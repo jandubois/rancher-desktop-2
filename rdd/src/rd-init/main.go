@@ -61,7 +61,7 @@ func run(ctx context.Context) error {
 	// Notify ready before we reload the other units; otherwise we end up
 	// blocking startup due to a loop with systemd-networkd.
 	if _, err := daemon.SdNotify(true, daemon.SdNotifyReady); err != nil {
-		return err
+		return fmt.Errorf("failed to notify systemd: %w", err)
 	}
 
 	seenUnits := make(map[string]bool)
@@ -75,7 +75,12 @@ func run(ctx context.Context) error {
 		if err != nil {
 			return fmt.Errorf("failed to start unit %s: %w", unit, err)
 		}
-		slog.InfoContext(ctx, "restarted systemd unit", "unit", unit, "result", <-ch)
+		select {
+		case result := <-ch:
+			slog.InfoContext(ctx, "restarted systemd unit", "unit", unit, "result", result)
+		case <-ctx.Done():
+			return fmt.Errorf("context closed while waiting for systemd unit %s: %w", unit, ctx.Err())
+		}
 	}
 
 	return nil

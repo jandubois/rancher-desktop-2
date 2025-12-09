@@ -10,13 +10,18 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+const (
+	// Path to cloud-config style metadata file provided by Lima.
+	metadataPath = "/mnt/lima-cidata/meta-data"
+)
+
 // Load /mnt/lima-cidata/meta-data
 func LoadMetadata(ctx context.Context) ([]string, error) {
 	var metaData struct {
 		LocalHostName string `yaml:"local-hostname"`
 	}
 
-	file, err := os.Open("/mnt/lima-cidata/meta-data")
+	file, err := os.Open(metadataPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load meta-data file: %w", err)
 	}

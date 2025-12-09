@@ -115,7 +115,7 @@ func LoadUserData(ctx context.Context) ([]string, error) {
 			err := os.WriteFile(
 				fmt.Sprintf("/etc/sudoers.d/90-lima-user-%s", userEntry.Name),
 				[]byte(userEntry.Name + " " + userEntry.Sudo),
-				0o644)
+				0o400)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create sudoers file for %q: %w", userEntry.Name, err)
 			}
@@ -185,7 +185,7 @@ func LoadUserData(ctx context.Context) ([]string, error) {
 		if err := os.WriteFile(writeFile.Path, []byte(writeFile.Content), os.FileMode(fileMode)); err != nil {
 			return nil, fmt.Errorf("failed to write file %s: %w", writeFile.Path, err)
 		}
-		uid := int64(-1)
+		var uid int64
 		gid := int64(-1)
 		userName, groupName, _ := strings.Cut(writeFile.Owner, ":")
 		if u, err := user.Lookup(userName); err != nil {

@@ -11,6 +11,11 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
+const (
+	// Path to cloud-config style networking configuration file provided by Lima.
+	networkConfigPath = "/mnt/lima-cidata/network-config"
+)
+
 var networkConfig struct {
 	Version uint `yaml:"version"`
 	Ethernets map[string]struct {
@@ -31,7 +36,7 @@ var networkConfig struct {
 
 func LoadNetworkConfig(ctx context.Context) ([]string, error) {
 	hasChanges := false
-	file, err := os.Open("/mnt/lima-cidata/network-config")
+	file, err := os.Open(networkConfigPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read network-config: %w", err)
 	}
