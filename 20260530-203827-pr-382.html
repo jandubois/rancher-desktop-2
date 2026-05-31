@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260530-203827-pr-382</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260530-203827-pr-382</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-05-30 20:38</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon">rancher-sandbox/rancher-desktop-daemon</a></td></tr>
+      <tr><td>Round</td><td>1 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/382" class="gh-ref" data-title="Keep the container engine up when a k3s install fails" data-state="open" data-type="pr">#382</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/pull/382" class="gh-ref" data-title="Keep the container engine up when a k3s install fails" data-state="open" data-type="pr">#382</a> — Keep the container engine up when a k3s install fails</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/fb8a71da"><code>fb8a71da</code></a> Keep the container engine up when a k3s install fails</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; core mechanism verified correct; bound each curl attempt (I1) and decide the failed-upgrade behavior (I2)</td></tr>
+      <tr><td>Wall-clock time</td><td><code>18 min 7 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR replaces the provision script&#39;s trailing <code>systemctl start</code> with an EXIT trap, so the container engine recovers whatever happens to k3s, and retries the k3s <code>curl | sh</code> install up to 30 times. The core mechanism is sound: the trap fires once, preserves the triggering exit code, and the subshell never re-fires it. Two gaps remain: each curl attempt carries no wall-clock deadline, and a failed k3s upgrade can restart the stale old version.</p>
+    <p>All three reviewers flagged the missing curl deadline. Codex alone surfaced the stale-upgrade path; its separate claim that the trap masks a target-start failure did not survive verification (<code>set -e</code> stays active inside the trap, so the failure propagates). The bash semantics behind every finding were checked against a live bash 5.3.9.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    <p>The most dangerous candidate — &quot;the EXIT trap masks the provision failure&quot; — is a non-issue. When the subshell runs <code>exit 1</code> after 30 attempts, <code>set -e</code> aborts the parent, the trap fires with <code>$?</code>=1, runs <code>systemctl start --no-block</code>, and the script still exits 1. Lima records the provision failure while the engine recovers, exactly as intended (verified on bash 5.3.9).</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Retry loop bounds attempts, not wall-clock — a stalled download hangs the boot <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/app/lima-template.yaml#L79-L96">pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="79" data-line="84-91"><code class="language-bash">                # The interface can have an address before the host-switch
+                # network is routable, so the download may fail right after a
+                # restart. Retry until it succeeds. -S surfaces the error
+                # without -s&#39;s progress meter spamming the log.
+                attempt=0
+                until curl -fsSL https://get.k3s.io | sh -; do
+                    attempt=$((attempt + 1))
+                    if (( attempt &gt;= 30 )); then
+                        echo &quot;k3s install failed after ${attempt} attempts&quot; &gt;&amp;2
+                        exit 1
+                    fi
+                    sleep 2
+                done
+            )
+            systemctl add-wants rancher-desktop.target k3s.service
+        fi
+
+        if [[ $PARAM_CONTAINER_ENGINE == &quot;containerd&quot; ]]; then</code></pre>
+    <p>The counter advances only when <code>curl</code> returns. A connection refused right after restart returns fast, so the count bounds it — the targeted transient. But a half-up host-switch network that completes the handshake then drops packets leaves <code>curl</code> waiting with no deadline; one attempt can hang far longer than 30 fast ones. The engine stops at line 59 and restarts only when the script exits (line 57 trap), so a long hang prolongs the very engine-down window this PR shrinks. The repo treats a missing download deadline as an operator-facing hang.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/app/lima-template.yaml#L52-L64">pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="52" data-line="57-59"><code class="language-yaml">
+    # Restart rancher-desktop.target on exit, even if a step below fails. The
+    # container engine belongs to this target but does not depend on
+    # Kubernetes, so a failed k3s install must not leave it stopped. --no-block
+    # returns immediately; the kubeconfig probe below absorbs k3s startup time.
+    trap &#39;systemctl start --no-block rancher-desktop.target&#39; EXIT
+
+    systemctl stop rancher-desktop.target
+
+    # Enable the requested container engine and disable the other.
+    # containerd.service has a Conflicts=docker, so we must not start both.
+    CONTAINERD_ACTION=$([[ $PARAM_CONTAINER_ENGINE = containerd ]] &amp;&amp; echo enable || echo disable)
+    DOCKER_ACTION=$([[ $PARAM_CONTAINER_ENGINE = moby ]] &amp;&amp; echo enable || echo disable)</code></pre>
+    <p>Fix: bound each attempt.</p>
+      <pre><code class="language-diff">-                until curl -fsSL https://get.k3s.io | sh -; do
++                until curl -fsSL --connect-timeout 10 --max-time 60 https://get.k3s.io | sh -; do</code></pre>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> A failed k3s upgrade restarts the stale old version <span class="pill pill-codex">Codex</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/app/lima-template.yaml#L79-L98">pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="79" data-line="84-93"><code class="language-bash">                # The interface can have an address before the host-switch
+                # network is routable, so the download may fail right after a
+                # restart. Retry until it succeeds. -S surfaces the error
+                # without -s&#39;s progress meter spamming the log.
+                attempt=0
+                until curl -fsSL https://get.k3s.io | sh -; do
+                    attempt=$((attempt + 1))
+                    if (( attempt &gt;= 30 )); then
+                        echo &quot;k3s install failed after ${attempt} attempts&quot; &gt;&amp;2
+                        exit 1
+                    fi
+                    sleep 2
+                done
+            )
+            systemctl add-wants rancher-desktop.target k3s.service
+        fi
+
+        if [[ $PARAM_CONTAINER_ENGINE == &quot;containerd&quot; ]]; then
+            echo &quot;K3S_CONTAINER_ENGINE_OPTIONS=--container-runtime-endpoint /run/k3s/containerd/containerd.sock&quot; \
+                &gt;/etc/systemd/system/k3s.service.env</code></pre>
+    <p>On a version change, a persistent install failure exits the subshell, so the script never reaches <code>add-wants</code> (line 93) or the kubeconfig removal (line 104). The trap then starts <code>rancher-desktop.target</code>, which still carries the <code>k3s.service</code> want from the prior install — so the old k3s binary and its stale <code>k3s.yaml</code> come back. Readiness probes only <code>/healthz</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/kubernetes/controllers/kube_reconciler.go#L250"><code>kube_reconciler.go:250</code></a>, no version check), so the App can settle against the wrong version.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/kubernetes/controllers/kube_reconciler.go#L245-L255">pkg/controllers/app/kubernetes/controllers/kube_reconciler.go</a></div>
+      <pre data-start="245" data-line="250"><code class="language-go">
+	// Requeue periodically so a later k3s death surfaces even if no other
+	// controller writes to App in the meantime. Without this, setKubeCondition
+	// is a no-op when Ready→Ready and there is nothing else to trigger a
+	// re-probe until the controller-runtime default resync (~10 min).
+	return ctrl.Result{RequeueAfter: kubeHealthyRequeue}, r.setKubeCondition(ctx, &amp;app,
+		metav1.ConditionTrue,
+		appv1alpha1.AppKubernetesReasonReady,
+		&quot;Kubernetes API server is ready&quot;,
+	)
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/app/lima-template.yaml#L99-L109">pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="99" data-line="104"><code class="language-yaml">        else
+            echo &quot;K3S_CONTAINER_ENGINE_OPTIONS=--docker&quot; &gt;/etc/systemd/system/k3s.service.env
+        fi
+
+        # Remove stale kubeconfig so k3s regenerates it on start.
+        rm -f /etc/rancher/k3s/k3s.yaml
+    fi
+
+    # rancher-desktop.target is restarted by the EXIT trap above.
+
+probes:</code></pre>
+    <p>Verify whether the provision script&#39;s non-zero exit already blocks settling; if it does not, the downgrade is silent. Fix: drop the k3s want before reinstalling and re-add it only on success (e.g. <code>rm -f /etc/systemd/system/rancher-desktop.target.wants/k3s.service</code> before the subshell).</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Retry re-runs the full installer, not just the download <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/app/lima-template.yaml#L79-L89">pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="79" data-line="84"><code class="language-bash">                # The interface can have an address before the host-switch
+                # network is routable, so the download may fail right after a
+                # restart. Retry until it succeeds. -S surfaces the error
+                # without -s&#39;s progress meter spamming the log.
+                attempt=0
+                until curl -fsSL https://get.k3s.io | sh -; do
+                    attempt=$((attempt + 1))
+                    if (( attempt &gt;= 30 )); then
+                        echo &quot;k3s install failed after ${attempt} attempts&quot; &gt;&amp;2
+                        exit 1
+                    fi</code></pre>
+    <p>Under <code>pipefail</code> the pipeline fails when either <code>curl</code> or the k3s installer (<code>sh -</code>) returns non-zero. The comment scopes the retry to the download race, but a deterministic installer failure — bad version, full disk, an <code>INSTALL_K3S_*</code> misconfig — re-fetches and re-extracts the binary 30 times before giving up. The installer is idempotent, so this wastes roughly a minute and clutters the log rather than corrupting state.</p>
+    <p>Fix: download once inside the loop (<code>curl ... --output /tmp/k3s-install.sh</code>), then run the installer once outside it, so a real installer error surfaces immediately.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Comment that <code>exit 1</code> deliberately surfaces the failure <span class="pill pill-claude">Claude</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/fb8a71da2e8fede58759373eacffcad2f61f1550/pkg/controllers/app/app/lima-template.yaml#L81-L93">pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="81" data-line="86-88"><code class="language-bash">                # restart. Retry until it succeeds. -S surfaces the error
+                # without -s&#39;s progress meter spamming the log.
+                attempt=0
+                until curl -fsSL https://get.k3s.io | sh -; do
+                    attempt=$((attempt + 1))
+                    if (( attempt &gt;= 30 )); then
+                        echo &quot;k3s install failed after ${attempt} attempts&quot; &gt;&amp;2
+                        exit 1
+                    fi
+                    sleep 2
+                done
+            )
+            systemctl add-wants rancher-desktop.target k3s.service</code></pre>
+    <p>This <code>exit 1</code> aborts the subshell, then the parent under <code>set -e</code>; the trap restores the engine and the script still exits non-zero. The behavior is correct and deliberate, but since the PR&#39;s theme is &quot;engine up even when k3s fails,&quot; a one-line note — the non-zero exit reports the failure to Lima while the trap handles recovery — would orient the next reader.</p>
+    <p>Fix: add that note at line 86.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><strong>The engine is down for the entire k3s retry window</strong> <code>(in-scope)</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> — <code>systemctl stop</code> at line 59 takes the engine down, and the trap restarts it only when the script exits. Every k3s retry extends the engine outage. For the common transient (a few fast retries) this costs seconds, but it couples engine availability to k3s install time — the opposite of the independence this PR argues for. Bounding each curl attempt (I1) caps the coupling; restarting the engine service directly after the enable/disable block, before the k3s work, would remove it, at the cost of a second restart path.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li>The EXIT trap covers every abort path — <code>systemctl stop</code> (line 59), the engine enable/disable (lines 63-66), and the k3s subshell — not just the k3s case, and it is registered (line 57) before the first command that can fail.</li>
+      <li><code>if (( attempt &gt;= 30 ))</code> avoids a real trap: a bare <code>(( ... ))</code> that evaluates false returns status 1 and would abort under <code>set -e</code>; the <code>if</code> condition is exempt.</li>
+      <li>The <code>( ... )</code> subshell resets the EXIT trap to default, so the engine restarts exactly once (verified), not once per subshell exit.</li>
+      <li><code>curl -fsS</code> surfaces the HTTP error on failure while <code>-s</code> keeps the progress meter out of the log.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>No automated test covers the change; the author documents this choice (see Acknowledged Limitations). The stated rationale — that a mocked harness would exercise only <code>trap ... EXIT</code> — is broader than the change warrants. A bash-level test that extracts the script with <code>curl</code> and <code>systemctl</code> stubbed on <code>PATH</code> would drive the actual control flow, not just bash internals.</p>
+    <p>Untested scenarios, highest risk first:</p>
+    <ol>
+      <li><strong>Failure path leaves the engine down</strong> — with <code>curl</code> always failing, assert the script invokes <code>systemctl start --no-block rancher-desktop.target</code> and exits non-zero. This is the regression guard for the bug being fixed.</li>
+      <li><strong>Failed upgrade restarts stale k3s (I2)</strong> — with an old <code>k3s.service</code> want present and the reinstall failing, assert the App does not settle against the old version.</li>
+      <li><strong>Retry-then-succeed</strong> — a <code>curl</code> stub that fails N times then succeeds yields one install and no engine-down end state.</li>
+      <li><strong>Hung network (I1)</strong> — a stubbed slow <code>curl</code> confirms each attempt is wall-clock-bounded.</li>
+    </ol>
+    <p>No provision-script test harness exists under <code>bats/</code> today, so adding one is real work — but the rationale should be narrowed rather than stated as &quot;only basic bash.&quot;</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The added comments (lines 53-57, 79-82) explain <em>why</em>: the engine&#39;s independence from k3s and the early-boot routing race. The <code>--no-block</code>/probe claim at lines 55-56 matches the probe at lines 109-135, and line 107 is an accurate breadcrumb where the old <code>systemctl start</code> lived. One gap: the comment at lines 79-82 attributes the retry to the download race, but the loop also retries installer failures (S1); widen the comment or narrow the loop to match.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>No unit test for the provision script</strong> — PR description: &quot;The provision script is intentionally left without a unit test. A mocked harness would stub out <code>systemctl</code> and <code>curl</code>, so it would only exercise <code>trap ... EXIT</code> (basic bash), not this change&#39;s behavior.&quot; The implementation matches this rationale. The Testing Assessment partially refutes its scope — the failure-path engine-recovery and retry-then-succeed behaviors are testable with stubbed <code>curl</code>/<code>systemctl</code>, and they exercise the change, not just bash — so the item is listed here rather than as a finding.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>#### <span class="pill pill-claude">Claude</span></p>
+    <p>Claude verified the bash semantics that decided the whole review — EXIT-trap exit-code preservation, subshell trap reset, and the <code>(( ))</code>-under-<code>set -e</code> hazard — against a live shell rather than reasoning from memory, which let it confirm the core mechanism instead of guessing at it. It alone raised the wasted full-installer retries (S1) and the stale retry comment. It rated the curl deadline Important and tied it to the engine-down window. Its one miss was the stale-k3s upgrade path.</p>
+    <p>#### <span class="pill pill-codex">Codex</span></p>
+    <p>Codex produced the single highest-value finding, I2, by tracing out of the changed file into the kubernetes reconciler and the App settle logic — the only agent to leave the diff. It also produced the review&#39;s one false positive: I1 claimed the trap masks a target-start failure, which assumes <code>set -e</code> does not apply inside an EXIT trap. A two-line test refuted it. Calibration was otherwise sound, and it skipped the Design Observations and Strengths sections.</p>
+    <p>#### <span class="pill pill-gemini">Gemini</span></p>
+    <p>Gemini was concise and correct but the shallowest of the three: a single finding (the curl deadline), rated Suggestion where the other two and the repo convention place it at Important. It added no unique findings and stayed inside the changed file, missing both the stale-upgrade path and the wasted-retry waste. Per its documented quota behavior it does not run <code>git blame</code>; Claude and Codex covered regression attribution.</p>
+    <p>#### Summary</p>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>5m 44s</td><td>6m 09s</td><td>4m 16s</td></tr>
+        <tr><td>Findings</td><td>1I 2S</td><td>2I</td><td>1I</td></tr>
+        <tr><td>Tool calls</td><td>17 (Bash 15, Read 2)</td><td>35 (shell 35)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>0</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>1</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 2S</strong></td><td><strong>2I</strong></td><td><strong>1I</strong></td></tr>
+        <tr><td>Downgraded</td><td>1 (I→S)</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Severity changes during consolidation: Claude&#39;s I2 (retry re-runs the full installer) moved important → suggestion S1; Gemini&#39;s curl-deadline finding moved suggestion → important I1, aligning with Claude, Codex, and the repo convention; Codex&#39;s I1 (trap masks the target-start failure) was dropped as a false positive after a direct bash test.</p>
+    <p>Codex delivered the most value — the only unique high-severity finding (I2) and otherwise-sound calibration — despite its one false positive. Claude&#39;s empirical verification anchored the review and kept the trap mechanism from being over-rated. Gemini confirmed the consensus finding but surfaced nothing the other two missed.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>When a change adds or moves a command into a bash <code>trap &#39;...&#39; EXIT</code> handler, verify the exit-code and option semantics against a live shell before flagging any masking or propagation claim. The trap runs with <code>set -e</code>/<code>pipefail</code> still in effect; the shell exits with the status that triggered the trap unless a command inside the trap itself fails under <code>set -e</code>; and a <code>( )</code> subshell resets traps to default, so an <code>exit</code> inside it does not re-fire the parent&#39;s EXIT trap. Findings that assert a trap masks, changes, or double-fires an exit status sound high-confidence and are frequently wrong — a two-line <code>bash -c</code> reproduction settles them.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[repo] k3s readiness in the App&#39;s kubernetes reconciler is established by a <code>/healthz</code> probe alone; it does not verify the running server version against the requested <code>KUBERNETES_VERSION</code>. The provision script wires k3s into <code>rancher-desktop.target</code> with <code>add-wants</code>, which creates a persistent <code>.wants</code> symlink that survives across boots. When reviewing version-change or reinstall paths, check that a failed in-VM upgrade cannot leave the previous k3s version running and still satisfy readiness — the symlink and the running binary both outlive a failed reinstall.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
