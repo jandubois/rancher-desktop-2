@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260530-200218-pr-380</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260530-200218-pr-380</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-05-30 20:18</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon">rancher-sandbox/rancher-desktop-daemon</a></td></tr>
+      <tr><td>Round</td><td>1 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/380" class="gh-ref" data-title="Hold Settled False until the LimaVM applies a template change" data-state="open" data-type="pr">#380</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/pull/380" class="gh-ref" data-title="Hold Settled False until the LimaVM applies a template change" data-state="open" data-type="pr">#380</a> — Hold Settled False until the LimaVM applies a template change</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/6b65c393"><code>6b65c393</code></a> Hold Settled False until the LimaVM applies a template change</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge as-is</span> &mdash; the fix is correct and well-traced; only a doc-table omission and a BATS-style nit remain, all Suggestions.</td></tr>
+      <tr><td>Wall-clock time</td><td><code>19 min 18 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR gates <code>computeSettledCondition</code> on <code>templateUpToDate</code> — the template ConfigMap&#39;s <code>resourceVersion</code> versus the LimaVM&#39;s <code>ObservedTemplateResourceVersion</code> — so <code>Settled</code> stays False (reason <code>ApplyingTemplate</code>) until the VM restarts into a rewritten template, closing the premature-settle window in issue <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/378" class="gh-ref" data-title="`rdd set` returns `Settled` before a restart-requiring change is applied" data-state="open" data-type="issue">#378</a>. All three reviewers found the fix correct with no Critical or Important issues; an independent cross-controller trace confirmed convergence with no hang. Remaining items are a design-doc table omission and a BATS-style nit.</p>
+    <p>All three reviewers (Claude, Codex, Gemini) agreed the core logic is sound. The only inter-reviewer disagreement was the severity and validity of the <code>local</code>-inside-<code>@test</code> style point (S2), resolved below against the actual file.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> New <code>ApplyingTemplate</code> Settled reason missing from the design-doc contract <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/docs/design/api_app.md#L117-L133">docs/design/api_app.md</a></div>
+      <pre data-start="117" data-line="122-128"><code class="language-plaintext">  | `KubernetesReady`      | `True`    | `Ready`          | k3s API server is reachable; instance context merged into `~/.kube/config` |
+  | `KubernetesReady`      | `False`   | `NotApplicable`  | `spec.kubernetes.enabled` is false                                |
+  | `KubernetesReady`      | `False`   | `NotRunning`     | VM is not running, so k3s cannot be healthy                       |
+  | `KubernetesReady`      | `False`   | `Probing`        | Waiting for k3s API server to respond                             |
+  | `KubernetesReady`      | `False`   | `MergeFailed`    | k3s is reachable but merging the instance kubeconfig failed (see `message`) |
+  | `Settled`              | `True`    | `Settled`        | Reconcile chain has caught up with the current spec               |
+  | `Settled`              | `False`   | `WaitingForLimaVM` | The App has no `Running` condition yet (nothing mirrored from LimaVM) |
+  | `Settled`              | `False`   | `WaitingForEngine` | Engine controller has not yet written `ContainerEngineReady`    |
+  | `Settled`              | `False`   | `EngineStale`    | Engine controller has not yet observed the current generation     |
+  | `Settled`              | `False`   | `WaitingForKubernetes` | Kubernetes controller has not yet written `KubernetesReady`  |
+  | `Settled`              | `False`   | `KubernetesStale` | Kubernetes controller has not yet observed the current generation |
+  | `Settled`              | `False`   | *(forwarded)*    | Forwarded from the blocking `Running`, `ContainerEngineReady`, or `KubernetesReady` reason |
+
+  `Running=True` means the Lima guest has finished booting and SSH is reachable. It says nothing about the container engine socket; consumers that depend on the engine (container/image/volume mirrors, `docker` against the forwarded socket) must also check `ContainerEngineReady`, which flips to `True` only after the engine controller has connected to the socket and completed its initial full sync.
+
+  The `Created` and `Running` conditions are mirrored from LimaVM, so their `lastTransitionTime` reflects the LimaVM transition rather than the copy — the timestamp is meaningful for staleness checks. The engine reconciler stamps `ContainerEngineReady.observedGeneration` with the App&#39;s `metadata.generation` at the time it writes the condition; if the App&#39;s generation advances between the reconciler&#39;s read and write, the stamp reflects the write-time generation rather than the observed one. The App reconciler computes `Settled` from the mirrored `Running`, the engine-written `ContainerEngineReady`, and the Kubernetes-written `KubernetesReady` (the last only when `spec.kubernetes.enabled` is true), and stamps its own `observedGeneration` with the `metadata.generation` observed when it computed the condition, not the generation at write time. The retry-on-conflict loop re-reads on 409, so a successful write always carries the current generation. `rdd set` waits for `Settled.status=True` with `observedGeneration &gt;= post-patch metadata.generation`, so stale snapshots cannot prematurely satisfy the wait.
+</code></pre>
+    <p>The table at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/docs/design/api_app.md#L122-L128"><code>api_app.md:122-128</code></a> exhaustively enumerates every <code>Settled</code> reason, but this PR adds a new emitted reason <code>AppSettledReasonApplyingTemplate</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/apis/app/v1alpha1/app_types.go#L83"><code>app_types.go:83</code></a>, written at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/controllers/app/app/controllers/app_controller.go#L510"><code>app_controller.go:510</code></a>) with no row. The prose at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/docs/design/api_app.md#L132"><code>api_app.md:132</code></a> still says &quot;stale snapshots cannot prematurely satisfy the wait&quot; — the exact guarantee <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/378" class="gh-ref" data-title="`rdd set` returns `Settled` before a restart-requiring change is applied" data-state="open" data-type="issue">#378</a> violated — without mentioning the new gate. The <code>waitForDesiredState</code> doc comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/cmd/rdd/set.go#L467-L473"><code>set.go:467-473</code></a> lists what <code>Settled</code> gates on (LimaVM phase, engine, Kubernetes) and omits the template gate. RDD has no public release, so this is doc drift, not a contract break.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/docs/design/api_app.md#L117-L137">docs/design/api_app.md</a></div>
+      <pre data-start="117" data-line="122-132"><code class="language-plaintext">  | `KubernetesReady`      | `True`    | `Ready`          | k3s API server is reachable; instance context merged into `~/.kube/config` |
+  | `KubernetesReady`      | `False`   | `NotApplicable`  | `spec.kubernetes.enabled` is false                                |
+  | `KubernetesReady`      | `False`   | `NotRunning`     | VM is not running, so k3s cannot be healthy                       |
+  | `KubernetesReady`      | `False`   | `Probing`        | Waiting for k3s API server to respond                             |
+  | `KubernetesReady`      | `False`   | `MergeFailed`    | k3s is reachable but merging the instance kubeconfig failed (see `message`) |
+  | `Settled`              | `True`    | `Settled`        | Reconcile chain has caught up with the current spec               |
+  | `Settled`              | `False`   | `WaitingForLimaVM` | The App has no `Running` condition yet (nothing mirrored from LimaVM) |
+  | `Settled`              | `False`   | `WaitingForEngine` | Engine controller has not yet written `ContainerEngineReady`    |
+  | `Settled`              | `False`   | `EngineStale`    | Engine controller has not yet observed the current generation     |
+  | `Settled`              | `False`   | `WaitingForKubernetes` | Kubernetes controller has not yet written `KubernetesReady`  |
+  | `Settled`              | `False`   | `KubernetesStale` | Kubernetes controller has not yet observed the current generation |
+  | `Settled`              | `False`   | *(forwarded)*    | Forwarded from the blocking `Running`, `ContainerEngineReady`, or `KubernetesReady` reason |
+
+  `Running=True` means the Lima guest has finished booting and SSH is reachable. It says nothing about the container engine socket; consumers that depend on the engine (container/image/volume mirrors, `docker` against the forwarded socket) must also check `ContainerEngineReady`, which flips to `True` only after the engine controller has connected to the socket and completed its initial full sync.
+
+  The `Created` and `Running` conditions are mirrored from LimaVM, so their `lastTransitionTime` reflects the LimaVM transition rather than the copy — the timestamp is meaningful for staleness checks. The engine reconciler stamps `ContainerEngineReady.observedGeneration` with the App&#39;s `metadata.generation` at the time it writes the condition; if the App&#39;s generation advances between the reconciler&#39;s read and write, the stamp reflects the write-time generation rather than the observed one. The App reconciler computes `Settled` from the mirrored `Running`, the engine-written `ContainerEngineReady`, and the Kubernetes-written `KubernetesReady` (the last only when `spec.kubernetes.enabled` is true), and stamps its own `observedGeneration` with the `metadata.generation` observed when it computed the condition, not the generation at write time. The retry-on-conflict loop re-reads on 409, so a successful write always carries the current generation. `rdd set` waits for `Settled.status=True` with `observedGeneration &gt;= post-patch metadata.generation`, so stale snapshots cannot prematurely satisfy the wait.
+
+Deleting the `App` resource triggers the finalizer to stop and delete the owned LimaVM (and wait for the LimaVM controller to complete its own cleanup before removing the App finalizer).
+
+## GUI
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/apis/app/v1alpha1/app_types.go#L78-L88">pkg/apis/app/v1alpha1/app_types.go</a></div>
+      <pre data-start="78" data-line="83"><code class="language-go">	AppSettledReasonKubernetesStale = &quot;KubernetesStale&quot;
+
+	// AppSettledReasonApplyingTemplate means the LimaVM has not yet restarted
+	// into the current template, so a spec change that rewrote the template is
+	// not yet in effect.
+	AppSettledReasonApplyingTemplate = &quot;ApplyingTemplate&quot;
+)
+
+// Reasons for the KubernetesReady condition.
+const (
+	// AppKubernetesReasonReady means the k3s API server is reachable and the</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/controllers/app/app/controllers/app_controller.go#L505-L515">pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="505" data-line="510"><code class="language-go">	// current template, the spec change has not taken effect. Hold Settled
+	// False even when the feeding conditions are momentarily all True at the
+	// new generation against the not-yet-restarted VM.
+	if !templateUpToDate {
+		settled.Status = metav1.ConditionFalse
+		settled.Reason = v1alpha1.AppSettledReasonApplyingTemplate
+		settled.Message = settledMessageApplyingTemplate
+		return settled
+	}
+
+	switch {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/cmd/rdd/set.go#L462-L478">cmd/rdd/set.go</a></div>
+      <pre data-start="462" data-line="467-473"><code class="language-go">		logrus.Info(&quot;App updated&quot;)
+	}
+	return app.Generation, nil
+}
+
+// waitForDesiredState waits for the App reconcile chain to settle on
+// the new spec. Every property change waits for Settled=True with
+// ObservedGeneration &gt;= minGen. Settled gates on the LimaVM reaching
+// its terminal phase (Started or Stopped), on ContainerEngineReady=True
+// at the current generation when the engine controller is registered,
+// and on KubernetesReady=True at the current generation when
+// spec.kubernetes.enabled is true.
+//
+// Filtering on ObservedGeneration &gt;= minGen blocks a stale
+// Settled=True from a prior reconcile from satisfying the wait
+// before the App controller observes our write.
+func waitForDesiredState(ctx context.Context, config *rest.Config, timeout time.Duration, minGen int64) error {</code></pre>
+    <p>Fix:</p>
+      <pre><code class="language-diff">   | `Settled`              | `False`   | `KubernetesStale` | Kubernetes controller has not yet observed the current generation |
++  | `Settled`              | `False`   | `ApplyingTemplate` | A template-rewriting spec change is not yet applied; the LimaVM has not restarted into the current template |
+   | `Settled`              | `False`   | *(forwarded)*    | Forwarded from the blocking Running/Engine/Kubernetes reason |</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>local</code> inside the new <code>@test</code> block <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/bats/tests/32-app-controllers/app.bats#L222-L232">bats/tests/32-app-controllers/app.bats</a></div>
+      <pre data-start="222" data-line="227"><code class="language-bash">    # and after to prove the switch rebooted the VM. We check both because they
+    # cover different failure modes: lastTransitionTime advances only when Running
+    # flips, proving a reboot; observedTemplateResourceVersion advances only after
+    # the VM applies the new template, guarding against a premature Settled.
+    run -0 rdd ctl get limavm &quot;${VM_NAME}&quot; --namespace &quot;${RDD_NAMESPACE}&quot; -o json
+    local before=&quot;${output}&quot;
+    run -0 jq -r &#39;.status.conditions[] | select(.type == &quot;Running&quot;) | .status&#39; &lt;&lt;&lt;&quot;${before}&quot;
+    assert_output &quot;True&quot;
+    run -0 jq -r &#39;.status.conditions[] | select(.type == &quot;Running&quot;) | .lastTransitionTime&#39; &lt;&lt;&lt;&quot;${before}&quot;
+    local before_transition=&quot;${output}&quot;
+    run -0 jq -r &#39;.status.observedTemplateResourceVersion&#39; &lt;&lt;&lt;&quot;${before}&quot;</code></pre>
+    <p>The new test declares four <code>local</code> variables (lines 227, 231, 233, 238). The repo&#39;s review steering says to flag <code>local</code> inside <code>@test</code> — each test runs in its own subshell, so the scoping is redundant. Codex rated this Suggestion; Gemini rated it Important. It is purely stylistic with no behavioral impact, so Suggestion is correct. Claude declined it, noting the file already contains <code>local</code>-in-<code>@test</code> uses — verified: 5 pre-existing instances at lines 94, 146, 158, 189, 199 (Claude&#39;s &quot;149 in this file&quot; was inaccurate; the file has 10 <code>local</code> total, 5 in <code>@test</code> blocks). The steering rule and the file&#39;s actual convention contradict each other (see Review Process Notes).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/bats/tests/32-app-controllers/app.bats#L89-L99">bats/tests/32-app-controllers/app.bats</a></div>
+      <pre data-start="89" data-line="94"><code class="language-plaintext">    assert_output --partial &quot;rdd.rancherdesktop.io/cleanup&quot;
+}
+
+@test &quot;verify LimaVM has owner reference pointing to App&quot; {
+    run -0 rdd ctl get limavm &quot;${VM_NAME}&quot; --namespace &quot;${RDD_NAMESPACE}&quot; -o json
+    local json=&quot;${output}&quot;
+
+    run -0 jq -r &#39;.metadata.ownerReferences[0].kind&#39; &lt;&lt;&lt;&quot;${json}&quot;
+    assert_output &quot;App&quot;
+
+    run -0 jq -r &#39;.metadata.ownerReferences[0].name&#39; &lt;&lt;&lt;&quot;${json}&quot;</code></pre>
+    <p>Fix: drop <code>local</code> from the four declarations (<code>before=</code>, <code>before_transition=</code>, <code>before_template=</code>, <code>after=</code>); ideally sweep the 5 pre-existing instances in the same pass so the rule holds file-wide.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>templateUpToDate</code> computed from the outer <code>app</code> read, applied against re-Get&#39;d <code>latest</code> <span class="pill pill-claude">Claude</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/controllers/app/app/controllers/app_controller.go#L381-L391">pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="381" data-line="386"><code class="language-go">
+	// Propagate app spec.containerEngine and spec.kubernetes into the LimaVM&#39;s
+	// template ConfigMap. templateUpToDate reports whether the LimaVM is running
+	// the current template; computeSettledCondition gates on it so `rdd set`
+	// cannot return before a template change has actually been applied.
+	templateUpToDate := true
+	if limaVM.Status.TemplateConfigMap != &quot;&quot; {
+		templateCM := &amp;corev1.ConfigMap{}
+		if err := r.Get(ctx, client.ObjectKey{Name: limaVM.Status.TemplateConfigMap, Namespace: namespace}, templateCM); err != nil {
+			if !apierrors.IsNotFound(err) {
+				return ctrl.Result{}, fmt.Errorf(&quot;failed to fetch LimaVM template ConfigMap: %w&quot;, err)</code></pre>
+    <p><code>templateUpToDate</code> (finalized at line 421) is derived from the outer <code>app.Spec</code>/<code>limaVM</code> reads, but <code>computeSettledCondition</code> runs against <code>latest</code> (re-Get&#39;d at line 442-443), which can carry a higher generation if a new <code>rdd set</code> lands mid-loop. The stamped <code>Settled.ObservedGeneration</code> would then be the newer generation while the flag reflects the prior spec. This self-heals — the newer generation triggers another reconcile that re-derives the template and finds it stale — and mirrors the existing pattern for <code>engineEnabled</code>/<code>kubernetesEnabled</code> (computed once at lines 439-440; the loop&#39;s staleness is already noted in the comment at lines 433-438). Benign.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/controllers/app/app/controllers/app_controller.go#L416-L448">pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="416" data-line="421-443"><code class="language-go">				return ctrl.Result{Requeue: true}, nil
+			}
+			// LimaVM defers ObservedTemplateResourceVersion until the restart
+			// completes, so a matching resourceVersion means the running
+			// instance reflects the current template.
+			templateUpToDate = templateCM.ResourceVersion == limaVM.Status.ObservedTemplateResourceVersion
+		}
+	}
+
+	if !limaVM.Spec.Running &amp;&amp; app.Spec.Running {
+		limaVM.Spec.Running = true
+		if err := r.Update(ctx, limaVM); err != nil {
+			return ctrl.Result{}, fmt.Errorf(&quot;failed to propagate running state to LimaVM: %w&quot;, err)
+		}
+		return ctrl.Result{}, nil
+	}
+
+	// Mirror LimaVM status conditions and compute Settled. The engine
+	// reconciler writes ContainerEngineReady on the same object, so
+	// app&#39;s resourceVersion from the initial Get can be stale.
+	// retry.RetryOnConflict + re-Get matches
+	// EngineReconciler.setEngineCondition; without it, concurrent
+	// writers 409-loop through controller-runtime requeues.
+	engineEnabled := r.engineEnabled(ctx)
+	kubernetesEnabled := r.kubernetesEnabled(ctx)
+	if err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+		latest := &amp;v1alpha1.App{}
+		if err := r.Get(ctx, client.ObjectKeyFromObject(&amp;app), latest); err != nil {
+			return err
+		}
+		changed := false
+		for _, cond := range limaVM.Status.Conditions {
+			// Defensive: guards against a future LimaVM bypass that would fail CRD validation.</code></pre>
+    <p>Fix: add a one-line comment near line 459 noting <code>templateUpToDate</code>, like the enabled flags, is evaluated against the outer read and self-corrects on the next generation. Recomputing from <code>latest</code> inside the loop is heavier and not warranted.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Generic, change-agnostic gate</strong> <span class="pill pill-claude">Claude</span> — The gate unsettles on <em>any</em> template-rewriting spec change (<code>containerEngine.name</code>, <code>kubernetes.version</code>, <code>kubernetes.enabled</code>) without inspecting what changed, and correctly makes a version-aware <code>KubernetesReady</code> probe unnecessary — matching the direction <code>@mook-as</code> argued for in the issue. (in-scope)</li>
+      <li><strong>Reuses existing deferral instead of new synchronization</strong> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> — The fix leans on the already-correct <code>ObservedTemplateResourceVersion</code> deferral in <code>limavm_controller.go:handleTemplateUpdate</code> (the version is withheld while <code>RestartNeeded</code> is set, lines 420-423). Both sides of the comparison are reads of the same <code>&lt;name&gt;-template</code> ConfigMap, so the <code>resourceVersion</code> match is exact. (in-scope)</li>
+      <li><strong>Graceful degradation on boot failure</strong> <span class="pill pill-gemini">Gemini</span> — Because <code>ApplyingTemplate</code> holds only until the LimaVM writes the new template, a VM that then fails to boot surfaces the real failure (<code>Starting</code>/<code>Failed</code>) rather than masking it behind <code>ApplyingTemplate</code> indefinitely.</li>
+      <li><strong>Test improvements</strong> <span class="pill pill-claude">Claude</span> <span class="pill pill-gemini">Gemini</span> — The rename &quot;without stopping VM&quot; → &quot;restarts the VM&quot; corrects a pre-existing misnomer, and the before/after snapshot of <code>lastTransitionTime</code> + <code>observedTemplateResourceVersion</code> directly catches a premature-settle regression. The <code>templateOutOfDate bool</code> + <code>!tt.templateOutOfDate</code> extension covers the new branch without touching the 20+ existing table cases.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The unit test (<code>app_controller_test.go</code>, &quot;stale template holds Settled false despite ready conditions&quot;) is meaningful: it was confirmed to fail (<code>True != False</code>) with the gate disabled and pass when restored, and <code>go test ./pkg/controllers/app/app/controllers</code> passes. The BATS test validates the end-to-end fix via <code>lastTransitionTime</code>/<code>observedTemplateResourceVersion</code> deltas after a blocking <code>rdd set</code>.</p>
+    <p>Untested scenarios, ranked by risk:</p>
+    <ol>
+      <li><em></em><code>kubernetes.version=X</code> at the integration level<em></em> — the issue&#39;s headline reproducer. Both the unit and BATS tests exercise <code>containerEngine.name</code>; the version-change path is not pinned. Since the gate is template-generic and both fields rewrite the same ConfigMap, coverage is adequate, but the exact reported bug is not directly reproduced in CI.</li>
+      <li><em></em>Combined <code>running=false</code> + template change<em></em> — no test asserts the gate does not strand <code>Settled</code> when a template change races a stop. Traced manually: the stopped-phase branch in <code>handleTemplateUpdate</code> records the new resourceVersion immediately, so <code>Settled</code> reaches True with no hang. Low risk, but it is the one untested interaction between the new gate and the <code>!desiredRunning</code> arms.</li>
+      <li><strong>No reconciler-level test</strong> proving <code>templateUpToDate</code> is derived from ConfigMap <code>resourceVersion</code> vs <code>LimaVM.status.observedTemplateResourceVersion</code>; only the pure <code>computeSettledCondition</code> function is unit-tested.</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>One gap, captured as S1: the new <code>ApplyingTemplate</code> reason is absent from the authoritative <code>Settled</code> reason table (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/docs/design/api_app.md#L122-L128"><code>api_app.md:122-128</code></a>), the design-doc prose (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/docs/design/api_app.md#L132"><code>api_app.md:132</code></a>), and the <code>waitForDesiredState</code> comment (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/cmd/rdd/set.go#L467-L473"><code>set.go:467-473</code></a>). Code-level doc comments (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/apis/app/v1alpha1/app_types.go#L80-L83"><code>app_types.go:80-83</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/controllers/app/app/controllers/app_controller.go#L382-L385"><code>app_controller.go:382-385</code></a>, <code>504-507</code>) are accurate and complete, and the <code>ObservedTemplateResourceVersion</code> field doc the fix relies on is already documented.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Single commit with a message that accurately describes the change and its rationale. History and scope are clean.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>Code comment</strong> — &quot;ConfigMaps are not watched, so requeue to let the reconciler evaluate remaining spec fields&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/6b65c393c85854ca9260c9d81770f27fbe94b7bd/pkg/controllers/app/app/controllers/app_controller.go#L411-L415"><code>app_controller.go:411-415</code></a>). The change makes this limitation less likely to cause premature success: the follow-up reconcile now holds <code>Settled=False</code> until the LimaVM reports the current template <code>resourceVersion</code>, rather than relying on LimaVM to set <code>restartNeeded</code> before a racing <code>rdd set</code> observes <code>Settled=True</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> — Produced the only unique finding (S3, the <code>templateUpToDate</code>-vs-<code>latest</code> self-healing window) and ran the deepest cross-controller lifecycle trace, confirming <code>Settled</code> converges across the stop/restart/start paths with no hang. On the <code>local</code>-inside-<code>@test</code> style point it correctly observed that the file already contains such uses and declined to flag it — the right instinct on file consistency — but anchored that to an inaccurate count (&quot;149 in this very file&quot;; the file actually has 10 <code>local</code>, 5 inside <code>@test</code> blocks), conflating the file with the whole suite. Its documentation finding matched Codex&#39;s.</p>
+    <p><strong>[Codex]</strong> — Caught the full extent of the documentation gap: not just the missing reason-table row but also the now-stale <code>waitForDesiredState</code> comment in <code>set.go</code>, which the other two missed. Ran <code>go test</code> on the package to confirm it passes. Calibrated the <code>local</code> nit correctly as a Suggestion. Clean and accurate.</p>
+    <p><strong>[Gemini]</strong> — Agreed the core logic is correct and contributed the &quot;graceful degradation on boot failure&quot; design strength that no other reviewer raised. Over-rated the single <code>local</code> style point as Important (downgraded to Suggestion here). It did not run <code>git blame</code> (known daily-quota behavior), so it could not separate the new <code>local</code> lines from the pre-existing ones — the very distinction that decided S2&#39;s resolution.</p>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>12m 17s</td><td>4m 11s</td><td>3m 43s</td></tr>
+        <tr><td>Findings</td><td>2S</td><td>2S</td><td>1S</td></tr>
+        <tr><td>Tool calls</td><td>30 (Bash 15, Read 15)</td><td>41 (shell 40, stdin 1)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>1</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>4</td><td>4</td><td>4</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2S</strong></td><td><strong>2S</strong></td><td><strong>1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation</strong> — Gemini&#39;s <code>local</code>-inside-<code>@test</code> finding was downgraded from Important to Suggestion (S2): the construct is purely stylistic with no behavioral impact, and the file already contains the same pattern. No findings were dropped as false positives.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <p>Codex offered the most actionable value this round by capturing the complete documentation surface (table + prose + CLI comment). Claude added the only novel code-level observation (S3) and the strongest correctness assurance via its lifecycle trace. Gemini&#39;s distinctive contribution was a design strength rather than a finding. With no Critical or Important issues from any reviewer and an independent trace confirming the fix, the convergent verdict is high-confidence.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[repo] UPDATE the BATS <code>local</code>-inside-<code>@test</code> rule to address pre-existing instances. The current rule (&quot;Do not use <code>local</code> inside <code>@test</code> blocks … Flag <code>local</code> inside <code>@test</code>&quot;) is contradicted by existing test code that already uses the pattern, which makes reviewers split between flagging the new instance and defending it as consistent with the file. Clarify the rule: flag a newly-added <code>local</code> inside an <code>@test</code> block at <strong>Suggestion</strong> severity (it is redundant scoping, not a correctness issue) and recommend sweeping the pre-existing instances in the same file in the same pass — do not accept a new instance on the grounds that the file already contains the pattern. This keeps the rule enforceable without re-litigating severity each round.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
