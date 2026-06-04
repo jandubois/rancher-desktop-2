@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260603-164818-pr-383</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260603-164818-pr-383</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-06-03 16:48</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon">rancher-sandbox/rancher-desktop-daemon</a></td></tr>
+      <tr><td>Round</td><td>3 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/383" class="gh-ref" data-title="Harden Windows shutdown against recycled PIDs and leftover hostagent state" data-state="open" data-type="pr">#383</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/pull/383" class="gh-ref" data-title="Harden Windows shutdown against recycled PIDs and leftover hostagent state" data-state="open" data-type="pr">#383</a> — Harden Windows shutdown against recycled PIDs and leftover hostagent state</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/9ff1a0bb"><code>9ff1a0bb</code></a> Always reclaim hostagent resources during graceful shutdown<br><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/54470995"><code>54470995</code></a> Reject a recycled service PID on Windows<br><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/7aaaba77"><code>7aaaba77</code></a> Verify hostagent identity before sending CTRL_BREAK on Windows</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the Windows hardening is correct and the Round 2 fixes landed, but the new <code>service.PID()</code> guard newly rejects a control plane started through the <code>svc serve</code> alias spelling</td></tr>
+      <tr><td>Wall-clock time</td><td><code>16 min 44 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 3 amends the Round 2 resolution fixes into the original commits. Six of the nine changed files are byte-identical to what two prior rounds cleared; the three changed files carry only those fixes — one functional (the <code>processCommandLine</code> buffer-sizing fix, verified correct and complete) and two doc-only. Codex surfaced one net-new regression both prior rounds and the other two reviewers missed: the new <code>service.PID()</code> guard rejects a control plane started as <code>rdd svc serve</code>.</p>
+    <p>All three cloud reviewers ran. Claude and Gemini reached &quot;Merge&quot; with no findings, each independently confirming the buffer-sizing fix and treating the three Round 2 declined items as accepted limitations. Codex alone traced the <code>svc</code> alias to the <code>serve</code> daemon and found I1 — a deterministic false negative on a non-standard path. Verification confirms the mechanism and the regression label, and bounds the blast radius: the normal <code>svc start</code> / <code>service start</code> path self-spawns the canonical <code>service serve</code>, so it and every BATS test are unaffected.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> <code>service.PID()</code> rejects a control plane started as <code>rdd svc serve</code> <span class="pill pill-codex">Codex</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/service/cmd/service.go#L171-L181">pkg/service/cmd/service.go</a></div>
+      <pre data-start="171" data-line="176"><code class="language-go">		// IsOurProcess returns false for any state it cannot confirm — a denied
+		// OpenProcess or a short PEB read on a live control plane included. Such a
+		// false negative reads as not-running and removes the PID file below; we
+		// accept that as the cost of the guard, which needs only the low query
+		// rights a same-user process always grants.
+		if err == nil &amp;&amp; !process.IsOurProcess(pid, &quot;service&quot;, &quot;serve&quot;) {
+			err = fmt.Errorf(&quot;pid %d is not our control plane&quot;, pid)
+		}
+	}
+	if err != nil {
+		_ = os.Remove(instance.PIDFile())</code></pre>
+    <p><code>svc</code> aliases <code>service</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L45"><code>cmd/rdd/service.go:45</code></a>) and <code>serve</code> is a normal, non-hidden subcommand, so the daemon can run as <code>rdd svc serve</code>, whose command line holds <code>svc serve</code>, not <code>service serve</code>. <code>IsOurProcess</code> requires every substring via <code>strings.Contains</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/util/process/process_windows.go#L83"><code>process_windows.go:83</code></a>), so the absent <code>service</code> returns false and line 181 removes the live daemon&#39;s PID file; <code>Running()</code> then reports it dead and <code>svc stop</code> cannot find it. At merge-base <code>PID()</code> accepted any alive PID, making this a regression. The blast radius is narrow: <code>svc start</code> self-spawns the canonical <code>service serve</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L296"><code>service.go:296</code></a>), so the normal path and every BATS test stay unaffected — only a manual <code>rdd svc serve</code> triggers it. Unlike Round 2&#39;s declined S1 (a transient failure judged near-impossible), this fires deterministically.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L40-L50">cmd/rdd/service.go</a></div>
+      <pre data-start="40" data-line="45"><code class="language-go">
+func newServiceCommand(ctx context.Context) *cobra.Command {
+	command := &amp;cobra.Command{
+		Use:           &quot;service&quot;,
+		Short:         &quot;Manage the RDD control plane management&quot;,
+		Aliases:       []string{&quot;svc&quot;},
+		SilenceUsage:  true,
+		SilenceErrors: true,
+	}
+	command.AddCommand(
+		newServiceConfigCommand(),</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/util/process/process_windows.go#L78-L88">pkg/util/process/process_windows.go</a></div>
+      <pre data-start="78" data-line="83"><code class="language-go">	}
+	cmdline, err := processCommandLine(handle)
+	if err != nil {
+		return false
+	}
+	for _, s := range cmdlineSubstrings {
+		if !strings.Contains(cmdline, s) {
+			return false
+		}
+	}
+	return true</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L291-L301">cmd/rdd/service.go</a></div>
+      <pre data-start="291" data-line="296"><code class="language-go">		return nil
+	}
+
+	wait, err := cmd.Flags().GetBool(&quot;wait&quot;)
+	if err != nil {
+		return err
+	}
+
+	if err := service.StopWithWait(wait); err != nil {
+		return err
+	}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/service/cmd/service.go#L176-L186">pkg/service/cmd/service.go</a></div>
+      <pre data-start="176" data-line="181"><code class="language-go">		if err == nil &amp;&amp; !process.IsOurProcess(pid, &quot;service&quot;, &quot;serve&quot;) {
+			err = fmt.Errorf(&quot;pid %d is not our control plane&quot;, pid)
+		}
+	}
+	if err != nil {
+		_ = os.Remove(instance.PIDFile())
+		return PIDNotFound
+	}
+	return pid
+}
+</code></pre>
+    <p>Fix: discriminate on <code>&quot;serve&quot;</code> alone, since <code>&quot;service&quot;</code> does not contain <code>&quot;serve&quot;</code>; the image-path match still rejects unrelated rdd processes. Or accept and document it, as with the concurrent-instances limitation at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L162-L166"><code>service.go:162-166</code></a>.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><strong>Substring discrimination is brittle to command-name aliases</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex</span> — <code>IsOurProcess</code>&#39;s <code>strings.Contains</code> discriminator (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/util/process/process_windows.go#L83"><code>process_windows.go:83</code></a>) assumes the daemon spells its subcommand one canonical way. The <code>svc</code>/<code>service</code> alias pair breaks that assumption (I1). The docstring already warns about prefix collisions (<code>vm</code> vs <code>vm2</code>); alias spellings are the same class. Matching on the narrowest token that survives every alias (<code>serve</code>), or parsing argv, forecloses the class.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li>The hostagent force-stop paths re-check <code>HostAgentPID</code> immediately before each destructive use, including after graceful waits, so a stored PID is never trusted once time has passed. <code>(in-scope)</code> <span class="pill pill-codex">Codex</span></li>
+      <li><code>hostAgentPIDFile()</code> is exactly the <code>--pidfile</code> value passed at launch (<code>limavm_lifecycle.go:367,646</code>), an unambiguous per-instance discriminator that cannot match a sibling whose name is a prefix. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span></li>
+      <li><code>IsOurProcess</code> is the single PEB-walk implementation in the tree, so the buffer-sizing invariant the Round 2 fix established lives in one place. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>No net-new untested scenarios surfaced this round. The one functional change — the <code>processCommandLine</code> buffer-sizing fix — is exercised indirectly by <code>TestProcessCommandLineReadsOwnCommandLine</code>, which walks the PEB against the live test process; <code>GOOS=windows go vet</code> confirms the Windows-only test compiles. The <code>length == 1</code> panic edge the fix closes is unreachable on supported Windows, where <code>NTUnicodeString.Length</code> is always even. I1 has no coverage: a Windows test that launches <code>rdd svc serve</code>, writes its PID, and asserts <code>service.PID()</code> still recognizes it would close the gap. <span class="pill pill-codex">Codex</span> The three Round 2 testing gaps — Windows recycled-PID injection for <code>service.PID()</code>, the <code>StatusBroken</code> stale-PID branch, and same-image-different-role rejection — remain Skipped; each requires Windows-specific PID-file injection that BATS cannot reproduce on the macOS dev host.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>All three reviewers agree the doc-only changes describe the code accurately. <code>process_unix.go</code>&#39;s rewritten docstring documents the residual recycled-PID risk; <code>PID()</code>&#39;s comment notes the per-call PEB-walk cost and the transient-false-negative trade-off; <code>doc.go</code> adds process-identity verification to the package summary. One gap follows from I1: if the discriminator is fixed, <code>PID()</code>&#39;s comment should name the accepted command spellings; if I1 is accepted instead, the comment should record that a daemon started via <code>svc serve</code> is not recognized.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Clean. Three commits, each a self-contained concern matching its subject, with the Round 2 fixes amended into the introducing commits rather than appended as fixups.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Declined in prior rounds</strong> (Round 2 Resolution table, Commented; surrounding code unchanged):</p>
+    <ul>
+      <li><em></em>Unix <code>IsOurProcess</code> no-op trusts a recycled on-disk PID<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/util/process/process_unix.go#L36-L41"><code>process_unix.go:36-41</code></a>. Pre-existing, out-of-scope for this Windows-scoped PR; the residual risk is documented in the rewritten docstring.</li>
+      <li><em></em><code>PID()</code> removes the PID file on a transient identity-check failure<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L171-L175"><code>service.go:171-175</code></a>. Near-impossible for a same-user process holding only <code>PROCESS_QUERY_LIMITED_INFORMATION|PROCESS_VM_READ</code>; documented. (I1 is separate — deterministic, not transient.)</li>
+      <li><em></em><code>Running()</code>/<code>PID()</code> runs a full PEB walk on every shutdown poll<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L139-L142"><code>service.go:139-142</code></a>. Negligible cost; documented on <code>PID()</code>.</li>
+    </ul>
+    <p><strong>Carried forward (unchanged by this PR):</strong></p>
+    <ul>
+      <li><em></em>Recycled <code>DriverPID</code> taskkilled unchecked<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L596-L600"><code>limavm_lifecycle.go:596-600</code></a>. <code>IsOurProcess</code> matches the rdd image, not qemu/wsl; Job Objects named as the proper fix. On Windows RDD uses WSL2, where <code>DriverPID</code> is typically 0.</li>
+      <li><em></em>Brief handle-release window before <code>procExited</code> closes<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/controllers/lima/limavm/controllers/hostagent_watcher.go#L212-L216"><code>hostagent_watcher.go:212-216</code></a>. <code>cmd.Wait()</code> releases the OS handle just before closing the channel.</li>
+      <li><strong>Service-PID discriminator cannot distinguish concurrent instances</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L162-L166"><code>service.go:162-166</code></a>. Dev/test only.</li>
+      <li><em></em><code>forceStopForDeletion</code> StatusBroken stale-PID branch not tested<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L659-L662"><code>limavm_lifecycle.go:659-662</code></a> (Round 2, Skipped).</li>
+      <li><em></em><code>KillTree</code> cannot traverse a dead parent&#39;s tree on Windows<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/pkg/util/process/process_windows.go#L246-L251"><code>process_windows.go:246-251</code></a>. Orphaned port forwarders documented as harmless.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="codex"><span class="pill pill-codex">Codex</span> <a href="#codex" class="pilcrow">&#182;</a></h3>
+    <p>Codex carried the round. It alone traced the <code>svc</code> alias to the non-hidden <code>serve</code> daemon and surfaced I1 — the deterministic false negative the new <code>PID()</code> guard introduces, which two prior rounds and both other reviewers missed. It labelled the regression correctly, distinguished it from Round 2&#39;s declined transient-failure concern, and cross-compiled the package for Windows to back its testing note. Its proposed fix (a new multi-set <code>IsOurProcessCommand</code>) is heavier than the discriminator change needs, but the finding itself is exact.</p>
+    <h3 id="claude"><span class="pill pill-claude">Claude</span> <a href="#claude" class="pilcrow">&#182;</a></h3>
+    <p>Claude verified the three resolution fixes rigorously — it checked the buffer-sizing math against the actual <code>NTUnicodeString.Length uint16</code> field and ran <code>GOOS=windows go vet</code> — and confirmed the discriminator against the canonical self-spawn args at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/9ff1a0bbef91641a3a2ad4a033dc6f81136c1cf7/cmd/rdd/service.go#L296"><code>service.go:296</code></a>. That same focus on the self-spawn is why it missed I1: having proven the <code>start</code> path spells the daemon <code>service serve</code>, it marked <code>service.go</code> clean without weighing a direct <code>svc serve</code> invocation. Its calibration was otherwise reliable, with no false positives.</p>
+    <h3 id="gemini"><span class="pill pill-gemini">Gemini</span> <a href="#gemini" class="pilcrow">&#182;</a></h3>
+    <p>Gemini reached &quot;Merge&quot; with no findings, confirming the buffer-sizing fix handles odd lengths and sub-unit states and that the new docstrings match the code. It catalogued the three Round 2 declined items as acknowledged limitations rather than re-raising them. Like Claude, it marked <code>service.go</code> clean and missed I1. Per the known-behavior note it skipped <code>git blame</code>, so the regression labelling fell to Codex.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>4m 18s</td><td>4m 38s</td><td>0m 58s</td></tr>
+        <tr><td>Findings</td><td>none</td><td>1I</td><td>none</td></tr>
+        <tr><td>Tool calls</td><td>20 (Bash 10, Read 10)</td><td>36 (shell 36)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>2</td><td>2</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>9</td><td>9</td><td>9</td></tr>
+        <tr><td>Coverage misses</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>none</strong></td><td><strong>1I</strong></td><td><strong>none</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Codex provided the most value — the only finding this round, verified deterministic and a genuine regression. Claude&#39;s verification of the functional fix was the most rigorous and gives high confidence the buffer-sizing change is correct. Gemini added confirmation but no unique signal. The agreement on the absence of critical issues, plus my own end-to-end trace of the alias chain and the merge-base regression check, gives high confidence: the Windows hardening is correct, and I1 is the single decision point.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvement — Correctness dimension: discriminator must survive every launch spelling.</strong> When code identifies a process by matching a substring of its command line — to confirm identity, ownership, or role before a destructive or state-changing action — enumerate every way that process can be launched: command aliases, abbreviated subcommands, a background self-spawn that hard-codes one spelling, and direct foreground invocation. Confirm the discriminator matches each. A guard that matches only the canonical self-spawn spelling silently rejects the same process started through an alias, so a reviewer who verifies only the self-spawn path marks the code clean and misses the gap. Recognize the pattern when a <code>strings.Contains</code> or substring check on argv or a command line gates a kill, signal, or PID-file removal.</p>
+    <p><em></em>[repo] The <code>service</code> command is aliased <code>svc</code>, and <code>serve</code> is directly invocable.<em></em> <code>rdd</code>&#39;s <code>service</code> command registers <code>svc</code> as an alias (<code>cmd/rdd/service.go</code>), and the <code>serve</code> subcommand — the control-plane daemon entry point — is not hidden, so <code>rdd svc serve</code> runs the daemon directly. The normal start path self-spawns it as canonical <code>service serve</code> (<code>pkg/service/cmd/service.go</code>), but a manual <code>rdd svc serve</code> produces a daemon whose command line reads <code>svc serve</code>. When reviewing code that discriminates the control-plane process by its command line, account for both spellings.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
