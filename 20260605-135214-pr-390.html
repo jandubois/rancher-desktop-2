@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260605-135214-pr-390</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260605-135214-pr-390</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-06-05 14:07</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon">rancher-sandbox/rancher-desktop-daemon</a></td></tr>
+      <tr><td>Round</td><td>2 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/390" class="gh-ref" data-title="Add the `rdd run` command" data-state="open" data-type="pr">#390</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/pull/390" class="gh-ref" data-title="Add the `rdd run` command" data-state="open" data-type="pr">#390</a> — Add the <code>rdd run</code> command</td></tr>
+      <tr><td>Branch</td><td><code>rdd-run</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/4703f483"><code>4703f483</code></a> Add the <code>rdd run</code> command</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; no critical or important issues; the <code>cygpath</code>/WSL2 test guard is the one suggestion worth fixing pre-merge</td></tr>
+      <tr><td>Wall-clock time</td><td><code>18 min 56 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/390" class="gh-ref" data-title="Add the `rdd run` command" data-state="open" data-type="pr">#390</a> was reworked since Round 1: instead of a per-invocation throwaway kubeconfig, the Kubernetes controller now publishes a standalone <code>~/.rd&lt;instance&gt;/kube.config</code> and <code>rdd run</code> points <code>KUBECONFIG</code> at it. That redesign, plus the Round 1 fixes (blank error line, <code>--help</code> short-circuit, doc rewrite), all verify against the code. No critical or important issues remain.</p>
+    <p>All three Round 1 code fixes and both redesign-resolved suggestions hold. The six surviving findings are suggestions: a WSL2 test-guard portability bug, a <code>DOCKER_CONFIG</code> mismatch edge case, a documentation-precision gap on current-context preservation, and three minor nits. Both findings Codex rated Important describe pre-existing, edge-case behavior with documentation or narrow-scope fixes, so I downgraded each to a suggestion.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>cygpath</code> test guard uses <code>is_windows</code>, breaking the PATH test on WSL2 <span class="pill pill-codex">Codex</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/bats/tests/32-app-controllers/kube-context.bats#L123-L136">bats/tests/32-app-controllers/kube-context.bats</a></div>
+      <pre data-start="123" data-line="128-131"><code class="language-bash">@test &quot;rdd run prepends the instance bin directory to PATH&quot; {
+    # The instance bin directory leads PATH so tools bundled with the
+    # instance shadow any global ones for the duration of the command.
+    run -0 rdd svc paths short_dir
+    bin_dir=&quot;${output}/bin&quot;
+    if is_windows; then
+        # printenv is an MSYS program: its runtime rewrites the inherited
+        # PATH into POSIX form, so convert rdd&#39;s native path to match.
+        run -0 cygpath -u &quot;${bin_dir}&quot;
+        bin_dir=&quot;${output}&quot;
+    fi
+
+    run_e -0 rdd run printenv PATH
+    assert_equal &quot;${output%%:*}&quot; &quot;${bin_dir}&quot;</code></pre>
+    <p><code>is_windows</code> is true for both MSYS2 and WSL2 (<code>bats/helpers/os.bash</code>), but <code>cygpath</code> is MSYS-only — the helper layer already handles WSL with <code>wslpath</code> (<code>bats/helpers/commands.bash</code>). On a WSL2 runner this new test calls a missing binary before it reaches the PATH assertion. This matches the repo&#39;s documented BATS rule: gate an MSYS2-only tool on <code>is_msys</code>, not <code>is_windows</code>.</p>
+    <p>Fix:</p>
+      <pre><code class="language-diff">-if is_windows; then
++if is_msys; then
+     run -0 cygpath -u &quot;${bin_dir}&quot;
+     bin_dir=&quot;${output}&quot;
++elif is_windows; then
++    run -0 wslpath -u &quot;${bin_dir}&quot;
++    bin_dir=&quot;${output}&quot;
+ fi</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> A <code>DOCKER_CONFIG</code> that differs from the daemon&#39;s spawn-time value breaks the context lookup <span class="pill pill-codex">Codex</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L119-L132">cmd/rdd/run.go</a></div>
+      <pre data-start="119" data-line="124-127"><code class="language-go">// command inherits it. It prepends the instance bin directory to PATH, selects
+// the instance Docker context, points KUBECONFIG at the instance kubeconfig,
+// and clears DOCKER_HOST so the Docker context takes effect.
+func setupRunEnv() error {
+	binDir := filepath.Join(instance.ShortDir(), &quot;bin&quot;)
+	vars := []struct{ key, value string }{
+		{&quot;PATH&quot;, binDir + string(os.PathListSeparator) + os.Getenv(&quot;PATH&quot;)},
+		{&quot;DOCKER_CONTEXT&quot;, instance.Name()},
+		{&quot;KUBECONFIG&quot;, instance.KubeConfig()},
+	}
+	for _, v := range vars {
+		if err := os.Setenv(v.key, v.value); err != nil {
+			return fmt.Errorf(&quot;set %s: %w&quot;, v.key, err)
+		}</code></pre>
+    <p><code>setupRunEnv</code> sets <code>DOCKER_CONTEXT</code> but leaves <code>DOCKER_CONFIG</code> alone. The daemon writes the <code>rancher-desktop-&lt;instance&gt;</code> context under its own <code>$DOCKER_CONFIG/contexts</code> (<code>docker_context.go:dockerConfigDir</code>), reading the value frozen at daemon-spawn time. So <code>DOCKER_CONFIG=/tmp/isolated rdd run docker ps</code> against a daemon started with the default <code>~/.docker</code> searches <code>/tmp/isolated</code> and cannot find the context. The common flows (no custom <code>DOCKER_CONFIG</code>, or a consistent one) work; only a mismatch fails.</p>
+    <p>Fix: optional. Before exec, create or update the instance Docker context in the child&#39;s effective <code>DOCKER_CONFIG</code> without changing <code>currentContext</code>, or document that <code>rdd run</code> assumes one <code>DOCKER_CONFIG</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> Help and design text overstate current-context preservation <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p>Both the help and <code>cmd_app.md</code> say the current context in <code>~/.kube/config</code> (and the selected Docker context) &quot;stay as they are.&quot; Startup still switches the current context when the existing one is absent or unhealthy: <code>manageKubeContext</code> launches a probe that calls <code>setCurrentKubeContext</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/pkg/controllers/app/kubernetes/controllers/kube_reconciler.go#L411-L414"><code>kube_reconciler.go:411-414</code></a>), and the engine reconciler does the same for Docker. The BATS suite asserts both switches (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/bats/tests/32-app-controllers/kube-context.bats#L139-L145"><code>kube-context.bats:139-145</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/bats/tests/32-app-controllers/engine-docker.bats#L851-L867"><code>engine-docker.bats:851-867</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/pkg/controllers/app/kubernetes/controllers/kube_reconciler.go#L406-L419">pkg/controllers/app/kubernetes/controllers/kube_reconciler.go</a></div>
+      <pre data-start="406" data-line="411-414"><code class="language-go">		// Signal the WaitGroup before writing to ~/.kube/config so that
+		// removeKubeContext.Wait() is not blocked by a slow file write.
+		signalDone()
+
+		// Guard against writing after removeKubeContext cancelled probeCtx.
+		if !healthy &amp;&amp; probeCtx.Err() == nil {
+			if err := setCurrentKubeContext(contextName); err != nil {
+				log.Error(err, &quot;Failed to set current Kubernetes context&quot;, &quot;context&quot;, contextName)
+			}
+		}
+	}()
+	return nil
+}
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/bats/tests/32-app-controllers/kube-context.bats#L134-L150">bats/tests/32-app-controllers/kube-context.bats</a></div>
+      <pre data-start="134" data-line="139-145"><code class="language-plaintext">
+    run_e -0 rdd run printenv PATH
+    assert_equal &quot;${output%%:*}&quot; &quot;${bin_dir}&quot;
+}
+
+@test &quot;kubernetes controller sets current-context when no healthy context exists&quot; {
+    # The current-context probe runs in a goroutine after KubernetesReady is
+    # set; poll until it resolves.
+    try --max 6 --delay 2 -- kube_current_context_is &quot;${CONTEXT_NAME}&quot;
+
+    run -0 kube_current_context
+    assert_output &quot;${CONTEXT_NAME}&quot;
+}
+
+@test &quot;KubernetesReady=NotApplicable when kubernetes is disabled&quot; {
+    rdd set running=true kubernetes.enabled=false
+    run -0 rdd ctl get app &quot;${APP_NAME}&quot; \</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/bats/tests/32-app-controllers/engine-docker.bats#L846-L872">bats/tests/32-app-controllers/engine-docker.bats</a></div>
+      <pre data-start="846" data-line="851-867"><code class="language-plaintext">EOF
+    printf &#39;{&quot;currentContext&quot;:&quot;%s&quot;}\n&#39; &quot;${probe_target}&quot; &gt;&quot;${DOCKER_CONFIG}/config.json&quot;
+
+    rdd set running=false
+    rdd set running=true containerEngine.name=moby
+    rdd ctl wait --for=condition=ContainerEngineReady app/app --timeout=30s
+
+    # The probe goroutine runs asynchronously; give it a moment.
+    try --max 6 --delay 1 -- assert_docker_context &quot;${CONTEXT_NAME}&quot;
+
+    assert_docker_context &quot;${CONTEXT_NAME}&quot;
+}
+
+@test &quot;stopping moby engine removes Docker context and clears currentContext&quot; {
+    rdd set running=false
+
+    run_e -0 docker_context_dir &quot;${CONTEXT_NAME}&quot;
+    context_dir=&quot;${output}&quot;
+
+    # removeDockerContext runs asynchronously after the reconciler processes
+    # the Running=False transition; poll until the directory is gone.
+    try --max 10 --delay 1 -- test ! -d &quot;${context_dir}&quot;
+    assert_dir_not_exists &quot;${context_dir}&quot;
+
+    # currentContext should either be gone or point to something else.
+    run -0 cat &quot;${DOCKER_CONFIG}/config.json&quot;
+    run -0 jq_output &#39;.currentContext // empty&#39;</code></pre>
+    <p>This is pre-existing App-startup behavior, documented at <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/docs/design/api_app.md#L42"><code>api_app.md:42</code></a> (&quot;only change the current context if it does not exist, or is not working&quot;), not a code regression — the PR-introduced gap is the missing caveat.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/docs/design/api_app.md#L37-L47">docs/design/api_app.md</a></div>
+      <pre data-start="37" data-line="42"><code class="language-plaintext">### Docker and Kube Contexts
+
+When the `App` is starting it creates the Docker context and sets up the kubeconfig in `~/.kube/config`.
+
+It will only change the current context if it does not exist, or is not working at the time the app is starting.
+
+A standalone kube config holding only the `rancher-desktop-2` context is also written to `~/.rd2/kube.config`, which the [`rdd run`](cmd_app.md#rdd-run) command points `KUBECONFIG` at.
+
+Consider using `cliPluginsExtraDirs` in `~/.docker/config.json` instead of installing into `~/.docker/cli-plugins` and have a diagnostic if the plugins exist in `~/.docker/cli-plugins`? The mechanism should be compatible with whatever we do on Windows.
+
+## App object</code></pre>
+    <p>Fix: add the absent/unhealthy caveat to the help and <code>cmd_app.md</code>, cross-referencing <code>api_app.md</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> An unset <code>PATH</code> leaves a trailing separator, adding the cwd to the search path <span class="pill pill-gemini">Gemini</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L120-L130">cmd/rdd/run.go</a></div>
+      <pre data-start="120" data-line="125"><code class="language-go">// the instance Docker context, points KUBECONFIG at the instance kubeconfig,
+// and clears DOCKER_HOST so the Docker context takes effect.
+func setupRunEnv() error {
+	binDir := filepath.Join(instance.ShortDir(), &quot;bin&quot;)
+	vars := []struct{ key, value string }{
+		{&quot;PATH&quot;, binDir + string(os.PathListSeparator) + os.Getenv(&quot;PATH&quot;)},
+		{&quot;DOCKER_CONTEXT&quot;, instance.Name()},
+		{&quot;KUBECONFIG&quot;, instance.KubeConfig()},
+	}
+	for _, v := range vars {
+		if err := os.Setenv(v.key, v.value); err != nil {</code></pre>
+    <p>When <code>PATH</code> is unset, <code>os.Getenv(&quot;PATH&quot;)</code> returns <code>&quot;&quot;</code>, leaving a trailing separator (<code>~/.rd2/bin:</code>). POSIX reads an empty segment as the current directory, so the cwd silently enters the executable search path. An unset <code>PATH</code> is rare for an interactive invocation, so this is low risk.</p>
+    <p>Fix: append the separator and the existing <code>PATH</code> only when it is non-empty.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Redundant <code>len(args) &gt; 0</code> guard after <code>args[0]</code> was already indexed <span class="pill pill-claude">Claude</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L64-L74">cmd/rdd/run.go</a></div>
+      <pre data-start="64" data-line="69"><code class="language-go">	// A leading &quot;--&quot; still escapes it, so `rdd run -- --help` runs --help.
+	if args[0] == &quot;-h&quot; || args[0] == &quot;--help&quot; {
+		return cmd.Help()
+	}
+	// Drop a leading &quot;--&quot; separator, e.g. `rdd run -- docker ps`.
+	if len(args) &gt; 0 &amp;&amp; args[0] == &quot;--&quot; {
+		args = args[1:]
+	}
+	if len(args) == 0 {
+		return errors.New(&quot;run requires a command to execute&quot;)
+	}</code></pre>
+    <p><code>cobra.MinimumNArgs(1)</code> runs even under <code>DisableFlagParsing</code>, so <code>runAction</code> is never reached with empty <code>args</code>, and line 65 already dereferences <code>args[0]</code>. The <code>len(args) &gt; 0</code> clause at line 69 can never be false. The post-strip <code>len(args) == 0</code> check at line 72 is the one that matters (it catches <code>rdd run --</code>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L60-L77">cmd/rdd/run.go</a></div>
+      <pre data-start="60" data-line="65-72"><code class="language-go">
+func runAction(cmd *cobra.Command, args []string) error {
+	// Show help without starting the App. DisableFlagParsing otherwise routes
+	// --help through ensureAppRunning and on to an exec of &quot;--help&quot; as a command.
+	// A leading &quot;--&quot; still escapes it, so `rdd run -- --help` runs --help.
+	if args[0] == &quot;-h&quot; || args[0] == &quot;--help&quot; {
+		return cmd.Help()
+	}
+	// Drop a leading &quot;--&quot; separator, e.g. `rdd run -- docker ps`.
+	if len(args) &gt; 0 &amp;&amp; args[0] == &quot;--&quot; {
+		args = args[1:]
+	}
+	if len(args) == 0 {
+		return errors.New(&quot;run requires a command to execute&quot;)
+	}
+
+	if err := ensureAppRunning(cmd.Context(), args[0]); err != nil {
+		return err</code></pre>
+    <p>Fix: drop the <code>len(args) &gt; 0 &amp;&amp;</code> clause at line 69.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> A signal-killed child reports exit 255 instead of <code>128+signal</code> <span class="pill pill-claude">Claude</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L151-L163">cmd/rdd/run.go</a></div>
+      <pre data-start="151" data-line="156-158"><code class="language-go">	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+
+	err := command.Run()
+	var exitErr *exec.ExitError
+	if errors.As(err, &amp;exitErr) {
+		return &amp;cliexit.Error{Code: exitErr.ExitCode()}
+	}
+	if err != nil {
+		return fmt.Errorf(&quot;run %s: %w&quot;, args[0], err)
+	}
+	return nil</code></pre>
+    <p>When the child dies from a signal, <code>exitErr.ExitCode()</code> returns <code>-1</code> (the Go <code>os/exec</code> contract), and <code>os.Exit(-1)</code> wraps to 255 on Unix, losing the <code>128+signal</code> status a shell would propagate. The PR&#39;s own comment notes signal handling is not yet wired up, so this is an edge case.</p>
+    <p>Fix: note the limitation in the existing comment, or on Unix map a signaled exit to <code>128 + int(ws.Signal())</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em><code>rdd run</code> relies on the App-startup path to publish contexts<em></em> <code>(future)</code> <span class="pill pill-codex">Codex</span> — both S2 and S3 trace to one root: the one-shot command depends on App startup to publish Docker and Kubernetes contexts into shared config, then reads them back. Building ephemeral configs directly from the instance endpoints would make the command&#39;s isolation local and testable and free it from the daemon&#39;s frozen <code>DOCKER_CONFIG</code>. Out of scope for this PR.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>The standalone instance kubeconfig is wired symmetrically: <code>writeInstanceKubeConfig</code> sits beside <code>createReplaceKubeContext</code> in <code>manageKubeContext</code>, and <code>removeInstanceKubeConfig</code> beside <code>deleteKubeContext</code> in <code>removeKubeContext</code>, which fires on both the disabled and not-running paths. The file is gone whenever the context entries are. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span></li>
+      <li><code>instanceClusterUser</code> was extracted so the merge path and the standalone-file path share one cluster/user extraction, avoiding duplication. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span></li>
+      <li>Running the target as a child rather than replacing <code>rdd</code> gives uniform cross-platform exit propagation; the <code>cliexit.Error{Code}</code> plus nil-<code>Err</code> suppression is a minimal way to drop the spurious error line, and <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L158"><code>run.go:158</code></a> is the only nil-<code>Err</code> producer. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span></li>
+      <li><code>DisableFlagParsing</code> with early <code>--help</code> interception and <code>--</code> escape lets <code>rdd run</code> pass arbitrary flags to the child without absorbing them. <code>(in-scope)</code> <span class="pill pill-gemini">Gemini</span></li>
+      <li>The <code>kubernetes.enabled=true</code> auto-enable resolves through the existing defaulter, keeping one source of truth for the version and retiring the &quot;stable not yet implemented&quot; caveat from <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/386" class="gh-ref" data-title="Create `rdd run` command" data-state="open" data-type="issue">#386</a>. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Coverage is good: unit tests cover <code>isKubeCommand</code>, <code>setupRunEnv</code>, the help short-circuit, and <code>writeInstanceKubeConfig</code>/<code>removeInstanceKubeConfig</code>; BATS tests exercise the Docker context, the Kubernetes current-context, PATH prefixing, and exit-status propagation against a live instance. <code>go test ./pkg/controllers/app/kubernetes/controllers</code> passes; <code>go test ./cmd/rdd</code> cannot run in the review worktree, which lacks the embedded <code>lima-guestagent.gz</code> asset.</p>
+    <p>Untested scenarios, by risk:</p>
+    <ol>
+      <li>Reconcile-level wiring of the instance kubeconfig: <code>Test_Reconcile_KubernetesReady_Ready</code> sets <code>InstanceKubeConfigPath</code> but never asserts the file appears after a Ready reconcile or disappears after a disable/not-running reconcile. A <code>os.Stat</code> check on each path would close the loop. <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span></li>
+      <li><code>rdd run</code> auto-enabling Kubernetes for a non-existent App (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L99-L103"><code>run.go:99-103</code></a>): the BATS suite always enters with an App present. <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span></li>
+      <li><code>rdd run</code> against an existing App with Kubernetes disabled, where <code>KUBECONFIG</code> points at an absent <code>kube.config</code>. <span class="pill pill-claude">Claude</span></li>
+      <li>The <code>DOCKER_CONFIG</code> mismatch in S2. <span class="pill pill-codex">Codex</span></li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>docs/design/cmd_app.md</code> and <code>docs/design/api_app.md</code> describe the env wiring, the auto-enable behavior, and the standalone kubeconfig accurately. <code>docs/design/bootstrap.md</code> (not in the diff) is now consistent with the redesign — its <code>~/.rd2/kube.config</code> reference, which Round 1 flagged as stale, matches the published file. All added exported symbols (<code>instance.KubeConfig</code>, <code>writeInstanceKubeConfig</code>, <code>removeInstanceKubeConfig</code>, <code>InstanceKubeConfigPath</code>) carry docstrings. The one residual is the current-context-preservation overstatement in S3.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>A single, self-contained commit that builds and whose message describes the change and the bundled BATS cleanups. Dropping <code>local</code> from <code>@test</code> blocks and hoisting <code>CONTEXT_NAME</code> to a file-level constant support the new tests in the same two files and follow the repo&#39;s BATS conventions. Clean.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>Signal-driven cancellation not wired up</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/4703f4834f538797446d39dbbbf5ccdbdc8770c3/cmd/rdd/run.go#L145-L148"><code>cmd/rdd/run.go:145-148</code></a>: the comment notes <code>CommandContext</code> would hard-kill the child on cancellation, but the cobra context is never canceled today, so this matches a plain exec. Verified: no <code>signal.NotifyContext</code>/<code>ExecuteContext</code> in <code>cmd/rdd</code> or <code>pkg/cli</code>. The child shares <code>rdd</code>&#39;s process group, so Ctrl+C reaches it directly. S6 is the one residual nuance (signal exit-code encoding).</li>
+    </ul>
+    <h3 id="declined-in-prior-rounds">Declined in prior rounds <a href="#declined-in-prior-rounds" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em><code>isKubeCommand</code> misses the <code>rdd kubectl</code> / <code>rdd helm</code> alias<em></em> — declined Round 1 (narrow best-effort heuristic; users can enable Kubernetes explicitly). Not re-raised this round.</li>
+      <li><em></em><code>ensureAppRunning</code> and <code>setAction</code> each build a client and ready the service<em></em> — declined Round 1 (negligible cost for a single-user CLI). Re-raised this round and dropped; the code is unchanged.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> contributed the two simplicity/correctness nits no one else saw: the redundant <code>len(args) &gt; 0</code> guard — verified against cobra&#39;s <code>ValidateArgs</code>-under-<code>DisableFlagParsing</code> behavior — and the signal-killed-child exit-code nuance. It also caught the current-context doc gap, but framed it correctly as pre-existing rather than inflating it. One caution: it claimed the <code>cmd/rdd</code> unit tests pass locally, yet the review worktree lacks the embedded <code>lima-guestagent.gz</code> asset that package needs to build, so that claim is unverified — treat it with caution. Its third suggestion repeated Round 1&#39;s declined double-fetch finding.</p>
+    <p><strong>[Codex]</strong> raised the two most substantive findings: the <code>DOCKER_CONFIG</code> mismatch, verified against <code>docker_context.go</code>, and the <code>cygpath</code>/WSL2 test guard, which matches the repo&#39;s own documented BATS rule. It rated those two plus the current-context contract as Important regressions; I downgraded all three. Its calibration ran hot — the underlying behaviors are pre-existing and the impacts are edge cases — but every finding verified against the code.</p>
+    <p><strong>[Gemini]</strong> found one suggestion, the trailing-<code>PATH</code>-separator edge case, unique and correct, alongside a clean set of strengths. Its sandbox denied a <code>grep_search</code> into the Go module cache, so it could not inspect upstream <code>clientcmd</code> behavior; it still reviewed all 13 files and produced structured findings. The lightest reviewer this round, but its one finding held.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>9m 29s</td><td>8m 53s</td><td>4m 40s</td></tr>
+        <tr><td>Findings</td><td>3S</td><td>3S</td><td>1S</td></tr>
+        <tr><td>Tool calls</td><td>47 (Read 26, Bash 21)</td><td>84 (shell 83, stdin 1)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>4</td><td>2</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>2</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>13</td><td>13</td><td>13</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>3S</strong></td><td><strong>3S</strong></td><td><strong>1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>2 (I→S)</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>1</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation:</strong> Codex I1 (startup changes global context selections): Important regression → Suggestion gap S3 (pre-existing App-startup behavior; doc-only fix). Codex I2 (<code>DOCKER_CONFIG</code> mismatch): Important regression → Suggestion gap S2 (new command, pre-existing-class limitation, edge-case impact). Claude&#39;s double-fetch suggestion: dropped (matches Round 1&#39;s declined S4; code unchanged).</p>
+    <p>All three Round 1 code fixes and both redesign-resolved suggestions verified. Codex carried the substantive findings this round; Claude owned the code-quality nits and the most careful prior-round reconciliation; Gemini added one valid edge case.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvement:</strong> When CLI code wraps or execs a subprocess and propagates its exit status, check the signal-death path. <code>(*exec.ExitError).ExitCode()</code> returns <code>-1</code> when the child is terminated by a signal, and <code>os.Exit(-1)</code> wraps to 255 on Unix, dropping the shell-conventional <code>128+signal</code> status. Flag exit-code propagation that forwards <code>ExitCode()</code> directly without handling the signaled case, and recommend mapping a signaled exit to <code>128 + int(signal)</code> on Unix.</p>
+    <p><strong>Skill improvement:</strong> When code prepends a directory to <code>PATH</code> by concatenating it with the existing value (<code>newDir + sep + os.Getenv(&quot;PATH&quot;)</code>), check the empty-<code>PATH</code> case. An empty existing value leaves a trailing separator, and POSIX reads an empty <code>PATH</code> segment as the current directory — silently adding the cwd to the executable search path. Flag unconditional <code>PATH</code> concatenation and recommend appending the separator only when the existing value is non-empty.</p>
+    <p><strong>Repo context update [repo]:</strong> <code>go test ./cmd/rdd</code> cannot run in a fresh review worktree: the package embeds <code>pkg/guestagent/lima-guestagent.gz</code>, a build artifact absent from a clean checkout, so the build fails before any test runs. Build the asset (run <code>make</code>) before <code>go test ./cmd/rdd</code>, or verify <code>cmd/rdd</code> logic through the BATS suite and through packages that do not embed the asset (<code>pkg/controllers/...</code> tests run without it).</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
