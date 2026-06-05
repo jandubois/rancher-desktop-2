@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260604-204530-pr-390</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260604-204530-pr-390</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-06-04 21:02</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon">rancher-sandbox/rancher-desktop-daemon</a></td></tr>
+      <tr><td>Round</td><td>1 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/390" class="gh-ref" data-title="Add the `rdd run` command" data-state="open" data-type="pr">#390</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/pull/390" class="gh-ref" data-title="Add the `rdd run` command" data-state="open" data-type="pr">#390</a> — Add the <code>rdd run</code> command</td></tr>
+      <tr><td>Branch</td><td><code>rdd-run</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/83562df1"><code>83562df1</code></a> Add the <code>rdd run</code> command</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; two common-input UX bugs (blank error line, <code>--help</code>); no correctness or data-loss issues</td></tr>
+      <tr><td>Wall-clock time</td><td><code>22 min 27 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/390" class="gh-ref" data-title="Add the `rdd run` command" data-state="open" data-type="pr">#390</a> adds <code>rdd run COMMAND [ARGS...]</code>, which starts Rancher Desktop and runs a child process wired to the instance&#39;s Docker and Kubernetes contexts through <code>PATH</code>, <code>DOCKER_CONTEXT</code>, and a throwaway <code>KUBECONFIG</code>. The wiring is clean and copied credentials stay 0600. Two UX defects hit common inputs: a non-zero child exit prints a blank <code>level=error</code> line, and <code>rdd run --help</code> boots the VM before failing instead of showing help.</p>
+    <p>All three reviewers independently flagged the blank error line and the <code>--help</code> defect; both were reproduced live. The remaining findings — a documentation contract that overstates kubeconfig isolation, a Docker/Kubernetes coupling on kubeconfig load, and signal/cleanup gaps — each came from a single reviewer and verify against the code.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Non-zero child exit prints a blank <code>level=error</code> line <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/run.go#L191-L204">cmd/rdd/run.go</a></div>
+      <pre data-start="191" data-line="196-199"><code class="language-go">	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+
+	err := command.Run()
+	var exitErr *exec.ExitError
+	if errors.As(err, &amp;exitErr) {
+		return &amp;cliexit.Error{Code: exitErr.ExitCode()}
+	}
+	if err != nil {
+		return fmt.Errorf(&quot;run %s: %w&quot;, args[0], err)
+	}
+	return nil
+}</code></pre>
+    <p><code>execCommand</code> builds <code>cliexit.Error</code> with a nil <code>Err</code>, so its <code>Error()</code> returns <code>&quot;&quot;</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/pkg/cli/exit/exit.go#L31-L33"><code>pkg/cli/exit/exit.go:31-33</code></a>). <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/app-controller/main.go#L173-L176"><code>main.go:173-176</code></a> matches the error, calls <code>logrus.Error(err)</code>, then exits. The empty message emits a bare <code>level=error</code> line after the child&#39;s own stderr. Error level always reaches the terminal (default <code>warn</code>), so this fires on every non-zero child exit — a <code>grep</code> no-match, a false <code>test</code>, any failing <code>docker</code>/<code>kubectl</code>. Reproduced live. The other producers (<code>Rejected</code>, <code>Timeout</code>) always wrap a real error, so only this new site regresses.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/pkg/cli/exit/exit.go#L26-L38">pkg/cli/exit/exit.go</a></div>
+      <pre data-start="26" data-line="31-33"><code class="language-go">	Code int
+	Err  error
+}
+
+// Error implements the error interface.
+func (e *Error) Error() string {
+	if e.Err == nil {
+		return &quot;&quot;
+	}
+	return e.Err.Error()
+}
+
+// Unwrap exposes the wrapped error to errors.Is and errors.As.</code></pre>
+    <p>Fix: guard the log on a non-empty message.</p>
+      <pre><code class="language-diff"> if errors.As(err, &amp;exitErr) {
+-    logrus.Error(err)
++    if exitErr.Err != nil {
++        logrus.Error(err)
++    }
+     os.Exit(exitErr.Code)
+ }</code></pre>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>rdd run --help</code> boots the VM, then fails instead of showing help <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/run.go#L49-L61">cmd/rdd/run.go</a></div>
+      <pre data-start="49" data-line="54-56"><code class="language-go">
+			Examples:
+			  rdd run docker run --rm hello-world
+			  rdd run kubectl get nodes
+		`),
+		Args:               cobra.MinimumNArgs(1),
+		DisableFlagParsing: true,
+		RunE:               runAction,
+	}
+	return command
+}
+
+func runAction(cmd *cobra.Command, args []string) error {</code></pre>
+    <p><code>DisableFlagParsing: true</code> stops cobra from intercepting <code>--help</code>/<code>-h</code>. <code>runAction</code> strips only a leading <code>--</code>, so <code>rdd run --help</code> satisfies <code>MinimumNArgs(1)</code>, runs <code>ensureAppRunning</code> (a full App start and settle wait), then tries to exec <code>--help</code> as a binary. Run live, it booted the App and ended with <code>exec: &quot;--help&quot;: executable file not found in $PATH</code>. A user reaching for <code>--help</code> to discover the command instead starts a VM and meets a confusing error; only <code>rdd help run</code> works today.</p>
+    <p>Fix: handle the help flags before <code>ensureAppRunning</code>.</p>
+      <pre><code class="language-go">if args[0] == &quot;-h&quot; || args[0] == &quot;--help&quot; {
+    return cmd.Help()
+}</code></pre>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> Help text and design doc overstate kubeconfig isolation <span class="pill pill-codex">Codex</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+    <p>Both the long help and the design doc state the user&#39;s <code>~/.kube/config</code> is &quot;left untouched.&quot; <code>rdd run</code> itself honors that — it writes a throwaway file. But <code>runAction</code> calls <code>ensureAppRunning</code> first (run.go:74), and starting the App merges the instance context into <code>~/.kube/config</code> once k3s is healthy (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/pkg/controllers/app/kubernetes/controllers/kube_reconciler.go#L353"><code>kube_reconciler.go:353</code></a> → <code>createReplaceKubeContext</code>, no path-management gate).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/pkg/controllers/app/kubernetes/controllers/kube_reconciler.go#L348-L358">pkg/controllers/app/kubernetes/controllers/kube_reconciler.go</a></div>
+      <pre data-start="348" data-line="353"><code class="language-go">// At most one probe runs at a time.
+func (r *KubernetesReconciler) manageKubeContext(ctx context.Context) error {
+	contextName := instance.Name()
+	log := logf.FromContext(ctx).WithName(&quot;kube-context&quot;)
+
+	if err := createReplaceKubeContext(contextName, r.K3sConfigPath); err != nil {
+		log.Error(err, &quot;Failed to create Kubernetes context&quot;, &quot;context&quot;, contextName)
+		return fmt.Errorf(&quot;create Kubernetes context %q: %w&quot;, contextName, err)
+	}
+
+	r.contextMu.Lock()</code></pre>
+    <p>The project&#39;s own <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/docs/design/api_app.md#L39"><code>docs/design/api_app.md:39</code></a> confirms it: &quot;When the <code>App</code> is starting it creates the Docker context and sets up the kubeconfig in <code>~/.kube/config</code>.&quot; The throwaway file protects the user&#39;s <em>selected</em> context, not the file contents.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/docs/design/api_app.md#L34-L44">docs/design/api_app.md</a></div>
+      <pre data-start="34" data-line="39"><code class="language-plaintext">
+Lightweight app snapshots only copy this data disk, and not the full VM image.
+
+### Docker and Kube Contexts
+
+When the `App` is starting it creates the Docker context and sets up the kubeconfig in `~/.kube/config`.
+
+It will only change the current context if it does not exist, or is not working at the time the app is starting.
+
+The kube config is also written to `~/.rd2/kube.config` (mostly for the [`rdd run`](cmd_app.md#rdd-run) command).
+</code></pre>
+    <p>Fix: say <code>rdd run</code> does not change the <em>selected</em> context, and note that startup adds the instance entry to <code>~/.kube/config</code> as usual. Reconcile the stale <code>~/.rd2/kube.config</code> references in <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/docs/design/api_app.md#L43"><code>api_app.md:43</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/docs/design/bootstrap.md#L97"><code>bootstrap.md:97</code></a>.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> A malformed <code>~/.kube/config</code> breaks Docker-only <code>rdd run</code> commands <span class="pill pill-codex">Codex</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/run.go#L145-L158">cmd/rdd/run.go</a></div>
+      <pre data-start="145" data-line="150-153"><code class="language-go">// When the instance context is absent (Kubernetes disabled), the file still
+// selects it as the current context with no matching entry, so kubectl and
+// helm fail with a clear &quot;context does not exist&quot; error.
+func writeRunKubeconfig() (string, error) {
+	name := instance.Name()
+
+	src, err := clientcmd.NewDefaultClientConfigLoadingRules().Load()
+	if err != nil {
+		return &quot;&quot;, fmt.Errorf(&quot;load kubeconfig: %w&quot;, err)
+	}
+
+	dst := clientcmdapi.NewConfig()
+	dst.CurrentContext = name
+	if kubeCtx, ok := src.Contexts[name]; ok {</code></pre>
+    <p><code>runAction</code> calls <code>writeRunKubeconfig</code> unconditionally (run.go:74), and <code>Load()</code> aggregates and returns parse errors for any file in the precedence chain (<code>client-go</code> <code>loader.go:40,85</code>). So a single corrupt kubeconfig fails <code>rdd run docker ps</code> with <code>load kubeconfig: ...</code> before Docker ever runs, coupling a Docker-only command to unrelated Kubernetes state. A missing file is fine — <code>Load()</code> skips it — so only a malformed file triggers this.</p>
+    <p>Fix: for non-kube commands, tolerate a load failure by falling back to the empty-config path the missing-context case already uses (write only <code>CurrentContext</code>), or defer kubeconfig creation until a kube command needs it.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>isKubeCommand</code> misses the <code>rdd kubectl</code> / <code>rdd helm</code> alias on a cold start <span class="pill pill-gemini">Gemini</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/run.go#L86-L99">cmd/rdd/run.go</a></div>
+      <pre data-start="86" data-line="91-94"><code class="language-go">
+// ensureAppRunning starts Rancher Desktop and waits for it to settle. When the
+// App does not exist yet and command invokes a Kubernetes client, it enables
+// Kubernetes so the client has a cluster to talk to; the App defaulter then
+// picks the default Kubernetes version. An existing App is only started.
+func ensureAppRunning(ctx context.Context, command string) error {
+	c, _, err := getAppKubeClient(ctx)
+	if err != nil {
+		return err
+	}
+
+	props := []string{&quot;running=true&quot;}
+	var app appv1alpha1.App
+	switch err := c.Get(ctx, client.ObjectKey{Name: &quot;app&quot;}, &amp;app); {</code></pre>
+    <p><code>ensureAppRunning</code> auto-enables Kubernetes only when <code>isKubeCommand(args[0])</code> is true. For <code>rdd run rdd kubectl get nodes</code>, <code>args[0]</code> is <code>rdd</code>, so the auto-enable branch is skipped; against a fresh App, Kubernetes never starts and the command fails. The new BATS test uses exactly this <code>rdd run rdd kubectl</code> form (<code>kube-context.bats</code>), but only after the suite already enabled Kubernetes, so it passes. The heuristic is best-effort and cannot see through <code>sh -c</code>, <code>env</code>, or <code>sudo</code> either.</p>
+    <p>Fix: also detect the <code>rdd &lt;kubectl|helm&gt;</code> alias and cover it in <code>TestIsKubeCommand</code>; note the heuristic&#39;s limits in the help text.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> Ctrl+C leaks the throwaway kubeconfig and skips cleanup <span class="pill pill-gemini">Gemini</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <pre><code class="language-diff"> command.Stderr = os.Stderr
++signal.Ignore(os.Interrupt)
+ err := command.Run()</code></pre>
+    <p><code>rdd</code> installs no signal handler, and the child shares its foreground process group, so Ctrl+C delivers SIGINT to both. <code>rdd</code> dies on the default disposition before the deferred <code>os.Remove(kubeconfig)</code> runs (run.go:75), leaving a 0600 throwaway kubeconfig in <code>$TMPDIR</code> until reboot. Ending a long <code>rdd run kubectl logs -f</code> or <code>exec -it</code> with Ctrl+C is the common case, so these files accumulate. The author already notes signal handling is deferred (run.go:186-188, see Acknowledged Limitations), but that comment covers context cancellation, not the cleanup leak.</p>
+    <p>Fix: ignore <code>os.Interrupt</code> before <code>command.Run()</code>. <code>rdd</code> then waits for the child, runs its defers, and propagates the child&#39;s exit code; the child still receives the signal directly.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>ensureAppRunning</code> and <code>setAction</code> each build a client and ready the service <span class="pill pill-claude">Claude</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>ensureAppRunning</code> calls <code>getAppKubeClient</code> to read the App (run.go:92), then <code>setAction</code> calls <code>getAppKubeClient</code> again and re-fetches the App (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/set.go#L269"><code>set.go:269</code></a>). Each <code>getAppKubeClient</code> re-runs <code>ensureServiceRunning</code>, builds a fresh scheme, and dials a new client (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/set.go#L612-L628"><code>set.go:612-628</code></a>). For a single-user CLI the cost is negligible, but the second read also widens the window in which the App can change between the existence check and the patch (see Design Observations).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/set.go#L264-L274">cmd/rdd/set.go</a></div>
+      <pre data-start="264" data-line="269"><code class="language-go">			return fmt.Errorf(&quot;invalid argument %q: property name must not be empty&quot;, arg)
+		}
+		properties[key] = value
+	}
+
+	c, restConfig, err := getAppKubeClient(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Fetch the CRD schema and validate/coerce all property values.</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/set.go#L607-L633">cmd/rdd/set.go</a></div>
+      <pre data-start="607" data-line="612-628"><code class="language-go">	return &quot;&quot;, 0, false
+}
+
+// getAppKubeClient returns a controller-runtime client with the App scheme
+// registered, and the raw REST config for creating other clients.
+func getAppKubeClient(ctx context.Context) (client.Client, *rest.Config, error) {
+	if err := ensureServiceRunning(ctx); err != nil {
+		return nil, nil, err
+	}
+	config, err := service.GetKubeRestConfig()
+	if err != nil {
+		return nil, nil, fmt.Errorf(&quot;failed to get kubeconfig: %w&quot;, err)
+	}
+	runtimeScheme := runtime.NewScheme()
+	if err := appv1alpha1.AddToScheme(runtimeScheme); err != nil {
+		return nil, nil, fmt.Errorf(&quot;failed to add App types to scheme: %w&quot;, err)
+	}
+	c, err := client.New(config, client.Options{Scheme: runtimeScheme})
+	if err != nil {
+		return nil, nil, fmt.Errorf(&quot;failed to create client: %w&quot;, err)
+	}
+	return c, config, nil
+}
+
+// fetchSpecSchema retrieves the App CRD from the API server and returns the
+// OpenAPI v3 schema for the spec field.
+func fetchSpecSchema(ctx context.Context, config *rest.Config) (*apiextensionsv1.JSONSchemaProps, error) {</code></pre>
+    <p>Fix: optional. If simplified later, thread the App and client fetched in <code>ensureAppRunning</code> into <code>setAction</code> so the read and the enablement decision share one snapshot.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em><code>rdd run</code> reuses the persistent global-context publication path<em></em> <code>(future)</code> <span class="pill pill-codex">Codex</span> — I3 and S1 share one root: the one-shot command relies on App startup to publish Docker and Kubernetes contexts into the user&#39;s global config, then reads back from it. Building ephemeral Docker and kube configs straight from the instance endpoints would make the command&#39;s isolation local and testable, and would free it from the health of the user&#39;s existing config.</li>
+      <li><strong>TOCTOU between the App existence check and the patch</strong> <code>(future)</code> <span class="pill pill-claude">Claude</span> — <code>ensureAppRunning</code> decides whether to add <code>kubernetes.enabled=true</code> from a <code>Get</code> that returns NotFound (run.go:99-103), but <code>setAction</code> re-fetches and patches. If another process creates the App without Kubernetes in that window, <code>setAction</code> patches <code>kubernetes.enabled=true</code> onto the existing App, contradicting the documented &quot;an existing App is only started, never reconfigured.&quot; Irrelevant for a single-user CLI today; deciding enablement from one shared read (S4) closes it.</li>
+      <li><em></em>Every <code>rdd run</code> issues <code>running=true</code> and waits for Settled<em></em> <code>(in-scope)</code> <span class="pill pill-claude">Claude</span> — even <code>rdd run docker context show</code> runs the full set-and-wait path. When the App is already settled the patch is a no-op and the wait returns quickly, so the cost is one apiserver round-trip. Acceptable, and it matches the documented &quot;starts first if not already running.&quot;</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>The code handles the environment-precedence traps correctly: clearing <code>DOCKER_HOST</code> lets <code>DOCKER_CONTEXT</code> win, and setting <code>KUBECONFIG</code> at the environment level overrides <code>~/.kube/config</code>. <span class="pill pill-claude">Claude</span> <span class="pill pill-gemini">Gemini</span></li>
+      <li>The throwaway kubeconfig is 0600 and copies only the instance context, cluster, and user — not the whole config — so credentials stay protected. <span class="pill pill-claude">Claude</span></li>
+      <li>Missing-<code>~/.kube/config</code> and missing-instance-context cases degrade gracefully to a clear &quot;context does not exist&quot; error. <span class="pill pill-claude">Claude</span></li>
+      <li><code>writeRunKubeconfig</code> runs before <code>setupRunEnv</code>, so it reads the user&#39;s real <code>KUBECONFIG</code> rather than the throwaway it installs. <span class="pill pill-claude">Claude</span></li>
+      <li>Relying on the App defaulter for the Kubernetes version, instead of hardcoding <code>kubernetes.version=stable</code> as the issue sketched, keeps one source of truth. <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The unit tests are meaningful — real <code>clientcmd</code> round-trips and real environment mutation, no mocks — and they pass. They cover the command classification, the environment wiring, and both kubeconfig-copy paths. The BATS additions use <code>run_e -0</code> followed by output assertions correctly.</p>
+    <p>Untested scenarios, by risk:</p>
+    <ol>
+      <li>Non-zero child exit: no test asserts the propagated status or the absence of the spurious error line (I1). A <code>run -7 rdd run sh -c &#39;exit 7&#39;</code> check would catch it.</li>
+      <li><code>rdd run --help</code> / <code>-h</code> behavior (I2).</li>
+      <li>The <code>kubernetes.enabled=true</code> auto-enable branch against a fresh App (run.go:101-103): the BATS suites run against an already-provisioned instance, so this branch has no end-to-end coverage.</li>
+      <li>The <code>--</code> separator strip (run.go:63-65): <code>rdd run -- docker ps</code>.</li>
+      <li><code>isKubeCommand</code> for the <code>rdd kubectl</code> alias (S2).</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>docs/design/cmd_app.md</code> describes the new flow accurately — the <code>PATH</code> prepend, <code>DOCKER_CONTEXT</code>, cleared <code>DOCKER_HOST</code>, throwaway <code>KUBECONFIG</code>, the kubectl/helm auto-enable, and &quot;only starts an existing App&quot; — except for the &quot;stay unchanged&quot; claim about <code>~/.kube/config</code> (I3). Two sibling docs still describe the old design: <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/docs/design/api_app.md#L43"><code>api_app.md:43</code></a> calls <code>~/.rd2/kube.config</code> the file &quot;mostly for the <code>rdd run</code> command,&quot; and <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/docs/design/bootstrap.md#L97"><code>bootstrap.md:97</code></a> routes <code>rdd run</code> through it, while the new command uses a throwaway temp file instead. The exported-symbol godoc question does not arise — <code>run.go</code> is <code>package main</code>, and its function comments are present and clear.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>A single, self-contained commit that builds and passes tests. The message describes the implementation and calls out the in-passing BATS cleanups (dropping <code>local</code>, hoisting <code>CONTEXT_NAME</code>, replacing status-only <code>run -0</code>), which belong here because they touch the same two test files the feature extends. Clean.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><code>CommandContext</code> versus a plain exec<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/83562df1343b104aa60a3192a0efa39abd7b7499/cmd/rdd/run.go#L186-L188"><code>cmd/rdd/run.go:186-188</code></a>: &quot;CommandContext would hard-kill the child if ctx were canceled; the cobra context is never canceled today, so this matches a plain exec until signal-driven cancellation is wired up.&quot; Verified: <code>main.go</code> installs no signal handler and runs the root command on a background context, so the context is indeed never canceled. The comment is accurate. S3 raises the separate cleanup-leak consequence that this comment does not cover.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> reproduced both headline bugs live — it built the binary, ran <code>rdd run --help</code>, and ran a failing child to confirm the blank error line. It contributed the only unique correctness-adjacent suggestion (the duplicated client/<code>ensureServiceRunning</code> call and the TOCTOU it widens) and the richest set of Design Observations and Strengths. Its calibration held: the two clear UX bugs stayed Important, everything speculative landed in Suggestions or Design Observations. It missed the Ctrl+C leak and the documentation-isolation overstatement that the other two caught.</p>
+    <p><strong>[Codex]</strong> alone surfaced the documentation-isolation contract gap (I3) and the malformed-kubeconfig coupling (S1), both of which verify against the code and the project&#39;s own design docs. Its classification was off on I3 — it called a pre-existing startup behavior a &quot;regression&quot; — so I relabeled it a gap, and I downgraded the malformed-kubeconfig coupling to Suggestion on practical likelihood. It could not run <code>go test</code> (the worktree lacks the embedded <code>lima-guestagent.gz</code> asset), but none of its findings depended on execution.</p>
+    <p><strong>[Gemini]</strong> caught the two gaps the others missed: the <code>rdd kubectl</code> alias blind spot in the auto-enable heuristic and the Ctrl+C kubeconfig leak. It rated both Important; I downgraded each to Suggestion, since the alias gap is narrow and best-effort and the leaked file is 0600 litter cleaned on reboot. Its claim that SIGINT makes <code>rdd</code> &quot;exit with status 2&quot; is imprecise — Go re-raises the signal, so <code>rdd</code> exits 130 — but the leak itself is real. It skipped <code>git blame</code> as usual (daily quota), which did not affect coverage here.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>12m 35s</td><td>7m 04s</td><td>7m 51s</td></tr>
+        <tr><td>Findings</td><td>2I 1S</td><td>3I 1S</td><td>2I 2S</td></tr>
+        <tr><td>Tool calls</td><td>62 (Bash 41, Read 21)</td><td>49 (shell 49)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>7</td><td>1</td><td>1</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>1</td><td>2</td><td>2</td></tr>
+        <tr><td>Files reviewed</td><td>6</td><td>6</td><td>6</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 1S</strong></td><td><strong>3I 1S</strong></td><td><strong>2I 2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1 (I→S)</td><td>2 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation:</strong> Codex I1 (fresh starts mutate global contexts): reclassified regression → gap (the mutation is pre-existing App-startup behavior) and consolidated as Important I3. Codex&#39;s <code>--help</code> finding: Suggestion → Important (consolidated I2). Codex malformed-kubeconfig: Important → Suggestion S1. Gemini <code>isKubeCommand</code> alias: Important → Suggestion S2. Gemini Ctrl+C leak: Important → Suggestion S3.</p>
+    <p>All three reviewers converged on the two highest-value findings, and each contributed at least one verified unique finding, so no single agent dominated. Claude carried the live verification and design analysis; Codex owned the documentation/contract angle; Gemini owned the signal and heuristic edge cases.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Repo context update [repo]:</strong> A CLI command that documents leaving the user&#39;s global Docker or Kubernetes configuration &quot;unchanged&quot; must be checked against the App-startup reconcilers, not only its own code. <code>manageKubeContext</code> (<code>pkg/controllers/app/kubernetes/controllers/kube_reconciler.go</code>) unconditionally merges the instance context into <code>~/.kube/config</code> once k3s is healthy, and the engine reconciler creates the Docker context and sets <code>currentContext</code> when the existing one is unhealthy. Any command that triggers an App start — through <code>rdd set running=true</code>, <code>ensureAppRunning</code>, or <code>ensureServiceRunning</code> — inherits these global side effects regardless of its own isolation. Flag isolation claims that ignore the startup path.</p>
+    <p><strong>Skill improvement:</strong> When a command loads or parses configuration for one subsystem on a code path shared with commands that do not use that subsystem, a malformed or unreadable config fails the unrelated commands too. Flag an unconditional config load that gates execution of subsystem-agnostic commands, and recommend deferring the load until a command that needs it runs — or tolerating the failure for the commands that do not.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
