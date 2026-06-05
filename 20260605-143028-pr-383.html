@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260605-143028-pr-383</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260605-143028-pr-383</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-06-05 14:30</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon">rancher-sandbox/rancher-desktop-daemon</a></td></tr>
+      <tr><td>Round</td><td>5 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/383" class="gh-ref" data-title="Harden Windows shutdown against recycled PIDs and leftover hostagent state" data-state="open" data-type="pr">#383</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/pull/383" class="gh-ref" data-title="Harden Windows shutdown against recycled PIDs and leftover hostagent state" data-state="open" data-type="pr">#383</a> — Harden Windows shutdown against recycled PIDs and leftover hostagent state</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/cad3a1fd"><code>cad3a1fd</code></a> Terminate the WSL2 distro before unregistering a stale instance<br><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/ba400557"><code>ba400557</code></a> Always reclaim hostagent resources during graceful shutdown<br><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/3cc25735"><code>3cc25735</code></a> Reject a recycled service PID on Windows<br><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/35d36f8f"><code>35d36f8f</code></a> Verify hostagent identity before sending CTRL_BREAK on Windows</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; tighten the <code>serve</code> discriminator (I1, the Round 4 fix overshot); the <code>Interrupt(0)</code> guard (I2) is cheap defense-in-depth. The core PID-reuse hardening is correct.</td></tr>
+      <tr><td>Wall-clock time</td><td><code>31 min 39 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 5 lands the three Round 4 fixes — the <code>serve</code> discriminator, the <code>assert_*</code> BATS rename, and terminate-before-unregister — all verified against the diff. Codex shows the discriminator fix overshot: <code>IsOurProcess(pid, &quot;serve&quot;)</code> substring-matches the shared argv[0] path, so any install path containing <code>serve</code> accepts an unrelated rdd process (I1). A pre-existing <code>StopWithWait</code> race can also signal PID 0 (I2). No critical issues; the core PID-reuse hardening is correct.</p>
+    <p>All three reviewers ran. Codex carried the round with both Important findings on the <code>service.PID()</code> surface; Claude and Gemini marked that file clean (a coverage miss). Gemini&#39;s lone critical — <code>exec.CommandContext</code> force-killing the hostagent — describes documented, by-design behavior the &quot;always reclaim&quot; logic exists to handle, so it is recorded as a Design Observation, not a finding.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> <code>service.PID()</code> <code>serve</code> discriminator over-matches the shared image path <span class="pill pill-codex">Codex</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/service/cmd/service.go#L177-L187">pkg/service/cmd/service.go</a></div>
+      <pre data-start="177" data-line="182"><code class="language-go">		// IsOurProcess returns false for any state it cannot confirm — a denied
+		// OpenProcess or a short PEB read on a live control plane included. Such a
+		// false negative reads as not-running and removes the PID file below; we
+		// accept that as the cost of the guard, which needs only the low query
+		// rights a same-user process always grants.
+		if err == nil &amp;&amp; !process.IsOurProcess(pid, &quot;serve&quot;) {
+			err = fmt.Errorf(&quot;pid %d is not our control plane&quot;, pid)
+		}
+	}
+	if err != nil {
+		_ = os.Remove(instance.PIDFile())</code></pre>
+    <p><code>IsOurProcess</code> runs <code>strings.Contains(cmdline, &quot;serve&quot;)</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/util/process/process_windows.go#L83"><code>process_windows.go:83</code></a>), and the command line begins with argv[0] — the install path, identical for every rdd process. On a path that contains <code>serve</code> (a username like <code>observer</code>, a <code>webserver</code> directory), the substring matches any rdd CLI process, not just the daemon, so the discriminator silently stops discriminating: <code>Running()</code> reports a recycled <code>rdd ctl</code> PID as the control plane, and <code>StopWithWait</code> then signals it. On a path without <code>serve</code> the guard works. This is the Round 4 <code>service serve</code>→<code>serve</code> fix overshooting — too narrow became too broad (gap, not a regression: merge-base <code>PID()</code> had no identity check at all).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/util/process/process_windows.go#L78-L88">pkg/util/process/process_windows.go</a></div>
+      <pre data-start="78" data-line="83"><code class="language-go">	}
+	cmdline, err := processCommandLine(handle)
+	if err != nil {
+		return false
+	}
+	for _, s := range cmdlineSubstrings {
+		if !strings.Contains(cmdline, s) {
+			return false
+		}
+	}
+	return true</code></pre>
+    <p>Fix: match a parsed argv token, not a raw substring — require <code>serve</code> as a standalone word after the image-path check.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>StopWithWait</code> can pass <code>PIDNotFound</code> (0) to <code>process.Interrupt</code> <span class="pill pill-codex">Codex</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/service/cmd/service.go#L459-L485">pkg/service/cmd/service.go</a></div>
+      <pre data-start="459" data-line="464-480"><code class="language-go">
+// StopWithWait sends a shutdown signal to the service. When wait is true, it
+// blocks until the process exits, ctx is cancelled, or timeout elapses; pass
+// timeout 0 to wait indefinitely (bounded only by ctx).
+func StopWithWait(ctx context.Context, wait bool, timeout time.Duration) error {
+	if !Running() {
+		return fmt.Errorf(&quot;%q control plane is not running&quot;, instance.Name())
+	}
+
+	pid := PID()
+	// Try graceful shutdown first. On Unix, Kill already sends SIGTERM which
+	// triggers the Go signal handler. On Windows, Kill uses TerminateProcess
+	// which bypasses all handlers, so we send Interrupt (CTRL_BREAK_EVENT)
+	// first to let the service run its shutdown path (shutdownAllHostagents).
+	//
+	// On Unix, Interrupt (SIGINT) always succeeds for a valid PID, so the
+	// Kill fallback never fires. On Windows, Interrupt uses
+	// GenerateConsoleCtrlEvent, which fails when caller and target lack a
+	// shared console; Kill (TerminateProcess) then bypasses graceful shutdown.
+	// Hostagents survive in their own process groups and self-heal on the
+	// next service start via killOrphanedHostagent.
+	if err := process.Interrupt(pid); err != nil {
+		if err := process.Kill(pid); err != nil {
+			return fmt.Errorf(&quot;failed to stop %q control plane with pid %d: %w&quot;, instance.Name(), pid, err)
+		}
+	}
+</code></pre>
+    <p><code>Running()</code> calls <code>PID()</code>, then line 468 calls it again without rejecting <code>PIDNotFound</code>. If the daemon exits, a concurrent stop removes the file, or a transient identity check fails between the two reads, the second <code>PID()</code> returns 0. <code>Interrupt(0)</code> is <code>GenerateConsoleCtrlEvent(CTRL_BREAK, 0)</code> — every process sharing the console — on Windows, and <code>kill(0, SIGINT)</code> — the caller&#39;s whole group — on Unix. The double-read is pre-existing (identical at merge-base); this PR&#39;s new <code>IsOurProcess</code> path adds a fresh way for read #2 to return 0. Likelihood is low; the consequence is the exact broadcast hazard the PR targets. Distinct from the Round 2 declined &quot;transient false-negative removes the PID file,&quot; which concerned file removal, not signalling 0.</p>
+    <p>Fix: read <code>PID()</code> once, return early on <code>PIDNotFound</code>, then signal.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> PID-guard &quot;clear unless ours&quot; logic duplicated across five sites <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L205-L215">pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go</a></div>
+      <pre data-start="205" data-line="210"><code class="language-go">		// the orphaned driver must die. Job Objects, not PID files, are the
+		// proper fix.
+		if inst.Status == limatype.StatusRunning || inst.Status == limatype.StatusBroken {
+			logger.Info(&quot;Force-stopping orphaned VM driver&quot;, &quot;status&quot;, inst.Status)
+			forceInst := *inst
+			if inst.HostAgentPID &gt; 0 &amp;&amp; !process.IsOurProcess(inst.HostAgentPID, &quot;hostagent&quot;, hostAgentPIDFile(inst)) {
+				forceInst.HostAgentPID = 0
+			}
+			stopInstanceForcibly(ctx, logger, &amp;forceInst)
+		}
+		return r.startInstance(ctx, limaVM, inst)</code></pre>
+    <p>The negated &quot;clear the recycled HostAgentPID before taskkill&quot; block, with its ~10-line comment, repeats at five force-stop sites; the sites also differ in whether they copy (<code>forceInst := *inst</code>) or mutate in place. Each is correct, but a future change to the discriminator or the zeroing rule must touch all five. A helper consolidates the rule and the comment.</p>
+    <p>Fix:</p>
+      <pre><code class="language-go">func clearRecycledHostAgentPID(inst *limatype.Instance) {
+    if inst.HostAgentPID &gt; 0 &amp;&amp; !process.IsOurProcess(inst.HostAgentPID, &quot;hostagent&quot;, hostAgentPIDFile(inst)) {
+        inst.HostAgentPID = 0
+    }
+}</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>cmd.Wait</code> timeout comment cites an impossible inherited-pipe block <span class="pill pill-codex">Codex</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_controller.go#L587-L600">pkg/controllers/lima/limavm/controllers/limavm_controller.go</a></div>
+      <pre data-start="587" data-line="592-595"><code class="language-go">			// keeps the PID for stopInstanceForcibly to terminate.
+			if inst.HostAgentPID &gt; 0 &amp;&amp; !process.IsOurProcess(inst.HostAgentPID, &quot;hostagent&quot;, hostAgentPIDFile(inst)) {
+				inst.HostAgentPID = 0
+			}
+			stopInstanceForcibly(cleanupCtx, logger, inst)
+		}
+		cancel()
+
+		// Wait briefly for the process to exit after a forced kill. Without a
+		// timeout, cmd.Wait can block indefinitely if a child process survives
+		// KillTree and holds an inherited pipe. Returns at once when the process
+		// already exited.
+		waitCtx, waitCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		select {</code></pre>
+    <p>The hostagent&#39;s stdout/stderr are <code>*os.File</code> log handles (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L433-L434"><code>limavm_lifecycle.go:433-434</code></a>; <code>logfile.Create</code> returns <code>*os.File</code>). When stdio is an <code>*os.File</code>, <code>os/exec</code> passes the fd directly and runs no I/O-copy goroutine, so <code>cmd.Wait()</code> cannot block on an inherited pipe — and an inherited regular-file handle never blocks <code>Wait()</code> either. The timeout stays a sound defensive bound; only the rationale misleads. The wording is pre-existing, reworded here.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L428-L439">pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go</a></div>
+      <pre data-start="428" data-line="433-434"><code class="language-go">	// SetGroup makes the hostagent a new process-group leader (pgid == pid
+	// on Unix), which lets bats-with-timeout.sh attribute leaked qemu
+	// grandchildren back to their hostagent ancestor via pgid.
+	haCmd := exec.CommandContext(ctx, rddPath, args...)
+	process.SetGroup(haCmd)
+	haCmd.Stdout = haStdoutW
+	haCmd.Stderr = haStderrW
+
+	if err := haCmd.Start(); err != nil {
+		logger.Error(err, &quot;Failed to start hostagent&quot;)
+		r.stopHostSwitch(limaVM.Name)
+		if updateErr := r.updateCondition(ctx, limaVM, ConditionRunning, metav1.ConditionFalse, ReasonStartFailed, err.Error()); updateErr != nil {</code></pre>
+    <p>Fix: describe the actual invariant — the wait returns at once when the watcher already reaped the process, and bounds shutdown otherwise.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>resolveLongPath</code> could size the buffer in one retry instead of doubling <span class="pill pill-gemini">Gemini</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>GetLongPathName</code> returns the exact required length when the buffer is too small, so a single resize would suffice; the loop doubles instead. The practical cost is nil — an executable path fits 1024 units on the first call — and the doubling mirrors <code>processImagePath</code>, which must double because <code>QueryFullProcessImageName</code> does not report its required size. Keeping both helpers on one idiom is a defensible reason to leave this unchanged.</p>
+    <p>Fix (optional): allocate <code>n</code> and retry once; or keep the loop for consistency with <code>processImagePath</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><em></em><code>exec.CommandContext</code> force-kills the hostagent on manager shutdown, bypassing graceful signalling<em></em> <code>(in-scope)</code> <span class="pill pill-gemini">Gemini</span> — <code>startInstance</code> binds <code>haCmd</code> to the manager context (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L431"><code>limavm_lifecycle.go:431</code></a>). <code>waitForShutdown</code> blocks on that same context&#39;s <code>Done()</code> and only then runs <code>shutdownAllHostagents</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_controller.go#L520-L522"><code>limavm_controller.go:520-522</code></a>), so on Windows Go&#39;s <code>exec</code> has already called <code>TerminateProcess</code>: <code>procExited</code> closes promptly, the <code>Interrupt</code> loop skips the dead PID, and <code>taskkill /T</code> cannot reach orphaned children. This is deliberate — commit <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/ba400557"><code>ba400557</code></a>&#39;s &quot;always reclaim&quot; exists to clean up after the force-kill, and <code>KillTree</code> documents the orphaned forwarders as harmless. Gemini&#39;s alternative (<code>exec.Command</code>, no context) would enable signal-based teardown but loses the guaranteed-cleanup safety net and relies on a console-bound <code>CTRL_BREAK</code> a detached service cannot deliver. The current design is defensible; recorded as an observation, not a defect.</li>
+      <li><strong>DriverPID is force-killed without an identity check</strong> <code>(future)</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> — <code>IsOurProcess</code> matches the rdd image, not qemu/wsl, so the restart paths taskkill a stored DriverPID unverified (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L201-L206"><code>limavm_lifecycle.go:201-206</code></a>). The PR scopes itself to the HostAgentPID/CTRL_BREAK hazard and names Job Objects, tracking the hostagent+driver tree, as the class fix. On Windows RDD uses WSL2, where DriverPID is typically 0, so the live exposure is small. Worth a tracked follow-up rather than more PID-file patching.</li>
+      <li><em></em><code>Reconcile</code>&#39;s sentinel cleanup path removes the directory without unregistering the distro<em></em> <code>(future)</code> [orchestrator, carried from Round 4] — the sentinel branch (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_controller.go#L205"><code>limavm_controller.go:205</code></a>) uses a bare <code>os.RemoveAll</code>, unlike the leftover-instance and stale-directory paths that now terminate/unregister. This is pre-existing/PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/392" class="gh-ref" data-title="Enable Kubernetes context tests on Windows" data-state="merged" data-type="pr">#392</a> code, outside PR <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/issues/383" class="gh-ref" data-title="Harden Windows shutdown against recycled PIDs and leftover hostagent state" data-state="open" data-type="pr">#383</a>&#39;s diff; restated for continuity.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li>The <code>procExited</code>-gated skip in <code>signalHostagent</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/hostagent_watcher.go#L213-L219"><code>hostagent_watcher.go:213-219</code></a>) and <code>shutdownAllHostagents</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_controller.go#L550-L554"><code>limavm_controller.go:550-554</code></a>) ties &quot;safe to signal&quot; to the OS handle still being held — the real invariant — rather than to on-disk state. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span></li>
+      <li>The force-stop paths re-check <code>HostAgentPID</code> immediately before each destructive use, so a stored PID is never trusted once time has passed. <code>(in-scope)</code> <span class="pill pill-codex">Codex</span></li>
+      <li><code>hostAgentPIDFile</code> is the exact <code>--pidfile</code> value passed at launch (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L646"><code>limavm_lifecycle.go:646</code></a>), an unambiguous per-instance discriminator that cannot match a sibling whose name is a prefix. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span></li>
+      <li><code>processCommandLine</code> guards the zero/odd-length case before <code>&amp;buf[0]</code>, sizes the read to the buffer rather than to <code>Length</code>, and errors on a short read — careful unsafe code backed by a struct-offset regression test. <code>(in-scope)</code> <span class="pill pill-claude">Claude</span></li>
+      <li><code>removeStaleInstance</code> now terminates the WSL2 distro before unregistering and drops the redundant GOOS guard, landing the Round 4 design observation. <code>(in-scope)</code> [orchestrator]</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The new <code>process_windows_test.go</code> is strong. <code>TestIsOurProcessRejectsForeignExecutable</code> proves the rejection comes from the image-path mismatch — not an <code>OpenProcess</code> denial — by independently opening the child and asserting its image differs, the defense-not-accident verification the repo conventions ask for. <code>TestSamePathMatchesShortAndLongForms</code> covers 8.3-name handling with a correct skip when generation is disabled. The BATS additions assert cross-platform PID-file reclamation and Windows distro termination after a graceful stop.</p>
+    <p>Untested, ranked by residual risk: (1) the I1 over-match and the acknowledged <code>service.PID()</code> false-negative both need a recycled PID or denied <code>OpenProcess</code> on Windows; (2) the I2 <code>Interrupt(0)</code> race is timing-dependent; (3) <code>processCommandLine</code> against a command line longer than 1024 UTF-16 units exercises the buffer-growth loops, currently uncovered; (4) <code>forceStopForDeletion</code> on a <code>StatusBroken</code> WSL2 instance with a stale PID file, which the code itself flags as not reproducible in BATS. Each gap needs Windows plus fault injection; consistent with prior rounds&#39; accepted limits.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The in-code comments are thorough — every guard carries a &quot;why,&quot; and <code>doc.go</code> now names identity verification. Three nits, all minor: the <code>cmd.Wait</code> comment misattributes the block to an inherited pipe (S2); the <code>shutdownAllHostagents</code> comment frames the leftover PID file as &quot;the usual case on Windows,&quot; yet the always-reclaim loop runs on all platforms (distro termination being a Windows no-op); and the <code>service.PID()</code> comment claims the guard &quot;confirms the PID runs a control plane,&quot; which I1 shows is weaker than stated on install paths containing <code>serve</code>. Fixing I1 makes that comment accurate.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Clean. Four commits, each a self-contained concept matching its subject: add <code>IsOurProcess</code> and apply it to the hostagent CTRL_BREAK paths (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/35d36f8f"><code>35d36f8f</code></a>), guard the service PID (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/3cc25735"><code>3cc25735</code></a>), always reclaim hostagent resources (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/ba400557"><code>ba400557</code></a>), and terminate the WSL2 distro before unregister (<a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/commit/cad3a1fd"><code>cad3a1fd</code></a>). No fixup commits; messages describe intent. No splitting needed.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Confirmed against the code and carried forward:</p>
+    <ul>
+      <li><strong>DriverPID killed unchecked on Windows</strong> — <code>limavm_lifecycle.go:201-206, 596-599</code>. <code>IsOurProcess</code> matches the rdd image, not qemu/wsl; Job Objects named as the proper fix. The orphaned driver must die, so a restart cannot zero it.</li>
+      <li><em></em>Handle-release vs. <code>procExited</code>-close window<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/hostagent_watcher.go#L212-L216"><code>hostagent_watcher.go:212-216</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/controllers/lima/limavm/controllers/limavm_controller.go#L539-L545"><code>limavm_controller.go:539-545</code></a>. <code>cmd.Wait()</code> releases the OS handle just before closing the channel; the window is a few instructions.</li>
+      <li><strong>Service-PID discriminator cannot distinguish concurrent instances</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/cmd/rdd/service.go#L166-L170"><code>service.go:166-170</code></a>. Dev/test only; a lone instance never recycles a PID into another control plane.</li>
+      <li><em></em><code>KillTree</code> cannot traverse a dead parent&#39;s tree on Windows<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-daemon/blob/cad3a1fd772e1e032e832e71fe9e8d9b8e403203/pkg/util/process/process_windows.go#L240-L251"><code>process_windows.go:240-251</code></a>. Orphaned port forwarders cannot rebind their ports and are documented as harmless.</li>
+      <li><strong>Stale-PID-file and forceStop-timeout paths untested</strong> — <code>limavm_lifecycle.go:661, 565-567</code>. Reproducing them needs Windows-specific PID-file manipulation.</li>
+    </ul>
+    <p>Declined in prior rounds (Round 2 Resolution, Commented; surrounding code unchanged):</p>
+    <ul>
+      <li><em></em>Unix <code>IsOurProcess</code> no-op trusts a recycled on-disk PID<em></em> — <code>process_unix.go</code>. Out of scope for this Windows-scoped PR; documented in the docstring.</li>
+      <li><em></em><code>PID()</code> removes the PID file on a transient identity-check failure<em></em> — <code>service.go</code>. Near-impossible for a same-user process holding only query rights. (I2 is separate: it concerns signalling 0, not file removal.)</li>
+      <li><em></em><code>Running()</code>/<code>PID()</code> runs a full PEB walk on every shutdown poll<em></em> — <code>service.go</code>. Negligible cost; documented on <code>PID()</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude"><span class="pill pill-claude">Claude</span> <a href="#claude" class="pilcrow">&#182;</a></h3>
+    <p>Claude verified the implementation rigorously — it confirmed the build, traced the copy-vs-mutate handling across every guard site, and checked the PEB-walk unsafe code line by line. That depth cost it the round&#39;s two Important findings: it marked <code>service.go</code> clean, missing both the <code>serve</code> over-match and the <code>Interrupt(0)</code> race that Codex caught on the same surface. Its first attempt timed out mid-verification at 900s without emitting a review, so the result here is the retry. The duplication suggestion and the <code>longPath</code> false-positive-bias observation were its unique contributions.</p>
+    <h3 id="codex"><span class="pill pill-codex">Codex</span> <a href="#codex" class="pilcrow">&#182;</a></h3>
+    <p>Codex carried the round. Both Important findings — the <code>serve</code> discriminator overshooting the Round 4 fix, and the <code>Interrupt(0)</code> double-read — were its alone, each traced to the line and the syscall. It also caught the misattributed <code>cmd.Wait</code> inherited-pipe comment. After last round&#39;s one false positive, this round was clean, and its findings sit squarely on the surface the PR is hardening.</p>
+    <h3 id="gemini"><span class="pill pill-gemini">Gemini</span> <a href="#gemini" class="pilcrow">&#182;</a></h3>
+    <p>Gemini opened with a critical — <code>exec.CommandContext</code> defeating graceful shutdown — that verification reclassified to a design observation: the behavior is real but documented, and the &quot;always reclaim&quot; logic exists to handle it. Its <code>GetLongPathName</code> micro-optimization is valid yet conflicts with the file&#39;s intentional consistency. Per the known-behavior note it skipped <code>git blame</code>, so regression labelling fell to the others, and it too marked <code>service.go</code> clean.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>7m 48s</td><td>6m 16s</td><td>5m 48s</td></tr>
+        <tr><td>Findings</td><td>1S</td><td>2I 1S</td><td>1S</td></tr>
+        <tr><td>Tool calls</td><td>34 (Bash 17, Read 17)</td><td>43 (shell 41, stdin 2)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>4</td><td>3</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>3</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>9</td><td>9</td><td>9</td></tr>
+        <tr><td>Coverage misses</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1S</strong></td><td><strong>2I 1S</strong></td><td><strong>1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Codex provided the most value this round: it owned both Important findings and the one accurate comment fix, all on the <code>service.PID()</code> surface the other two passed over. Claude&#39;s line-by-line verification of the unsafe PEB walk gives high confidence the new code is correct, even though it missed the service-PID findings. Gemini&#39;s critical did not survive verification, but its instinct to question the shutdown lifecycle surfaced a worthwhile design discussion. The agreement on no critical issues, plus my own trace of the <code>serve</code> substring against the shared argv[0] and the merge-base, gives high confidence: the hardening is sound, and I1 is the one fix worth making before merge.</p>
+    <p>Reconciliation: Gemini&#39;s C1 (<code>exec.CommandContext</code> defeats graceful shutdown) moved from critical to a design observation — the behavior is by-design and the always-reclaim logic handles it. Codex&#39;s I1 and S1 labels moved from &quot;regression&quot; to &quot;gap&quot;: merge-base <code>PID()</code> had no identity check, and the <code>cmd.Wait</code> comment wording pre-existed this PR. No findings were dropped as false positives.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvement — Correctness dimension: a substring identity check against a full command line is defeated by the shared image path.</strong> When code identifies a process by testing whether its command line contains a discriminator substring, remember that the command line begins with argv[0] — the image path — which is identical for every invocation of the same binary. A discriminator that can also appear in the install path (a username, a parent directory, an unrelated subcommand argument) matches every invocation and collapses the check to the image-path test alone. Recognize the pattern as <code>strings.Contains(commandLine, token)</code> (or equivalent) used for identity; flag it and recommend matching a parsed argv token, because argv[0] is shared across a binary&#39;s invocations.</p>
+    <p><strong>[repo] The control-plane daemon has two launch spellings; service-PID identity must accept both.</strong> RDD starts the daemon by self-spawning the canonical <code>service serve</code> and also accepts the <code>svc serve</code> alias, so an identity check on the service PID must recognize either invocation. Because every rdd process shares the same argv[0] (the install path), a <code>strings.Contains</code> discriminator on the full command line can be silently defeated by an install path containing the token. When reviewing changes to <code>service.PID()</code> or its discriminator, verify it matches a command token rather than a raw substring, and that it accepts both launch spellings.</p>
+    <p><em></em>Note (already tracked): the worktree <code>ROUND=1</code> helper bug recurred.<em></em> Running from <code>.claude/worktrees/…</code>, the lead helper again reported <code>ROUND=1</code> for what is the fifth review of this PR. Round 4 already filed this skill bug; the round number here was corrected to 5 by checking the main repo&#39;s <code>.reviews/</code>, and all Step 6 writes target the main repo&#39;s reviews worktree. No new suggestion filed.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
