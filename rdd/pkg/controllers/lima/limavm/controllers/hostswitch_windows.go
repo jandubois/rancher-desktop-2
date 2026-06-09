@@ -107,6 +107,10 @@ const (
 	vsockListenPort    = 6656
 	handshakeTimeout   = 5 * time.Minute
 
+	// relayUnstableThreshold is the number of consecutive abnormal relay closes,
+	// with no clean close in between, that flags the data plane as flapping.
+	relayUnstableThreshold = 3
+
 	// signaturePhrase identifies our distro among all running Hyper-V VMs.
 	// This value is a protocol contract with the guest-side network-setup
 	// binary and must not be changed independently.
@@ -272,6 +276,7 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 
 	// Accept vsock connections and feed them into the virtual network.
 	g.Go(func() error {
+		var abnormalCloses int
 		for {
 			conn, err := ln.Accept()
 			if err != nil {
@@ -283,10 +288,24 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 			// AcceptStdio blocks until the connection closes. This is
 			// intentional: each VM runs a single vm-switch process, so
 			// reconnections are serial (old connection EOF, then new accept).
-			if err := vn.AcceptStdio(ctx, conn); err != nil {
-				logger.Error(err, "Failed to accept connection into virtual network")
+			start := time.Now()
+			err = vn.AcceptStdio(ctx, conn)
+			elapsed := time.Since(start)
+			if err != nil {
+				// The relay carried traffic for `elapsed`, then broke; the
+				// guest's vm-switch reconnects after a 1s retry. A healthy
+				// relay never returns here while the VM runs, so repeated breaks
+				// with no clean close mean guest networking is flapping.
+				abnormalCloses++
+				logger.Error(err, "Vsock data relay dropped; the guest will reconnect",
+					"duration", elapsed.String(), "abnormalCloses", abnormalCloses)
+				if abnormalCloses == relayUnstableThreshold {
+					logger.Info("Host-switch relay is unstable: the guest data connection keeps breaking and reconnecting without a clean close, so guest networking flaps; check /var/log/vm-switch.log in the guest",
+						"abnormalCloses", abnormalCloses)
+				}
 			} else {
-				logger.Info("Accepted vsock connection")
+				abnormalCloses = 0
+				logger.Info("Vsock data relay closed cleanly", "duration", elapsed.String())
 			}
 		}
 	})
