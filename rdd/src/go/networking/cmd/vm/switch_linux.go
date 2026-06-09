@@ -102,8 +102,14 @@ func main() {
 	signal.Notify(traceSigCh, syscall.SIGUSR1)
 	go func() {
 		for range traceSigCh {
-			enabled := !tracePackets.Load()
-			tracePackets.Store(enabled)
+			var enabled bool
+			for {
+				old := tracePackets.Load()
+				enabled = !old
+				if tracePackets.CompareAndSwap(old, enabled) {
+					break
+				}
+			}
 			logrus.Infof("SIGUSR1 received: per-packet tracing is now %t", enabled)
 		}
 	}()
