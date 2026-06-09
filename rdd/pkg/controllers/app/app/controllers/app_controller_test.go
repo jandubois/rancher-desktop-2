@@ -461,10 +461,17 @@ func Test_applySpecToTemplate(t *testing.T) {
 func Test_vmSwitchExtraArgs(t *testing.T) {
 	t.Run("unset RDD_KEEP_LOGS yields no extra args", func(t *testing.T) {
 		t.Setenv("RDD_KEEP_LOGS", "")
+		t.Setenv("RDD_TRACE_PACKETS", "")
 		assert.Equal(t, vmSwitchExtraArgs(), "")
 	})
-	t.Run("set RDD_KEEP_LOGS yields the append and trace flags", func(t *testing.T) {
+	t.Run("RDD_KEEP_LOGS without tracing yields append only", func(t *testing.T) {
 		t.Setenv("RDD_KEEP_LOGS", "1")
+		t.Setenv("RDD_TRACE_PACKETS", "")
+		assert.Equal(t, vmSwitchExtraArgs(), "--vm-switch-logfile-append")
+	})
+	t.Run("RDD_TRACE_PACKETS adds the trace flag", func(t *testing.T) {
+		t.Setenv("RDD_KEEP_LOGS", "1")
+		t.Setenv("RDD_TRACE_PACKETS", "1")
 		assert.Equal(t, vmSwitchExtraArgs(), "--vm-switch-logfile-append --trace-packets")
 	})
 }

@@ -139,16 +139,23 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 	}, "\n"), nil
 }
 
-// vmSwitchExtraArgs returns the network-setup flags that turn on diagnostic
-// vm-switch logging — append to the logfile across VM restarts and trace
-// packets — when RDD_KEEP_LOGS is set, and an empty string otherwise. The lima
+// vmSwitchExtraArgs returns the network-setup flags that enable diagnostic
+// vm-switch logging when RDD_KEEP_LOGS is set, and an empty string otherwise.
+// --vm-switch-logfile-append is always on: it accumulates every relay cycle in
+// one host-side log and costs nothing. --trace-packets is opt-in behind
+// RDD_TRACE_PACKETS because decoding and logging every packet on the relay hot
+// path perturbs the timing-sensitive failures it is meant to diagnose. The lima
 // template overrides network-setup's ExecStart only when this is non-empty, so
 // production keeps the distro's own command.
 func vmSwitchExtraArgs() string {
 	if os.Getenv("RDD_KEEP_LOGS") == "" {
 		return ""
 	}
-	return "--vm-switch-logfile-append --trace-packets"
+	args := "--vm-switch-logfile-append"
+	if os.Getenv("RDD_TRACE_PACKETS") != "" {
+		args += " --trace-packets"
+	}
+	return args
 }
 
 // toLinuxPath converts a host path to a Linux-accessible path inside a Lima VM.
