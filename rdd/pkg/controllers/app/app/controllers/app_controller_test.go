@@ -5,10 +5,13 @@
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"os"
 	"strings"
 	"testing"
+	"text/template"
 
 	"gotest.tools/v3/assert"
 
@@ -18,6 +21,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/yaml"
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	limav1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
@@ -452,6 +456,69 @@ func Test_applySpecToTemplate(t *testing.T) {
 				"expected output to contain %q, got:\n%s", tt.wantEnabledLine, got)
 		})
 	}
+}
+
+func Test_vmSwitchExtraArgs(t *testing.T) {
+	t.Run("unset RDD_KEEP_LOGS yields no extra args", func(t *testing.T) {
+		t.Setenv("RDD_KEEP_LOGS", "")
+		assert.Equal(t, vmSwitchExtraArgs(), "")
+	})
+	t.Run("set RDD_KEEP_LOGS yields the append and trace flags", func(t *testing.T) {
+		t.Setenv("RDD_KEEP_LOGS", "1")
+		assert.Equal(t, vmSwitchExtraArgs(), "--vm-switch-logfile-append --trace-packets")
+	})
+}
+
+// renderProvisionContent mirrors Lima's executeGuestTemplate: it runs the guest
+// template engine over a provision file's content with the given Param map, the
+// only datum the network-setup drop-in references.
+func renderProvisionContent(t *testing.T, content string, param map[string]string) string {
+	t.Helper()
+	tmpl, err := template.New("").Parse(content)
+	assert.NilError(t, err)
+	var out bytes.Buffer
+	assert.NilError(t, tmpl.Execute(&out, map[string]any{"Param": param}))
+	return out.String()
+}
+
+func Test_limaTemplate_vmSwitchExtraArgsDropin(t *testing.T) {
+	t.Parallel()
+
+	data, err := os.ReadFile("../lima-template.yaml")
+	assert.NilError(t, err)
+
+	var doc struct {
+		Provision []struct {
+			Path    string `json:"path"`
+			Content string `json:"content"`
+		} `json:"provision"`
+	}
+	assert.NilError(t, yaml.Unmarshal(data, &doc))
+
+	const dropinPath = "/etc/systemd/system/network-setup.service.d/extra-args.conf"
+	var content string
+	for _, p := range doc.Provision {
+		if p.Path == dropinPath {
+			content = p.Content
+			break
+		}
+	}
+	assert.Assert(t, content != "", "no provision entry writes %s", dropinPath)
+
+	// Without RDD_KEEP_LOGS the param is empty and the drop-in renders blank, so
+	// network-setup keeps the distro's own ExecStart.
+	blank := renderProvisionContent(t, content, map[string]string{"VM_SWITCH_EXTRA_ARGS": ""})
+	assert.Equal(t, strings.TrimSpace(blank), "")
+
+	// With the flags the drop-in clears and replaces ExecStart, appending the
+	// extra args to the end of the reproduced command.
+	got := renderProvisionContent(t, content,
+		map[string]string{"VM_SWITCH_EXTRA_ARGS": "--vm-switch-logfile-append --trace-packets"})
+	assert.Assert(t, strings.Contains(got, "[Service]"), "got:\n%s", got)
+	assert.Equal(t, strings.Count(got, "ExecStart="), 2, "expected a clear then a set, got:\n%s", got)
+	assert.Assert(t, strings.HasSuffix(strings.TrimSpace(got),
+		"--dhcp-script /usr/local/libexec/udhcpc/rancher-desktop.script --vm-switch-logfile-append --trace-packets"),
+		"got:\n%s", got)
 }
 
 // newTestScheme returns a scheme with all types the AppReconciler touches.

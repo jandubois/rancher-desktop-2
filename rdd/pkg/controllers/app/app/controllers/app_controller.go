@@ -131,11 +131,24 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 		fmt.Sprintf("  HOST_HOME_GUEST: %q", toLinuxPath(hostHome)),
 		fmt.Sprintf("  HOST_INSTANCE_CONFIG: %q", toLinuxPath(instance.K3sConfig())),
 		fmt.Sprintf("  VM_SWITCH_LOG: %q", toLinuxPath(filepath.Join(instance.LogDir(), "vm-switch.log"))),
+		fmt.Sprintf("  VM_SWITCH_EXTRA_ARGS: %q", vmSwitchExtraArgs()),
 		fmt.Sprintf("  KUBERNETES_ENABLED: %v", spec.Kubernetes.Enabled),
 		fmt.Sprintf("  KUBERNETES_VERSION: %s", spec.Kubernetes.Version),
 		fmt.Sprintf("  KUBERNETES_PORT: %d", kubernetesPort),
 		"",
 	}, "\n"), nil
+}
+
+// vmSwitchExtraArgs returns the network-setup flags that turn on diagnostic
+// vm-switch logging — append to the logfile across VM restarts and trace
+// packets — when RDD_KEEP_LOGS is set, and an empty string otherwise. The lima
+// template overrides network-setup's ExecStart only when this is non-empty, so
+// production keeps the distro's own command.
+func vmSwitchExtraArgs() string {
+	if os.Getenv("RDD_KEEP_LOGS") == "" {
+		return ""
+	}
+	return "--vm-switch-logfile-append --trace-packets"
 }
 
 // toLinuxPath converts a host path to a Linux-accessible path inside a Lima VM.
