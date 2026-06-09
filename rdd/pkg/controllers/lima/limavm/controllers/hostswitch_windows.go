@@ -107,6 +107,14 @@ const (
 	vsockListenPort    = 6656
 	handshakeTimeout   = 5 * time.Minute
 
+	// relayMinDuration is the shortest a vsock data connection must last to
+	// count as a real relay. A guest vm-switch that connects and drops faster
+	// than this carried no frames, so the guest still has no networking.
+	relayMinDuration = 5 * time.Second
+	// relayDropWarnThreshold is the number of consecutive immediate drops that
+	// triggers a loud warning that the data plane is not relaying.
+	relayDropWarnThreshold = 3
+
 	// signaturePhrase identifies our distro among all running Hyper-V VMs.
 	// This value is a protocol contract with the guest-side network-setup
 	// binary and must not be changed independently.
@@ -272,6 +280,7 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 
 	// Accept vsock connections and feed them into the virtual network.
 	g.Go(func() error {
+		var immediateDrops int
 		for {
 			conn, err := ln.Accept()
 			if err != nil {
@@ -283,10 +292,28 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 			// AcceptStdio blocks until the connection closes. This is
 			// intentional: each VM runs a single vm-switch process, so
 			// reconnections are serial (old connection EOF, then new accept).
-			if err := vn.AcceptStdio(ctx, conn); err != nil {
-				logger.Error(err, "Failed to accept connection into virtual network")
-			} else {
-				logger.Info("Accepted vsock connection")
+			start := time.Now()
+			err = vn.AcceptStdio(ctx, conn)
+			elapsed := time.Since(start)
+			switch {
+			case err == nil:
+				immediateDrops = 0
+				logger.Info("Accepted vsock connection", "duration", elapsed.String())
+			case elapsed < relayMinDuration:
+				// The guest's vm-switch connected but dropped before relaying
+				// any frames, so the guest still has no DHCP/DNS/NAT. A
+				// succeeding handshake while this repeats means the data plane
+				// is dead even though the bridge is up.
+				immediateDrops++
+				logger.Error(err, "Vsock data connection dropped without relaying",
+					"duration", elapsed.String(), "consecutiveDrops", immediateDrops)
+				if immediateDrops == relayDropWarnThreshold {
+					logger.Info("Host-switch data plane is not relaying: the guest connects on vsock then drops before any frame, so it has no DHCP/DNS/NAT; check the guest vm-switch",
+						"port", vsockListenPort)
+				}
+			default:
+				immediateDrops = 0
+				logger.Error(err, "Failed to accept connection into virtual network", "duration", elapsed.String())
 			}
 		}
 	})
