@@ -29,11 +29,13 @@ which runs best on Windows.
 - Run `27235240401`: attempt 1 PASSED (tracing on), attempt 2 (rerun) PASSED,
   attempt 3 FAILED — the analyzed repro. Artifact:
   `rdd-logs-windows-latest-bats-app`.
-- Three tracing-off runs were in flight at handoff time:
-  `27241058805`, `27241058771`, `27241058839` (branches `ci-repro-traceoff-1/2/3`).
-  Check their `BATS (windows-latest, bats-app)` conclusions first; a failure
-  artifact from these shows the flake without tracing perturbation (but has no
-  guest packet trace — tracing-on artifacts are the ones with vm-switch logs).
+- Tracing-off campaign (branches `ci-repro-traceoff-1/2/3`, commit
+  `e246bf649`): runs `27241058805` and `27241058839` passed windows bats-app;
+  run `27241058771` FAILED it — the tracing-off repro. Its artifact shows the
+  same flake signature (120× `Resolving timed out`, `k3s install failed after
+  30 attempts`) and **54× `no route to host` with zero `connection refused`**
+  on the 6443 dials. Defect 2 is therefore tracing-independent (§3); variant
+  V5 of Experiment A drops in priority.
 
 ### Evidence archive
 - macOS: `~/rdd-flake-evidence/run-27235240401-attempts1and3-logs.tar.gz`
@@ -98,7 +100,9 @@ Dnscache).
   Either netstack does not (in this configuration) create a usable neighbor
   entry from a received ARP request, or some other per-boot state breaks
   resolution. This is what Experiment A discriminates.
-- Status: evidence-locked behavior; mechanism OPEN.
+- Status: evidence-locked behavior; mechanism OPEN. Confirmed
+  tracing-independent by the tracing-off repro (run `27241058771`:
+  54× `no route to host`, zero `connection refused`).
 
 ### Defect 3 — a healthy VM was shut down with no logged initiator
 - Boot B reached fully-ready (all lima requirements + kubeconfig probe
@@ -123,8 +127,8 @@ Dnscache).
 - "DNS responses too slow for curl": boot B latencies — 147 of 149 < 1 s,
   rest ≤ 2 s, zero unanswered.
 - "Packet tracing masks the flake": attempt 3 failed with tracing on.
-  (Tracing may still influence which defect manifests; the tracing-off runs
-  address that.)
+- "Packet tracing causes Defect 2": run `27241058771` failed with tracing off,
+  same `no route to host` signature and same DNS-dead boots.
 
 ### Why only kube-context fails
 1. Only test needing guest DNS/internet during provisioning (in-guest
