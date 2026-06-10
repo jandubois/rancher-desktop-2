@@ -177,6 +177,7 @@ format:
 LTAG_EXCLUDES := \
 	bats/lib \
 	pkg/util/nxadmtail \
+	third_party \
 	$(GUESTAGENT_BINARY) \
 	${NULL}
 ltag:
