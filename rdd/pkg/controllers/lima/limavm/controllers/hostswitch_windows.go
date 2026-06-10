@@ -301,10 +301,9 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 				// relay never returns here while the VM runs, so repeated breaks
 				// with no clean close mean guest networking is flapping.
 				abnormalCloses++
-				cam, arp := vnDiagnostics(vn)
-				logger.Error(err, "Vsock data relay dropped; the guest will reconnect",
-					"duration", elapsed.String(), "abnormalCloses", abnormalCloses,
-					"cam", cam, "arp", arp)
+				values := append([]any{"duration", elapsed.String(), "abnormalCloses", abnormalCloses},
+					vnDiagnostics(vn)...)
+				logger.Error(err, "Vsock data relay dropped; the guest will reconnect", values...)
 				if abnormalCloses == relayUnstableThreshold {
 					logger.Info("Host-switch relay is unstable: the guest data connection keeps breaking and reconnecting without a clean close, so guest networking flaps; check /var/log/vm-switch.log in the guest",
 						"abnormalCloses", abnormalCloses)
@@ -350,8 +349,7 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 			case <-ctx.Done():
 				return nil
 			case <-ticker.C:
-				cam, arp := vnDiagnostics(vn)
-				logger.Info("Virtual network diagnostics", "cam", cam, "arp", arp)
+				logger.Info("Virtual network diagnostics", vnDiagnostics(vn)...)
 			}
 		}
 	})
@@ -453,22 +451,27 @@ func (r *statusRecorder) Write(b []byte) (int, error) {
 	return r.ResponseWriter.Write(b)
 }
 
-// vnDiagnostics summarizes the virtual network's host-to-guest delivery
-// state: the switch CAM table (guest MAC -> connection) and the stack's ARP
-// counters. These are the two layers whose disagreement breaks dialing into
-// the guest, so they are logged periodically and on every relay drop.
-func vnDiagnostics(vn *virtualnetwork.VirtualNetwork) (cam, arp string) {
-	cam = queryVN(vn, "/cam")
+// vnDiagnostics returns logger key/value pairs summarizing the virtual
+// network's host-to-guest delivery state at all four layers that can break
+// dialing into the guest: the switch CAM table, the stack's ARP counters,
+// the neighbor cache, and the NIC/route tables. The last two come from the
+// vendored gvisor-tap-vsock's /neighbors and /nicinfo endpoints.
+func vnDiagnostics(vn *virtualnetwork.VirtualNetwork) []any {
 	var stats struct {
 		ARP map[string]any `json:"ARP"`
 	}
-	arp = "unavailable"
+	arp := "unavailable"
 	if err := json.Unmarshal([]byte(queryVN(vn, "/stats")), &stats); err == nil {
 		if b, err := json.Marshal(stats.ARP); err == nil {
 			arp = string(b)
 		}
 	}
-	return cam, arp
+	return []any{
+		"cam", queryVN(vn, "/cam"),
+		"arp", arp,
+		"neighbors", queryVN(vn, "/neighbors"),
+		"nicinfo", queryVN(vn, "/nicinfo"),
+	}
 }
 
 // queryVN performs an in-process GET against the virtual network's services
