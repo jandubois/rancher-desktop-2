@@ -356,7 +356,9 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 
 	logger.Info("Host-switch running", "subnet", subnet.SubnetCIDR, "gateway", subnet.GatewayIP)
 
-	switch err := g.Wait(); {
+	err = g.Wait()
+	unexposeAllForwards(logger, vn)
+	switch {
 	case parentCtx.Err() != nil:
 		// Cancelled by stopHostSwitch or restartHostSwitch: a clean shutdown.
 		logger.Info("Host-switch stopped")
@@ -480,9 +482,36 @@ func vnDiagnostics(vn *virtualnetwork.VirtualNetwork) []any {
 	}
 }
 
+// unexposeAllForwards closes every host listener the forwarder API opened on
+// this virtual network. gvisor-tap-vsock ties exposed-port listeners to
+// nothing, so without this a forward exposed moments before a VM restart
+// outlives its virtual network: it keeps the host port bound (the next
+// boot's expose fails with EADDRINUSE) and serves dials into a stack with no
+// guest attached, which fail with "no route to host".
+func unexposeAllForwards(logger logr.Logger, vn *virtualnetwork.VirtualNetwork) {
+	var forwards []struct {
+		Local    string `json:"local"`
+		Protocol string `json:"protocol"`
+	}
+	if err := json.Unmarshal([]byte(queryVN(vn, "/services/forwarder/all")), &forwards); err != nil {
+		logger.Error(err, "Failed to list exposed forwards for teardown")
+		return
+	}
+	for _, fwd := range forwards {
+		body, err := json.Marshal(map[string]string{"local": fwd.Local, "protocol": fwd.Protocol})
+		if err != nil {
+			continue
+		}
+		rec := postVN(vn, "/services/forwarder/unexpose", body)
+		logger.Info("Unexposed forward at teardown",
+			"local", fwd.Local, "protocol", fwd.Protocol, "status", rec.statusCode())
+	}
+}
+
 // queryVN performs an in-process GET against the virtual network's services
-// mux and returns the response body. gvisor-tap-vsock exports stack
-// introspection (/cam, /stats, /leases) only through this mux.
+// mux and returns the response body. The mux serves the diagnostic endpoints
+// (/cam, /stats, /neighbors, /nicinfo) at its root and the forwarder API
+// under /services/forwarder/.
 func queryVN(vn *virtualnetwork.VirtualNetwork, path string) string {
 	req, err := http.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
@@ -493,10 +522,29 @@ func queryVN(vn *virtualnetwork.VirtualNetwork, path string) string {
 	return strings.TrimSpace(rec.body.String())
 }
 
-// bodyRecorder is a minimal in-process ResponseWriter for queryVN.
+// postVN performs an in-process POST against the virtual network's services mux.
+func postVN(vn *virtualnetwork.VirtualNetwork, path string, body []byte) *bodyRecorder {
+	rec := &bodyRecorder{}
+	req, err := http.NewRequest(http.MethodPost, path, bytes.NewReader(body))
+	if err != nil {
+		return rec
+	}
+	vn.ServicesMux().ServeHTTP(rec, req)
+	return rec
+}
+
+// bodyRecorder is a minimal in-process ResponseWriter for queryVN and postVN.
 type bodyRecorder struct {
 	header http.Header
 	body   bytes.Buffer
+	status int
+}
+
+func (r *bodyRecorder) statusCode() int {
+	if r.status == 0 {
+		return http.StatusOK
+	}
+	return r.status
 }
 
 func (r *bodyRecorder) Header() http.Header {
@@ -508,7 +556,7 @@ func (r *bodyRecorder) Header() http.Header {
 
 func (r *bodyRecorder) Write(b []byte) (int, error) { return r.body.Write(b) }
 
-func (r *bodyRecorder) WriteHeader(int) {}
+func (r *bodyRecorder) WriteHeader(code int) { r.status = code }
 
 // --- Vsock handshake ---
 
