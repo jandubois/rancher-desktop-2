@@ -66,6 +66,30 @@ provision:
     ExecStart=
     ExecStart=/usr/local/bin/network-setup --debug --logfile ${NETWORK_SETUP_LOG} --vm-switch-path ${VM_SWITCH_PATH} --vm-switch-logfile ${VM_SWITCH_LOG} --dhcp-script /usr/local/libexec/udhcpc/rancher-desktop.script {{.Param.VM_SWITCH_EXTRA_ARGS}}
     {{- end}}
+# Stream guest diagnostics to the host log directory so they survive VM
+# teardown: the journals of the boot/networking units (which only log inside
+# the guest), and lima-init.log (lima's boot output, which records why
+# provisioning failed). GUEST_LOG_DIR is empty unless the host sets
+# RDD_KEEP_LOGS, so production boots skip this. The capture units are
+# transient; each boot starts fresh ones, appending to the host files.
+- mode: system
+  script: |
+    #!/bin/bash
+
+    set -o errexit -o nounset -o pipefail -o xtrace
+
+    if [[ -z $PARAM_GUEST_LOG_DIR ]]; then
+        exit 0
+    fi
+
+    if ! systemctl is-active --quiet rdd-journal-capture.service; then
+        systemd-run --collect --unit=rdd-journal-capture /bin/sh -c \
+            "journalctl --follow --no-tail --output=short-iso --unit=lima-init.service --unit=network-setup.service --unit=rancher-desktop-guest-agent.service --unit=rdd-guest.service --unit=wsl-proxy.service >> \"$PARAM_GUEST_LOG_DIR/guest-journal.log\""
+    fi
+    if ! systemctl is-active --quiet rdd-lima-init-capture.service; then
+        systemd-run --collect --unit=rdd-lima-init-capture /bin/sh -c \
+            "tail -c +0 -F /var/log/lima-init.log >> \"$PARAM_GUEST_LOG_DIR/lima-init.log\""
+    fi
 - mode: system
   script: |
     #!/bin/bash
