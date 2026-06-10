@@ -7,12 +7,15 @@
 package controllers
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -252,9 +255,10 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 		return
 	}
 	mux := http.NewServeMux()
-	mux.Handle("/services/forwarder/all", vn.Mux())
-	mux.Handle("/services/forwarder/expose", vn.Mux())
-	mux.Handle("/services/forwarder/unexpose", vn.Mux())
+	forwarderAPI := logForwarderRequests(logger, vn.Mux())
+	mux.Handle("/services/forwarder/all", forwarderAPI)
+	mux.Handle("/services/forwarder/expose", forwarderAPI)
+	mux.Handle("/services/forwarder/unexpose", forwarderAPI)
 
 	// Capture the parent context before errgroup shadows it: after g.Wait() the
 	// errgroup's derived ctx is always cancelled, so only the parent reveals
@@ -297,8 +301,10 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 				// relay never returns here while the VM runs, so repeated breaks
 				// with no clean close mean guest networking is flapping.
 				abnormalCloses++
+				cam, arp := vnDiagnostics(vn)
 				logger.Error(err, "Vsock data relay dropped; the guest will reconnect",
-					"duration", elapsed.String(), "abnormalCloses", abnormalCloses)
+					"duration", elapsed.String(), "abnormalCloses", abnormalCloses,
+					"cam", cam, "arp", arp)
 				if abnormalCloses == relayUnstableThreshold {
 					logger.Info("Host-switch relay is unstable: the guest data connection keeps breaking and reconnecting without a clean close, so guest networking flaps; check /var/log/vm-switch.log in the guest",
 						"abnormalCloses", abnormalCloses)
@@ -331,6 +337,23 @@ func (r *LimaVMReconciler) runHostSwitch(ctx context.Context, logger logr.Logger
 			return err
 		}
 		return nil
+	})
+
+	// Snapshot the switch CAM table and the stack's ARP counters once a
+	// minute, so a failing run records the host-to-guest delivery state
+	// without a debugger attached.
+	g.Go(func() error {
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case <-ticker.C:
+				cam, arp := vnDiagnostics(vn)
+				logger.Info("Virtual network diagnostics", "cam", cam, "arp", arp)
+			}
+		}
 	})
 
 	logger.Info("Host-switch running", "subnet", subnet.SubnetCIDR, "gateway", subnet.GatewayIP)
@@ -380,6 +403,103 @@ func newVirtualNetworkConfig(subnet hostSwitchSubnet) types.Configuration {
 		GatewayVirtualIPs: []string{subnet.StaticDNSHost},
 	}
 }
+
+// logForwarderRequests wraps the guest-facing forwarder API so expose and
+// unexpose calls — and their failures, such as the host port already being
+// bound — are recorded host-side. The guest agent logs the same exchange only
+// inside the VM, where the log is lost on teardown.
+func logForwarderRequests(logger logr.Logger, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(io.LimitReader(r.Body, 4096))
+		r.Body = io.NopCloser(bytes.NewReader(body))
+		rec := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
+		next.ServeHTTP(rec, r)
+		values := []any{"method", r.Method, "path", r.URL.Path, "status", rec.status}
+		if len(body) > 0 {
+			values = append(values, "body", string(body))
+		}
+		if rec.errBody.Len() > 0 {
+			values = append(values, "error", strings.TrimSpace(rec.errBody.String()))
+		}
+		// Expose/unexpose are rare and load-bearing; the GET endpoints are
+		// polled, so keep them out of the default log.
+		if r.Method == http.MethodPost {
+			logger.Info("Forwarder API request", values...)
+		} else {
+			logger.V(1).Info("Forwarder API request", values...)
+		}
+	})
+}
+
+// statusRecorder captures the response status, and the body of error
+// responses, while passing everything through to the real ResponseWriter.
+type statusRecorder struct {
+	http.ResponseWriter
+	status  int
+	errBody bytes.Buffer
+}
+
+func (r *statusRecorder) WriteHeader(code int) {
+	r.status = code
+	r.ResponseWriter.WriteHeader(code)
+}
+
+func (r *statusRecorder) Write(b []byte) (int, error) {
+	if r.status >= http.StatusBadRequest {
+		if room := 512 - r.errBody.Len(); room > 0 {
+			r.errBody.Write(b[:min(len(b), room)])
+		}
+	}
+	return r.ResponseWriter.Write(b)
+}
+
+// vnDiagnostics summarizes the virtual network's host-to-guest delivery
+// state: the switch CAM table (guest MAC -> connection) and the stack's ARP
+// counters. These are the two layers whose disagreement breaks dialing into
+// the guest, so they are logged periodically and on every relay drop.
+func vnDiagnostics(vn *virtualnetwork.VirtualNetwork) (cam, arp string) {
+	cam = queryVN(vn, "/cam")
+	var stats struct {
+		ARP map[string]any `json:"ARP"`
+	}
+	arp = "unavailable"
+	if err := json.Unmarshal([]byte(queryVN(vn, "/stats")), &stats); err == nil {
+		if b, err := json.Marshal(stats.ARP); err == nil {
+			arp = string(b)
+		}
+	}
+	return cam, arp
+}
+
+// queryVN performs an in-process GET against the virtual network's services
+// mux and returns the response body. gvisor-tap-vsock exports stack
+// introspection (/cam, /stats, /leases) only through this mux.
+func queryVN(vn *virtualnetwork.VirtualNetwork, path string) string {
+	req, err := http.NewRequest(http.MethodGet, path, nil)
+	if err != nil {
+		return err.Error()
+	}
+	rec := &bodyRecorder{}
+	vn.ServicesMux().ServeHTTP(rec, req)
+	return strings.TrimSpace(rec.body.String())
+}
+
+// bodyRecorder is a minimal in-process ResponseWriter for queryVN.
+type bodyRecorder struct {
+	header http.Header
+	body   bytes.Buffer
+}
+
+func (r *bodyRecorder) Header() http.Header {
+	if r.header == nil {
+		r.header = http.Header{}
+	}
+	return r.header
+}
+
+func (r *bodyRecorder) Write(b []byte) (int, error) { return r.body.Write(b) }
+
+func (r *bodyRecorder) WriteHeader(int) {}
 
 // --- Vsock handshake ---
 
