@@ -3,6 +3,44 @@
 Written 2026-06-09 on macOS, for continuation on the Windows dev machine.
 Branch: `hostswitch-relay-diag` (macOS worktree `~/git/rdd-hostswitch-diag`).
 
+## 0. BREAKTHROUGH 2026-06-10: instrumented failure captured (run 27251068707)
+
+The first failure with instrumentation active (commit `593431a47`) settles the
+mechanism for this manifestation; details below supersede the corresponding
+open questions in §3. Artifact archived at `~/rdd-flake-evidence/`.
+
+1. **Wedge** (NEW, narrows the old "DNS dead" mystery): boots A and B lost all
+   guest egress immediately after a fully successful DHCP exchange
+   (guest-journal: lease + route + resolv.conf at 03:58:32; gateway ARP
+   counters zero for the next six minutes; relay connection stayed up). The
+   DHCP round trip proves the tap→vm-switch→vsock→gvisor path worked, then
+   guest frames stopped reaching the gvisor NIC. gvisor's DNS resolver
+   (Defect 1) is exonerated for this run — queries never arrived.
+2. **Leak** (Defect 2 mechanism CONFIRMED for this run): boot A's provision
+   EXIT trap started the half-installed k3s on the dying boot; the guest
+   agent exposed 6443 successfully (04:04:36, status 200) ten seconds before
+   teardown. gvisor's Expose listener is tied to nothing, so it leaked —
+   still bound to 127.0.0.1:6443, still dialing boot A's guestless netstack.
+3. **Lockout**: boots B and C re-exposed and got status 500
+   (`bind: Only one usage of each socket address...`). All 53
+   `no route to host` dials hit the leaked listener; boot C's provision
+   succeeded (lima-init exit 0) yet stayed unreachable to the 900 s cap.
+4. **Defect 3 root cause CONFIRMED**: lima-init.log shows `boot.sh` exit 1 =
+   our k3s installer loop exhausting 30 attempts (`Resolving timed out`),
+   exactly as plan-reply §1.2 derived.
+
+**Fix targets, in order:** (a) tie exposed-port listeners to the host-switch
+lifecycle — unexpose all forwards on teardown, or close listeners with the vn
+in the vendored fork; (b) find the post-DHCP egress wedge (commit `ad60cdf60`
+adds switch byte counters to the snapshots so the next failure shows whether
+the relay or the guest stopped); (c) stop the installer loop from triggering
+restart loops (host-side k3s remains the structural answer).
+
+Caveat: the traced run (`27235240401` attempt 3) still does not fully fit the
+leak pattern (its boot B expose was the first in its rdd process); whether a
+lima-vs-gvisor 6443 bind race explains it stays open until a full-capture
+failure (expose logging + /neighbors + /nicinfo) lands.
+
 ## 1. Problem
 
 `BATS (windows-latest, bats-app)` intermittently fails at `not ok 115 setup_file
