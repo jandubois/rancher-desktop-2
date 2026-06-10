@@ -507,3 +507,5 @@ tool (
 	mvdan.cc/sh/v3/cmd/shfmt
 	sigs.k8s.io/controller-tools/cmd/controller-gen
 )
+
+replace github.com/containers/gvisor-tap-vsock => ./third_party/gvisor-tap-vsock
