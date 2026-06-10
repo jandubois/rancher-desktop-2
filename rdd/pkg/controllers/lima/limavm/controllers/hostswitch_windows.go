@@ -458,7 +458,9 @@ func (r *statusRecorder) Write(b []byte) (int, error) {
 // vendored gvisor-tap-vsock's /neighbors and /nicinfo endpoints.
 func vnDiagnostics(vn *virtualnetwork.VirtualNetwork) []any {
 	var stats struct {
-		ARP map[string]any `json:"ARP"`
+		ARP           map[string]any `json:"ARP"`
+		BytesSent     uint64         `json:"BytesSent"`
+		BytesReceived uint64         `json:"BytesReceived"`
 	}
 	arp := "unavailable"
 	if err := json.Unmarshal([]byte(queryVN(vn, "/stats")), &stats); err == nil {
@@ -468,6 +470,10 @@ func vnDiagnostics(vn *virtualnetwork.VirtualNetwork) []any {
 	}
 	return []any{
 		"cam", queryVN(vn, "/cam"),
+		// Switch-level byte counters: a guest whose egress wedges after DHCP
+		// shows bytesReceived frozen while the relay connection stays up.
+		"bytesSent", stats.BytesSent,
+		"bytesReceived", stats.BytesReceived,
 		"arp", arp,
 		"neighbors", queryVN(vn, "/neighbors"),
 		"nicinfo", queryVN(vn, "/nicinfo"),
