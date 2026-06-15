@@ -23,6 +23,7 @@ import (
 	_ "k8s.io/component-base/metrics/prometheus/clientgo"
 	_ "k8s.io/component-base/metrics/prometheus/version"
 
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/console"
 	cliexit "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/exit"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/help"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/developer"
@@ -85,6 +86,11 @@ func setLogOptions(cmd *cobra.Command, _ []string) error {
 			return fmt.Errorf("invalid log format: %q", logFormat)
 		}
 	}
+	// On Windows, child processes (notably wsl.exe) put the shared console into
+	// DISABLE_NEWLINE_AUTO_RETURN mode and never restore it, so later log lines
+	// "staircase". Repairing the mode before each write keeps our output clean.
+	// A no-op on other platforms and when stderr is redirected to a file/pipe.
+	logrus.SetOutput(console.RepairingWriter(os.Stderr))
 	logLevel, err := cmd.Root().Flags().GetString("log-level")
 	if err != nil {
 		return err
