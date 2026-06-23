@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260622-183645-pr-479</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260622-183645-pr-479</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-06-22 18:36</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of pr-479)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/479" class="gh-ref" data-title="Recover from orphaned WSL2 distro registrations" data-state="open" data-type="pr">#479</a> — Recover from orphaned WSL2 distro registrations</td></tr>
+      <tr><td>Branch</td><td><code>fix/wsl2-orphaned-distro-reimport</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c684b5ff9"><code>c684b5ff9</code></a> lima: re-import an orphaned WSL2 distro on start<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/491188217"><code>491188217</code></a> service: unregister WSL2 distros on delete</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh); Gemini 3.1 Pro — dropped (auth failure)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; sound mechanism; one Important enumeration bug emits spurious Windows warnings, and its unit test masks it</td></tr>
+      <tr><td>Wall-clock time</td><td><code>17 min 32 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="consolidated-review">Consolidated Review <a href="#consolidated-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h3>
+    <p>This Windows-only PR heals orphaned WSL2 distro registrations (re-import on start) and prevents new ones (unregister on <code>svc delete</code>). The mechanism is sound and matches Lima&#39;s WSL2 driver. One Important defect: <code>instanceDistroNames</code> enumerates every directory under LimaHome, so Lima&#39;s reserved <code>_config</code>/<code>_disks</code> dirs become phantom <code>lima-_config</code> distros that emit a spurious warning on every Windows delete — and a unit test masks it by creating <code>_config</code> as a file.</p>
+    <p>Two cloud reviewers ran (Codex, Claude); Gemini dropped on an authentication error. Both reviewers independently raised the enumeration bug. They split on the start-time heal path: Codex rated the missing terminate-before-unregister step Important, Claude rated it a Suggestion. This report adjudicates it as a Suggestion — the triggering state (a diskless distro still running) is unlikely, but the one-line fix restores parity with the two sibling cleanup sites.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> <code>instanceDistroNames</code> enumerates Lima&#39;s reserved <code>_</code>-dirs as distros — spurious Windows warning on every <code>svc delete</code> <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/service/cmd/service.go#L608-L633">rdd/pkg/service/cmd/service.go</a></div>
+      <pre data-start="608" data-line="613-628"><code class="language-go">		var args []string
+		if err := json.Unmarshal(data, &amp;args); err == nil {
+			return args
+		}
+	}
+	return nil
+}
+
+// shouldEnableController determines if a controller should be enabled based on the controller&#39;s specification.
+func shouldEnableController(controller base.Controller, spec string) bool {
+	if controller.GetAPIGroup() == &quot;builtin&quot; {
+		return true
+	}
+	// Empty spec: only builtin controllers are enabled
+	if spec == &quot;&quot; {
+		return false
+	}
+
+	controllerName := controller.GetName()
+	apiGroup := controller.GetAPIGroup()
+
+	var included bool
+	var excluded bool
+
+	parts := strings.Split(spec, &quot;,&quot;)
+	for _, part := range parts {</code></pre>
+    <p><code>instanceDistroNames</code> returns a <code>lima-&lt;name&gt;</code> distro for every directory under LimaHome, checking only <code>entry.IsDir()</code>. LimaHome also holds Lima&#39;s reserved directories — <code>_config</code>, <code>_disks</code>, <code>_networks</code> — and Lima creates <code>_config</code> (the shared SSH key) as soon as any instance exists (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/ssh_keys_windows.go#L21-L26"><code>ssh_keys_windows.go:21-26</code></a>). So <code>unregisterInstanceDistros</code> runs <code>wsl --unregister lima-_config</code>, which fails and logs at <code>warn</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/cmd/rdd/service.go#L605"><code>service.go:605</code></a>): &quot;Failed to unregister WSL2 distro; a stale registration may remain.&quot; On the CLI path (logrus, default level <code>warn</code>) this false alarm reaches the user&#39;s terminal on every Windows delete. Lima&#39;s own <code>store.Instances()</code> skips <code>.</code>/<code>_</code>-prefixed entries (<code>store.go:67</code>); this hand-rolled copy dropped that filter.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/ssh_keys_windows.go#L16-L27">rdd/pkg/controllers/lima/limavm/controllers/ssh_keys_windows.go</a></div>
+      <pre data-start="16" data-line="21-26"><code class="language-go">// Lima&#39;s DefaultPubKeys uses cygpath to convert the key path to MSYS2 format
+// (/c/...), which only works with MSYS2&#39;s ssh-keygen. Windows OpenSSH&#39;s
+// ssh-keygen doesn&#39;t understand MSYS2 paths and fails with &quot;No such file&quot;.
+// By pre-generating the key with a native Windows path, Lima finds the
+// existing key and skips its broken keygen path.
+func ensureSSHKeys(ctx context.Context) error {
+	configDir, err := dirnames.LimaConfigDir()
+	if err != nil {
+		return err
+	}
+	return ensureSSHKeysAt(ctx, filepath.Join(configDir, filenames.UserPrivateKey))
+}</code></pre>
+    <p>The unit test masks the bug: it creates <code>_config</code> as a <em>file</em> (<code>service_test.go:22</code>), so the real directory case never runs. Update that test to create <code>_config</code> with <code>os.Mkdir</code> and it fails until the filter is restored.</p>
+    <p>Fix: skip reserved and dotfile entries, mirroring <code>store.Instances()</code>.</p>
+      <pre><code class="language-diff">-		if entry.IsDir() {
+-			names = append(names, &quot;lima-&quot;+entry.Name())
+-		}
++		name := entry.Name()
++		// Skip Lima&#39;s reserved dirs (_config, _disks, ...), as store.Instances does.
++		if !entry.IsDir() || strings.HasPrefix(name, &quot;_&quot;) || strings.HasPrefix(name, &quot;.&quot;) {
++			continue
++		}
++		names = append(names, &quot;lima-&quot;+name)</code></pre>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Heal path skips the terminate-before-unregister guard its two siblings apply <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L382-L396">rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go</a></div>
+      <pre data-start="382" data-line="387-391"><code class="language-go">
+	// Heal an orphaned WSL2 registration before the hostagent boots it (see
+	// wsl2RegistrationIsOrphaned). Unregistering makes Lima&#39;s Start (below, in
+	// the hostagent) treat the distro as uninitialized and re-import basedisk,
+	// instead of booting a missing disk into ERROR_FILE_NOT_FOUND forever.
+	if wsl2RegistrationIsOrphaned(inst) {
+		logger.Info(&quot;WSL2 distro is registered but its root disk is missing; unregistering to force re-import&quot;,
+			&quot;instance&quot;, limaVM.Name, &quot;disk&quot;, wsl2RootDisk)
+		unregisterWSL2Distro(ctx, logger, limaVM.Name)
+	}
+
+	// Get the path to our own executable (rdd) to use as the hostagent launcher
+	rddPath, err := os.Executable()
+	if err != nil {
+		logger.Error(err, &quot;Failed to get executable path&quot;)</code></pre>
+    <p>The heal path calls <code>unregisterWSL2Distro</code> without first calling <code>terminateWSL2Distro</code>. Both sibling cleanup sites terminate first — <code>removeStaleInstance</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L844-L845"><code>limavm_lifecycle.go:844-845</code></a>) and <code>unregisterInstanceDistros</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/cmd/rdd/service.go#L591-L592"><code>service.go:591-592</code></a>) — because <code>wsl --unregister</code> can deadlock on a distro that still holds kernel state (documented at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L841-L843"><code>limavm_lifecycle.go:841-843</code></a>; recovery needs <code>taskkill /F /IM wslservice.exe</code>). The 30s context timeout bounds the <code>wsl.exe</code> call, not the underlying wslservice deadlock.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L836-L850">rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go</a></div>
+      <pre data-start="836" data-line="841-845"><code class="language-go">// a previous service run whose cleanup failed. On Windows, the WSL2 distro is
+// terminated and then unregistered (removing its ext4.vhdx and releasing any
+// file locks) before the remaining Lima metadata directory is deleted; the WSL2
+// calls are no-ops on other platforms, where the directory is removed directly.
+func removeStaleInstance(ctx context.Context, logger logr.Logger, instName, instanceDir string) error {
+	// Terminate the distro before unregistering it: wsl.exe --unregister can
+	// deadlock on a distro that still holds kernel state, the same hazard
+	// forceStopForDeletion guards against. Both calls are no-ops off Windows.
+	terminateWSL2Distro(ctx, logger, instName)
+	unregisterWSL2Distro(ctx, logger, instName)
+	return os.RemoveAll(instanceDir)
+}
+
+// preserveInstanceLogs moves log files from the Lima instance directory to
+// a subdirectory of the service log directory before the instance is deleted.</code></pre>
+    <p>Codex rated this Important; Claude and this report rate it a Suggestion, because a diskless distro is rarely Running — a running distro holds its <code>ext4.vhdx</code> open, which usually blocks the deletion that creates the orphan. The fix is one line and restores parity with the other two sites.</p>
+    <p>Fix:</p>
+      <pre><code class="language-diff">+	terminateWSL2Distro(ctx, logger, limaVM.Name)
+ 	unregisterWSL2Distro(ctx, logger, limaVM.Name)</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Heal-path unregister failure logs only at <code>V(1)</code>, yet its failure perpetuates the loop being fixed <span class="pill pill-claude">Claude</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+    <p>When the heal-path <code>unregisterWSL2Distro</code> fails, it logs only at <code>V(1)</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L831"><code>limavm_lifecycle.go:831</code></a>), and <code>startInstance</code> proceeds to boot the diskless distro into the <code>ERROR_FILE_NOT_FOUND</code> loop this PR exists to break. The next reconcile&#39;s Lima <code>Start</code> failure surfaces a louder error, so the condition self-retries and stays observable — but the heal log alone shows only &quot;unregistering to force re-import&quot; with no signal that it failed. Consider logging the heal-path failure at a higher level, or returning a distinct error so the requeue reason is explicit.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L826-L836">rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go</a></div>
+      <pre data-start="826" data-line="831"><code class="language-go">	}
+	distroName := &quot;lima-&quot; + instName
+	wslCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	if err := exec.CommandContext(wslCtx, &quot;wsl.exe&quot;, &quot;--unregister&quot;, distroName).Run(); err != nil {
+		logger.V(1).Info(&quot;Failed to unregister WSL2 distro&quot;, &quot;distro&quot;, distroName, &quot;error&quot;, err)
+	}
+}
+
+// removeStaleInstance removes a stale Lima instance directory left behind by
+// a previous service run whose cleanup failed. On Windows, the WSL2 distro is</code></pre>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em>(future)</em> <code>unregisterInstanceDistros</code> (<code>service.go</code>) and <code>terminateWSL2Distro</code>/<code>unregisterWSL2Distro</code> (<code>limavm_lifecycle.go</code>) are two independent implementations of the same terminate-then-unregister cleanup — differing in logger (logrus vs logr), log level, and instance-enumeration discipline. The TODO at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/cmd/rdd/service.go#L580-L583"><code>service.go:580-583</code></a> flags this pending the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/319" class="gh-ref" data-title="Provide hooks for service stop and deletion" data-state="open" data-type="issue">#319</a> stop/delete hook. The duplication is the structural reason I1 exists: the CLI copy lost the reserved-name filter that Lima&#39;s <code>store.Instances()</code> encodes. One shared helper taking an explicit <code>limaHome</code> would foreclose the class. <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em>(in-scope)</em> <code>wsl2RegistrationIsOrphaned</code> reads both live signals at one reconcile — <code>inst.Status</code> (from <code>wsl --list</code>) and an <code>os.Stat</code> of the disk — so no staleness creeps between proxy and ground truth. The <code>StatusUninitialized</code> and <code>VMType != WSL2</code> short-circuits keep it a correct no-op for fresh imports and off Windows. <span class="pill pill-claude">Claude</span></li>
+      <li><em>(in-scope)</em> The heal runs before the hostagent launches — the right lifecycle point, since Lima&#39;s WSL2 driver re-imports only a distro absent from <code>wsl --list</code>. <span class="pill pill-codex">Codex</span></li>
+      <li><em>(in-scope)</em> The fix targets the root cause (Lima&#39;s re-import gating) rather than the symptom, and covers both recovery and prevention. <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The reserved-directory exclusion is untested for its real shape: the test creates <code>_config</code> as a file, so the directory case that produces the spurious warning never runs (I1). Recreating <code>_config</code>/<code>_disks</code> as directories makes the test fail until I1 is fixed. <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span></li>
+      <li>No test covers the terminate/unregister sequencing or the orphan re-import end-to-end. The unit tests exercise only the <code>wsl2RegistrationIsOrphaned</code> predicate and the name mapping; no Windows BATS case exercises orphaned-distro recovery. <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span></li>
+      <li>The <code>os.Stat</code> non-ENOENT error path in <code>wsl2RegistrationIsOrphaned</code> is untested: a permission or I/O error returns <code>false</code> (not orphaned) and boots. The conservative default is reasonable but uncovered. <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    <p>The predicate tests themselves are correct — missing-disk, present-disk, uninitialized, and non-WSL2 cases all hold.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/docs/design/cmd_service.md#L111-L115"><code>rdd/docs/design/cmd_service.md:111-115</code></a> describes <code>svc delete</code> as directory removal only. Add one Windows sentence: WSL2 distro registrations are unregistered before the Lima home is removed. <span class="pill pill-codex">Codex</span></li>
+      <li>The comment at <code>service_test.go:21</code> calls <code>_config</code> &quot;a stray file&quot;; it is a directory. Fix alongside I1. <span class="pill pill-claude">Claude</span></li>
+      <li>New docstrings are accurate. <code>wsl2RegistrationIsOrphaned</code>&#39;s &quot;Always false off Windows, where VMType is never WSL2&quot; holds, and the <code>service.go</code> TODO and <code>unregisterInstanceDistros</code> docstring describe the duplication and best-effort behavior correctly. <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Clean. Two commits split along the recovery/prevention seam — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c684b5ff9"><code>c684b5ff9</code></a> (heal on start) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/491188217"><code>491188217</code></a> (prevent on delete) — each self-contained with its own tests. Both messages state the root cause and the mechanism. No fixup commits. <span class="pill pill-claude">Claude</span></p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/cmd/rdd/service.go#L580-L583"><code>service.go:580-583</code></a> (TODO):<em></em> the service-layer cleanup reimplements the lima controller&#39;s, because <code>svc delete</code> stops the daemon before reaching it; routing through the controller awaits <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/319" class="gh-ref" data-title="Provide hooks for service stop and deletion" data-state="open" data-type="issue">#319</a>. I1 is a concrete bug in that temporary code, not the duplication itself. <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span></li>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/cmd/rdd/service.go#L598-L600"><code>service.go:598-600</code></a> (comment):<em></em> a never-imported distro name fails the unregister harmlessly. This covers <em>instance</em> directories whose distro was never imported; it does not cover Lima&#39;s reserved <code>_config</code>/<code>_disks</code> directories (I1), which are not instances. <span class="pill pill-claude">Claude</span></li>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c684b5ff97ae7048335785948872152f0b24fef6/rdd/cmd/rdd/service.go#L575-L577"><code>service.go:575-577</code></a> (docstring):<em></em> cleanup is best-effort and time-bounded, since <code>wsl.exe</code> can hang on a degraded WSL subsystem — so the PR reduces, but does not guarantee, stale-registration cleanup. <span class="pill pill-codex">Codex</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> — Claude produced the most complete review. It raised the enumeration bug, called out the masking test as its own finding, and surfaced the heal-path logging gap (S2) that no other reviewer saw. Its design read was strongest: it traced the predicate&#39;s dual live-signal design and framed the service/controller duplication as the structural cause of the enumeration bug. It rated the terminate-first issue a Suggestion on solid reasoning — a diskless distro rarely runs — which this report adopted. No false positives.</p>
+    <p><strong>[Codex]</strong> — Codex independently raised the enumeration bug and supplied the decisive evidence: RDD&#39;s Windows SSH-key setup creates <code>_config</code> before normal use, so the bug fires in routine operation rather than an edge case. It also caught the <code>cmd_service.md</code> doc gap that Claude missed. It rated the terminate-first issue Important; this report downgraded it to Suggestion, judging the triggering state unlikely. Tight, well-cited, no false positives.</p>
+    <p><strong>[Gemini]</strong> — Gemini produced no review. Its CLI hit a non-interactive authentication error (<code>FatalAuthenticationError</code>) and exited before reading the prompt. This is an environment failure, not a model limitation; re-authenticating the Gemini CLI (interactive login or <code>GEMINI_API_KEY</code>) restores it. Dropped for this review.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>5m 51s</td><td>5m 25s</td><td>0m 03s</td></tr>
+        <tr><td>Findings</td><td>1I 2S</td><td>1I 1S</td><td>none</td></tr>
+        <tr><td>Tool calls</td><td>35 (Bash 27, Read 8)</td><td>58 (shell 58)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>1</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>2</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>4</td><td>4</td><td>0</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 2S</strong></td><td><strong>1I 1S</strong></td><td><strong>none</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1 (I→S)</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Both reviewers that ran converged on the single Important bug, which raises confidence in it. Claude went deeper on design and edge cases; Codex supplied the decisive evidence and the doc gap. Even with Gemini absent, the two-agent panel agreed on the core finding and produced no false positives.</p>
+    <p><strong>Reconciliation:</strong> Codex&#39;s terminate-before-unregister finding was downgraded important → suggestion (S1), because a diskless distro is rarely Running. Claude&#39;s two Important findings — the enumeration bug and the masking test — were merged into one Important (I1), since a single fix addresses both; the severity is unchanged.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>No skill or repo-context changes warranted. Both reviewers received the repo context (including the new-Warn-on-routine-path UX rule) and applied it; the enumeration finding fell out of standard dimensions. The one process note is operational, not a standing rule: the Gemini CLI failed on a non-interactive auth error, so future runs in this environment need a valid Gemini credential (interactive login or <code>GEMINI_API_KEY</code>) before launch.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
