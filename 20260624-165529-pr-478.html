@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260624-165529-pr-478</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260624-165529-pr-478</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-06-24 16:55</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of pr-478)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/478" class="gh-ref" data-title="E2E: Fix startup test" data-state="open" data-type="pr">#478</a> — E2E: Fix startup test</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/680d2aaa4"><code>680d2aaa4</code></a> E2E: remove backend test<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f2fba8630"><code>f2fba8630</code></a> E2E: Fix main test; remove <code>backend</code>.<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d38bdc9fc"><code>d38bdc9fc</code></a> RDD: mock: Add app reconciler<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/521ef67b5"><code>521ef67b5</code></a> RDD: Leave a copy of CRDs with mock controller</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; stamp <code>ObservedGeneration</code> (I1, one line) and reconcile the <code>startSlowerDesktop</code> signature (I2); the rest is optional</td></tr>
+      <tr><td>Wall-clock time</td><td><code>21 min 2 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/478" class="gh-ref" data-title="E2E: Fix startup test" data-state="open" data-type="pr">#478</a> reworks the Playwright startup E2E test to drive a standalone mock controller instead of the deleted JavaScript backend. The daemon runs with all controllers disabled while the <code>mock-controller</code> binary ships every CRD and adds an <code>appReconciler</code> that flips the App&#39;s <code>Settled</code> condition to mirror <code>spec.running</code>. No critical issues surfaced; the important findings are latent but cheap to fix.</p>
+    <p>All three reviewers converged on the mock reconciler and the test-helper rewrite. The two Important findings are real but dormant — one trips only when someone runs <code>rdd set</code> against the mock, the other only when a <code>.fixme</code> suite is re-enabled. Two agent claims were downgraded after verification: a &quot;non-SSA status update&quot; race (no concurrent writer exists in the disabled-controllers mock) and an &quot;endless reconcile loop&quot; (the apiserver dedupes the no-op write), both folded into S1.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Mock <code>Settled</code> omits <code>ObservedGeneration</code>; <code>rdd set --wait</code> hangs against the mock <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/mock/app_reconciler.go#L52-L67">rdd/pkg/controllers/mock/app_reconciler.go</a></div>
+      <pre data-start="52" data-line="57-62"><code class="language-go">	// Ensure the `Settled` condition matches the running state.
+	status := metav1.ConditionFalse
+	if app.Spec.Running {
+		status = metav1.ConditionTrue
+	}
+	apimeta.SetStatusCondition(&amp;app.Status.Conditions, metav1.Condition{
+		Type:    &quot;Settled&quot;,
+		Status:  status,
+		Reason:  &quot;MockController&quot;,
+		Message: fmt.Sprintf(&quot;app.running set to %v&quot;, app.Spec.Running),
+	})
+	if err := r.Status().Update(ctx, &amp;app); err != nil {
+		log.Error(err, &quot;Failed to update App status&quot;, &quot;name&quot;, req.NamespacedName)
+		return ctrl.Result{}, err
+	}
+</code></pre>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/apis/app/v1alpha1/app_types.go#L22-L26"><code>app_types.go:22-26</code></a> states a load-bearing invariant: every App status condition must stamp <code>ObservedGeneration</code>. <code>rdd set</code> (default <code>--wait=true</code>) returns only when <code>gen &gt;= minGen &amp;&amp; status == True</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/cmd/rdd/set.go#L488"><code>set.go:488</code></a>), where <code>minGen</code> is the post-write generation. The mock leaves <code>observedGeneration</code> at 0, so the predicate never holds and the command blocks until timeout. This PR&#39;s test sidesteps it with <code>--wait=false</code>, and the front end reads status only (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/pkg/rancher-desktop/store/rdd.ts#L50"><code>store/rdd.ts:50</code></a>), so nothing breaks today — but the next caller who runs <code>rdd set running=true</code> against the mock hits the hang. New code, so a fidelity gap rather than a regression.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/apis/app/v1alpha1/app_types.go#L17-L31">rdd/pkg/apis/app/v1alpha1/app_types.go</a></div>
+      <pre data-start="17" data-line="22-26"><code class="language-go">const EngineControllerName = &quot;engine&quot;
+
+// KubernetesControllerName is the registry name of the Kubernetes context controller.
+const KubernetesControllerName = &quot;kubernetes&quot;
+
+// App condition types.
+//
+// Load-bearing invariant: every condition written to App status must stamp
+// ObservedGeneration with the App&#39;s generation. `rdd set` filters conditions
+// by generation, both to wait on a fresh Settled and to report reconcile
+// progress, so an unstamped condition reads as stale and never appears.
+const (
+	// AppConditionRunning mirrors the LimaVM Running condition: True
+	// means the Lima guest has finished booting and SSH is reachable.
+	// It says nothing about the container engine socket; consumers</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/cmd/rdd/set.go#L483-L493">rdd/cmd/rdd/set.go</a></div>
+      <pre data-start="483" data-line="488"><code class="language-go">	reporter := newConditionReporter(minGen)
+	return watchCondition(ctx, config, func(obj *unstructured.Unstructured) bool {
+		// Surface reconcile progress: log each App condition as its
+		// status, reason, or message changes while we wait.
+		reporter.report(obj)
+		status, gen, present := conditionInfo(obj, appv1alpha1.AppConditionSettled)
+		return present &amp;&amp; gen &gt;= minGen &amp;&amp; status == metav1.ConditionTrue
+	})
+}
+
+// conditionReporter logs App status condition changes as they happen, so</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/pkg/rancher-desktop/store/rdd.ts#L45-L55">pkg/rancher-desktop/store/rdd.ts</a></div>
+      <pre data-start="45" data-line="50"><code class="language-typescript">      const app: RDDClient.IoRancherdesktopAppV1alpha1App | undefined = getters.app;
+      const conditions = app?.status?.conditions;
+      return conditions?.find((condition) =&gt; condition.type === type)?.status === &#39;True&#39;;
+    };
+  },
+  settled(state, getters) {
+    return getters.status(&#39;Settled&#39;);
+  },
+  /**
+   * Get the current Kubernetes namespace from the app; undefined if the app is
+   * missing or does not specify one (which is invalid due to the defaulter).</code></pre>
+    <p>Fix:</p>
+      <pre><code class="language-diff"> apimeta.SetStatusCondition(&amp;app.Status.Conditions, metav1.Condition{
+-    Type:    &quot;Settled&quot;,
++    Type:               v1alpha1.AppConditionSettled,
+     Status:             status,
+     Reason:             &quot;MockController&quot;,
+     Message:            fmt.Sprintf(&quot;app.running set to %v&quot;, app.Spec.Running),
++    ObservedGeneration: app.Generation,
+ })</code></pre>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>startSlowerDesktop</code> dropped a parameter that five suites still pass <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/e2e/utils/TestUtils.ts#L345-L355">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="345" data-line="350"><code class="language-ts">
+  return electronApp;
+}
+
+// Start Rancher Desktop, and wait for the window to appear.
+export async function startSlowerDesktop(testInfo: TestInfo): Promise&lt;[ElectronApplication, Page]&gt; {
+  const launchOptions: startRancherDesktopOptions = { };
+
+  if (process.env.CI) {
+    launchOptions.timeout = 120_000; // default is 30_000 msec but the CI is very slow
+  }</code></pre>
+    <p>The signature went from <code>(testInfo, defaultSettings = {})</code> to one parameter, and the body no longer calls <code>createDefaultSettings</code>. Seven call sites still pass a settings object — <code>containers.e2e.spec.ts:20,318,426</code>, <code>dashboard.e2e.spec.ts:12</code>, <code>extensions.e2e.spec.ts:65</code>, <code>volumes.e2e.spec.ts:16</code>, <code>credentials-server.e2e.spec.ts:224</code>. That is a TS2554 error, but CI lint runs ESLint only (<code>scripts/lint-typescript.ts</code>), not <code>tsc</code>, and Playwright&#39;s esbuild loader strips types — so the argument is dropped silently at runtime. Every affected block is <code>.fixme</code>, so the loss is dormant; re-enabling any of them launches with default settings, not the intended ones.</p>
+    <p>Fix: drop the dead second argument at the call sites, or restore the parameter and forward it to <code>createDefaultSettings</code>.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> <code>beforeExit</code> cleanup spawns async work <span class="pill pill-gemini">Gemini</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/e2e/utils/TestUtils.ts#L286-L301">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="286" data-line="291-296"><code class="language-ts">  const topSrcDir = path.join(import.meta.dirname, &#39;../..&#39;);
+  const logsDir = reportAsset(testInfo, &#39;log&#39;);
+  await fs.promises.rm(logsDir, {
+    recursive: true, force: true, maxRetries: 3,
+  });
+  await fs.promises.mkdir(logsDir, { recursive: true });
+  // Set the RDD_INSTANCE process-wide so we can use the correct instance for
+  // running any child processes.
+  process.env.RDD_INSTANCE = reportAsset(testInfo, &#39;instance&#39;);
+  const env = {
+    ...process.env,
+    ...options?.env ?? {},
+    RDD_LOG_DIR: logsDir,
+  };
+
+  // We need to manually launch RDD, to force the use of the mock backend.</code></pre>
+    <p><code>beforeExit</code> fires when the event loop empties. A fire-and-forget <code>spawnFile</code> adds a live child handle, refills the loop, and re-arms <code>beforeExit</code> when it drains — an exit-time spin. If the worker exits through <code>process.exit()</code> instead, <code>beforeExit</code> never fires and the handler is dead. Either way the cleanup is unreliable. The test passes, which means the handler is being skipped, not looping — <code>teardownApp</code> does the real cleanup via <code>rdd service delete</code>. Downgraded from the reported Critical: the blast radius is test teardown, and an authoritative cleanup path already exists.</p>
+    <p>Fix: drop the <code>rdd service stop</code> hook and rely on <code>teardownApp</code>; keep the synchronous <code>controller.kill()</code> under <code>process.on(&#39;exit&#39;)</code>.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Mock reconciler updates status on every reconcile <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/mock/app_reconciler.go#L52-L68">rdd/pkg/controllers/mock/app_reconciler.go</a></div>
+      <pre data-start="52" data-line="57-63"><code class="language-go">	// Ensure the `Settled` condition matches the running state.
+	status := metav1.ConditionFalse
+	if app.Spec.Running {
+		status = metav1.ConditionTrue
+	}
+	apimeta.SetStatusCondition(&amp;app.Status.Conditions, metav1.Condition{
+		Type:    &quot;Settled&quot;,
+		Status:  status,
+		Reason:  &quot;MockController&quot;,
+		Message: fmt.Sprintf(&quot;app.running set to %v&quot;, app.Spec.Running),
+	})
+	if err := r.Status().Update(ctx, &amp;app); err != nil {
+		log.Error(err, &quot;Failed to update App status&quot;, &quot;name&quot;, req.NamespacedName)
+		return ctrl.Result{}, err
+	}
+
+	return ctrl.Result{}, nil</code></pre>
+    <p>The real App controller guards the write with <code>SetStatusCondition</code>&#39;s return — <code>if !changed { return }</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/app/app/controllers/app_controller.go#L533"><code>app_controller.go:533</code></a>). The mock discards the bool and always calls <code>Status().Update</code>. Two stronger framings were checked and dropped: there is no concurrent App-status writer in the disabled-controllers mock (the convention in <code>deep-review-context.md:50</code> targets the real <code>AppReconciler</code>/<code>EngineReconciler</code>), and the apiserver dedupes the byte-identical no-op write, so no reconcile loop forms. The remaining point is hygiene: mirror the guard to drop one redundant write per reconcile.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/app/app/controllers/app_controller.go#L528-L538">rdd/pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="528" data-line="533"><code class="language-go">		settled := computeSettledCondition(latest, settledInputs{
+			engineEnabled:     engineEnabled,
+			kubernetesEnabled: kubernetesEnabled,
+			templateUpToDate:  templateUpToDate,
+		})
+		changed = apimeta.SetStatusCondition(&amp;latest.Status.Conditions, settled) || changed
+		if !changed {
+			return nil
+		}
+		return r.Status().Update(ctx, latest)
+	}); err != nil {</code></pre>
+    <p>Fix:</p>
+      <pre><code class="language-diff">-apimeta.SetStatusCondition(&amp;app.Status.Conditions, metav1.Condition{ /* ... */ })
++if !apimeta.SetStatusCondition(&amp;app.Status.Conditions, metav1.Condition{ /* ... */ }) {
++    return ctrl.Result{}, nil
++}
+ if err := r.Status().Update(ctx, &amp;app); err != nil {</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>waitForAppSettled</code> leaks its timer and keeps a dead guard <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/e2e/pages/nav-page.ts#L55-L84">e2e/pages/nav-page.ts</a></div>
+      <pre data-start="55" data-line="60-79"><code class="language-ts">      return false;
+    }
+  }
+
+  /**
+   * Wait for the backend app to be settled.
+   */
+  async waitForAppSettled() {
+    // We are using the mock controller, so the progress should become ready
+    // fairly quickly.
+
+    let timedOut = false;
+    setTimeout(() =&gt; { timedOut = true }, 30_000);
+    const delay = 500; // msec
+    // eslint-disable-next-line no-unmodified-loop-condition -- Flag updated by timer.
+    while (!timedOut) {
+      if (await this.isAppSettled()) {
+        return;
+      }
+      await util.promisify(setTimeout)(delay);
+    }
+
+    if (timedOut) {
+      throw new Error(&#39;Backend did not settle within 30 seconds&#39;);
+    }
+  }
+
+  /**
+   * Navigate to a given tab, returning the page object model appropriate for
+   * the destination tab.</code></pre>
+    <p>The 30s timer is never cleared, so on the success path it stays armed and keeps the Node event loop busy until it fires. The loop&#39;s only non-<code>return</code> exit sets <code>timedOut</code> true, making the trailing <code>if (timedOut) throw</code> always true. A deadline comparison drops the timer, the eslint-disable, and the redundant guard:</p>
+      <pre><code class="language-ts">const deadline = Date.now() + 30_000;
+while (Date.now() &lt; deadline) {
+  if (await this.isAppSettled()) return;
+  await util.promisify(setTimeout)(500);
+}
+throw new Error(&#39;Backend did not settle within 30 seconds&#39;);</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> 1 s progress-bar timeout risks CI flakes <span class="pill pill-gemini">Gemini</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/e2e/main.e2e.spec.ts#L53-L63">e2e/main.e2e.spec.ts</a></div>
+      <pre data-start="53" data-line="58"><code class="language-ts">    const app = appList.items[0];
+    expect(app.spec?.running).toBe(true);
+  });
+
+  test(&#39;progress should return when application not settled&#39;, async() =&gt; {
+    const navPage = new NavPage(page);
+
+    await rdd(&#39;set&#39;, &#39;running=false&#39;, &#39;--wait=false&#39;);
+    await expect(navPage.progressBar).toBeVisible({ timeout: 1_000 });
+    // The text should be reflected from the status condition.
+    const rawApps = await rdd(&#39;ctl&#39;, &#39;get&#39;, &#39;apps&#39;, &#39;--output=json&#39;);</code></pre>
+    <p>After <code>--wait=false</code> the bar reappears only once the reconcile, watch event, IPC hop, and render all complete. One second covers that on a fast machine; a loaded CI runner can miss it. Drop the override to inherit Playwright&#39;s default, or raise it to <code>5_000</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> Defensive CRD <code>Get</code> cannot fire <span class="pill pill-claude">Claude</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p>The reconciler reads <code>apps.app.rancherdesktop.io</code> each pass and errors if it is absent. The controller installs and establishes its CRDs before <code>mgr.Start</code>, and a <code>For(&amp;App{})</code> reconciler cannot trigger until the App CRD exists — so the read always succeeds. No sibling reconciler does this. Drop the block.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Doc comment typo and non-idiomatic godoc <span class="pill pill-claude">Claude</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/mock/app_reconciler.go#L19-L29">rdd/pkg/controllers/mock/app_reconciler.go</a></div>
+      <pre data-start="19" data-line="24"><code class="language-go">	logf &quot;sigs.k8s.io/controller-runtime/pkg/log&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1&quot;
+)
+
+// type appReconciler reconiles the mock App resource, resulting in the app
+// always being Settled.
+type appReconciler struct {
+	client.Client
+	Recorder events.EventRecorder
+}</code></pre>
+    <p>&quot;reconiles&quot; should read &quot;reconciles&quot;, and godoc leads with the bare symbol name: <code>// appReconciler reconciles the mock App resource...</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> <code>appReconciler.Recorder</code> is assigned but never read <span class="pill pill-claude">Claude</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>Recorder events.EventRecorder</code> is wired in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/mock/mock_controller.go#L108"><code>mock_controller.go:108</code></a> but unused in <code>Reconcile</code>. Sibling reconcilers carry the same dead field; since <code>appReconciler</code> is new, drop the field and its <code>GetEventRecorder</code> wiring rather than copy the pattern.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/controllers/mock/mock_controller.go#L103-L113">rdd/pkg/controllers/mock/mock_controller.go</a></div>
+      <pre data-start="103" data-line="108"><code class="language-go">	}
+
+	log.Info(&quot;Setting up Mock AppReconciler&quot;)
+	err = (&amp;appReconciler{
+		Client:   mgr.GetClient(),
+		Recorder: mgr.GetEventRecorder(controllerLongName),
+	}).SetupWithManager(mgr)
+	if err != nil {
+		return err
+	}
+</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> <code>verifyUserProfile</code> is now a no-op; <code>lockedFields</code> asserts state it no longer sets <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+    <p>Removing <code>setUserProfile</code> leaves <code>verifyUserProfile</code> calling only <code>clearUserProfile()</code>, so the name overstates the work. <code>lockedFields.e2e.spec.ts</code> still asserts <code>patterns</code> equals <code>[&#39;c&#39;,&#39;d&#39;,&#39;f&#39;]</code> and the locked-field rejections that <code>setUserProfile</code> used to establish. The block is <code>.fixme</code>, so the gap is latent; re-enabling it fails. Rename the helper, or restore the suite&#39;s profile setup through the new configuration path.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li><strong>Drives the real status-condition path (in-scope).</strong> <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span> The mock reconciles the actual App CRD and <code>Settled</code> condition the front end already consumes (<code>store/rdd.ts</code>), rather than the bespoke <code>/v1/backend_state</code> shim the old test polled. The test now exercises production wiring.</li>
+      <li><strong>Generated, single-source CRDs (in-scope).</strong> <span class="pill pill-claude">Claude</span> <code>generate-crds.sh</code> writes the mock&#39;s <code>crd.yaml</code> from the same <code>controller-gen</code> output as the per-controller copies, marked <code>DO NOT EDIT</code>; the <code>//go:embed</code> keeps the data hand-edit-free. The <code>seen_mock</code> header-once logic is correct.</li>
+      <li><strong>Disabled-controller isolation (in-scope).</strong> <span class="pill pill-codex">Codex</span> Running the daemon with <code>--controllers=</code> and then a standalone mock keeps the startup test off real VM and container infrastructure while still driving the RDD API path.</li>
+    </ul>
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><strong>Literal condition type invites silent drift (future).</strong> <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span> The mock writes the type string <code>&quot;Settled&quot;</code> and reason <code>&quot;MockController&quot;</code> as literals. A mock-specific reason is fine, but the type should use <code>v1alpha1.AppConditionSettled</code> so a future rename cannot diverge from the <code>set.go</code> and <code>store/rdd.ts</code> consumers. Folds into I1&#39;s fix.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The migration off the deleted JS backend is sound, and the active test now asserts both the settle (progress bar hides) and un-settle (progress bar returns with the condition message) transitions. Three gaps remain:</p>
+    <ol>
+      <li><em></em><code>rdd set</code> with default <code>--wait</code> against the mock<em></em> is never exercised; per I1 it would hang. The only <code>rdd set</code> in the active test passes <code>--wait=false</code>.</li>
+      <li><em></em><code>Settled</code> returning to <code>True</code><em></em> is untested — the test settles, then un-settles, but never re-settles, so the False→True message refresh is unverified.</li>
+      <li><em></em>The <code>.fixme</code> suites<em></em> (containers, volumes, dashboard, extensions, credentials-server) stay unvalidated under the new mock backend, and I2 silently drops the settings they pass.</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>doc.go</code> accurately states the mock requires the built-in controllers disabled, matching the new launcher. The app reconciler&#39;s doc comment has a typo and non-idiomatic form (S5). The <code>ObservedGeneration</code> invariant in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/pkg/apis/app/v1alpha1/app_types.go#L22-L26"><code>app_types.go:22-26</code></a> is contradicted by the mock until I1 lands; if the omission is ever deliberate, a one-line comment in <code>app_reconciler.go</code> would stop the next reader from &quot;fixing&quot; it the wrong way.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The four commits partition the work cleanly: CRD copy, app reconciler, main-test fix, backend-test removal. The backend removal spans two commits (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f2fba8630"><code>f2fba8630</code></a> removes the support helpers, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/680d2aaa4"><code>680d2aaa4</code></a> deletes the spec file), a cosmetic overlap that does not affect bisectability.</p>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> — Broadest coverage. It raised both Important findings and every minor <code>app_reconciler.go</code> cleanup — the unreachable CRD <code>Get</code>, the unused <code>Recorder</code>, the godoc typo — that the others skipped. It traced I1 end to end through <code>set.go</code> and <code>store/rdd.ts</code> to show why the front end tolerates the missing generation while <code>rdd set</code> would not. Its misses were the <code>beforeExit</code> defect and the 1 s timeout flake, both in files it marked reviewed.</p>
+    <p><strong>[Codex]</strong> — Found I1 independently and gave it the sharpest trace: the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/680d2aaa42dc72ada53ea3a495f36f003fde95a2/rdd/cmd/rdd/set.go#L488"><code>set.go:488</code></a> predicate and <code>conditionInfo</code> reading generation 0. It also caught the <code>startSlowerDesktop</code> argument drop, though it filed it as a suggestion rather than weighing the silent-discard impact. Its second reconciler finding overreached — the &quot;endless reconcile loop&quot; ignores the apiserver&#39;s no-op dedup — and dropped to S1. The tightest, most verifiable writing of the three.</p>
+    <p><strong>[Gemini]</strong> — The only reviewer to catch the <code>beforeExit</code> defect and the 1 s timeout flake, both genuine and both unique. It also inflated severity throughout: the <code>beforeExit</code> finding arrived as Critical, and three of its four &quot;important&quot; findings were suggestions. It missed I1 despite reviewing <code>app_reconciler.go</code>, and its non-SSA finding cited the convention without checking that the disabled-controllers mock has a single writer. It skipped <code>git blame</code> (quota), so it could not separate new code from pre-existing.</p>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>11m 33s</td><td>7m 46s</td><td>4m 31s</td></tr>
+        <tr><td>Findings</td><td>2I 6S</td><td>2I 1S</td><td>1I 4S</td></tr>
+        <tr><td>Tool calls</td><td>59 (Bash 39, Read 20)</td><td>93 (shell 93)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>2</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>0</td><td>2</td></tr>
+        <tr><td>Files reviewed</td><td>17</td><td>17</td><td>17</td></tr>
+        <tr><td>Coverage misses</td><td>2</td><td>3</td><td>3</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 6S</strong></td><td><strong>2I 1S</strong></td><td><strong>1I 4S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1 (I→S)</td><td>5 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Gemini C1 <code>beforeExit</code>: critical → important I3. Gemini I1 timer leak: important → suggestion S2. Gemini I2 1 s timeout: important → suggestion S3. Gemini I3 non-SSA update: important → suggestion S1. Gemini I4 lockedFields: important → suggestion S7. Codex I2 endless loop: important → suggestion S1. Codex S1 <code>startSlowerDesktop</code>: suggestion → important I2.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <p>Codex and Claude carried the substance: both independently found I1, the one finding with real teeth, and Codex&#39;s <code>set.go</code> trace plus Claude&#39;s front-end cross-check together established it beyond doubt. Claude added the long tail of mock cleanups. Gemini earned its slot on two unique catches the others missed entirely, but its severity calibration ran hot and it needs the most verification per finding. For this PR, Claude returned the most value, Codex the highest precision.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li><code>[repo]</code> In Node-based E2E or test harnesses, flag async work — <code>spawnFile</code>, unawaited promises, any call that adds an event-loop handle — inside a <code>process.on(&#39;beforeExit&#39;)</code> or <code>process.on(&#39;exit&#39;)</code> handler. <code>beforeExit</code> re-arms the loop every time that async work drains, producing an exit-time spin, and both hooks are skipped when the runner calls <code>process.exit()</code>. Cleanup that must run belongs in explicit teardown, not a lifecycle hook.</li>
+      <li><code>[repo]</code> UPDATE the App.Status SSA convention entry: the non-SSA / retry-on-conflict requirement applies only to a controller that runs alongside other App-status writers. A standalone mock started with <code>--controllers=</code> is the sole status writer, so a plain read-modify-write <code>Status().Update</code> is correct there and should not be flagged; a spec-write conflict self-heals through the controller-runtime requeue. Reviewers were flagging the mock under the production-controller rule.</li>
+      <li><code>[repo]</code> CI lint runs ESLint only (<code>scripts/lint-typescript.ts</code>), not <code>tsc</code>, and Playwright transpiles through esbuild, which strips types without checking them. Type errors that <code>tsc</code> would catch — excess function arguments (TS2554), wrong argument types — ship green and fail silently at runtime. When a function signature changes, grep every caller; do not assume the type checker guards the contract.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
