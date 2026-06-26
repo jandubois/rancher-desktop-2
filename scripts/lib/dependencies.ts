@@ -67,6 +67,9 @@ export interface DependencyVersions {
 
 export const DEP_VERSIONS_PATH = 'pkg/rancher-desktop/assets/dependencies.yaml';
 
+/** The manifest for the guest packages the build bakes into the rdd binary. */
+export const GUEST_DEP_VERSIONS_PATH = 'rdd/dependencies.yaml';
+
 /**
  * One downloadable artifact for a dependency.  Every field needed to fetch and
  * verify the bytes lives here, so a downloader needs no per-package knowledge.
