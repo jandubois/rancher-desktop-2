@@ -68,9 +68,9 @@ func linkForwarders(execPath, binDir, pluginDir string) error {
 	}
 	plugins := pluginTargets(execPath)
 
-	// Every bundled binary forwards to itself; kubectl is a multicall into rdd
-	// rather than a separate binary, so it forwards to rdd. The plugins also go
-	// into the bin directory so they work as standalone commands.
+	// Every bundled binary forwards to itself. Each multicall name forwards to
+	// rdd, which provides it, unless the bundle ships a binary of that name. The
+	// plugins also go into the bin directory so they work as standalone commands.
 	binWant := map[string]string{}
 	for _, entry := range entries {
 		if entry.IsDir() || entry.Name() == forwarderName {
@@ -78,7 +78,11 @@ func linkForwarders(execPath, binDir, pluginDir string) error {
 		}
 		binWant[entry.Name()] = filepath.Join(srcDir, entry.Name())
 	}
-	binWant["kubectl.exe"] = filepath.Join(srcDir, "rdd.exe")
+	for _, name := range multiCallLinks {
+		if _, ok := binWant[name+".exe"]; !ok {
+			binWant[name+".exe"] = filepath.Join(srcDir, "rdd.exe")
+		}
+	}
 	for name, target := range plugins {
 		binWant[name] = target
 	}

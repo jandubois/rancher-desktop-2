@@ -13,8 +13,8 @@
 // publishes a small forwarder per tool beside a <tool>.shim file naming the real
 // binary (see forwarders.go). Inside the application bundle rdd owns these
 // directories and keeps them mirroring the bundled binaries. Standalone, rdd
-// repairs its own rdd and kubectl links and prunes anything an uninstalled
-// application left dangling — symlinks, and forwarders whose target is gone — so
+// repairs its own rdd and multicall links and prunes anything an uninstalled
+// application left dangling (symlinks, and forwarders whose target is gone), so
 // a stale entry cannot shadow a tool the user later installs on PATH; working
 // links, forwarders with a live target, and other files survive.
 package binlinks
@@ -31,10 +31,15 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 )
 
+// multiCallLinks are the subcommands rdd also provides as multicall binaries
+// (see cmd/rdd/multicall.go); each gets a link in the bin directory pointing
+// at rdd.
+var multiCallLinks = []string{"kubectl", "nerdctl"}
+
 // LinkBundledBinaries publishes rdd's binaries into the instance bin directory.
 // Inside the application bundle it mirrors every bundled binary, recreating the
 // directory on macOS and Linux and reconciling forwarders in place on Windows;
-// standalone it repairs only its own rdd and kubectl links.
+// standalone it repairs only its own rdd and multicall links.
 // Publishing is best-effort and must not block startup. A per-binary link
 // failure is logged and skipped. Only a whole-operation failure is returned for
 // the caller to log, such as an unreadable bundle directory, an unwritable bin
@@ -85,7 +90,7 @@ func pluginTargets(execPath string) map[string]string {
 
 // exeSuffix is the executable extension for goos: ".exe" on Windows, empty
 // elsewhere. Bundled binaries carry it in their own names; only the links rdd
-// invents (kubectl, and the standalone rdd and kubectl) need it appended.
+// invents (the multicall links, and the standalone rdd) need it appended.
 func exeSuffix(goos string) string {
 	if goos == "windows" {
 		return ".exe"
@@ -113,12 +118,12 @@ func inAppBundle(execPath, goos string) bool {
 	return strings.HasSuffix(execPath, sep+tail)
 }
 
-// linkBinaries recreates binDir with links to the bundled binaries, a kubectl
-// link to rdd, and links to the bundled docker CLI plugins; and recreates
-// pluginDir with links to just those plugins (for docker's cliPluginsExtraDirs).
-// Recreating each drops stale links from a previous install; reading the source
-// directories before removing the targets keeps the existing links when a read
-// fails.
+// linkBinaries recreates binDir with links to the bundled binaries, the
+// multicall links to rdd, and links to the bundled docker CLI plugins; and
+// recreates pluginDir with links to just those plugins (for docker's
+// cliPluginsExtraDirs). Recreating each drops stale links from a previous
+// install; reading the source directories before removing the targets keeps the
+// existing links when a read fails.
 func linkBinaries(execPath, binDir, pluginDir, exe string, useSymlink bool) error {
 	srcDir := filepath.Dir(execPath)
 	entries, err := os.ReadDir(srcDir)
@@ -144,10 +149,16 @@ func linkBinaries(execPath, binDir, pluginDir, exe string, useSymlink bool) erro
 		}
 	}
 
-	// No separate kubectl binary is bundled; rdd provides it. Link kubectl to
-	// rdd so kubectl on PATH reaches rdd.
-	if err := link(execPath, filepath.Join(binDir, "kubectl"+exe), useSymlink); err != nil {
-		klog.Warningf("Failed to link kubectl to rdd: %v", err)
+	// rdd provides kubectl and nerdctl. Link each multicall name to rdd so it
+	// reaches rdd from PATH, unless the bundle ships a binary of that name.
+	for _, name := range multiCallLinks {
+		linkPath := filepath.Join(binDir, name+exe)
+		if _, err := os.Lstat(linkPath); err == nil {
+			continue
+		}
+		if err := link(execPath, linkPath, useSymlink); err != nil {
+			klog.Warningf("Failed to link %s to rdd: %v", name, err)
+		}
 	}
 
 	// Plugins go into the bin directory too, so docker-compose and docker-buildx
@@ -195,7 +206,7 @@ func link(target, linkPath string, useSymlink bool) error {
 
 // ensureSelfLinks keeps the instance bin directory usable when no application
 // bundle has published it. It first prunes symlinks and forwarders left dangling
-// by an uninstalled application, then points the rdd and kubectl links at a
+// by an uninstalled application, then points the rdd and multicall links at a
 // standalone rdd. Working links, forwarders with a live target, and other files
 // survive.
 func ensureSelfLinks(execPath, binDir, pluginDir, exe string, useSymlink bool) error {
@@ -213,9 +224,9 @@ func ensureSelfLinks(execPath, binDir, pluginDir, exe string, useSymlink bool) e
 	if _, err := os.Stat(pluginDir); err == nil {
 		pruneDanglingForwarders(pluginDir)
 	}
-	for _, name := range []string{"rdd" + exe, "kubectl" + exe} {
-		if err := ensureSelfLink(filepath.Join(binDir, name), execPath, useSymlink); err != nil {
-			klog.Warningf("Failed to repair the %q link: %v", name, err)
+	for _, name := range append([]string{"rdd"}, multiCallLinks...) {
+		if err := ensureSelfLink(filepath.Join(binDir, name+exe), execPath, useSymlink); err != nil {
+			klog.Warningf("Failed to repair the %q link: %v", name+exe, err)
 		}
 	}
 	return nil
