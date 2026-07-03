@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260702-214637-pr-478</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260702-214637-pr-478</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-02 21:46</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>3 (of pr-478)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/478" class="gh-ref" data-title="E2E: Fix startup test" data-state="open" data-type="pr">#478</a> — E2E: Fix startup test</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ad8b24a77"><code>ad8b24a77</code></a> Address AI review comments<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8ce37aa06"><code>8ce37aa06</code></a> Address AI review comments<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/680d2aaa4"><code>680d2aaa4</code></a> E2E: remove backend test<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f2fba8630"><code>f2fba8630</code></a> E2E: Fix main test; remove <code>backend</code>.<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d38bdc9fc"><code>d38bdc9fc</code></a> RDD: mock: Add app reconciler<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/521ef67b5"><code>521ef67b5</code></a> RDD: Leave a copy of CRDs with mock controller</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the feature is correct; two Important defects sit in the delta commit&#39;s own test-cleanup code, neither blocks the feature</td></tr>
+      <tr><td>Wall-clock time</td><td><code>25 min 56 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 3 lands one delta commit (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ad8b24a77"><code>ad8b24a77</code></a>) that resolves every Round 2 finding: the mock-controller cleanup now holds a module-scoped process handle, teardown survives a failed app launch, and <code>isAppSettled</code> tolerates the daemon&#39;s not-ready window. Two net-new defects remain, both in that commit&#39;s cleanup code — its own catch swallows the exit-status assertion, and the stale-controller kill guard reads a handle that reassignment already cleared.</p>
+    <p>All three reviewers focused on the delta commit&#39;s rewrite of <code>teardown</code> and <code>startRancherDesktop</code>. Claude and Codex independently found the swallowed exit assertion (I1); Claude and Gemini independently found the dead stale-kill guard (I2). Three findings did not survive verification against the code: Gemini&#39;s &quot;delete aborts setup&quot; (C1) and &quot;file-open leak&quot; (I3), and Codex&#39;s kubeconfig-startup race (its I1) — each refuted below.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Mock-controller exit assertion is swallowed by its own catch <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/utils/TestUtils.ts#L173-L201">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="173" data-line="178-196"><code class="language-ts">    console.error(`Failed to clean up RDD: ${ ex }`);
+  } finally {
+    await expect(util.promisify(rddLogs.close.bind(rddLogs))(), &#39;failed to close RDD logs&#39;)
+      .resolves.toBeUndefined();
+  }
+  try {
+    const { mockController } = currentTest ?? {};
+    if (mockController) {
+      if (typeof mockController?.exitCode !== &#39;number&#39;) {
+        const promise = new Promise&lt;void&gt;((resolve) =&gt; {
+          mockController.once(&#39;exit&#39;, () =&gt; resolve());
+        });
+        mockController.kill();
+        await promise;
+      }
+      const { exitCode: exit, signalCode: signal } = mockController;
+      expect({ exit, signal }, &#39;mock controller exited&#39;).toEqual({ exit: 0, signal: null });
+    }
+  } catch (ex) {
+    // Ignore the error if the process is already gone, but log it otherwise.
+    if (!ex || typeof ex !== &#39;object&#39; || !(&#39;code&#39; in ex) || ex.code !== &#39;ESRCH&#39;) {
+      console.error(`Failed to clean up mock controller: ${ ex }`);
+    }
+  }
+
+  if (currentTest?.file === filename) {
+    const delta = (Date.now() - currentTest.startTime) / 1_000;
+    const min = Math.floor(delta / 60);
+    const sec = Math.round(delta % 60);</code></pre>
+    <p>The assertion the delta commit added to surface a bad exit sits inside the same <code>try</code> as the kill, and the catch only logs — it never re-throws. A Playwright matcher error is not <code>code === &#39;ESRCH&#39;</code>, so a crashed or signal-killed controller (<code>{exit: null, signal: &#39;SIGKILL&#39;}</code>) reaches <code>console.error</code> and the test stays green. The <code>ESRCH</code> branch is itself dead: the old <code>process.kill(pid)</code> threw <code>ESRCH</code>, but <code>ChildProcess.kill()</code> does not. A mid-run crash is still caught indirectly — the app never settles, so <code>waitForAppSettled</code> times out — but a non-zero exit after the UI assertions pass goes unreported.</p>
+    <p>Fix: move the assertion out of the <code>try</code>, or re-throw everything except <code>ESRCH</code>.</p>
+      <pre><code class="language-ts">} catch (ex) {
+  if (ex &amp;&amp; typeof ex === &#39;object&#39; &amp;&amp; &#39;code&#39; in ex &amp;&amp; ex.code === &#39;ESRCH&#39;) return;
+  throw ex;
+}</code></pre>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> Stale-controller kill guard can never fire <span class="pill pill-claude">Claude</span> <span class="pill pill-gemini">Gemini</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/utils/TestUtils.ts#L315-L327">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="315" data-line="320-322"><code class="language-ts"> * @param testPath The path to the test file.
+ * @param options Additional options; see type definition for details.
+ * @returns The Electon application.
+ */
+export async function startRancherDesktop(testInfo: TestInfo, options: startRancherDesktopOptions = {}): Promise&lt;ElectronApplication&gt; {
+  currentTest = {
+    file: testInfo.file, options, startTime: Date.now(),
+  };
+  const topSrcDir = path.join(import.meta.dirname, &#39;../..&#39;);
+  const logsDir = reportAsset(testInfo, &#39;log&#39;);
+  await fs.promises.rm(logsDir, {
+    recursive: true, force: true, maxRetries: 3,
+  });</code></pre>
+    <p><code>startRancherDesktop</code> replaces <code>currentTest</code> with a fresh object at line 320, then the guard at line 356 reads <code>currentTest.mockController</code> from that fresh object — always <code>undefined</code>. The guard, meant to kill a controller a prior run left behind, is dead code and never calls <code>kill()</code>. Today the trigger is narrow: <code>workers: 1</code> runs every file in one worker, teardown now reliably kills the controller (the Round 2 undefined-<code>app</code> fix), and only <code>.fixme</code> suites re-enter <code>startRancherDesktop</code> without a teardown between. The defect is real regardless of the current blast radius.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/utils/TestUtils.ts#L351-L361">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="351" data-line="356"><code class="language-typescript">      .resolves.toBeUndefined();
+  }
+
+  // The mock controller does not daemonize; launch it in the background.
+  try {
+    if (typeof currentTest.mockController?.exitCode !== &#39;number&#39;) {
+      currentTest.mockController?.kill();
+    }
+  } catch { /* Ignore errors killing stale controllers */ }
+  const controller = childProcess.spawn(
+    path.join(topSrcDir, &#39;rdd&#39;, &#39;bin&#39;, exeName(&#39;mock-controller&#39;)),</code></pre>
+    <p>Fix: capture the previous handle before reassigning <code>currentTest</code>.</p>
+      <pre><code class="language-ts">const previousController = currentTest?.mockController;
+currentTest = { file: testInfo.file, options, startTime: Date.now() };
+// ...
+if (previousController &amp;&amp; typeof previousController.exitCode !== &#39;number&#39;) {
+  previousController.kill();
+}</code></pre>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Teardown can hang on an already-exited or unresponsive controller <span class="pill pill-claude">Claude</span> <span class="pill pill-gemini">Gemini</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/utils/TestUtils.ts#L176-L191">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="176" data-line="181-186"><code class="language-ts">      .resolves.toBeUndefined();
+  }
+  try {
+    const { mockController } = currentTest ?? {};
+    if (mockController) {
+      if (typeof mockController?.exitCode !== &#39;number&#39;) {
+        const promise = new Promise&lt;void&gt;((resolve) =&gt; {
+          mockController.once(&#39;exit&#39;, () =&gt; resolve());
+        });
+        mockController.kill();
+        await promise;
+      }
+      const { exitCode: exit, signalCode: signal } = mockController;
+      expect({ exit, signal }, &#39;mock controller exited&#39;).toEqual({ exit: 0, signal: null });
+    }
+  } catch (ex) {</code></pre>
+    <p>Two paths leave <code>await promise</code> waiting forever. If the controller already exited on a signal, <code>exitCode</code> is <code>null</code> (<code>typeof null === &#39;object&#39;</code>), the guard treats it as running, and <code>once(&#39;exit&#39;)</code> waits for an event that already fired. If <code>kill()</code> (SIGTERM) fails to terminate the process, <code>&#39;exit&#39;</code> never fires. Either way teardown stalls to Playwright&#39;s hook timeout. The normal path is safe — <code>rdd service delete</code> earlier in teardown drops the control plane and the controller self-exits 0 before this block — so the risk stays confined to abnormal exits. Gemini rated this Important; the abnormal-only trigger puts it at Suggestion.</p>
+    <p>Fix: guard on both fields (<code>exitCode === null &amp;&amp; signalCode === null</code>) and bound the wait with a timer that escalates to <code>SIGKILL</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>Main App Test</code> runs without <code>.serial</code> despite order-dependent shared state <span class="pill pill-claude">Claude</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/main.e2e.spec.ts#L5-L15">e2e/main.e2e.spec.ts</a></div>
+      <pre data-start="5" data-line="10"><code class="language-ts">
+import * as rddClient from &#39;@rdd-client&#39;;
+
+import type { ElectronApplication, Page } from &#39;@playwright/test&#39;;
+
+test.describe(&#39;Main App Test&#39;, () =&gt; {
+  let electronApp: ElectronApplication;
+  let page: Page;
+
+  test.beforeAll(async({ colorScheme }, testInfo) =&gt; {
+    electronApp = await startRancherDesktop(testInfo);</code></pre>
+    <p>The suite shares one app across its tests and depends on order: <code>application should have been created</code> asserts <code>running === true</code>, then <code>progress should return when application not settled</code> sets <code>running=false</code>. Its sibling <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/screenshots/screenshots.e2e.spec.ts#L29"><code>screenshots/screenshots.e2e.spec.ts:29</code></a> runs the same &quot;Main App Test&quot; as <code>test.describe.serial</code>, and <code>preferences</code>, <code>quit-on-close</code>, and <code>start-in-background</code> follow that convention. Under <code>workers: 1</code> with <code>fullyParallel</code> off the happy path runs in order regardless, so this is no correctness break. It matters on failure: a plain <code>describe</code> runs the remaining tests after one fails, and on CI (<code>retries: 2</code>) retries a single test against already-mutated state instead of re-running the whole group from <code>beforeAll</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/screenshots/screenshots.e2e.spec.ts#L24-L34">screenshots/screenshots.e2e.spec.ts</a></div>
+      <pre data-start="24" data-line="29"><code class="language-typescript">
+const isWin = os.platform() === &#39;win32&#39;;
+const isMac = os.platform() === &#39;darwin&#39;;
+let console: Log;
+
+test.describe.serial(&#39;Main App Test&#39;, () =&gt; {
+  let electronApp: ElectronApplication;
+  let page: Page;
+  let navPage: NavPage;
+  let screenshot: MainWindowScreenshots;
+  const afterCheckedTimeout = 200;</code></pre>
+    <p>Fix: use <code>test.describe.serial</code> to match the sibling suite and the repo convention.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><em></em><code>isAppSettled</code> gates on a human-readable log substring (future).<em></em> <span class="pill pill-claude">Claude</span> The readiness check greps <code>rdd service status</code> stderr for the literal <code>has been started: true</code>, emitted by <code>logrus.Infof</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/rdd/cmd/rdd/service.go#L398"><code>rdd/cmd/rdd/service.go:398</code></a>. It works today because logrus keeps that phrase verbatim inside the JSON <code>msg</code>, but any reformat of that line turns silently into a 30 s poll timeout with no diagnostic. The code comment (&quot;We do not have a parsable output yet&quot;) names the root cause; a machine-readable <code>service status</code> (exit code or JSON field) would remove the coupling. Test-only, and the poll bounds the failure.</li>
+      <li><em></em>The mock <code>crd.yaml</code> duplicates every controller&#39;s CRD with no drift check (future).<em></em> <span class="pill pill-claude">Claude</span> <code>generate-crds.sh</code> regenerates the 2074-line aggregate alongside the per-controller copies in one run, so drift is unlikely, but no CI step verifies the committed copy matches a fresh generation. A <code>git diff --exit-code</code> after <code>make generate</code> would close that gap.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li><em></em><code>isAppSettled</code>&#39;s <code>try/catch → return false</code> restores not-ready tolerance (in-scope).<em></em> <span class="pill pill-claude">Claude</span> <code>expect.poll</code> now retries through the daemon&#39;s startup window instead of throwing on the first non-zero <code>rdd</code> exit — the Round 2 S1 fix, done correctly.</li>
+      <li><em></em>Process-wide <code>RDD_INSTANCE</code> keeps every child on one instance (in-scope).<em></em> <span class="pill pill-claude">Claude</span> <code>spawnFile</code> inherits <code>process.env</code>, so even the un-<code>env</code>&#39;d <code>service status</code> call targets the isolated control plane.</li>
+      <li><em></em>Dropping the per-reconciler CRD-existence <code>Get</code> is safe (in-scope).<em></em> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span> The mock ships and registers all CRDs via <code>//go:embed crd.yaml</code> before any reconciler starts, so the guards could no longer fire.</li>
+      <li><em></em>The mock App reconciler drives the real <code>Settled</code> contract (in-scope).<em></em> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span> It stamps <code>ObservedGeneration</code> and reconciles the actual App CRD the front end consumes, keeping the test on the production status path while embedded CRDs avoid VM and container startup.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR is itself test infrastructure, so the risks live in its own robustness, ranked by impact: a non-clean mock-controller exit goes unreported (I1), the double-start-without-teardown guard is inert (I2), and teardown can hang on an abnormal exit (S1). The new <code>main</code> suite now asserts both transitions — the progress bar hides with <code>running === true</code>, then returns carrying the condition message after <code>running=false</code>. The un-settle test reads the <code>Settled</code> condition once and couples the bar text to the mock&#39;s message (<code>&quot;app.running set to %v&quot;</code>); <code>toHaveText</code> auto-retries, so the risk is low. The <code>.fixme</code> suites stay unvalidated under the new mock backend.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>startRancherDesktop</code>&#39;s JSDoc still names <code>@param testPath</code> — the parameter is <code>testInfo</code> — and misspells &quot;Electon&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/utils/TestUtils.ts#L315-L317"><code>e2e/utils/TestUtils.ts:315-317</code></a>); both predate this commit but sit in the rewritten block, worth a one-line fix. <code>rdd/pkg/controllers/mock/doc.go</code> correctly documents that the mock needs the built-in controllers disabled. The <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/e2e/pages/nav-page.ts#L49"><code>nav-page.ts:49</code></a> comment honestly flags the log-substring gate as a stopgap.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Both <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8ce37aa06"><code>8ce37aa06</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ad8b24a77"><code>ad8b24a77</code></a> carry the subject &quot;Address AI review comments&quot; — review-iteration fixups. Keeping them separate during active review is fine; before merge, fold each into the feature commit it patches (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f2fba8630"><code>f2fba8630</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d38bdc9fc"><code>d38bdc9fc</code></a>).</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><code>startSlowerDesktop</code> dropped a parameter (declined Round 1).<em></em> The signature now takes only <code>testInfo</code>, yet five <code>.fixme</code> suites (<code>containers</code>, <code>credentials-server</code>, <code>dashboard</code>, <code>extensions</code>, <code>volumes</code>) still pass a settings object. No CI job runs <code>tsc</code> over <code>e2e/</code> and Playwright transpiles through esbuild without type-checking, so the arity mismatch ships green. Author: those suites will be rewritten or dropped. The delta commit left them untouched.</li>
+      <li><em></em><code>lockedFields</code> asserts profile state it no longer establishes (prior S3).<em></em> The <code>.fixme</code> suite still checks <code>patterns</code> and the locked k8s version after <code>setUserProfile</code> was removed; it falls under the same rewrite-or-drop plan.</li>
+      <li><em></em>Dead <code>CURRENT_SETTINGS_VERSION</code> imports (prior S4).<em></em> Now unused in <code>ProfileUtils.ts</code>, <code>lockedFields.e2e.spec.ts</code>, and <code>screenshots.e2e.spec.ts</code>. <code>eslint.config.mts</code> disables <code>@typescript-eslint/no-unused-vars</code> repo-wide during the ESLint transition, so this does not fail CI.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> — Carried the round. It co-found both Important defects — the swallowed exit assertion with Codex, the dead stale-kill guard with Gemini — and alone raised the missing-<code>.serial</code> gap and both design concerns. It grounded its claims by reading <code>serviceConfigAction</code> and the sibling <code>screenshots</code> suite rather than reasoning from the diff alone. Its one calibration slip: it labeled the missing <code>.serial</code> a &quot;regression,&quot; but the prior modifier was <code>.fixme</code>, so those tests never ran — a gap, not a regression.</p>
+    <p><strong>[Codex]</strong> — Highest precision on the swallowed-assertion finding, with the cleanest rethrow fix, traced through <code>external.RunControllers</code>. Its other finding — the mock controller races kubeconfig and exits 1 — did not survive: <code>rdd svc config</code> routes through <code>ensureServiceRunning</code>, which blocks up to 90 s for readiness, so the one-shot fetch cannot fast-fail. That refutation needs <code>serviceConfigAction</code>, a file outside the diff; reviewing the delta in isolation, Codex could not see the wait. It missed the stale-kill guard and the teardown hang.</p>
+    <p><strong>[Gemini]</strong> — Mixed. It independently found the dead stale-kill guard with a correct root cause, and its signal-exit observation sharpened S1. But it led with a Critical — <code>rdd service delete</code> aborts setup — that the code refutes outright: <code>serviceDeleteAction</code> returns nil when the service does not exist. Its file-open &quot;leak&quot; named an unreachable path, since a spawned controller implies <code>logsDir</code> already exists. Half its findings did not survive. It skipped <code>git blame</code> (quota).</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>13m 38s</td><td>8m 22s</td><td>2m 25s</td></tr>
+        <tr><td>Findings</td><td>2I 2S</td><td>1I</td><td>1I 1S</td></tr>
+        <tr><td>Tool calls</td><td>28 (Bash 20, Read 8)</td><td>97 (shell 97)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>2</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>22</td><td>22</td><td>22</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 2S</strong></td><td><strong>1I</strong></td><td><strong>1I 1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>1</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Gemini I1 (teardown hang): important → suggestion S1, on the abnormal-exit-only trigger. Gemini C1 (<code>rdd service delete</code> aborts setup): dropped as a false positive — <code>serviceDeleteAction</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ad8b24a772cf11e859e230b425f647eb6f7bdcfa/rdd/cmd/rdd/service.go#L376-L378"><code>service.go:376-378</code></a>) returns nil when <code>!service.Exists()</code>, so the command is idempotent. Gemini I3 (file-open leak): dropped as a false positive — <code>startRancherDesktop</code> creates <code>logsDir</code> before spawning the controller, so the ENOENT it feared cannot coincide with a controller to leak. Codex I1 (kubeconfig-startup race): dropped as a false positive — <code>rdd svc config</code> → <code>ensureServiceRunning</code> blocks up to <code>startWaitTimeout</code> (90 s) for apiserver readiness and a fresh discovery ConfigMap, so the mock controller&#39;s one-shot <code>GetKubeConfigFromRDD</code> waits rather than exiting 1. Claude S2 (missing <code>.serial</code>): reclassified from regression to gap, since the suite was <code>.fixme</code> before this round.</p>
+    <p>Claude returned the most value: both Important defects, the <code>.serial</code> gap, and both design concerns. Codex held the highest precision on the finding it shared, but reviewing the delta in isolation cost it the kubeconfig refutation and two misses. Gemini contributed one solid find amid two drops.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>Add a review dimension for assertions placed inside error-swallowing handlers. When a test or cleanup routine puts an <code>expect</code>/<code>assert</code> inside a <code>try</code> whose <code>catch</code> only logs or returns, or inside a detached event callback, verify the assertion can still fail the test. A matcher throws an ordinary error; a catch that swallows or logs it turns a real failure into a false-green. Recognize the pattern as an assertion whose nearest enclosing <code>catch</code> does not re-throw, and flag it.</li>
+      <li>Add a review dimension for cleanup or a guard that reads a resource handle from mutable shared state (a module variable or an object field). Trace the read back to the last write in the same scope: if an earlier statement reassigned or reset that state before the read, the guard operates on the new value and silently no-ops. Flag a teardown or safety-net check that reads state a preceding line in the same function already cleared.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li><code>[repo]</code> The <code>rdd service</code> verbs are idempotent: <code>delete</code> returns nil when <code>!service.Exists()</code>, <code>create</code> returns nil when the instance already exists, and <code>start</code>/<code>stop</code> return nil when the plane is already in the target state (<code>rdd/cmd/rdd/service.go</code>). Do not flag an un-<code>.catch()</code>&#39;d <code>rdd service delete</code>/<code>create</code> at the start of a test helper as &quot;aborts setup on a clean environment&quot; — the command exits 0 when there is nothing to do.</li>
+      <li><code>[repo]</code> <code>rdd svc config</code> blocks for readiness rather than reading a file: it routes through <code>ensureServiceRunning</code>, which waits up to <code>startWaitTimeout</code> (90 s) for the API server and a fresh discovery ConfigMap (<code>rdd/cmd/rdd/service.go</code>). An external controller that fetches its kubeconfig via <code>base.GetKubeConfigFromRDD</code> therefore blocks for readiness and does not fast-fail, even when the daemon was launched with <code>service start --wait=false</code>. Reviewers have twice flagged a nonexistent &quot;controller starts before kubeconfig is written&quot; race; the wait forecloses it.</li>
+      <li><code>[repo]</code> E2E suites that share one app or page across their tests and depend on test order use <code>test.describe.serial</code> (see <code>screenshots/screenshots.e2e.spec.ts</code>, <code>preferences</code>, <code>quit-on-close</code>, <code>start-in-background</code>). The e2e config runs <code>workers: 1</code> with <code>fullyParallel</code> off, so a plain <code>describe</code> still runs in order, but <code>.serial</code> additionally skips the remainder on a failure and retries the whole group from <code>beforeAll</code> rather than one test against mutated state. Flag an order-dependent, shared-state suite enabled as a plain <code>describe</code>.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
