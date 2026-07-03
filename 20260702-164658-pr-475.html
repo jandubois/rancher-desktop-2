@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260702-164658-pr-475</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260702-164658-pr-475</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-02 16:46</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/475" class="gh-ref" data-title="RDA: Report error on incompatible control plane" data-state="open" data-type="pr">#475</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/475" class="gh-ref" data-title="RDA: Report error on incompatible control plane" data-state="open" data-type="pr">#475</a> — RDA: Report error on incompatible control plane</td></tr>
+      <tr><td>Branch</td><td><code>rda/no-block-on-rdd</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/03498b4fa"><code>03498b4fa</code></a> RDA: Force block fetching kubeconfig until cert callback<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/42ec30861"><code>42ec30861</code></a> Address review comments<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c7a9e827d"><code>c7a9e827d</code></a> RDA: rdd-ctl: Ensure <code>fetchConfig</code> does not run concurrently<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e1e1b02aa"><code>e1e1b02aa</code></a> RDA: Exit if RDD broken by incompatible server<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/709998a45"><code>709998a45</code></a> RDA: Do not block startup on rdd config<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b58538d55"><code>b58538d55</code></a> RDD: Provide unique error code on incompatible server</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; plumbing is correct end-to-end; the parser needs tests and a few error-path items need tidying. None block merge.</td></tr>
+      <tr><td>Wall-clock time</td><td><code>1 h 18 min 50 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This PR trades an infinite startup wait for a fast, explicit failure: the daemon returns a new exit code 5 for an incompatible control plane, and the Electron main process shows an error dialog and quits. The Go exit-code plumbing and the TS/Go field-name contract are correct end-to-end. The gaps are narrow: the twice-regressed JSONL message parser has no tests, and a handful of error-path items degrade diagnostics rather than break behavior.</p>
+    <p>Codex and Claude reviewed independently; Gemini failed to produce output on two attempts (see the retro). The two reviews converged on the empty-<code>msg</code> JSON log line and the stderr-drain race, and each surfaced one unique correctness item. The orchestrator dropped one Codex finding — a claimed <code>spawnFile</code> type-check failure — after running the real type-checker disproved it.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Incompatible-server path and its JSONL parser have no tests <span class="pill pill-claude">Claude</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/rdd-ctl.ts#L94-L116">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="94" data-line="99-111"><code class="language-ts">    } catch (err) {
+      if (err instanceof SpawnError &amp;&amp; err.code === CodeIncompatibleServer) {
+        // Fatal: the server is using an incompatible backend.  `stderr` is in
+        // JSONL (i.e. JSON objects on separate lines); try to get the error
+        // message out of them.
+        let message = &#39;Unsupported RDD service version&#39;;
+        for (const line of stderr.split(/\r?\n/)) {
+          try {
+            const error: { &#39;exit-code&#39;?: number; msg?: string } = JSON.parse(line);
+            if (error?.[&#39;exit-code&#39;] !== CodeIncompatibleServer) {
+              continue;
+            }
+            if (typeof error?.msg === &#39;string&#39; &amp;&amp; error.msg &amp;&amp; error.msg !== &#39;&lt;nil&gt;&#39;) {
+              message = error.msg;
+              break;
+            }
+          } catch { /* ignore; try next line, or use fallback message */ }
+        }
+        console.error(message);
+        Electron.dialog.showErrorBox(&#39;Incompatible RDD Service&#39;, message);
+        Electron.app.quit();
+        // We cannot recover (the user needs to restart the application), so
+        // `fetchConfig` caching the error is fine.  However, do not use the</code></pre>
+    <p>The parser regressed twice under review — the fallback first fired on multi-line JSON, then this loop was added to scan for the <code>exit-code:5</code> line — yet nothing exercises it. BATS asserts exit codes 3 and 4 (<code>rdd/bats/tests/20-service/6-timeout.bats</code>) but never 5; <code>rdd-ctl.ts</code> has no spec, and the cert-callback flow in <code>networking/index.ts</code> is untested. A regression that reverts the parser, or that returns the config before installing certificates, would ship green.</p>
+    <p>Fix: extract the &quot;find the <code>exit-code:5</code> line, else fall back&quot; logic into a pure helper and unit-test it against warn-level single-line, trace-level multi-line, empty-<code>msg</code>, and malformed input. Add a <code>run -5</code> BATS assertion if a version-mismatch fixture becomes feasible.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> stderr can be truncated when <code>spawnFile</code> rejects, hiding the version-specific message <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>spawnFile</code> rejects the instant the child&#39;s <code>exit</code> event fires; the stderr <code>end</code> promise sits in the same <code>Promise.all</code> and is abandoned on the first rejection. The <code>catch</code> then reads the <code>stderr</code> closure, which may still be missing the final chunk — the <code>exit-code:5</code> line that main.go logs immediately before exiting. When that line is absent, the parser falls back to the generic &quot;Unsupported RDD service version&quot; text. This is the fallback @mook-as observed (r3476447447); the loop fix addressed multi-line output, not this exit-versus-drain race.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/rdd-ctl.ts#L89-L99">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="89" data-line="94"><code class="language-ts">          .then(({ stdout }) =&gt; console.log(&#39;RDD version:&#39;, stdout))
+          .catch(err =&gt; console.error(&#39;Error fetching RDD version:&#39;, err));
+
+        return stdout;
+      }
+    } catch (err) {
+      if (err instanceof SpawnError &amp;&amp; err.code === CodeIncompatibleServer) {
+        // Fatal: the server is using an incompatible backend.  `stderr` is in
+        // JSONL (i.e. JSON objects on separate lines); try to get the error
+        // message out of them.
+        let message = &#39;Unsupported RDD service version&#39;;</code></pre>
+    <p>Fix: have <code>spawnFile</code> await stdio drain (listen for <code>close</code>, not <code>exit</code>) before rejecting, or parse only after an explicit stderr-complete signal. Touches shared infrastructure (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/childProcess.ts#L277-L288"><code>utils/childProcess.ts:277-288</code></a>), so weigh the blast radius.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Unbound <code>console.error</code> in <code>.catch</code> loses <code>this</code> and throws <span class="pill pill-codex">Codex</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/networking/index.ts#L63-L73">pkg/rancher-desktop/main/networking/index.ts</a></div>
+      <pre data-start="63" data-line="68"><code class="language-ts">    mainEvents.emit(&#39;network-ready&#39;);
+  });
+  // Trigger RDD config loading, ignoring the result.  This lets us move the
+  // certificate handling setup outside of a potential hot path.  If this has
+  // already occurred, it would just ignore the cached result.
+  mainEvents.invoke(&#39;rdd/kube-config&#39;).catch(console.error);
+}
+
+/**
+ * Configure the default Electron session&#39;s WebRequest to provide authentication
+ * for accessing RDD&#39;s API server.</code></pre>
+    <p><code>console</code> is <code>Logging.networking</code> (a <code>Log</code>), and <code>Log.error</code> calls <code>this.logWithDate</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/logging.ts#L129"><code>utils/logging.ts:129</code></a>). Passing <code>console.error</code> unbound drops <code>this</code>, so when <code>rdd/kube-config</code> rejects — which happens on the incompatible-server path — the catch handler itself throws a <code>TypeError</code> and buries the original failure in an unhandled rejection. A sibling utility already pairs the safe arrow form (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/backgroundProcess.ts#L140"><code>utils/backgroundProcess.ts:140</code></a>) with the same unbound bug (line 144).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/logging.ts#L124-L134">pkg/rancher-desktop/utils/logging.ts</a></div>
+      <pre data-start="124" data-line="129"><code class="language-typescript">    this.logWithDate(&#39;log&#39;, message, optionalParameters);
+  }
+
+  /** Print a log message to the log file; appends a new line as appropriate. */
+  error(message: any, ...optionalParameters: any[]) {
+    this.logWithDate(&#39;error&#39;, message, optionalParameters);
+  }
+
+  /** Print a log message to the log file; appends a new line as appropriate. */
+  info(message: any, ...optionalParameters: any[]) {
+    this.logWithDate(&#39;info&#39;, message, optionalParameters);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/backgroundProcess.ts#L135-L145">pkg/rancher-desktop/utils/backgroundProcess.ts</a></div>
+      <pre data-start="135" data-line="140"><code class="language-typescript">        return;
+      }
+      this.shouldRun().then((result) =&gt; {
+        if (result) {
+          this.timer = timers.setTimeout(() =&gt; {
+            this.restart().catch(ex =&gt; console.error(ex));
+          }, 1_000);
+          console.debug(`Background process ${ this.name } will restart (process ${ process.pid } exited)`);
+        }
+      }).catch(console.error);
+    });</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/networking/index.ts#L139-L143">pkg/rancher-desktop/main/networking/index.ts</a></div>
+      <pre data-start="139" data-line="144"><code class="language-typescript">    return true;
+  } catch {
+    return false;
+  }
+}</code></pre>
+    <p>Fix: <code>.catch(ex =&gt; console.error(ex))</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> JSON logging branch drops the nil-<code>Err</code> guard, emitting an empty-<code>msg</code> line <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/cmd/rdd/main.go#L176-L186">rdd/cmd/rdd/main.go</a></div>
+      <pre data-start="176" data-line="181"><code class="language-go">	if err := cli.RunNoErrOutput(cmd); err != nil {
+		// *cliexit.Error lets a subcommand opt into a specific exit code; everything else gets exit 1.
+		var exitErr *cliexit.Error
+		if errors.As(err, &amp;exitErr) {
+			if _, ok := logrus.StandardLogger().Formatter.(*logrus.JSONFormatter); ok {
+				// If we&#39;re logging to JSON, include the exit code.
+				logrus.WithField(&quot;exit-code&quot;, exitErr.Code).Error(err)
+			} else if exitErr.Err != nil {
+				// A propagated child-exit code carries no message (nil Err); logging it
+				// would emit a bare level=error line, so log only when there is one.
+				logrus.Error(err)</code></pre>
+    <p><code>(*cliexit.Error).Error()</code> returns <code>&quot;&quot;</code> when <code>Err</code> is nil (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/pkg/cli/exit/exit.go#L35-L40"><code>pkg/cli/exit/exit.go:35-40</code></a>), so a propagated child exit (<code>rdd run</code>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/cmd/rdd/run.go#L177"><code>run.go:177</code></a>) under <code>--log-format=json</code> now logs <code>{&quot;exit-code&quot;:N,&quot;level&quot;:&quot;error&quot;,&quot;msg&quot;:&quot;&quot;}</code>. The text branch keeps the guard that suppresses exactly this bare line. This PR&#39;s own <code>service config</code> path always carries a message, so the effect is cosmetic, but it reintroduces the noise the guard was written to prevent.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/pkg/cli/exit/exit.go#L30-L45">rdd/pkg/cli/exit/exit.go</a></div>
+      <pre data-start="30" data-line="35-40"><code class="language-go">	Code int
+	Err  error
+}
+
+// Error implements the error interface.
+func (e *Error) Error() string {
+	if e.Err == nil {
+		return &quot;&quot;
+	}
+	return e.Err.Error()
+}
+
+// Unwrap exposes the wrapped error to errors.Is and errors.As.
+func (e *Error) Unwrap() error {
+	return e.Err
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/cmd/rdd/run.go#L172-L182">rdd/cmd/rdd/run.go</a></div>
+      <pre data-start="172" data-line="177"><code class="language-go">	var exitErr *exec.ExitError
+	if errors.As(err, &amp;exitErr) {
+		// A signal-killed child has no exit code: ExitCode() returns -1, which
+		// os.Exit maps to 255 rather than the shell&#39;s 128+signal. Wiring up
+		// signal handling (see above) would let us propagate 128+signal.
+		return &amp;cliexit.Error{Code: exitErr.ExitCode()}
+	}
+	if err != nil {
+		return fmt.Errorf(&quot;run %s: %w&quot;, args[0], err)
+	}
+	return nil</code></pre>
+    <p>Fix: gate the JSON branch on <code>exitErr.Err != nil</code> too, adding the <code>exit-code</code> field only when a message exists.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>rdd --version=raw</code> is spawned fire-and-forget on every fetch <span class="pill pill-claude">Claude</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/rdd-ctl.ts#L83-L93">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="83" data-line="88"><code class="language-ts">          console.error(&#39;Error processing new RDD configuration&#39;, err);
+        }
+
+        // Log the RDD version for debugging purposes; no need to do that
+        // synchronously, though.
+        spawnFile(rddPath, [&#39;--version=raw&#39;], { stdio: [&#39;ignore&#39;, &#39;pipe&#39;, console] })
+          .then(({ stdout }) =&gt; console.log(&#39;RDD version:&#39;, stdout))
+          .catch(err =&gt; console.error(&#39;Error fetching RDD version:&#39;, err));
+
+        return stdout;
+      }</code></pre>
+    <p>Detached from the returned promise, the <code>&#39;RDD version:&#39;</code> line lands at a nondeterministic point in the startup log, and the inner <code>{ stdout }</code> shadows the outer <code>stdout</code> returned two lines later. The extra subprocess runs on every successful config fetch.</p>
+    <p>Fix: <code>await</code> the call so the version precedes the config in the log and rename the destructured variable; drop it if the daemon already logs its version at startup.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>stderrWritable.final()</code> is dead code <span class="pill pill-claude">Claude</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>spawnFile</code> forwards each <code>data</code> chunk to the sink but never calls <code>.end()</code> on it (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/childProcess.ts#L264-L270"><code>utils/childProcess.ts:264-270</code></a>), so <code>final()</code> never fires. The handler is harmless because logrus JSON lines are newline-terminated, but it cannot flush a trailing partial line and implies a flush path that does not exist.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/childProcess.ts#L259-L275">pkg/rancher-desktop/utils/childProcess.ts</a></div>
+      <pre data-start="259" data-line="264-270"><code class="language-typescript">        }
+        if (childStream) {
+          if (encoding) {
+            childStream.setEncoding(encoding);
+          }
+          childStream.on(&#39;data&#39;, (chunk) =&gt; {
+            if (stdStreams[i]) {
+              (stdStreams[i]).write(chunk);
+            } else {
+              result[resultMap[i]] += chunk;
+            }
+          });
+          promises.push(new Promise&lt;void&gt;(resolve =&gt; childStream.on(&#39;end&#39;, resolve)));
+        }
+      }
+    }
+  }</code></pre>
+    <p>Fix: drop <code>final()</code>, or flush <code>lastStderrLine</code> from the success and <code>catch</code> paths where the stream actually ends.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The fatal quit trusts the numeric exit code, not a confirmed signal</strong> <em>(future)</em> <span class="pill pill-claude">Claude</span> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/rdd-ctl.ts#L95"><code>rdd-ctl.ts:95</code></a> quits on <code>err.code === CodeIncompatibleServer</code>, while <code>rdd run</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/cmd/rdd/run.go#L177"><code>run.go:177</code></a>) propagates arbitrary child exit codes including 5. This is safe today only because the TS spawns <code>rdd service config</code>, whose sole source of exit 5 is <code>checkSupportedVersion</code>. Gating the quit on a parsed <code>exit-code:5</code> record — which the loop already finds — would make the decision robust to future callers.</li>
+      <li><em></em>The Latch hangs silently if <code>rdd-ctl</code> is not imported before networking<em></em> <em>(in-scope)</em> <span class="pill pill-claude">Claude</span> — <code>await certificateCallback</code> resolves only once something emits <code>rdd/certificate-callback</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/background.ts#L21"><code>background.ts:21</code></a> imports <code>@pkg/main/rdd-ctl</code> (registering the listener) before <code>setupNetworking</code> runs at line 90, so the order holds. A <code>setupNetworking</code> throw before the emit quits the app (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/background.ts#L93-L97"><code>background.ts:93-97</code></a>), so this cannot wedge a running app either. The dependency is real but implicit — worth a one-line comment.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Callback-before-return guarantees certificates precede any config consumer</strong> <em>(in-scope)</em> <span class="pill pill-claude">Claude</span> — <code>fetchConfigWithoutCache</code> invokes the cert callback before returning, and <code>fetchConfig</code> memoizes the promise, so every caller — including the renderer&#39;s independent <code>invoke(&#39;rdd/kube-config&#39;)</code> — receives a kubeconfig only after certificate handling is installed. This is safer than consuming the invoke return value directly, which would let the renderer race the cert setup.</li>
+      <li><strong>Exit-code plumbing is correct end-to-end</strong> <em>(in-scope)</em> <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span> — <code>checkSupportedVersion</code> → <code>Wait</code> → <code>Classify</code> → <code>main.go</code> → <code>os.Exit(5)</code>; the JSON <code>exit-code</code>/<code>msg</code> field names match the TS parser exactly; <code>Wait</code> stops polling only on code 5 and keeps retrying transient errors; and no references to the removed <code>errorServerVersionUnsupported</code> type remain.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Ranked by risk. The JSONL parser (I1) is the top target — pure logic, regressed twice, no tests. Next, the incompatible-server path end-to-end (dialog, <code>app.quit()</code>, and code-5 propagation) has no BATS coverage for code 5, though 3 and 4 are covered; the CLI contract (<code>rdd service config</code> exits 5 on a version mismatch) is testable in Go/BATS with a version override. Third, the cert-callback ordering guarantee is untested — a regression that returned the config before installing certificates would ship green. The truncated-stderr fallback (S1) is also unexercised.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>cmd_app.md</code> documents exit code 5 and links <code>pkg/cli/exit</code>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/rdd/pkg/cli/exit/exit.go#L14-L16"><code>exit.go:14-16</code></a> explains why the codes use explicit values rather than <code>iota</code> — both answer @jandubois&#39;s feedback directly. One imprecision: the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/mainEvents.ts#L129-L131"><code>mainEvents.ts:129-131</code></a> <code>@note</code> says <code>rdd/kube-config</code> &quot;blocks until <code>rdd/certificate-callback</code> has been called,&quot; but the handler also blocks on the config fetch itself, not only on callback registration.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Six commits, individually reviewable. Two are fold-in candidates: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/42ec30861"><code>42ec30861</code></a> &quot;Address review comments&quot; scatters edits across four files that belong in the commits that introduced them, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/03498b4fa"><code>03498b4fa</code></a> reworks the cert-callback mechanism added two commits earlier rather than extending it. Acceptable during active review iteration; squash before merge so bisect and cherry-pick see coherent units.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>Cert-callback throw is swallowed and the config is cached anyway</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/main/rdd-ctl.ts#L79-L84"><code>rdd-ctl.ts:79-84</code></a>. Deliberate and documented: &quot;Retrying to get the config will not help... The user will see other errors and need to restart.&quot; The trigger (<code>loadFromString</code>, or <code>configureRDDAuthentication</code> throwing <code>&#39;No currently active cluster&#39;</code>) is unlikely because the daemon emits a valid kubeconfig.</li>
+      <li><strong>Prior pasted-review items resolved this round</strong> — the <code>missingReadyCallback</code> fragility (replaced by the Latch), the <code>iota</code> exit codes (reverted to explicit values with a rationale comment), the reliance on <code>warn</code>-level single-line output (the loop now scans every line), and the <code>friom</code> comment typo. The empty-<code>msg</code> item survives as S3 and the fire-and-forget version log as S4.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>@jandubois asked for a more informative error dialog (r3471243858). The loop parser now surfaces the daemon&#39;s specific version-mismatch message in the common case, but the stderr-drain race (S1) can still force the generic &quot;Unsupported RDD service version&quot; fallback — so the concern is largely, not fully, addressed. The remaining review threads (exit-code documentation, <code>iota</code>, the registration-ordering race) are resolved in the final code.</p>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Codex]</strong> Codex&#39;s one Important claim — a <code>spawnFile</code> type-check failure on the custom stderr stream — was a false positive: the tuple overload it read as unmatched actually resolves, which <code>tsc</code> and the passing production build both confirm. Its real contribution was the unbound <code>.catch(console.error)</code> (S2), which no other agent caught and which the codebase&#39;s own safe idiom (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/backgroundProcess.ts#L140"><code>backgroundProcess.ts:140</code></a>) validates. It also independently found the stderr-drain race and the empty-<code>msg</code> log line. Calibration ran hot on the type claim — Important severity rested on a build it never ran.</p>
+    <p><strong>[Claude]</strong> Claude produced the widest coverage and the only surviving Important finding, the untested parser, and read the design correctly where Codex erred — it never flagged a type error on the <code>spawnFile</code> call. Its unique catches were the fire-and-forget version log and the dead <code>final()</code> handler, both low-severity but real. It mapped the cert-callback ordering contract precisely, including the app-quit safety valve that bounds the &quot;Latch hangs&quot; concern. Every finding survived verification.</p>
+    <p><strong>[Gemini]</strong> Gemini produced no output on either attempt. The CLI started — it logged &quot;YOLO mode enabled&quot; — then was killed before writing a review, with no quota, sandbox, or crash trace to explain it, and the retry reproduced the failure exactly. Its absence leaves a coverage risk: Gemini often trades git-blame discipline for a different search angle, so a class of finding it favors may be unrepresented here.</p>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>14m 04s</td><td>7m 26s</td><td>—</td></tr>
+        <tr><td>Findings</td><td>1I 4S</td><td>3S</td><td>none</td></tr>
+        <tr><td>Tool calls</td><td>34 (Bash 19, Read 15)</td><td>63 (shell 63)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>2</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>4</td><td>1</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>8</td><td>8</td><td>0</td></tr>
+        <tr><td>Coverage misses</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 4S</strong></td><td><strong>3S</strong></td><td><strong>none</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Codex&#39;s <code>spawnFile</code> stderr-overload finding, rated Important, was dropped as a false positive: <code>tsc --noEmit</code> type-checked the exact call cleanly under a control test that confirmed the file was checked, and the production <code>package</code> build passed on the review SHA. No severities were changed; every other Codex and Claude finding survived at its original severity.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <p>Both cloud agents delivered real value — Claude for breadth and the load-bearing test-coverage gap, Codex for the unique unbound-<code>console.error</code> bug and the drain-race analysis. Claude edged ahead on accuracy, since Codex&#39;s headline Important finding did not survive verification. Gemini contributed nothing this run, and its double failure is the main process gap to fix before the next review.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When an agent claims code fails to compile or type-check — a TypeScript overload mismatch, a missing symbol, a broken build — treat the claim as empirically verifiable. Run the compiler or type-checker on the exact construct, or confirm the project&#39;s build even type-checks that file, before rating it. Overload resolution and type assignability are easy to misread from signatures alone, and many build setups transpile without type-checking in development, so a hand-derived &quot;this will not build&quot; is often wrong. Rate such a claim only after the tool agrees.</li>
+      <li>Flag callback arguments that pass an object method by bare reference — <code>.then(obj.method)</code>, <code>.catch(logger.error)</code>, <code>arr.forEach(this.handle)</code> — when the method body uses <code>this</code>. The detached call loses its receiver and throws at runtime, usually on an error path where the resulting <code>TypeError</code> buries the original failure. The safe form wraps the call in an arrow: <code>ex =&gt; logger.error(ex)</code>.</li>
+      <li>When code reads a child process&#39;s stdout or stderr after the process rejects or exits, verify the read waits for stream drain (the <code>close</code> event), not just <code>exit</code>. A process can emit <code>exit</code> before its stdio pipes flush, so a post-exit read of a captured buffer can miss the final chunk — often the exact line the caller needs. Flag error-path parsing that reads a subprocess-output buffer filled by a drain path separate from the one that triggered the throw.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] <code>Lint TypeScript</code> in CI runs eslint (<code>scripts/lint-typescript.ts</code>), not <code>tsc</code>, and <code>yarn dev</code> builds with <code>transpileOnly: true</code> — only the production <code>package</code> build (<code>yarn package</code>, <code>transpileOnly: false</code>) type-checks bundled files. To verify a TypeScript type- or compile-error claim, run <code>tsc --noEmit</code> or check the <code>package</code> job, not the lint or dev output.</li>
+      <li>[repo] The <code>Logging</code> module&#39;s <code>Log</code> methods (<code>Logging.&lt;topic&gt;.error</code>, <code>.log</code>, and siblings) are unbound and use <code>this</code> internally. Passing one by bare reference to a callback (<code>.catch(console.error)</code>) loses the receiver and throws a <code>TypeError</code>; the repo&#39;s safe idiom wraps it in an arrow (<code>ex =&gt; console.error(ex)</code>, see <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/03498b4faeb967ec2781b5e5325f3c3cfd649a65/pkg/rancher-desktop/utils/backgroundProcess.ts#L140"><code>utils/backgroundProcess.ts:140</code></a>). Flag bare-reference <code>Log</code>-method callbacks.</li>
+      <li>[repo] <code>spawnFile</code> (<code>pkg/rancher-desktop/utils/childProcess.ts</code>) accepts a <code>stream.Writable</code> in the stdio tuple (the encoding path routes it to the child pipe), and it rejects on the child&#39;s <code>exit</code> event before the stdout/stderr <code>end</code> promises resolve. A caller that reads a stderr closure filled by that stream inside its <code>catch</code> can observe a truncated buffer missing the final line. Trace the drain-versus-reject ordering when reviewing subprocess error parsing here.</li>
+      <li>[repo] UPDATE: the exit-codes context entry (<code>CodeRejected=3</code>, <code>CodeTimeout=4</code> in <code>pkg/cli/exit/exit.go</code>) should add <code>CodeIncompatibleServer=5</code> — the running daemon is incompatible with the client; documented in <code>cmd_app.md</code> and surfaced to the Electron UI as a fatal error dialog.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
