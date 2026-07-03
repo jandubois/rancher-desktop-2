@@ -19,11 +19,27 @@ load '../../helpers/load'
     assert_line "\"rancher-desktop-${RDD_INSTANCE}\" control plane PID is: 0"
 }
 
+@test 'nerdctl fails without creating the control plane' {
+    run -1 rdd nerdctl ps
+    assert_output --partial "the App does not exist"
+    run -0 rdd svc status
+    run -0 extract_msg
+    assert_line "\"rancher-desktop-${RDD_INSTANCE}\" control plane has been created: false"
+}
+
 @test 'create instance' {
     run -0 rdd svc create
     run -0 extract_msg
     assert_output "successfully created \"rancher-desktop-${RDD_INSTANCE}\" control plane"
     assert_dir_exist "${RDD_DIR}"
+}
+
+@test 'nerdctl fails without starting the control plane' {
+    run -1 rdd nerdctl ps
+    assert_output --partial "the control plane is not running"
+    run -0 rdd svc status
+    run -0 extract_msg
+    assert_line "\"rancher-desktop-${RDD_INSTANCE}\" control plane has been started: false"
 }
 
 @test 'verify instance does exist but has not been started' {
