@@ -158,9 +158,8 @@ func (w *containerdWatcher) applyImageMirror(nsCtx context.Context, ns string, i
 		statusApply.WithRepoDigests(repoDigest)
 	}
 
-	// No mirror finalizer is added until containerd-side deletes land in a
-	// later PR, matching the container mirrors.
 	return w.mirrorClient.applyImage(nsCtx,
-		containersv1alpha1apply.Image(mirrorName, w.apiNamespace),
+		containersv1alpha1apply.Image(mirrorName, w.apiNamespace).
+			WithFinalizers(mirrorFinalizer),
 		statusApply)
 }

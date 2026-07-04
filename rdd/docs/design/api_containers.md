@@ -58,8 +58,15 @@ the controller:
 4. Watches the Docker event stream for create, update, and delete events.
 
 With `containerEngine.name=containerd` the controller runs a containerd watcher
-instead, mirroring every containerd namespace along with its containers and
-images.  containerd has no volume concept, so it creates no `Volume` mirrors.
+instead, mirroring each containerd namespace along with its containers and
+images.  A namespace whose name is not a valid Kubernetes object name gets no
+`ContainerNamespace` mirror; its containers are still mirrored.  Whether a
+container's mirror name is hashed turns on its own ID, not on the namespace
+holding it, so a container with an ordinary ID keeps that ID as its mirror
+name in a skipped namespace exactly as it would anywhere else.  Its
+`.status.namespace` then names a namespace no `ContainerNamespace` object
+represents.  containerd
+has no volume concept, so it creates no `Volume` mirrors.
 Windows is the exception, since nothing serves the containerd named pipe there
 yet; the controller sets `ContainerEngineReady` to `True` with reason
 `NotApplicable` and takes no mirroring action.
@@ -77,14 +84,41 @@ controller removes all mirror resources and sets `ContainerEngineReady` to
 
 ### Finalizer lifecycle
 
-Each mirror carries the `engine.rancherdesktop.io/mirror`
-finalizer. A K8s-side delete triggers the finalizer handler, which
-deletes the corresponding engine object and then strips the finalizer
-so the mirror can be garbage-collected.
+`Container`, `Image` and `Volume` mirrors carry the
+`engine.rancherdesktop.io/mirror` finalizer. A K8s-side delete triggers
+the finalizer handler, which deletes the corresponding engine object and
+then strips the finalizer so the mirror can be garbage-collected.
+`ContainerNamespace` mirrors carry no finalizer: deleting one is not
+offered as a way to delete the engine namespace, so a finalizer with no
+handler would only trap the delete in Terminating.
 
 An engine-side delete (for example, `docker rm`) goes the other way:
 the engine controller strips the finalizer and deletes the mirror
 directly, without calling back into the engine.
+
+### containerd state the controller does not maintain
+
+On containerd the controller drives the engine over its API, while
+`nerdctl` maintains state the controller does not write: the container
+name reservation and its state directory, both of which live outside
+containerd, and the `containerd.io/restart.*` container labels, which
+live on the containerd record but are written only by `nerdctl` and by
+containerd's own restart monitor.
+Actions taken through the mirror leave all of it untouched, with two
+consequences today.
+
+Restart policies do not survive a mirror-driven stop. containerd's
+restart monitor decides from `containerd.io/restart.explicitly-stopped`,
+which `nerdctl stop` and `nerdctl kill` set and `nerdctl start` clears,
+so stopping an `unless-stopped` container through the action annotation
+lets the monitor start it again even though `status.lastAction` reports
+success.
+
+Deleting the mirror of a container that was created but never started
+leaves its name reserved. `nerdctl` releases a name either from
+`nerdctl rm` or from the container's post-stop hook, and a container
+with no task has run neither, so `nerdctl create --name` rejects that
+name afterwards.
 
 ## Namespaces
 
@@ -113,7 +147,7 @@ container through the action annotation described below.
 apiVersion: containers.rancherdesktop.io/v1alpha1
 kind: Container
 metadata:
-  name: 8eb6f2cf72b6616aa743cf9187f350af84c9749dab65474db2530f26745d2ef3 # container ID
+  name: 8eb6f2cf72b6616aa743cf9187f350af84c9749dab65474db2530f26745d2ef3 # container ID, or `ctr-` plus hex SHA-256 when that ID is not a valid object name
   namespace: rancher-desktop
   annotations:
     # Request a one-shot action. See "Container actions" below.
@@ -121,7 +155,7 @@ metadata:
 spec: {}
 status:
   name: magical_gates
-  namespace: k8s.io # Refers to a `ContainerNamespace` object
+  namespace: k8s.io # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
   path: /bin/sh
   args: [-c, 'sleep inf']
   # Image ID; corresponds to `Image` object's `.status.id` field.
@@ -166,10 +200,10 @@ status:
 
 ### Container state
 
-`status.status` always reflects the actual Docker state. The engine
-writes status on every sync and never writes the container's spec, so
-Docker's restart policy, out-of-band `docker start`, and explicit
-actions all converge through the same observed path.
+`status.status` always reflects the actual engine state. The engine
+writes status on every sync and never writes the container's spec, so a
+restart policy, an out-of-band `docker start` or `nerdctl start`, and
+explicit actions all converge through the same observed path.
 
 The Container API is deliberately status-only. Early designs used a
 level-triggered `spec.state` field, but Docker's restart policy and
@@ -190,7 +224,7 @@ metadata:
   namespace: rancher-desktop
 spec:
   name: magical_gates # If unset, generate one randomly
-  namespace: k8s.io # Refers to a `ContainerNamespace` object
+  namespace: k8s.io # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
   state: running # Default to `running`
   path: /bin/sh # defaults to image entry point / command
   args: [-c, 'sleep inf'] # defaults to image entry point / command
@@ -226,8 +260,8 @@ An admission controller will ensure that we cannot have multiple
 
 Set the `containers.rancherdesktop.io/action` annotation on the
 `Container` to request a one-shot action. The engine reconciler reads
-the annotation, dispatches the matching Docker call, records the
-outcome in `status.lastAction`, and removes the annotation.
+the annotation, dispatches the matching call to the container engine,
+records the outcome in `status.lastAction`, and removes the annotation.
 
 Valid values: `start`, `stop`, `pause`, `unpause`, `restart`.
 
@@ -236,15 +270,16 @@ value replaces the old, so a user who requests `pause` and then
 `unpause` before the reconciler has run will see only the unpause. No
 queue, no accumulating history.
 
-The engine calls Docker before patching `status.lastAction` and
-removing the annotation, so a crash mid-flight leaves the annotation
-in place and the next reconcile replays the action. Start, stop,
-pause, and unpause are idempotent against a container already in the
-target state, so replay is safe. Restart has no target state to match:
-a replay sends SIGTERM and waits the grace period a second time, which
-the controller cannot distinguish from a deliberate re-request.
+The controller calls the engine before patching `status.lastAction`
+and removing the annotation, so a crash mid-flight leaves the
+annotation in place and the next reconcile replays the action. Start,
+stop, pause, and unpause are idempotent against a container already in
+the target state, so replay is safe. Restart has no target state to
+match: a replay sends the container's stop signal and waits the grace
+period a second time, which the controller cannot distinguish from a
+deliberate re-request.
 
-If the Docker call fails (for example, `pause` on a container that is
+If the engine call fails (for example, `pause` on a container that is
 not running), the reconciler still removes the annotation and records
 the failure in `status.lastAction`:
 
@@ -259,14 +294,16 @@ status:
 ```
 
 The GUI is the intended caller for these actions. CLI users should
-reach for `docker start`, `docker stop`, etc. instead: the engine
-mirrors Docker state back into `status.status` either way.
+reach for `docker start`, `docker stop`, or their `nerdctl`
+equivalents, instead: the engine mirrors its own state back into
+`status.status` either way.
 
 #### Fetch container logs
 An endpoint at `/passthrough/.../logs/${container}` will speak WebSocket;
 messages are one way, as stream of bytes; messages should not be buffered.
 Message text must be UTF-8 encoded.  The last portion of the path must be the
-full container ID.
+`Container` mirror's name, which is the full container ID for every engine
+that produces one that is a valid object name.
 
 The following query parameters are accepted:
 
@@ -289,20 +326,36 @@ at which point the `Container` object will actually be deleted.
 `Image` objects reflect images in the container engine.  Each tag is represented
 as a new `Image` object; therefore, there may be multiple `Image` objects for
 the same image ID (one per tag).  If an image without any tags exists, that will
-be represented by an `Image` object without `.status.repoTag` and
-`.status.namespace`.
+be represented by an `Image` object without `.status.repoTag`.
+
+containerd names each record by the reference it was registered under, and a
+single pull through the CRI plugin registers up to three: the image config
+digest, the repo tag, and the repo digest.  A pull that names no tag, such as a
+pod pinned to a digest, registers only the first and last.  Each record becomes
+its own `Image` mirror sharing one `.status.id`; the tag one sets
+`.status.repoTag`, the repo digest one sets `.status.repoDigests`, and the
+config digest one sets neither, so a client keying on `repoTag` sees it as
+untagged.
+
+`.status.size` is engine-reported and the two engines do not measure the same
+thing: moby reports the uncompressed size of the image, while containerd sums
+the compressed blob sizes its manifest declares.  The same image therefore
+shows a smaller size under containerd.  Compare sizes within one engine, never
+across a backend switch.
 
 ```yaml
 apiVersion: containers.rancherdesktop.io/v1alpha1
 kind: Image
 metadata:
-  # `img-` plus hex SHA-256. A tagged image hashes `id + "\0" + tag`;
-  # a dangling image (no tags) hashes the id alone. The raw id is
-  # kept in `.status.id` and the tag in `.status.repoTag`.
+  # `img-` plus hex SHA-256. On moby, a tagged image hashes
+  # `id + "\0" + tag` and a dangling image hashes the id alone; on
+  # containerd, every record hashes `namespace + "\0" + record name`,
+  # never the id. Look mirrors up by `.status.id` or `.status.repoTag`
+  # rather than recomputing the name.
   name: img-2b0d7f4e7d2f2e2d3c6f0a8a4b5a6c7d8e9f0a1b2c3d4e5f607182a3b4c5d6e7
   namespace: rancher-desktop # not the containerd namespace
 status:
-  namespace: moby # Refers to a `ContainerNamespace` object
+  namespace: moby # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
   # Image ID, in the raw form.
   id: 'sha256:999adf320e40662dc96119a14f07459af9959a081d10ccab7c405257030ab96b'
   repoDigests:
@@ -329,7 +382,7 @@ metadata:
   name: image-fetch-12345
   namespace: rancher-desktop
 spec:
-  namespace: moby # Refers to a `ContainerNamespace` object
+  namespace: moby # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
   repoTag: 'registry.opensuse.org/opensuse/leap:latest'
 status:
   conditions:
@@ -387,16 +440,21 @@ status:
 ```
 
 #### Untag image
-Delete the `Image` object through the K8s API; the finalizer runs
-`ImageRemove` on the matching Docker reference. Docker keeps the underlying
-image while another tag or a running container references it, so removing
-one tag may leave the image in place.
+Delete the `Image` object through the K8s API; the finalizer removes the
+matching reference from the engine.
 
-The engine controller mirrors untag events in the reverse direction: on
-a Docker `untag` event it re-inspects the image and removes any K8s
-`Image` resources whose `.status.repoTag` is no longer in Docker's tag
-list. If the image becomes dangling, a new `Image` object without
-`.status.repoTag` takes its place.
+The two engines differ in what that leaves behind. Docker keeps the underlying
+image while another tag or a running container references it, so removing one
+tag may leave the image in place. containerd has no such protection: deleting
+the record a mirror was built from succeeds even while a container is running
+on it, and the container keeps its snapshot until it is deleted itself.
+
+On Docker the engine controller also mirrors untag events in the reverse
+direction: on an `untag` event it re-inspects the image and removes any K8s
+`Image` resources whose `.status.repoTag` is no longer in Docker's tag list. If
+the image becomes dangling, a new `Image` object without `.status.repoTag`
+takes its place. containerd needs none of this, because its `ImageDelete` event
+names the record directly and each record already has its own mirror.
 
 #### Delete untagged image
 Delete the `Image` object (which does not have any `.status.repoTag` set).  An
@@ -417,7 +475,7 @@ metadata:
   namespace: rancher-desktop
 status:
   name: volume-name
-  namespace: k8s.io # Refers to a `ContainerNamespace` object
+  namespace: k8s.io # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
   createdAt: "2025-11-17T03:14:16Z"
   driver: local
   mountpoint: /var/lib/docker/volumes/volume-name/_data
@@ -438,7 +496,7 @@ metadata:
   namespace: default
 spec:
   name: volume-name
-  namespace: k8s.io # Refers to a `ContainerNamespace` object
+  namespace: k8s.io # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
   driver: local
 status:
   conditions:
