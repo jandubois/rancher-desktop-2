@@ -36,7 +36,7 @@ Lightweight app snapshots only copy this data disk, and not the full VM image.
 
 ### Docker and Kube Contexts
 
-When the `App` is starting it creates the Docker context and sets up the kubeconfig in `~/.kube/config`.
+When the `App` is starting it sets up the kubeconfig in `~/.kube/config`, and on the moby backend it also creates the Docker context. containerd has no Docker endpoint to point a context at, so it creates none.
 
 It will only change the current context if it does not exist, or is not working at the time the app is starting.
 
@@ -142,9 +142,9 @@ status:
   | `Running`              | `False`   | `Starting`       | Lima instance is starting up                                      |
   | `Running`              | `False`   | `StartFailed`    | Lima instance failed to start                                     |
   | `Running`              | `False`   | `StopFailed`     | Lima instance failed to stop cleanly                              |
-  | `ContainerEngineReady` | `True`    | `Connected`      | Engine controller has connected to Docker and completed full sync |
-  | `ContainerEngineReady` | `True`    | `NotApplicable`  | Mirroring is not implemented for the current backend (e.g. `containerd`); forced `True` so `rdd set` can finish waiting |
-  | `ContainerEngineReady` | `False`   | `ConnectFailed`  | Engine controller failed to connect to Docker                     |
+  | `ContainerEngineReady` | `True`    | `Connected`      | Engine controller has connected to the container engine and completed full sync |
+  | `ContainerEngineReady` | `True`    | `NotApplicable`  | Mirroring is not supported for the selected engine on this platform (containerd on Windows); forced `True` so `rdd set` can finish waiting |
+  | `ContainerEngineReady` | `False`   | `ConnectFailed`  | Engine controller failed to connect to the container engine       |
   | `ContainerEngineReady` | `False`   | `Stopped`        | The VM is stopped; the engine watcher is not running              |
   | `KubernetesReady`      | `True`    | `Ready`          | API server answers, node Ready, context merged into `~/.kube/config`. Workload-level readiness (coredns, traefik) is not gated; wait for those Deployments directly when needed |
   | `KubernetesReady`      | `False`   | `NotApplicable`  | `spec.kubernetes.enabled` is false                                |
