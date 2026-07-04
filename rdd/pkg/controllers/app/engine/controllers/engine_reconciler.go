@@ -545,6 +545,23 @@ func (r *EngineReconciler) setEngineCondition(ctx context.Context, app *appv1alp
 			Message:            message,
 			ObservedGeneration: latest.Generation,
 		})
+		// supportsNamespaces tracks the selected engine so the UI can hide
+		// its container-namespace selector for engines without the concept.
+		// A pointer keeps the field absent until this first write; a plain
+		// bool would let another status writer materialize a zero-valued
+		// false next to a stale ContainerEngineReady after a restart.
+		//
+		// NotApplicable is the one reason that forces the condition True
+		// while mirroring nothing, so a consumer reading Status alone
+		// cannot tell that no ContainerNamespace mirrors exist. Report
+		// false there, whatever engine is selected. Every other reason
+		// that mirrors nothing says so in the condition itself.
+		supportsNamespaces := latest.Spec.ContainerEngine.Name == engineContainerd &&
+			reason != appv1alpha1.EngineReasonNotApplicable
+		if latest.Status.SupportsNamespaces == nil || *latest.Status.SupportsNamespaces != supportsNamespaces {
+			latest.Status.SupportsNamespaces = &supportsNamespaces
+			changed = true
+		}
 		if !changed {
 			return nil
 		}

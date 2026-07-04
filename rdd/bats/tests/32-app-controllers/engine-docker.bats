@@ -45,7 +45,8 @@ local_setup_file() {
     # Mirror resources live in App.spec.namespace. Override RDD_NAMESPACE
     # to whatever the App was created with so the test queries the same
     # namespace the engine controller uses, regardless of CRD defaults.
-    RDD_NAMESPACE=$(rdd ctl get app app -o jsonpath='{.spec.namespace}')
+    run -0 rdd ctl get app app -o jsonpath='{.spec.namespace}'
+    RDD_NAMESPACE=${output}
     export RDD_NAMESPACE
 }
 
@@ -66,6 +67,14 @@ do_websocket() { # endpoint
 @test "ContainerNamespace moby exists" {
     rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" \
         ContainerNamespace/moby --timeout=10s
+}
+
+@test "moby engine reports no namespace support" {
+    # The single moby ContainerNamespace is an implementation detail of the
+    # mirror model; the engine itself has no namespace concept for the UI
+    # to select from.
+    run -0 rdd ctl get app app -o jsonpath='{.status.supportsNamespaces}'
+    assert_output "false"
 }
 
 # --- Image mirroring ---
@@ -747,6 +756,36 @@ EOF
     refute_output
 }
 
+# --- containerd backend on platforms without a socket ---
+
+@test "containerd backend reports NotApplicable where nothing serves its socket" {
+    # Everywhere else the containerd backend mirrors, and
+    # engine-containerd.bats covers it. Windows has no bridge for the
+    # named pipe, so the reconciler forces ContainerEngineReady True with
+    # reason NotApplicable and mirrors nothing, which is what lets
+    # `rdd set` finish waiting on Settled.
+    if ! is_windows; then
+        skip "containerd mirrors on this platform"
+    fi
+    # Stop first so no stale True/Connected from moby satisfies the Settled
+    # wait before the engine reconciler has processed the switch.
+    rdd set running=false
+    rdd set containerEngine.name=containerd running=true
+
+    run -0 rdd ctl get app app \
+        -o jsonpath='{.status.conditions[?(@.type=="ContainerEngineReady")].reason}'
+    assert_output "NotApplicable"
+
+    # A backend that mirrors nothing offers no namespaces to select from.
+    run -0 rdd ctl get app app -o jsonpath='{.status.supportsNamespaces}'
+    assert_output "false"
+
+    for kind in containers images volumes ContainerNamespaces; do
+        run -0 rdd ctl get "${kind}" --namespace="${RDD_NAMESPACE}" --output=name
+        refute_output
+    done
+}
+
 # --- Docker context management ---
 
 # docker_context_dir returns the ~/.docker/contexts/meta/<hash> directory for
@@ -773,7 +812,7 @@ assert_docker_context() { # <expected-context>
 
 @test "moby engine creates Docker context for the instance" {
     # Ensure the engine is running on the moby backend; earlier tests may
-    # have stopped it.
+    # have stopped it, or switched it to containerd.
     rdd set running=true containerEngine.name=moby
     rdd ctl wait --for=condition=ContainerEngineReady \
         app/app --timeout=30s
