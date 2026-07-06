@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260706-112728-pr-531</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260706-112728-pr-531</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-06 11:27</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/531" class="gh-ref" data-title="RDA: Vuex: Use app as backing for preferences" data-state="open" data-type="pr">#531</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/531" class="gh-ref" data-title="RDA: Vuex: Use app as backing for preferences" data-state="open" data-type="pr">#531</a> — RDA: Vuex: Use app as backing for preferences</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c1df544ef"><code>c1df544ef</code></a> RDA: Improve Vuex typings<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b1cff31dc"><code>b1cff31dc</code></a> RDA: Vuex: Replace preferences store<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1c66a7614"><code>1c66a7614</code></a> RDA: Vuex: preferences: add tests</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the store rewrite is sound and well-tested, but the migration leaves the preferences dialog inert; confirm the follow-up is tracked and fix the nested-parent commit bug before the UI relies on it.</td></tr>
+      <tr><td>Wall-clock time</td><td><code>29 min 57 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This PR re-backs the Vuex preferences store on the RDD <code>App.spec</code> through the generated <code>@rdd-client</code>, replacing the IPC <code>Settings</code> object, and reworks the Vuex typings. The store internals — dry-run validation, JSON-Patch commit, request-abort serialization, and the app watcher — are sound and well-tested. The migration is incomplete: roughly sixteen UI consumers still dispatch the removed actions and read <code>Settings</code> fields <code>AppSpec</code> cannot represent, so the preferences dialog is inert on this branch.</p>
+    <p>All three reviewers agreed the internals are well-built. Codex surfaced the consumer break, Gemini the commit patch bug, and Claude the type-safety regressions and design concerns. The findings fall into two themes: migration completeness (I1, I2) and the <code>modify</code>/<code>commit</code> patch asymmetry (I3, S5).</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Removed preferences actions/getters still dispatched by the UI — every call silently no-ops <span class="pill pill-codex">Codex</span> <span class="pill pill-claude">Claude</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L105-L267">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="105" data-line="110-267"><code class="language-typescript">    state.isPlatformWindows = isPlatformWindows;
+  },
+  SET_HAS_ERROR(state, hasError) {
+    state.hasError = hasError;
+  },
+  SET_SEVERITIES(state, severities) {
+    state.severities = severities;
+  },
+  SET_PREFERENCES_ERROR(state, error) {
+    state.preferencesError = error;
+  },
+  SET_CAN_APPLY(state, canApply) {
+    state.canApply = canApply;
+  },
+} satisfies Partial&lt;MutationsType&lt;PreferencesState&gt;&gt; &amp; MutationTree&lt;PreferencesState&gt;;
+
+type PrefActionContext = ActionContext&lt;PreferencesState, typeof mutations&gt;;
+interface ProposePreferencesPayload { preferences?: Settings }
+
+export const actions = {
+  setPreferences({ commit }, preferences: Settings) {
+    commit(&#39;SET_PREFERENCES&#39;, _.cloneDeep(preferences));
+  },
+  initializePreferences({ commit }, preferences: Settings) {
+    commit(&#39;SET_PREFERENCES&#39;, _.cloneDeep(preferences));
+    commit(&#39;SET_INITIAL_PREFERENCES&#39;, _.cloneDeep(preferences));
+  },
+  async fetchPreferences({ dispatch, commit, rootState }) {
+    commit(&#39;SET_HAS_ERROR&#39;, true);
+
+    await new Promise&lt;void&gt;(resolve =&gt; resolve());
+  },
+  async fetchLocked({ commit, rootState }) {
+    commit(&#39;SET_HAS_ERROR&#39;, true);
+
+    await new Promise&lt;void&gt;(resolve =&gt; resolve());
+  },
+  async commitPreferences({ commit }, args: CommitArgs = {}) {
+    commit(&#39;SET_HAS_ERROR&#39;, true);
+
+    await new Promise&lt;void&gt;(resolve =&gt; resolve());
+  },
+
+  /**
+   * Update a given property for preferences. Propose the new preferences after
+   * each update to check if kubernetes requires a reset or restart.
+   * @param context The vuex context object
+   * @param args Key, value pair that corresponds to a property and its value
+   * in the preferences object
+   */
+  async updatePreferencesData&lt;P extends RecursiveKeys&lt;Settings&gt;&gt;({
+    commit, dispatch, state, rootState,
+  }: PrefActionContext, args: { property: P, value: RecursiveTypes&lt;Settings&gt;[P] }): Promise&lt;void&gt; {
+    const { property, value } = args;
+
+    commit(&#39;SET_PREFERENCES&#39;, _.set(_.cloneDeep(state.preferences), property, value));
+
+    await dispatch(
+      &#39;preferences/proposePreferences&#39;,
+      { },
+      { root: true },
+    );
+  },
+  setWslIntegrations({ commit, state }, integrations: Record&lt;string, string | boolean&gt;) {
+    /**
+     * Merge integrations if they exist during initialization.
+     *
+     * Issue #3232: First-time render of tabs causes the entire DOM tree to
+     * refresh, causing Preferences to initialize more than once.
+     */
+    const updatedIntegrations = _.merge({}, integrations, state.wslIntegrations);
+
+    commit(&#39;SET_WSL_INTEGRATIONS&#39;, updatedIntegrations);
+  },
+  updateWslIntegrations({ commit, state }, args: { distribution: string, value: boolean }) {
+    const { distribution, value } = args;
+
+    const integrations = _.set(_.cloneDeep(state.wslIntegrations), distribution, value);
+
+    commit(&#39;SET_WSL_INTEGRATIONS&#39;, integrations);
+  },
+  setPlatformWindows({ commit }, isPlatformWindows: boolean) {
+    commit(&#39;SET_IS_PLATFORM_WINDOWS&#39;, isPlatformWindows);
+  },
+  /**
+   * Validates the provided preferences object. Commits SET_SEVERITIES and
+   * SET_PREFERENCES_ERROR based on the validation response.
+   * @param context The vuex context object
+   * @param payload Contains credentials and an
+   * optional preferences object. Defaults to preferences stored in state if
+   * preferences are not provided.
+   * @returns A collection of severities to indicate any errors or side-effects
+   * associated with the preferences.
+   */
+  async proposePreferences(
+    { commit, state, getters, rootState },
+    { preferences }: ProposePreferencesPayload = {},
+  ): Promise&lt;Severities&gt; {
+    commit(&#39;SET_HAS_ERROR&#39;, true);
+
+    await new Promise&lt;void&gt;(resolve =&gt; resolve());
+
+    const severities: Severities = {
+      reset:   true,
+      restart: true,
+      error:   false,
+    };
+
+    commit(&#39;SET_SEVERITIES&#39;, severities);
+    commit(&#39;SET_PREFERENCES_ERROR&#39;, &#39;&#39;);
+
+    return severities;
+  },
+  async setShowMuted({ dispatch }, isMuted: boolean) {
+    await dispatch(
+      &#39;preferences/commitPreferences&#39;,
+      {
+        payload: {
+          version:     CURRENT_SETTINGS_VERSION,
+          diagnostics: { showMuted: isMuted },
+        },
+      },
+      { root: true },
+    );
+  },
+  setCanApply({ commit }, canApply: boolean) {
+    commit(&#39;SET_CAN_APPLY&#39;, canApply);
+  },
+} satisfies ActionTree&lt;PreferencesState, any, typeof mutations, typeof getters&gt;;
+
+export const getters = {
+  getPreferences(state) {
+    return state.preferences;
+  },
+  isPreferencesDirty(state) {
+    const isDirty = !_.isEqual(
+      normalizePreferences(state.initialPreferences, &#39;diff&#39;),
+      normalizePreferences(state.preferences, &#39;diff&#39;),
+    );
+
+    ipcRenderer.send(&#39;preferences-set-dirty&#39;, isDirty);
+
+    return isDirty;
+  },
+  getWslIntegrations(state) {
+    return state.wslIntegrations;
+  },
+  isPlatformWindows(state) {
+    return state.isPlatformWindows;
+  },
+  hasError(state) {
+    return state.hasError;
+  },
+  canApply(state, getters) {
+    return (getters.isPreferencesDirty &amp;&amp; state.preferencesError.length === 0) || state.canApply;
+  },
+  showMuted(state) {
+    return state.preferences.diagnostics.showMuted;
+  },
+  isPreferenceLocked: (state) =&gt; (value: string) =&gt; {
+    return _.get(state.lockedPreferences, value);
+  },
+} satisfies GetterTree&lt;PreferencesState, any&gt;;</code></pre>
+    <p>The rewrite deletes <code>updatePreferencesData</code>, <code>commitPreferences</code>, <code>proposePreferences</code>, <code>fetchPreferences</code>, <code>setShowMuted</code>, <code>setCanApply</code>, <code>updateWslIntegrations</code>, and the getters <code>getPreferences</code>/<code>isPreferencesDirty</code>/<code>canApply</code>/<code>showMuted</code>. Roughly sixteen sites across <code>components/Preferences/*.vue</code>, <code>pages/Preferences.vue</code>, <code>pages/Diagnostics.vue</code>, <code>DiagnosticsBody.vue</code>, and <code>store/diagnostics.ts</code> still reference them. TypeScript does not catch it: vuex&#39;s base <code>Dispatch(type: string, …)</code> overload declaration-merges with the strict augmentation in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/typings/store.d.ts#L41"><code>typings/store.d.ts:41</code></a>, so CI stays green. At runtime an unknown action logs <code>[vuex] unknown action type</code> and resolves <code>undefined</code> — every toggle and Apply becomes a no-op. The new surface has zero consumers, confirming a staged migration; downgraded from critical because there is no public release. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/diagnostics.ts#L108"><code>store/diagnostics.ts:108</code></a> also breaks outside the dialog.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/typings/store.d.ts#L36-L46">pkg/rancher-desktop/typings/store.d.ts</a></div>
+      <pre data-start="36" data-line="41"><code class="language-typescript">  Modules[module] extends { mutations: any } ?
+    Mutations&lt;module, Modules[module][&#39;mutations&#39;]&gt; : never;
+}&gt;&gt;;
+
+declare module &#39;vuex/types&#39; {
+  export interface Dispatch {
+    &lt;action extends keyof storeActions&gt;
+    (
+      type: action,
+      payload: Parameters&lt;storeActions[action]&gt;[0],
+      options?: DispatchOptions</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/diagnostics.ts#L103-L113">pkg/rancher-desktop/store/diagnostics.ts</a></div>
+      <pre data-start="103" data-line="108"><code class="language-typescript">    }
+
+    rowToUpdate.mute = isMuted;
+
+    await dispatch(
+      &#39;preferences/commitPreferences&#39;,
+      {
+        payload: {
+          version:     CURRENT_SETTINGS_VERSION,
+          diagnostics: { mutedChecks: { [rowToUpdate.id]: isMuted } },
+        },</code></pre>
+    <p>Fix: migrate the consumers, or land a tracking issue and note that the Preferences UI is intentionally inert until a follow-up.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>AppSpec</code> cannot represent most <code>Settings</code> fields the UI reads <span class="pill pill-codex">Codex</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L55-L65">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="55" data-line="60"><code class="language-ts">  return Object.fromEntries(normalizeFn(Object.entries(integrations)));
+};
+
+/**
+ * Normalizes preferences for consistent usage between API and UI
+ * @param preferences The preferences object to normalize.
+ * @param mode How the preferences should be normalized.
+ * @returns Returns a new object, containing normalized preferences data.
+ */
+const normalizePreferences = (preferences: Settings, mode: &#39;diff&#39; | &#39;submit&#39;) =&gt; {
+  return {</code></pre>
+    <p>The old store held a full <code>Settings</code> object; <code>AppSpec</code> exposes four top-level fields. Components read paths <code>AppSpec</code> lacks — <code>preferences.application.telemetry.enabled</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue#L85"><code>ApplicationGeneral.vue:85</code></a>), <code>getPreferences.application.extensions.allowed.list</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/components/MarketplaceCatalog.vue#L33"><code>MarketplaceCatalog.vue:33</code></a>) — and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/components/Preferences/ModalBody.vue#L32"><code>ModalBody.vue:32</code></a> still types the prop as <code>Settings</code>. Even after the I1 action migration, these reads resolve to <code>undefined</code>, and the dry-run patch (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L149"><code>preferences.ts:149</code></a>, <code>fieldValidation: &#39;Strict&#39;</code>) would reject unknown fields. The App API must grow to cover these preferences, or the UI must be scoped to the fields <code>AppSpec</code> supports.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue#L80-L90">pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue</a></div>
+      <pre data-start="80" data-line="85"><code class="language-markup">      data-test=&quot;statistics&quot;
+      legend-text=&quot;Statistics&quot;
+    &gt;
+      &lt;rd-checkbox
+        label=&quot;Allow collection of anonymous statistics to help us improve Rancher Desktop&quot;
+        :value=&quot;preferences.application.telemetry.enabled&quot;
+        :is-locked=&quot;isPreferenceLocked(&#39;application.telemetry.enabled&#39;)&quot;
+        @update:value=&quot;onChange(&#39;application.telemetry.enabled&#39;, $event)&quot;
+      /&gt;
+    &lt;/rd-fieldset&gt;
+  &lt;/div&gt;</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/components/MarketplaceCatalog.vue#L28-L38">pkg/rancher-desktop/components/MarketplaceCatalog.vue</a></div>
+      <pre data-start="28" data-line="33"><code class="language-markup">    },
+    allowedListEnabled(): boolean {
+      return this.getPreferences.application.extensions.allowed.enabled;
+    },
+    allowedExtensions(): string[] {
+      return this.getPreferences.application.extensions.allowed.list;
+    },
+    filteredExtensions(): ExtensionData[] {
+      let tempExtensions = this.marketData
+        .filter((item) =&gt; {
+          return this.isAllowed(item.slug);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/components/Preferences/ModalBody.vue#L27-L37">pkg/rancher-desktop/components/Preferences/ModalBody.vue</a></div>
+      <pre data-start="27" data-line="32"><code class="language-markup">    currentNavItem: {
+      type:     String,
+      required: true,
+    },
+    preferences: {
+      type:     Object as PropType&lt;Settings&gt;,
+      required: true,
+    },
+  },
+  computed: {
+    ...mapState(&#39;credentials&#39;, [&#39;credentials&#39;]),</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L144-L154">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="144" data-line="149"><code class="language-typescript">
+    await new Promise&lt;void&gt;(resolve =&gt; resolve());
+  },
+
+  /**
+   * Update a given property for preferences. Propose the new preferences after
+   * each update to check if kubernetes requires a reset or restart.
+   * @param context The vuex context object
+   * @param args Key, value pair that corresponds to a property and its value
+   * in the preferences object
+   */</code></pre>
+    <p>Fix: do not switch the full dialog to <code>AppSpec</code> until the schema covers the surfaced settings, or narrow the UI to the supported fields.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> <code>commit</code> JSON-Patch <code>add</code> fails when the parent object is absent (enabling Kubernetes) <span class="pill pill-gemini">Gemini</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L177-L196">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="177" data-line="182-191"><code class="language-ts">    commit(&#39;SET_WSL_INTEGRATIONS&#39;, updatedIntegrations);
+  },
+  updateWslIntegrations({ commit, state }, args: { distribution: string, value: boolean }) {
+    const { distribution, value } = args;
+
+    const integrations = _.set(_.cloneDeep(state.wslIntegrations), distribution, value);
+
+    commit(&#39;SET_WSL_INTEGRATIONS&#39;, integrations);
+  },
+  setPlatformWindows({ commit }, isPlatformWindows: boolean) {
+    commit(&#39;SET_IS_PLATFORM_WINDOWS&#39;, isPlatformWindows);
+  },
+  /**
+   * Validates the provided preferences object. Commits SET_SEVERITIES and
+   * SET_PREFERENCES_ERROR based on the validation response.
+   * @param context The vuex context object
+   * @param payload Contains credentials and an
+   * optional preferences object. Defaults to preferences stored in state if
+   * preferences are not provided.
+   * @returns A collection of severities to indicate any errors or side-effects</code></pre>
+    <p><code>commit</code> emits one JSON-Patch <code>add</code> per changed key. Under RFC 6902, <code>add</code> to <code>/spec/kubernetes/enabled</code> requires <code>/spec/kubernetes</code> to already exist. An App created by <code>rdd set running=true</code> has no <code>spec.kubernetes</code>: <code>createAndPatchApp</code>/<code>fillRequiredFields</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/rdd/cmd/rdd/set.go#L359"><code>rdd/cmd/rdd/set.go:359</code></a>) fill only the spec-level required <code>running</code>, and the CRD gives <code>kubernetes</code> no default (unlike <code>containerEngine</code>). Enabling Kubernetes from the UI then sends <code>add</code> to a missing parent, which the API server rejects with 422. <code>modify</code>&#39;s merge-patch dry-run vivifies the parent, so validation passes while the real commit fails. Downgraded from critical: latent until the UI is wired (I1), recoverable via the CLI, and pre-release.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/rdd/cmd/rdd/set.go#L354-L364">rdd/cmd/rdd/set.go</a></div>
+      <pre data-start="354" data-line="359"><code class="language-go">	createSpec := specMap
+	if dryRun {
+		// Create with required defaults only; patch carries the real values.
+		createSpec = make(map[string]any)
+	}
+	fillRequiredFields(createSpec, specSchema)
+
+	obj := &amp;unstructured.Unstructured{
+		Object: map[string]any{
+			&quot;apiVersion&quot;: appv1alpha1.GroupVersion.String(),
+			&quot;kind&quot;:       appv1alpha1.AppKind,</code></pre>
+    <p>Fix: build <code>commit</code> as a merge patch from <code>changes</code> (mapping <code>undefined</code> to <code>null</code>), matching the dry-run path.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>MutationsType</code> loosened globally to admit one non-<code>SET_</code> mutation <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/ts-helpers.ts#L7-L19">pkg/rancher-desktop/store/ts-helpers.ts</a></div>
+      <pre data-start="7" data-line="12-14"><code class="language-ts"> * MutationsType is used to describe the type that `mutations` should have.
+ * This has a `SET_` method per property in `State`, that takes a payload of the
+ * correct type.  Note that we may have additional mutations available; typically
+ * this is used as `const mutations = { ... } satisfies MutationsType&lt;State&gt;`.
+ */
+export type MutationsType&lt;T&gt; = {
+  [key in keyof T as `SET_${ UpperSnakeCase&lt;key&gt; }`]?: (state: T, payload: T[key]) =&gt; any;
+};
+
+/**
+ * MutationsPayloadType converts from a MutationsType to a type with the same
+ * keys but just the payload as the value.
+ */</code></pre>
+    <p>The added index signature lets <code>preferences.ts</code> declare <code>UPDATE_PREFERENCE</code> under a bare <code>satisfies MutationsType&lt;PreferencesState&gt;</code>. But it weakens the check for every module using <code>satisfies MutationsType&lt;…&gt;</code> alone (<code>steve.ts</code>, <code>container-engine.ts</code>, <code>rdd.ts</code>, <code>diagnostics.ts</code>): a misspelled <code>SET_</code> name or wrong payload now matches the index signature instead of erroring. The established pattern for extra mutations is <code>satisfies MutationsType&lt;S&gt; &amp; MutationTree&lt;S&gt;</code> (see <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/rddConnection.ts#L61"><code>rddConnection.ts:61</code></a>), which the old <code>preferences.ts</code> used. <code>satisfies</code> preserves the precise <code>UPDATE_PREFERENCE</code> typing either way.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/rddConnection.ts#L56-L66">pkg/rancher-desktop/store/rddConnection.ts</a></div>
+      <pre data-start="56" data-line="61"><code class="language-typescript">   */
+  addNamespacedResource(state, [module, resource]: [string, string]) {
+    state.namespacedResources[module] ??= new Set();
+    state.namespacedResources[module].add(resource);
+  },
+} satisfies MutationsType&lt;RDDConnectionState&gt; &amp; MutationTree&lt;RDDConnectionState&gt;;
+
+/**
+ * fetchConfigPromise is used to ensure that multiple concurrent calls to
+ * `fetchConfig` only runs once; this is necessary if a disconnect causes
+ * multiple watchers to error out at once.</code></pre>
+    <p>Fix: drop the <code>&amp; Record&lt;…&gt;</code> and use <code>satisfies MutationsType&lt;PreferencesState&gt; &amp; MutationTree&lt;PreferencesState&gt;</code> in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L80"><code>preferences.ts:80</code></a>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>RecursiveReadonly</code> not updated to <code>object</code> like its siblings <span class="pill pill-claude">Claude</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/utils/typeUtils.ts#L11-L21">pkg/rancher-desktop/utils/typeUtils.ts</a></div>
+      <pre data-start="11" data-line="16"><code class="language-ts">};
+
+export type RecursiveReadonly&lt;T&gt; = {
+  readonly [P in keyof T]:
+  T[P] extends (infer U)[] ? readonly RecursiveReadonly&lt;U&gt;[] :
+
+    T[P] extends Record&lt;string, unknown&gt; ? RecursiveReadonly&lt;T[P]&gt; :
+      T[P];
+};
+
+/**</code></pre>
+    <p>This PR moved <code>RecursivePartial</code> and <code>RecursiveKeys</code> from <code>Record&lt;string, unknown&gt;</code> to <code>object</code> because generated <code>@rdd-client</code> classes do not extend <code>Record&lt;string, unknown&gt;</code> and so were not recursed into. <code>RecursiveReadonly</code> kept the old form, yet the PR adds a consumer at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L84"><code>preferences.ts:84</code></a> (<code>Required&lt;RecursiveReadonly&lt;AppSpec&gt;&gt;</code>) where <code>AppSpec</code> is a generated class — so the deep-readonly stops one level in. Type-level only, but an inconsistent trap.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L79-L89">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="79" data-line="84"><code class="language-typescript">    wslIntegrations:    { },
+    isPlatformWindows:  false,
+    hasError:           false,
+    severities:         {
+      reset: false, restart: false, error: false,
+    },
+    preferencesError: &#39;&#39;,
+    canApply:         false,
+  }
+);
+</code></pre>
+    <p>Fix: change line 16 to <code>T[P] extends object ? RecursiveReadonly&lt;T[P]&gt; :</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>state.preferences</code> typed <code>Required&lt;AppSpec&gt;</code> but initialized to <code>{}</code> <span class="pill pill-claude">Claude</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p>The watcher fills <code>preferences</code> only once <code>rdd/app</code> resolves with a spec. Before that — at startup, or after the app is deleted — <code>preferences</code> is an empty object typed as a fully-populated spec. Once consumers migrate (I1) and read <code>preferences.kubernetes.enabled</code>, they hit <code>undefined</code>. Initialize from defaults, or read through a getter that tolerates the empty state.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>commit</code> can drop a <code>modify</code> that interleaves during its await <span class="pill pill-claude">Claude</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>commit</code> snapshots <code>body</code> from <code>changes</code>, awaits the patch, then clears all changes unconditionally at line 205. A <code>modify</code> that runs during the await adds a key <code>commit</code> never sent but then wipes — a lost update. Practically unreachable in the single-user UI, so low severity.</p>
+    <p>Fix: clear only the keys actually committed, rather than resetting <code>changes</code> to <code>{}</code>.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>modify</code>&#39;s merge-patch dry-run cannot represent a field removal <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>modify</code> validates a JSON Merge Patch of the whole <code>spec: state.preferences</code> with <code>dryRun: &#39;All&#39;</code>. When a change sets a field to <code>undefined</code> — the <code>remove</code> case <code>commit</code> handles at line 187 — <code>JSON.stringify</code> drops the key, so the merge patch neither validates nor represents the removal. The dry-run passes on a payload that differs from what <code>commit</code> sends as a JSON-Patch <code>remove</code>, so validation and the real write can disagree. This is the removal-side twin of I3.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L182-L192">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="182" data-line="187"><code class="language-typescript">    const integrations = _.set(_.cloneDeep(state.wslIntegrations), distribution, value);
+
+    commit(&#39;SET_WSL_INTEGRATIONS&#39;, integrations);
+  },
+  setPlatformWindows({ commit }, isPlatformWindows: boolean) {
+    commit(&#39;SET_IS_PLATFORM_WINDOWS&#39;, isPlatformWindows);
+  },
+  /**
+   * Validates the provided preferences object. Commits SET_SEVERITIES and
+   * SET_PREFERENCES_ERROR based on the validation response.
+   * @param context The vuex context object</code></pre>
+    <p>Fix: validate the exact patch <code>commit</code> will send (see the Design Observation on divergent patch mechanisms).</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> Watcher leaves unrelated background updates stale after a revert <span class="pill pill-gemini">Gemini</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L254-L264">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="254" data-line="259"><code class="language-ts">  },
+  hasError(state) {
+    return state.hasError;
+  },
+  canApply(state, getters) {
+    return (getters.isPreferencesDirty &amp;&amp; state.preferencesError.length === 0) || state.canApply;
+  },
+  showMuted(state) {
+    return state.preferences.diagnostics.showMuted;
+  },
+  isPreferenceLocked: (state) =&gt; (value: string) =&gt; {</code></pre>
+    <p>While <code>changes</code> is non-empty, the watcher skips <code>SET_PREFERENCES</code>, so a background <code>App.spec</code> change (e.g. a CLI edit to an unrelated field) is not reflected. Refusing to clobber in-progress edits is correct — Claude flagged the same guard as a strength — but the watcher keys on <code>rdd/app</code> changing, not on <code>changes</code> emptying, so after the user reverts their edit it does not re-fire and the unrelated field stays stale until the next app change. Narrow in single-user use.</p>
+    <p>Fix: re-apply <code>app.spec</code> on every change and layer the uncommitted <code>changes</code> on top, so unrelated fields stay live without losing edits.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><strong>Two divergent patch mechanisms for one resource</strong> <code>(in-scope)</code> <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span> — <code>modify</code> validates with a full-spec merge patch while <code>commit</code> applies a hand-built JSON patch (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L181-L201"><code>preferences.ts:181-201</code></a>). The two exercise different server code paths and fail differently: the merge patch vivifies parents and ignores <code>undefined</code>, the JSON patch requires existing parents and encodes explicit <code>remove</code>. This split is the root of both I3 and S5. Dry-running the exact JSON patch that <code>commit</code> will send — or building <code>commit</code> as a merge patch from <code>changes</code> — would keep validation and write in lock-step and close both gaps. The hand-rolled RFC 6901 escaping (<code>replaceAll(&#39;~&#39;,&#39;~0&#39;).replaceAll(&#39;/&#39;,&#39;~1&#39;)</code>) is correct and tested; a small patch helper would also cover array indices (the <code>// TODO: Handle array values</code> at line 189) uniformly.</li>
+      <li><strong>Dot-notation keys cannot represent map keys or array indices</strong> <code>(future)</code> <span class="pill pill-claude">Claude</span> — <code>Changes</code> keys are dot-joined paths consumed by <code>_.get</code>/<code>_.set</code>/<code>key.split(&#39;.&#39;)</code>. Today&#39;s <code>AppSpec</code> (<code>running</code>, <code>kubernetes.*</code>, <code>containerEngine.name</code>, <code>namespace</code>) has no map or array fields, and <code>RecursiveLeafKeys</code>/<code>FieldType</code> note they do not handle arrays. Worth revisiting before adding map-typed spec fields (WSL integrations, allowed-image patterns) whose keys can contain dots.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li>The <code>SerializedRequestMiddleware</code> abort pattern is sound: the renderer&#39;s <code>fetch</code> rejects with <code>signal.reason</code>, so <code>Object.is(error, requestSerializer.abortError)</code> reliably distinguishes an intentional supersession from a real error. <span class="pill pill-claude">Claude</span></li>
+      <li>Moving validation to a dry-run <code>patchApp</code> against the same API-server contract that will apply the change — rather than a separate client-side validator — is a good direction. <span class="pill pill-codex">Codex</span></li>
+      <li>The <code>ActionTree</code>/<code>moduleName&lt;S&gt;</code>/<code>mutationsFor&lt;S&gt;</code> machinery gives each module&#39;s actions a precisely-typed <code>commit</code>, and <code>RootGetters</code> is cleanly relocated so <code>store.d.ts</code> and <code>ts-helpers.ts</code> share one definition. <span class="pill pill-claude">Claude</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The new <code>preferences.spec.ts</code> exercises real logic, not just mocks: JSON-Patch body construction with <code>~</code>/<code>/</code> escaping and <code>remove</code>-on-<code>undefined</code>, the revert-clears-change path, <code>ApiException</code> JSON-vs-non-JSON body parsing, and the watcher&#39;s four branches. Untested scenarios, ranked by risk:</p>
+    <ol>
+      <li><strong>Consumer wiring</strong> — no test asserts any component or <code>store/diagnostics.ts</code> dispatch resolves against the new surface; a store-registration or e2e smoke test would have caught I1.</li>
+      <li><strong>Nested-parent commit (I3)</strong> — no test covers <code>commit</code> adding a nested key whose parent object is absent from <code>app.spec</code>.</li>
+      <li><strong>Real abort propagation</strong> — the abort test calls <code>throwIfAborted()</code> by hand, validating the store&#39;s handling given a rejection, not that the <code>@rdd-client</code> fetch path actually rejects with <code>abortError</code>.</li>
+      <li><strong>Background update during edit / revert (S6)</strong> and the <em></em><code>commit</code>-vs-<code>modify</code> race (S4)<em></em>.</li>
+      <li><em></em>Empty <code>state.preferences</code> at startup (S3)<em></em>; dotted-key revert in <code>modify</code>; <code>getters.committed</code> and <code>isPreferenceLocked</code> (both trivial).</li>
+    </ol>
+    <p>Note: the <code>console.error</code> spy at <code>preferences.spec.ts:240</code> is installed at describe-collection time and survives the outer <code>jest.clearAllMocks()</code>, so it suppresses <code>console.error</code> for sibling describes too — test hygiene, not a correctness issue.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Exported symbols carry docstrings, and <code>isPreferenceLocked</code> links its TODO to issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/513" class="gh-ref" data-title="Implement deployment profiles" data-state="open" data-type="issue">#513</a>. No user-facing docs change. The PR would benefit from a note — in the description or a tracking issue — that the <code>AppSpec</code>-backed store intentionally supersedes only part of the <code>Settings</code> surface, so the incomplete-migration state (I1, I2) is deliberate rather than an oversight.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Minor: the typings work is spread across all three commits rather than isolated in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c1df544ef"><code>c1df544ef</code></a> (&quot;Improve Vuex typings&quot;). The <code>MutationsType</code> loosening (S1) and the <code>RecursiveLeafKeys</code>/<code>FieldType</code> additions land in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b1cff31dc"><code>b1cff31dc</code></a> (&quot;Replace preferences store&quot;), and the <code>RecursivePartial</code>→<code>object</code> change plus the test-only <code>signal</code>/<code>appMissingStatus</code> exports land in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1c66a7614"><code>1c66a7614</code></a> (&quot;add tests&quot;). Each commit still builds and the split is defensible — test-enablement changes riding with the tests — so this is a note, not a blocker.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L87"><code>preferences.ts:87</code></a> — <code>isPreferenceLocked</code> always returns <code>false</code>: <code>// TODO: deployment profiles https://github.com/rancher-sandbox/rancher-desktop-2/issues/513</code>.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L189"><code>preferences.ts:189</code></a> — array values in the JSON patch: <code>// TODO: Handle array values.</code> Matches the array limitation noted on <code>RecursiveLeafKeys</code>/<code>FieldType</code> (<code>typeUtils.ts:82,100</code>).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/preferences.ts#L203-L204"><code>preferences.ts:203-204</code></a> — <code>commit</code> re-sets preferences deliberately because it may race the watcher: <code>// Also update the pending preferences because we&#39;re not sure if this wins the race against the app watcher.</code></li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/c1df544efa96275025519b13bad3fe1d8ef63593/pkg/rancher-desktop/store/ts-helpers.ts#L79-L80"><code>ts-helpers.ts:79-80</code></a> — <code>GetterTree</code> types <code>rootGetters</code> loosely on purpose to avoid a circular definition.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude]</strong> — Produced the broadest review: the consumer break plus five type-safety and correctness suggestions no other agent raised (the <code>MutationsType</code> loosening, <code>RecursiveReadonly</code> parity, empty-<code>preferences</code> init, and the <code>commit</code>/<code>modify</code> lost-update race). It correctly diagnosed why CI stays green — the declaration-merged base <code>Dispatch</code> overload. It identified the nested-parent JSON-patch mechanism but concluded it was &quot;fine for the currently fully-defaulted spec,&quot; missing that <code>kubernetes</code> carries no CRD default and so under-rating what Gemini caught as I3. Its calibration was otherwise disciplined: it capped the consumer break at Important with explicit pre-release reasoning, which the consolidation adopted.</p>
+    <p><strong>[Codex]</strong> — Focused tightly on the migration break and owned it best: the removed action surface (C1) and the unique observation that <code>AppSpec</code> cannot represent the <code>Settings</code> schema the UI reads (C2, → I2), traced to concrete component lines. It raised no false positives and noted the dry-run validation direction as a strength. It rated both facets critical without weighing the pre-release, staged-migration context, so both were downgraded. It could not run yarn or lint in its sandbox and said so.</p>
+    <p><strong>[Gemini]</strong> — The only agent to find the commit patch bug (I3) and the merge-patch removal gap (S5), both traced through the <code>modify</code>/<code>commit</code> asymmetry. It missed the consumer-migration surface entirely, marking <code>ts-helpers.ts</code> and <code>typeUtils.ts</code> clean where Claude found S1 and S2. It rated the watcher guard (S6) Important where the guard is largely correct, and rated I3 critical on conditional reasoning; the trigger is real — confirmed via <code>set.go</code> — but the severity was calibrated down. As expected, it did not run <code>git blame</code>.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>16m 14s</td><td>7m 57s</td><td>6m 08s</td></tr>
+        <tr><td>Findings</td><td>1I 5S</td><td>2I</td><td>1I 2S</td></tr>
+        <tr><td>Tool calls</td><td>35 (Bash 30, Read 5)</td><td>98 (shell 98)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>1</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>5</td><td>1</td><td>2</td></tr>
+        <tr><td>Files reviewed</td><td>6</td><td>6</td><td>6</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>2</td><td>2</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 5S</strong></td><td><strong>2I</strong></td><td><strong>1I 2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>2 (I→S)</td><td>2 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Four severities changed during consolidation, all downgrades justified by the repo&#39;s pre-release, single-user, obviously-staged-migration context. Codex C1 (removed action surface) → I1 important. Codex C2 (<code>AppSpec</code> vs <code>Settings</code> schema) → I2 important. Gemini C1 split: the nested-parent commit failure → I3 important, and its merge-patch removal aspect → S5 suggestion. Gemini I1 (watcher drops background updates) → S6 suggestion, since refusing to clobber in-progress edits is correct and only the post-revert staleness remains. No finding was dropped as a false positive; every claim was verified against the code.</p>
+    <p>Codex and Gemini were complementary and each essential — Codex owned the migration break, Gemini owned the patch-logic bug — and neither found the other&#39;s theme. Claude was the most complete single review, covering both themes plus the type-safety regressions, and its severity calibration matched the consolidation most closely.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>When a change removes a member from a strongly-typed facade layered over a loosely-typed library API — a Vuex <code>dispatch</code>/<code>commit</code> augmentation, a typed event emitter, a DI-token map — do not assume the type-checker flags stale consumers. TypeScript interface augmentation merges rather than replaces, so a library&#39;s base <code>(type: string, …)</code> overload survives alongside the strict one and accepts any string key. Consumers that reference the removed member by string compile cleanly and fail only at runtime. When a PR removes actions, getters, mutations, events, or handlers addressed by a string key, grep the codebase for every consumer of each removed name and confirm it still resolves, rather than trusting a green type-check.</li>
+      <li>When reviewing code that builds RFC 6902 JSON Patch operations, flag <code>add</code> or <code>replace</code> on a nested path whose parent object is not guaranteed present: <code>add</code> to <code>/a/b/c</code> is rejected when <code>/a/b</code> is absent, unlike a JSON Merge Patch, which vivifies parents. Verify the parent is always populated by a schema default, a required field, or explicit creation. Separately, when one path validates a change with a dry-run under one patch strategy and another applies it under a different strategy, trace both — merge patch ignores omitted keys and creates parents, JSON patch encodes explicit <code>remove</code> and requires existing parents — so a dry-run can pass on a payload the real write will reject.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[repo] The Vuex store typings in <code>pkg/rancher-desktop/typings/store.d.ts</code> augment vuex&#39;s <code>Dispatch</code> and <code>Commit</code> to type known module actions and mutations, but vuex&#39;s base <code>(type: string, payload?: any)</code> overload survives declaration merging. Removing or renaming a store action or getter therefore produces no type error; <code>Lint TypeScript</code> and <code>Jest</code> stay green while <code>dispatch(&#39;module/action&#39;)</code> calls become runtime no-ops (<code>[vuex] unknown action type</code>). When reviewing changes to a store module&#39;s public surface, grep every <code>dispatch</code>/<code>mapActions</code>/<code>mapGetters</code>/<code>mapState</code> consumer directly instead of relying on the type-check.</li>
+      <li>[repo] In the App CRD (<code>rdd/pkg/apis/app/v1alpha1/app_types.go</code>), <code>spec.containerEngine</code> carries a <code>+kubebuilder:default</code> but <code>spec.kubernetes</code> does not, and only <code>running</code> is required at spec level. An App created via <code>rdd set</code> without a <code>kubernetes.*</code> field is stored with no <code>spec.kubernetes</code> object. Code that patches nested <code>kubernetes.*</code> fields with a JSON Patch <code>add</code> (<code>/spec/kubernetes/...</code>) must account for the absent parent, since the API server rejects an <code>add</code> whose parent object is missing.</li>
+      <li>[repo] PRs touching <code>pkg/rancher-desktop/</code> are in the classic Rancher Desktop Electron/Vue 2/Vuex/TypeScript tree, tested with Jest, not the Go daemon under <code>rdd/</code>. The &quot;RDA&quot; work re-backs this tree onto the daemon&#39;s kube-apiserver <code>App</code> resource through the generated <code>@rdd-client</code>. Expect staged migrations where a store or service is re-backed before its UI consumers are updated; confirm whether an incomplete-migration state is intended and tracked rather than flagging it as an oversight.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
