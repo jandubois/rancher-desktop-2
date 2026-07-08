@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260708-154035-pr-523</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260708-154035-pr-523</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-08 15:40</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/523" class="gh-ref" data-title="Add virtualMachine cpus/memory fields to App spec" data-state="open" data-type="pr">#523</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/Nino-K">@Nino-K</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/523" class="gh-ref" data-title="Add virtualMachine cpus/memory fields to App spec" data-state="open" data-type="pr">#523</a> — Add virtualMachine cpus/memory fields to App spec</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/61636f08c"><code>61636f08c</code></a> Add virtualMachine cpus/memory fields to App spec<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a9b12ce9e"><code>a9b12ce9e</code></a> Replace the host-info ConfigMap with HostInfo CRD</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; clean design, but the new BATS suite fails 5/14 as written and the webhook accepts negative cpus</td></tr>
+      <tr><td>Wall-clock time</td><td><code>23 min 0 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/523" class="gh-ref" data-title="Add virtualMachine cpus/memory fields to App spec" data-state="open" data-type="pr">#523</a> adds a <code>spec.virtualMachine</code> block (cpus + memory) to the App CRD with webhook bounds, Lima-template rewriting, and a new <code>HostInfo</code> singleton CRD for the GUI. The design is clean, but the new BATS suite fails 5 of 14 tests as written: its control plane omits the <code>rdd</code> controller group, and <code>cpus=0</code> stores <code>0</code> rather than clearing. The webhook also accepts negative cpus. All fixes are small and localized.</p>
+    <p>All three reviewers agreed there are no critical issues. The findings cluster into three themes: <strong>validation</strong> (negative cpus accepted and silently ignored), <strong>the new test suite</strong> (wrong controller group, a failing reset assertion, and BATS-style issues), and <strong>HostInfo robustness</strong> (no recovery path, plus a comment that claims one exists). The orchestrator built and ran <code>virtual-machine.bats</code> on the review SHA; Codex independently ran the same suite. Both confirmed the two test failures below (I2, I3) empirically — Claude and Gemini, reasoning from the source alone, assumed the reset flow passed.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Webhook accepts negative <code>cpus</code>, then silently ignores it <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controllers/app_webhook.go#L67-L82">rdd/pkg/controllers/app/app/controllers/app_webhook.go</a></div>
+      <pre data-start="67" data-line="72-77"><code class="language-go">	}
+
+	return nil, nil
+}
+
+func (v *AppValidator) validateVirtualMachine(vm v1alpha1.VirtualMachineSpec) error {
+	if vm.CPUs != 0 {
+		if v.hostInfo.CPUs &gt; 0 &amp;&amp; vm.CPUs &gt; v.hostInfo.CPUs {
+			return fmt.Errorf(&quot;spec.virtualMachine.cpus %d exceeds the host CPU count of %d&quot;, vm.CPUs, v.hostInfo.CPUs)
+		}
+	}
+
+	if vm.Memory != nil {
+		memBytes := vm.Memory.Value()
+		if memBytes &lt; minMemoryBytes {
+			minQ := resource.NewQuantity(minMemoryBytes, resource.BinarySI)</code></pre>
+    <p>Issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/498" class="gh-ref" data-title="Add `virtualMachine.cpus` and `virtualMachine.memory` properties on the App controller" data-state="open" data-type="issue">#498</a> requires <code>cpus &gt;= 1</code>, with <code>0</code> as the reset sentinel. A negative value (<code>cpus: -4</code>) satisfies <code>!= 0</code> but passes the upper-bound test, and the CRD declares <code>cpus</code> as an unconstrained integer (no <code>minimum</code>), so admission stores it.</p>
+    <p><code>applyVMResources</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controllers/app_controller.go#L133-L148"><code>app_controller.go:133-148</code></a>) then skips both the <code>cpus == 0</code> env-fallback branch and the <code>cpus &gt; 0</code> rewrite branch, so the value is silently discarded — the VM uses the template default and <code>RDD_VM_CPUS</code> is suppressed.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controllers/app_controller.go#L128-L153">rdd/pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="128" data-line="133-148"><code class="language-go">// applyVMResources rewrites the template&#39;s cpus and memory lines from the App
+// spec. When spec values are unset it falls back to the RDD_VM_CPUS env var
+// (cpus only) and finally the template default.
+func applyVMResources(template string, spec v1alpha1.AppSpec) (string, error) {
+	// CPUs: spec takes priority over the env-var override.
+	cpus := spec.VirtualMachine.CPUs
+	if cpus == 0 {
+		if val := os.Getenv(vmCPUsEnv); val != &quot;&quot; {
+			n, err := strconv.Atoi(val)
+			if err != nil || n &lt; 1 {
+				return &quot;&quot;, fmt.Errorf(&quot;invalid %s value %q: want a positive integer&quot;, vmCPUsEnv, val)
+			}
+			cpus = n
+		}
+	}
+	if cpus &gt; 0 {
+		if !reCPUs.MatchString(template) {
+			return &quot;&quot;, errors.New(&quot;lima template has no cpus line to override&quot;)
+		}
+		template = reCPUs.ReplaceAllString(template, fmt.Sprintf(&quot;cpus: %d&quot;, cpus))
+	}
+
+	// Memory: spec value only; no env-var equivalent.
+	if mem := spec.VirtualMachine.Memory; mem != nil {
+		if !reMemory.MatchString(template) {
+			return &quot;&quot;, errors.New(&quot;lima template has no memory line to override&quot;)</code></pre>
+    <p>Fix: reject negatives in the webhook and gate the upper-bound check on <code>&gt; 0</code>.</p>
+      <pre><code class="language-go">if vm.CPUs &lt; 0 {
+    return fmt.Errorf(&quot;spec.virtualMachine.cpus %d must not be negative&quot;, vm.CPUs)
+}
+if vm.CPUs &gt; 0 { /* existing upper-bound check */ }</code></pre>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>rdd set virtualMachine.cpus=0</code> stores <code>0</code> instead of clearing; the reset test fails <span class="pill pill-codex">Codex</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/cmd/rdd/set.go#L735-L750">rdd/cmd/rdd/set.go</a></div>
+      <pre data-start="735" data-line="740-745"><code class="language-go">		v, err := strconv.ParseBool(raw)
+		if err != nil {
+			return nil, errors.New(&quot;expected boolean; use \&quot;true\&quot; or \&quot;false\&quot;&quot;)
+		}
+		return v, nil
+	case &quot;integer&quot;:
+		v, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return nil, errors.New(&quot;expected integer&quot;)
+		}
+		return v, nil
+	case &quot;string&quot;:
+		return raw, nil
+	default:
+		if schema.XIntOrString {
+			// resource.Quantity — an empty string clears the field (null patch);</code></pre>
+    <p>The generic integer coercion returns <code>int64(0)</code>, and <code>patchApp</code> sends a JSON merge patch <code>{&quot;cpus&quot;:0}</code>, which stores <code>0</code> (merge-patch removal requires <code>null</code>). Running the suite confirms the assertion at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/bats/tests/32-app-controllers/virtual-machine.bats#L92-L96"><code>virtual-machine.bats:92-96</code></a> fails: expected empty, actual <code>0</code>. Unlike <code>memory</code> (an <code>XIntOrString</code> whose empty string yields a null patch), an integer field cannot be cleared — <code>cpus=</code> errors with &quot;expected integer&quot; and <code>cpus=0</code> persists <code>0</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/bats/tests/32-app-controllers/virtual-machine.bats#L87-L101">rdd/bats/tests/32-app-controllers/virtual-machine.bats</a></div>
+      <pre data-start="87" data-line="92-96"><code class="language-plaintext">
+@test &quot;webhook rejects memory exceeding host total&quot; {
+    run -1 rdd ctl patch app &quot;${APP_NAME}&quot; \
+        --type=&#39;merge&#39; --dry-run=server \
+        -p=&#39;{&quot;spec&quot;:{&quot;virtualMachine&quot;:{&quot;memory&quot;:&quot;999999Gi&quot;}}}&#39;
+    assert_output --partial &quot;denied the request&quot;
+    assert_output --partial &quot;exceeds the host memory&quot;
+}
+
+@test &quot;rdd set virtualMachine.cpus=0 resets cpus to default&quot; {
+    rdd set --wait=false virtualMachine.cpus=0
+
+    run -0 get_app_field &#39;.spec.virtualMachine.cpus&#39;
+    assert_output &quot;&quot;
+}</code></pre>
+    <p>Fix: decide the contract. Either special-case <code>virtualMachine.cpus</code> so <code>0</code>/empty emits a <code>nil</code> (null patch) that clears the field, or keep <code>0</code> as the stored sentinel and change the test to assert <code>0</code> and document it.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The new BATS suite starts a control plane without the <code>rdd</code> group; 4 tests fail <span class="pill pill-codex">Codex</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/bats/tests/32-app-controllers/virtual-machine.bats#L14-L24">rdd/bats/tests/32-app-controllers/virtual-machine.bats</a></div>
+      <pre data-start="14" data-line="19"><code class="language-bash">get_app_field() {
+    rdd ctl get app &quot;${APP_NAME}&quot; -o jsonpath=&quot;{$1}&quot;
+}
+
+local_setup_file() {
+    setup_rdd_control_plane &quot;app&quot;
+    delete_app
+    rdd set --wait=false running=false
+}
+
+@test &quot;rdd-host-info ConfigMap is created at startup&quot; {</code></pre>
+    <p><code>--controllers=&quot;app&quot;</code> enables only the app API group plus builtins. The HostInfo controller is registered in the <code>rdd</code> group (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controller.go#L26-L27"><code>controller.go:26-27</code></a>), so <code>hostinfo</code> is never served. Running the suite, tests 1–3 and 9 fail with <code>the server doesn&#39;t have a resource type &quot;hostinfo&quot;</code>. Both the orchestrator&#39;s and Codex&#39;s live runs reproduced this.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controller.go#L21-L32">rdd/pkg/controllers/app/app/controller.go</a></div>
+      <pre data-start="21" data-line="26-27"><code class="language-go">	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base&quot;
+	servicecontrollers &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers&quot;
+)
+
+// Embedded Lima template split into platform-specific images and shared
+// configuration. The two parts are concatenated at runtime so the VM gets
+// an image type compatible with the host (qcow2 on Unix, tarball on WSL2).
+//
+//go:embed lima-images-unix.yaml
+var limaImagesUnix string
+
+//go:embed lima-images-wsl2.yaml</code></pre>
+    <p>Fix: enable both groups — <code>setup_rdd_control_plane &quot;app,rdd&quot;</code>.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> HostInfo singleton has no recovery path, and a comment claims one exists <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/rdd/hostinfo/controllers/hostinfo_controller.go#L59-L77">rdd/pkg/controllers/rdd/hostinfo/controllers/hostinfo_controller.go</a></div>
+      <pre data-start="59" data-line="64-72"><code class="language-go">}
+
+// Start implements manager.Runnable. It bootstraps the HostInfo singleton
+// once the cache is ready so that the reconciler loop can populate its Status.
+// Only the leader runs this to avoid concurrent creates.
+func (r *HostInfoReconciler) Start(ctx context.Context) error {
+	hi := &amp;rddv1alpha1.HostInfo{
+		ObjectMeta: metav1.ObjectMeta{Name: SingletonName},
+	}
+	if err := r.Create(ctx, hi); err != nil &amp;&amp; !apierrors.IsAlreadyExists(err) {
+		// Non-fatal: log and continue. The next reconcile will retry.
+		logf.FromContext(ctx).Error(err, &quot;Failed to bootstrap HostInfo singleton&quot;)
+	}
+	return nil
+}
+
+// NeedLeaderElection implements manager.LeaderElectionRunnable so that only
+// the leader creates the HostInfo singleton.
+func (r *HostInfoReconciler) NeedLeaderElection() bool { return true }</code></pre>
+    <p>If the one-shot <code>Start</code> create fails, no object exists; <code>Reconcile</code> fires only on <code>For(&amp;HostInfo{})</code> events and the informer&#39;s initial list is empty, so no reconcile ever runs — the &quot;next reconcile will retry&quot; comment is false. A runtime <code>delete hostinfo system</code> likewise leaves a permanent gap (<code>Reconcile</code> returns <code>IgnoreNotFound</code>). Impact is limited — the embedded apiserver makes the create reliable, and the webhook detects host limits directly rather than reading the CRD — but the GUI&#39;s range query breaks until restart, and the comment misleads.</p>
+    <p>Fix: extract <code>ensureSingleton(ctx)</code>, call it from <code>Start</code> and the singleton-NotFound branch of <code>Reconcile</code>; return/retry the bootstrap error, or correct the comment.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Run <code>go mod tidy</code> — <code>pbnjay/memory</code> is still marked <code>// indirect</code> <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/go.mod#L305-L315">rdd/go.mod</a></div>
+      <pre data-start="305" data-line="310"><code class="language-plaintext">	github.com/nishanths/predeclared v0.2.2 // indirect
+	github.com/nunnatsa/ginkgolinter v0.21.2 // indirect
+	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/opencontainers/image-spec v1.1.1 // indirect
+	github.com/opencontainers/selinux v1.13.1 // indirect
+	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 // indirect
+	github.com/pelletier/go-toml v1.9.5 // indirect
+	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
+	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
+	github.com/pierrec/lz4/v4 v4.1.26 // indirect
+	github.com/pkg/errors v0.9.1 // indirect</code></pre>
+    <p>The dependency is now imported directly by <code>hostinfo.go</code> and <code>hostinfo_controller.go</code>, but the PR&#39;s <code>go.mod</code> diff is empty, so <code>go mod tidy</code> was not run; it would drop the <code>// indirect</code> annotation. A CI tidy-check would flag this.</p>
+    <p>Fix: run <code>go mod tidy</code> and commit the result.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Drop <code>local</code> and command substitution inside <code>@test</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span> <span class="pill pill-gemini">Gemini</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/bats/tests/32-app-controllers/virtual-machine.bats#L68-L80">rdd/bats/tests/32-app-controllers/virtual-machine.bats</a></div>
+      <pre data-start="68" data-line="73-75"><code class="language-bash">    run -1 rdd ctl patch app &quot;${APP_NAME}&quot; \
+        --type=&#39;merge&#39; --dry-run=server \
+        -p=&#39;{&quot;spec&quot;:{&quot;virtualMachine&quot;:{&quot;memory&quot;:&quot;1Gi&quot;}}}&#39;
+    assert_output --partial &quot;denied the request&quot;
+    assert_output --partial &quot;less than the minimum&quot;
+}
+
+@test &quot;webhook rejects cpus exceeding host count&quot; {
+    local host_cpus
+    host_cpus=&quot;$(rdd ctl get configmap rdd-host-info \
+        --namespace rdd-system -o jsonpath=&#39;{.data.cpus}&#39;)&quot;
+    local excessive=$((host_cpus + 1))
+</code></pre>
+    <p>Each <code>@test</code> runs in its own subshell, so <code>local</code> is redundant (repo BATS convention). The command substitution swallows a non-zero exit and leaves the variable empty; <code>run -0 ...; excessive=$(( output + 1 ))</code> surfaces command failures with status and output.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> Drop redundant <code>run -0</code> where success is the entire assertion <span class="pill pill-claude">Claude</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p>The two &quot;webhook accepts…&quot; tests use <code>run -0 rdd ctl patch …</code> with no following reference to <code>${output}</code>/<code>${status}</code>. Under <code>set -e</code> the bare command already fails the test on non-zero exit, so <code>run -0</code> adds nothing (repo BATS convention). Invoke <code>rdd ctl patch …</code> directly.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> Remove the dead <code>Scheme</code> field on <code>HostInfoReconciler</code> <span class="pill pill-claude">Claude</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>Scheme</code> is assigned in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controller.go#L46"><code>controller.go:46</code></a> but never read — the reconciler sets no owner references (unlike sibling reconcilers that use <code>r.Scheme</code> for <code>SetControllerReference</code>). It is dead configuration; drop the field and the assignment, or comment a planned use.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controller.go#L41-L51">rdd/pkg/controllers/app/app/controller.go</a></div>
+      <pre data-start="41" data-line="46"><code class="language-go">func limaTemplateData() string {
+	images := limaImagesUnix
+	if runtime.GOOS == &quot;windows&quot; {
+		images = limaImagesWSL2
+	}
+	return images + limaTemplate
+}
+
+func init() {
+	base.RegisterController(newController())
+}</code></pre>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> The memory regex is coupled to the template&#39;s exact quoting <span class="pill pill-gemini">Gemini</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controllers/app_controller.go#L120-L130">rdd/pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="120" data-line="125"><code class="language-go">// backward compatibility; spec.virtualMachine.cpus takes precedence when set.
+const vmCPUsEnv = &quot;RDD_VM_CPUS&quot;
+
+var (
+	reCPUs   = regexp.MustCompile(`(?m)^cpus: \d+$`)
+	reMemory = regexp.MustCompile(`(?m)^memory: &quot;\d+&quot;$`)
+)
+
+// applyVMResources rewrites the template&#39;s cpus and memory lines from the App
+// spec. When spec values are unset it falls back to the RDD_VM_CPUS env var
+// (cpus only) and finally the template default.</code></pre>
+    <p>The regex requires the <code>memory</code> value to be double-quoted. It matches the current template, so this is not a live bug (a mismatch fails loudly with &quot;no memory line to override&quot;), but a cosmetic template edit dropping the quotes would break <code>memory</code> rewrites. Consider <code>&quot;?\d+&quot;?</code> for resilience.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> HostInfo ignores rogue objects and logs on no-op reconciles <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+    <p>The controller populates the status of any <code>HostInfo</code> name, not just <code>system</code>, so an accidentally-created object gets a status rather than being rejected. Separately, <code>log.Info(&quot;Updated HostInfo status&quot;, …)</code> fires on every reconcile, including the convergence pass whose <code>MergeFrom</code> patch is empty. Low-risk in a single-user control plane. Consider short-circuiting non-<code>system</code> names and gating the log on an actual status change.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> &quot;preserves other fields&quot; test sets no VM property <span class="pill pill-claude">Claude</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/bats/tests/32-app-controllers/virtual-machine.bats#L54-L64">rdd/bats/tests/32-app-controllers/virtual-machine.bats</a></div>
+      <pre data-start="54" data-line="59"><code class="language-bash">
+@test &quot;rdd set virtualMachine.memory stores the value&quot; {
+    rdd set --wait=false virtualMachine.memory=4Gi
+
+    run -0 get_app_field &#39;.spec.virtualMachine.memory&#39;
+    assert_output &quot;4Gi&quot;
+}
+
+@test &quot;rdd set preserves other fields when setting virtualMachine properties&quot; {
+    run -0 get_app_field &#39;.spec.running&#39;
+    assert_output &quot;false&quot;</code></pre>
+    <p>The test asserts <code>running == &quot;false&quot;</code> but never sets a VM property, so it silently depends on earlier tests running first in file order. Set a VM property inside the test before asserting <code>running</code> is preserved, so the check is self-contained.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>Host detection is duplicated across two packages and two <code>HostInfo</code> types<em></em> <code>(in-scope)</code> <span class="pill pill-claude">Claude</span>. <code>DetectHostInfo()</code> (app package) feeds the webhook, while <code>HostInfoReconciler.Reconcile</code> (rdd package) independently calls <code>goruntime.NumCPU()</code> + <code>memory.TotalMemory()</code> to populate the CRD; two Go types are both named <code>HostInfo</code>. Keeping detection out of the webhook is reasonable (a webhook read of the CRD would introduce a cross-group startup-ordering hazard), but the detection <em>logic</em> could live in one shared helper. Today the two paths agree only because both call <code>NumCPU()</code>; a future divergence (cgroup/affinity awareness in one path) would make the webhook and the GUI-visible range disagree silently.</li>
+      <li><strong>Memory ceiling is 100% of host RAM</strong> <code>(future)</code> <span class="pill pill-claude">Claude</span>. The webhook allows <code>memory == hostInfo.Memory</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controllers/app_webhook.go#L85"><code>app_webhook.go:85</code></a>), matching issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/498" class="gh-ref" data-title="Add `virtualMachine.cpus` and `virtualMachine.memory` properties on the App controller" data-state="open" data-type="issue">#498</a>, but allocating all host RAM to the guest can starve the host OS. Worth revisiting whether a headroom margin belongs here.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>HostInfo CRD placement</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex</span>. Moving host limits into a cluster-scoped <code>HostInfo</code> CRD in the <code>rdd</code> group (per Jan&#39;s review feedback) leaves room for future host diagnostics without overloading App.</li>
+      <li><strong>CPU precedence chain</strong> <code>(in-scope)</code> <span class="pill pill-claude">Claude</span>. spec → <code>RDD_VM_CPUS</code> → template default is expressed cleanly, and an invalid env value errors loudly so a CI typo cannot silently change VM sizing.</li>
+      <li><strong>Template-change requeue contract</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex</span>. The App reconciler updates the Lima template ConfigMap and explicitly requeues after the unwatched ConfigMap write, preserving the existing Settled/resourceVersion gating for applied changes.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The suite is well-structured but does not pass as written (see I2, I3): a live run fails 5 of 14 tests — 4 from the missing <code>rdd</code> controller group, 1 from the <code>cpus=0</code> reset assertion. Beyond those, coverage gaps:</p>
+    <ul>
+      <li><strong>Negative cpus</strong> (I1) — no unit or integration test; the untested branch is the actual gap.</li>
+      <li><strong>Webhook create path</strong> — <code>validateVirtualMachine</code> has no unit test, and the BATS suite exercises only the update path (<code>patch --dry-run=server</code>). Per the Create+Update webhook contract, an invalid VM spec on <em>create</em> is unverified. A table-driven unit test on <code>AppValidator.validate</code> with an injected <code>HostInfo</code> would cover both paths cheaply and remove the dependence on live host geometry.</li>
+      <li><strong>HostInfo recovery</strong> (I4) — the bootstrap-failure and post-delete paths are untested (and, as noted, do not self-heal).</li>
+      <li><em></em><code>applyVMResources</code> memory-missing-line<em></em> — the cpus-missing-line case is unit-tested; the memory equivalent is not.</li>
+    </ul>
+    <p>The <code>Test_applyVMResources</code> unit test is otherwise solid, covering env/spec precedence, the memory rewrite, and invalid-env errors.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><code>rdd/docs/design/api_app.md</code> does not document <code>spec.virtualMachine.cpus</code>, <code>spec.virtualMachine.memory</code>, or the <code>HostInfo</code> resource / valid ranges <span class="pill pill-codex">Codex</span>. It should be updated once the <code>cpus=0</code> reset contract (I2) is decided.</li>
+      <li>The inaccurate &quot;The next reconcile will retry&quot; comment (I4) should be fixed or removed.</li>
+      <li>Exported symbols are otherwise well documented — <code>VirtualMachineSpec</code>, <code>HostInfo</code>/<code>HostInfoStatus</code>, <code>DetectHostInfo</code>, and the reconciler all carry Godoc.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Two self-contained commits: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/61636f08c"><code>61636f08c</code></a> adds the spec fields, webhook, CLI, and template rewrite; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a9b12ce9e"><code>a9b12ce9e</code></a> replaces the ConfigMap approach with the <code>HostInfo</code> CRD per review feedback. The second is a genuine design change, not a fixup, and stands alone. History is clean; no action needed.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/61636f08c4e2a6a19fee4ad246db0a91738766d5/rdd/pkg/controllers/app/app/controllers/app_controller.go#L119-L120"><code>app_controller.go:119-120</code></a> — <code>RDD_VM_CPUS</code> is deliberately retained for CI backward compatibility and correctly de-prioritized behind the spec value.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Both of Jan&#39;s prior review comments were addressed by the commits under review: the ConfigMap became the <code>HostInfo</code> CRD, and the <code>minimum: 1</code> constraint was removed so <code>cpus=0</code> is accepted. Note, however, that the <code>cpus=0</code> <em>reset-to-empty</em> behavior Jan asked for does not actually clear the field (I2) — the value is accepted but stored as <code>0</code>.</p>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Codex]</strong> — The standout this round. It built the CLI, ran <code>go test</code>, and stood up a live disposable control plane, and was the only cloud agent to catch both empirically-confirmed test failures: the missing <code>rdd</code> controller group (I3) and the <code>cpus=0</code> storage bug (I2). Its findings carried accurate file:line citations and reproduction commands, and it alone flagged the <code>api_app.md</code> documentation gap. No false positives; no coverage misses on the material issues.</p>
+    <p><strong>[Claude]</strong> — Contributed the most suggestions and the two hygiene findings no one else saw — the stale <code>// indirect</code> (S1) and the dead <code>Scheme</code> field (S4) — plus the sharpest framing of the misleading HostInfo comment (I4). Its notable weakness was reasoning about tests instead of running them: it marked <code>set.go</code> &quot;no issues, verified correct&quot; and called the <code>cpus=0</code>/<code>memory=</code> reset flow a strength &quot;covered by dedicated tests,&quot; which live execution refuted (I2). It also missed the controller-group setup bug (I3). A confident false negative on a path that a build-and-run would have caught.</p>
+    <p><strong>[Gemini]</strong> — Solid on the shared code-level concerns (negative cpus, HostInfo self-heal, BATS style) and the source of two unique observations: the memory-regex fragility (S5) and rogue-HostInfo handling (S6). Its reset finding rested on a wrong premise — that <code>cpus=0</code> clears the field — so while the CLI-reset-inconsistency observation was directionally useful, the specific mechanism was incorrect and is captured accurately under I2. Like Claude, it did not run the suite (or <code>git blame</code>), so it could not surface the two execution-only failures.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>14m 25s</td><td>8m 57s</td><td>4m 28s</td></tr>
+        <tr><td>Findings</td><td>2I 6S</td><td>4I 1S</td><td>2I 3S</td></tr>
+        <tr><td>Tool calls</td><td>21 (Read 11, Bash 10)</td><td>64 (shell 63, stdin 1)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>4</td><td>2</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>4</td><td>3</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>21</td><td>21</td><td>21</td></tr>
+        <tr><td>Coverage misses</td><td>2</td><td>0</td><td>2</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 6S</strong></td><td><strong>4I 1S</strong></td><td><strong>2I 3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Codex delivered the most value this round: it was the only agent whose live verification caught the two failures that actually block the merge, and it produced them with clean reproductions. Claude and Gemini added real breadth — hygiene, style, and design observations the others missed — but both drew the wrong conclusion on the <code>cpus=0</code> reset by trusting the test source rather than executing it. The clearest process lesson: for a PR whose correctness hinges on new tests, source-only review is not enough; the suite has to be run.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>When a change adds or modifies a test suite, run that suite before concluding it passes; do not infer pass/fail by reading the test source.</strong> Source-only review produces false negatives — a test whose setup wires the wrong dependencies, or whose assertion contradicts the code&#39;s actual output, reads as correct on the page and fails on execution. If the suite cannot be run in the review environment, state that and lower confidence on any &quot;tests pass&quot; claim rather than asserting it.</li>
+      <li><em></em>When a validating webhook treats a sentinel value as &quot;unset / use default&quot; and skips validation for it (e.g. <code>if x != 0 { … }</code>), verify that out-of-range values on the other side of the sentinel are still rejected.<em></em> A guard that excludes the sentinel and then checks only an upper bound silently admits negatives; if the schema declares the field as an unconstrained integer, the webhook is the only gate. Confirm the CRD <code>minimum</code>/<code>maximum</code> and the webhook together cover the full invalid range.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>[repo]</strong> BATS tests that query a custom resource must enable that resource&#39;s API group in <code>setup_rdd_control_plane</code>&#39;s argument — the helper forwards it verbatim to <code>rdd svc create --controllers=</code>. Groups are <code>app</code>, <code>rdd</code>, <code>containers</code>, <code>lima</code>. A missing group surfaces as <code>the server doesn&#39;t have a resource type &quot;X&quot;</code> at test time, not as a clear setup error. When a test references a resource type, check that the enabled groups include the one that serves it (e.g. <code>HostInfo</code> is in <code>rdd</code>, <code>App</code> in <code>app</code>).</li>
+      <li><strong>[repo]</strong> In <code>rdd set</code>, an empty value clears string and quantity (<code>XIntOrString</code>) fields by emitting a null merge patch, but an integer field cannot be cleared this way: <code>field=</code> fails coercion (&quot;expected integer&quot;) and <code>field=0</code> stores <code>0</code> (a JSON merge patch keeps a zero; only <code>null</code> removes). When reviewing a new optional integer spec field documented with a &quot;0 means default / reset&quot; contract, verify reset-to-unset is actually achievable — and that any test asserting the field becomes empty reflects real behavior.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
