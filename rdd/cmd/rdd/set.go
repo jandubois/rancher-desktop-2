@@ -742,6 +742,11 @@ func coerceValue(schema *apiextensionsv1.JSONSchemaProps, raw string) (any, erro
 		if err != nil {
 			return nil, errors.New("expected integer")
 		}
+		// 0 means "unset / use default": send a null patch so the field is
+		// removed from the object (consistent with the int omitempty semantics).
+		if v == 0 {
+			return nil, nil
+		}
 		return v, nil
 	case "string":
 		return raw, nil

@@ -713,27 +713,8 @@ func runningLimaVMMessage(runningCond *metav1.Condition, desired string) string 
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *AppReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	if err := mgr.Add(r); err != nil {
-		return fmt.Errorf("failed to register host-info startup runnable: %w", err)
-	}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&v1alpha1.App{}, builder.WithPredicates(predicates.WatchEventLogger("app"))).
 		Owns(&limav1alpha1.LimaVM{}).
 		Complete(r)
 }
-
-// Start implements manager.Runnable. It creates or updates the rdd-host-info
-// ConfigMap once the cache is ready, so the GUI and validators can read the
-// host's CPU count and memory limit.
-func (r *AppReconciler) Start(ctx context.Context) error {
-	if err := CreateOrUpdateHostInfoConfigMap(ctx, r.Client); err != nil {
-		// Non-fatal: log and continue. Validation still works via the values
-		// passed to the webhook at construction time.
-		logf.FromContext(ctx).Error(err, "Failed to write host-info ConfigMap")
-	}
-	return nil
-}
-
-// NeedLeaderElection implements manager.LeaderElectionRunnable. The host-info
-// ConfigMap should only be written by the leader to avoid concurrent writes.
-func (r *AppReconciler) NeedLeaderElection() bool { return true }

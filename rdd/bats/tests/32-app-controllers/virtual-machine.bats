@@ -16,25 +16,22 @@ get_app_field() {
 }
 
 local_setup_file() {
-    setup_rdd_control_plane "app"
+    setup_rdd_control_plane "app,rdd"
     delete_app
     rdd set --wait=false running=false
 }
 
-@test "rdd-host-info ConfigMap is created at startup" {
-    rdd ctl wait --for=create configmap/rdd-host-info \
-        --namespace rdd-system --timeout=30s
+@test "HostInfo singleton is created at startup" {
+    rdd ctl wait --for=create hostinfo/system --timeout=30s
 }
 
-@test "rdd-host-info ConfigMap has a positive cpu count" {
-    run -0 rdd ctl get configmap rdd-host-info \
-        --namespace rdd-system -o jsonpath='{.data.cpus}'
+@test "HostInfo has a positive cpu count" {
+    run -0 rdd ctl get hostinfo system -o jsonpath='{.status.cpus}'
     assert_output_ge 1
 }
 
-@test "rdd-host-info ConfigMap has memory of at least 2 GiB" {
-    run -0 rdd ctl get configmap rdd-host-info \
-        --namespace rdd-system -o jsonpath='{.data.memory}'
+@test "HostInfo has memory of at least 2 GiB" {
+    run -0 rdd ctl get hostinfo system -o jsonpath='{.status.memory}'
     # 2 GiB = 2147483648 bytes
     assert_output_ge 2147483648
 }
@@ -74,8 +71,7 @@ local_setup_file() {
 
 @test "webhook rejects cpus exceeding host count" {
     local host_cpus
-    host_cpus="$(rdd ctl get configmap rdd-host-info \
-        --namespace rdd-system -o jsonpath='{.data.cpus}')"
+    host_cpus="$(rdd ctl get hostinfo system -o jsonpath='{.status.cpus}')"
     local excessive=$((host_cpus + 1))
 
     run -1 rdd ctl patch app "${APP_NAME}" \
