@@ -9,11 +9,9 @@ package controllers
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	goruntime "runtime"
 	"slices"
 	"strconv"
@@ -120,42 +118,38 @@ func (r *AppReconciler) kubernetesEnabled(ctx context.Context) bool {
 // backward compatibility; spec.virtualMachine.cpus takes precedence when set.
 const vmCPUsEnv = "RDD_VM_CPUS"
 
-var (
-	reCPUs   = regexp.MustCompile(`(?m)^cpus: \d+$`)
-	reMemory = regexp.MustCompile(`(?m)^memory: "\d+"$`)
+// Resource defaults, applied when spec.virtualMachine omits cpus or memory.
+const (
+	defaultVMCPUs   = 2
+	defaultVMMemory = 6 * 1024 * 1024 * 1024
 )
 
-// applyVMResources rewrites the template's cpus and memory lines from the App
-// spec. When spec values are unset it falls back to the RDD_VM_CPUS env var
-// (cpus only) and finally the template default.
-func applyVMResources(template string, spec v1alpha1.AppSpec) (string, error) {
-	// CPUs: spec takes priority over the env-var override.
+// vmResourceLines returns the Lima cpus and memory settings, which the embedded
+// template omits. spec.virtualMachine wins over the RDD_VM_CPUS override, which
+// wins over the defaults.
+func vmResourceLines(spec v1alpha1.AppSpec) ([]string, error) {
 	cpus := spec.VirtualMachine.CPUs
 	if cpus == 0 {
+		cpus = defaultVMCPUs
 		if val := os.Getenv(vmCPUsEnv); val != "" {
 			n, err := strconv.Atoi(val)
 			if err != nil || n < 1 {
-				return "", fmt.Errorf("invalid %s value %q: want a positive integer", vmCPUsEnv, val)
+				return nil, fmt.Errorf("invalid %s value %q: want a positive integer", vmCPUsEnv, val)
 			}
 			cpus = n
 		}
 	}
-	if cpus > 0 {
-		if !reCPUs.MatchString(template) {
-			return "", errors.New("lima template has no cpus line to override")
-		}
-		template = reCPUs.ReplaceAllString(template, fmt.Sprintf("cpus: %d", cpus))
-	}
 
-	// Memory: spec value only; no env-var equivalent.
+	// Memory has no env-var equivalent.
+	memory := int64(defaultVMMemory)
 	if mem := spec.VirtualMachine.Memory; mem != nil {
-		if !reMemory.MatchString(template) {
-			return "", errors.New("lima template has no memory line to override")
-		}
-		template = reMemory.ReplaceAllString(template, fmt.Sprintf(`memory: "%d"`, mem.Value()))
+		memory = mem.Value()
 	}
 
-	return template, nil
+	return []string{
+		fmt.Sprintf("cpus: %d", cpus),
+		fmt.Sprintf(`memory: "%d"`, memory),
+	}, nil
 }
 
 func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesPort int) (string, error) {
@@ -163,7 +157,7 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 	if err != nil {
 		return "", fmt.Errorf("failed to get host home directory: %w", err)
 	}
-	baseTemplate, err = applyVMResources(baseTemplate, spec)
+	vmResources, err := vmResourceLines(spec)
 	if err != nil {
 		return "", err
 	}
@@ -172,8 +166,8 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 	if err := os.MkdirAll(instance.LogDir(), 0o700); err != nil {
 		return "", fmt.Errorf("failed to create log directory: %w", err)
 	}
-	return strings.Join([]string{
-		baseTemplate,
+	lines := append([]string{baseTemplate}, vmResources...)
+	lines = append(lines,
 		"param:",
 		fmt.Sprintf("  CONTAINER_ENGINE: %s", spec.ContainerEngine.Name),
 		fmt.Sprintf("  HOST_DOCKER_SOCKET: %q", instance.DockerSocket()),
@@ -186,7 +180,8 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 		fmt.Sprintf("  KUBERNETES_VERSION: %s", spec.Kubernetes.Version),
 		fmt.Sprintf("  KUBERNETES_PORT: %d", kubernetesPort),
 		"",
-	}, "\n"), nil
+	)
+	return strings.Join(lines, "\n"), nil
 }
 
 // networkSetupExtraArgs returns the diagnostic vm-switch logging flags under

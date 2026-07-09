@@ -460,71 +460,58 @@ func Test_applySpecToTemplate(t *testing.T) {
 	}
 }
 
-// Test_applyVMResources is not parallel: t.Setenv forbids it.
-func Test_applyVMResources(t *testing.T) {
-	template := "cpus: 2\nmemory: \"6442450944\"\n"
+// Test_vmResourceLines is not parallel: t.Setenv forbids it.
+func Test_vmResourceLines(t *testing.T) {
+	defaultLines := []string{"cpus: 2", `memory: "6442450944"`}
 
 	tests := []struct {
 		name    string
 		env     string
 		spec    v1alpha1.AppSpec
-		input   string
-		want    string
+		want    []string
 		wantErr string
 	}{
 		{
-			name:  "unset env and spec leaves the template unchanged",
-			input: template,
-			want:  template,
+			name: "unset env and spec yields the defaults",
+			want: defaultLines,
 		},
 		{
-			name:  "env rewrites the cpus line",
-			env:   "3",
-			input: template,
-			want:  "cpus: 3\nmemory: \"6442450944\"\n",
+			name: "env sets the cpus",
+			env:  "3",
+			want: []string{"cpus: 3", `memory: "6442450944"`},
 		},
 		{
-			name:  "spec cpus take priority over env",
-			env:   "3",
-			spec:  v1alpha1.AppSpec{VirtualMachine: v1alpha1.VirtualMachineSpec{CPUs: 4}},
-			input: template,
-			want:  "cpus: 4\nmemory: \"6442450944\"\n",
+			name: "spec cpus take priority over env",
+			env:  "3",
+			spec: v1alpha1.AppSpec{VirtualMachine: v1alpha1.VirtualMachineSpec{CPUs: 4}},
+			want: []string{"cpus: 4", `memory: "6442450944"`},
 		},
 		{
-			name:  "spec memory rewrites the memory line",
-			spec:  v1alpha1.AppSpec{VirtualMachine: v1alpha1.VirtualMachineSpec{Memory: mustParseQuantity("4Gi")}},
-			input: template,
-			want:  "cpus: 2\nmemory: \"4294967296\"\n",
+			name: "spec memory sets the memory",
+			spec: v1alpha1.AppSpec{VirtualMachine: v1alpha1.VirtualMachineSpec{Memory: mustParseQuantity("4Gi")}},
+			want: []string{"cpus: 2", `memory: "4294967296"`},
 		},
 		{
 			name:    "non-numeric env value errors",
 			env:     "many",
-			input:   template,
 			wantErr: "invalid RDD_VM_CPUS",
 		},
 		{
 			name:    "zero env errors",
 			env:     "0",
-			input:   template,
 			wantErr: "invalid RDD_VM_CPUS",
-		},
-		{
-			name:    "template without a cpus line errors when cpus is set",
-			env:     "3",
-			input:   "memory: \"6442450944\"\n",
-			wantErr: "no cpus line",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv(vmCPUsEnv, tt.env)
-			got, err := applyVMResources(tt.input, tt.spec)
+			got, err := vmResourceLines(tt.spec)
 			if tt.wantErr != "" {
 				assert.ErrorContains(t, err, tt.wantErr)
 				return
 			}
 			assert.NilError(t, err)
-			assert.Equal(t, got, tt.want)
+			assert.DeepEqual(t, got, tt.want)
 		})
 	}
 }
