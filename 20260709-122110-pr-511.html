@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260709-122110-pr-511</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Fix label */
+.fix-label { font-weight: 700; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260709-122110-pr-511</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-09 12:21</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of target)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/511" class="gh-ref" data-title="rddepman: record full asset metadata and add the guest manifest" data-state="open" data-type="pr">#511</a> — rddepman: record full asset metadata and add the guest manifest</td></tr>
+      <tr><td>Branch</td><td><code>embed-distro-rddepman</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2f3bdba06"><code>2f3bdba06</code></a> rddepman: record full asset metadata in dependency manifests<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1cdf838a9"><code>1cdf838a9</code></a> rddepman: add the guest dependency manifest</td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude</span> Opus 4.8 (effort: xhigh), <span class="pill pill-codex">Codex</span> GPT 5.5 (effort: xhigh), <span class="pill pill-gemini">Gemini</span> 3.1 Pro (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the asset schema is sound, but <code>--regenerate</code> corrupts a legacy manifest and one install path lost its failure mode</td></tr>
+      <tr><td>Wall-clock time</td><td><code>21 min 44 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Three issues survived verification. <code>rddepman --regenerate</code> against a legacy manifest erases Electron&#39;s recorded checksums; each regenerated sibling rewrites the whole file, re-serializing the skipped entry as empty. Credential-helper installation now succeeds silently when no asset matches, where the old code threw. Three of the new spec&#39;s validation tests never reach the validator they name. The asset schema itself is sound, and the two commits are cleanly split.</p>
+    <p>Codex found both production defects. Claude produced the only suggestions and the sharpest design analysis. Gemini found nothing and asserted, incorrectly, that the migration path is robust. The third finding came from consolidation: no agent caught it.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> <code>--regenerate</code> erases the assets of every non-regenerable dependency <span class="pill pill-codex">Codex</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/rddepman.ts#L329-L352">scripts/rddepman.ts</a></div>
+      <pre data-start="329" data-line="334-347"><code class="language-ts"> * version bump; needs no GitHub token, only network access to the artifacts.
+ */
+async function regenerateAssets(dependencies: VersionedDependency[]): Promise&lt;void&gt; {
+  for (const dependency of dependencies) {
+    if (!dependency.regenerable) {
+      console.log(`Skipping ${ dependency.name } (bumped by rddepman, not regenerated).`);
+      continue;
+    }
+    const version = await dependency.currentVersion;
+
+    console.log(`Resolving assets for ${ dependency.name } ${ printable(version) }...`);
+    const assets = await dependency.getAssets(version);
+
+    await dependency.updateManifest(version, assets);
+  }
+}
+
+/** Selects the config (positional argument, default `host`) and mode. */
+function parseArgs(): { config: DependencyConfig, regenerate: boolean } {
+  const args = process.argv.slice(2);
+  const regenerate = args.includes(&#39;--regenerate&#39;);
+  const name = args.find(arg =&gt; !arg.startsWith(&#39;--&#39;)) ?? &#39;host&#39;;
+  const config = configs[name];
+</code></pre>
+    <p><code>readDependencyManifest</code> parses a legacy <code>checksums</code> entry into <code>assets: []</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L197"><code>scripts/lib/dependencies.ts:197</code></a>). Electron sets <code>regenerable = false</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L37"><code>scripts/dependencies/electron.ts:37</code></a>), so <code>regenerateAssets</code> skips it — but every regenerated sibling rewrites the <em>entire</em> file through <code>writeDependencyManifest</code>, which serializes Electron as <code>assets: []</code> and drops its <code>checksums</code> map. Nothing repopulates them.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L192-L202">scripts/lib/dependencies.ts</a></div>
+      <pre data-start="192" data-line="197"><code class="language-typescript">    manifest[name] = {
+      version: entry.version,
+      assets:  ((entry.assets as RawAsset[]) ?? []).map(asset =&gt; parseAsset(name, path, asset)),
+    };
+  }
+
+  return manifest;
+}
+
+// Split the editor-warning marker across array entries so this source file
+// itself stays unflagged; the joined output reassembles it for editors that</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L32-L42">scripts/dependencies/electron.ts</a></div>
+      <pre data-start="32" data-line="37"><code class="language-typescript">    return `https://github.com/${ this.githubOwner }/${ this.githubRepo }/releases/download/v${ version }/`;
+  }
+
+  // Electron&#39;s assets are pinned to the package.json version, which a
+  // regenerate cannot resolve; rddepman bumps it instead.
+  readonly regenerable = false;
+
+  private get version(): Promise&lt;string&gt; {
+    return import(&#39;electron/package.json&#39;).then(({ version }) =&gt; version);
+  }
+</code></pre>
+    <p>I reproduced this against a legacy fixture: after one sibling write, <code>electron:</code> carried <code>assets: []</code> and its recorded checksums were gone from the file. This breaks the exact migration the docstring at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L175-L179"><code>scripts/lib/dependencies.ts:175-179</code></a> advertises, and <code>Electron.download</code> then throws on an undefined recorded checksum (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L72-L76"><code>electron.ts:72-76</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L170-L184">scripts/lib/dependencies.ts</a></div>
+      <pre data-start="170" data-line="175-179"><code class="language-typescript">}
+
+/**
+ * Reads a `dependencies.yaml` into the typed manifest.  An entry with no
+ * `assets` list parses with an empty one, so `rddepman --regenerate` can
+ * migrate a manifest still written in the old `checksums` schema.  Remove
+ * the tolerance, and its test, once this change has landed on `main`.
+ */
+export async function readDependencyManifest(path: string): Promise&lt;DependencyManifest&gt; {
+  const raw: Record&lt;string, RawEntry&gt; = YAML.parse(await fs.promises.readFile(path, &#39;utf-8&#39;));
+  const manifest: DependencyManifest = {};
+
+  for (const [name, entry] of Object.entries(raw)) {
+    if (!entry || typeof entry !== &#39;object&#39; || !(&#39;version&#39; in entry)) {
+      throw new Error(`Entry ${ name } in ${ path } is missing a &quot;version&quot; field`);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L67-L81">scripts/dependencies/electron.ts</a></div>
+      <pre data-start="67" data-line="72-76"><code class="language-typescript">      throw new Error(`Upstream checksum is missing for ${ archiveName }`);
+    }
+    // If the version in the dependency manifest matches the version installed
+    // via `package.json`, check that the recorded checksum matches the upstream
+    // checksum; this ensures upstream hasn&#39;t been tampered with.
+    if (context.dependencies[this.name].version === version) {
+      const [recorded] = selectAssets(context, this.name, { platform: context.goPlatform, arch: context.goArch });
+      const recordedChecksum = recorded &amp;&amp; assetChecksum(recorded);
+
+      if (recordedChecksum !== expectedChecksum) {
+        throw new Error(`
+          Upstream checksum for Electron archive ${ archiveName }
+          is ${ expectedChecksum }, does not match recorded checksum ${ recordedChecksum }.
+          `.replace(/\s+/g, &#39; &#39;));
+      }</code></pre>
+    <p>Codex labeled this a regression. It is not — <code>--regenerate</code> is new in this PR, so this is a gap in new functionality.</p>
+    <p>Fix: preserve the raw entry for skipped dependencies, or regenerate Electron when the manifest version equals <code>package.json</code>&#39;s.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> Credential-helper install succeeds silently when no asset matches <span class="pill pill-codex">Codex</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/tools.ts#L242-L266">scripts/dependencies/tools.ts</a></div>
+      <pre data-start="242" data-line="247-261"><code class="language-ts">    darwin:  [&#39;docker-credential-osxkeychain&#39;],
+    windows: [&#39;docker-credential-wincred&#39;],
+    wsl:     [],
+  };
+
+  async download(context: DownloadContext): Promise&lt;void&gt; {
+    const version = context.dependencies[this.name].version;
+    const assets = selectAssets(context, this.name, { platform: context.goPlatform, arch: context.goArch });
+    // starting with the 0.7.0 the upstream releases have a broken ad-hoc signature
+    const codesign = context.platform === &#39;darwin&#39;;
+
+    await Promise.all(assets.map((asset) =&gt; {
+      const fullBinName = path.basename(new URL(asset.url).pathname);
+      const baseName = fullBinName
+        .replace(`-v${ version }.${ context.goPlatform }-${ context.goArch }`, &#39;&#39;)
+        .replace(/\.exe$/, &#39;&#39;);
+      const destPath = path.join(context.binDir, exeName(context, baseName));
+
+      return download(asset.url, destPath, { expectedChecksum: assetChecksum(asset), codesign });
+    }));
+  }
+
+  async getAssets(version: string): Promise&lt;DependencyAsset[]&gt; {
+    const baseURL = `https://github.com/${ this.githubOwner }/${ this.githubRepo }/releases/download/v${ version }`;
+    const upstream = await fetchUpstreamChecksums(`${ baseURL }/checksums.txt`, &#39;sha256&#39;);</code></pre>
+    <p><code>selectAssets</code> returns <code>[]</code> when nothing matches (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L321"><code>dependencies.ts:321</code></a>), and <code>Promise.all([])</code> resolves. The old code enumerated the expected helper names and called <code>lookupChecksum</code> for each, which threw when a checksum was absent — so this is a genuine fail-loud to fail-silent regression.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L316-L326">scripts/lib/dependencies.ts</a></div>
+      <pre data-start="316" data-line="321"><code class="language-typescript">  }
+
+  return entry.assets.filter(asset =&gt; assetMatches(asset, selector));
+}
+
+/**
+ * Returns the single asset of dependency `name` matching `selector`.  Throws
+ * unless exactly one asset matches.
+ */
+export function selectAsset(context: DownloadContext, name: string, selector: AssetSelector): DependencyAsset {
+  const matches = selectAssets(context, name, selector);</code></pre>
+    <p>Scope: every other install path calls <code>selectAsset</code>, which throws &quot;found 0&quot;, so a wholly blank manifest still fails through <code>helm</code> or <code>dockerCLI</code>. Reaching the silent path needs a gap specific to the credential helpers — a hand-edited manifest, a newly added arch, or an upstream helper that stops shipping. The result is a package with no <code>docker-credential-*</code> binaries and registry auth broken with no error.</p>
+    <p>Fix: require exactly one asset per expected helper name for <code>context.goPlatform</code>, and throw otherwise.</p>
+    </div>
+    <div class="card card-important">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> Three asset-validation tests never reach the validator they name<a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/__tests__/dependencies.spec.ts#L92-L111">scripts/lib/__tests__/dependencies.spec.ts</a></div>
+      <pre data-start="92" data-line="97-106"><code class="language-ts">    const loaded = await readDependencyManifest(file);
+
+    expect(loaded.helm).toEqual({ version: &#39;4.2.0&#39;, assets: [] });
+  });
+
+  it.each([
+    [&#39;platform&#39;, &#39;helm:\n  version: 1.0\n  assets:\n    - { platform: solaris, arch: amd64, url: u, checksum: sha256:abc }\n&#39;],
+    [&#39;arch&#39;, &#39;helm:\n  version: 1.0\n  assets:\n    - { platform: linux, arch: ppc64, url: u, checksum: sha256:abc }\n&#39;],
+    [&#39;checksum&#39;, &#39;helm:\n  version: 1.0\n  assets:\n    - { platform: linux, arch: amd64, url: u, checksum: not-a-sha }\n&#39;],
+  ])(&#39;rejects an asset with an invalid %s&#39;, async(_field, yaml) =&gt; {
+    const file = path.join(tmpDir, &#39;invalid.yaml&#39;);
+
+    await fs.promises.writeFile(file, yaml, &#39;utf-8&#39;);
+    await expect(readDependencyManifest(file)).rejects.toThrow();
+  });
+});
+
+describe(&#39;selectAsset / selectAssets&#39;, () =&gt; {
+  const context = contextFor(manifest);
+</code></pre>
+    <p>YAML parses <code>1.0</code> as the number <code>1</code>, so <code>readDependencyManifest</code> throws on its version type-check (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L189-L191"><code>dependencies.ts:189-191</code></a>) before <code>parseAsset</code> ever runs. Each case asserts a bare <code>rejects.toThrow()</code> with no matcher, so all three pass while exercising nothing. <code>parseAsset</code> — the PR&#39;s core new validation function — has no effective test.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L184-L196">scripts/lib/dependencies.ts</a></div>
+      <pre data-start="184" data-line="189-191"><code class="language-typescript">      throw new Error(`Entry ${ name } in ${ path } is missing a &quot;version&quot; field`);
+    }
+    if (typeof entry.version !== &#39;string&#39;) {
+      throw new Error(`Entry ${ name } in ${ path } has invalid version ${ JSON.stringify(entry.version) }; expected a string`);
+    }
+    if (entry.assets !== undefined &amp;&amp; !Array.isArray(entry.assets)) {
+      throw new Error(`Entry ${ name } in ${ path } has a non-list &quot;assets&quot; field`);
+    }
+    manifest[name] = {
+      version: entry.version,
+      assets:  ((entry.assets as RawAsset[]) ?? []).map(asset =&gt; parseAsset(name, path, asset)),
+    };
+  }</code></pre>
+    <p>I confirmed this by printing the thrown message for each fixture: <code>Entry helm ... has invalid version 1; expected a string</code>. Quoting the version yields <code>has invalid platform &quot;solaris&quot;</code>, the intended error.</p>
+    <p>Fix: quote the version (<code>version: &quot;1.0&quot;</code>) and assert the message, e.g. <code>rejects.toThrow(/invalid platform/)</code>.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> A missing manifest entry throws an opaque <code>TypeError</code> <span class="pill pill-claude">Claude</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L610-L622">scripts/lib/dependencies.ts</a></div>
+      <pre data-start="610" data-line="615-617"><code class="language-ts">    readonly manifestPath: string = DEP_VERSIONS_PATH;
+
+    get currentVersion(): Promise&lt;Version&gt; {
+      return getCachedManifest(this.manifestPath).then(m =&gt; m[this.name].version);
+    }
+
+    async updateManifest(newVersion: Version, newAssets: DependencyAsset[]): Promise&lt;Set&lt;string&gt;&gt; {
+      const manifest = await getCachedManifest(this.manifestPath);
+
+      manifest[this.name] = { version: newVersion, assets: newAssets };
+      await writeDependencyManifest(this.manifestPath, manifest);
+
+      return new Set([this.manifestPath]);</code></pre>
+    <p><code>name</code> loosened from <code>keyof DependencyVersions</code> to <code>string</code>, and <code>DependencyManifest</code> from a mapped type to <code>Record&lt;string, DependencyEntry&gt;</code>. A dependency class whose YAML entry is absent now yields <code>Cannot read properties of undefined (reading &#39;version&#39;)</code>. The same bare index appears at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L72"><code>electron.ts:72</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/tools.ts#L248"><code>tools.ts:248</code></a>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L67-L77">scripts/dependencies/electron.ts</a></div>
+      <pre data-start="67" data-line="72"><code class="language-typescript">      throw new Error(`Upstream checksum is missing for ${ archiveName }`);
+    }
+    // If the version in the dependency manifest matches the version installed
+    // via `package.json`, check that the recorded checksum matches the upstream
+    // checksum; this ensures upstream hasn&#39;t been tampered with.
+    if (context.dependencies[this.name].version === version) {
+      const [recorded] = selectAssets(context, this.name, { platform: context.goPlatform, arch: context.goArch });
+      const recordedChecksum = recorded &amp;&amp; assetChecksum(recorded);
+
+      if (recordedChecksum !== expectedChecksum) {
+        throw new Error(`</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/tools.ts#L243-L253">scripts/dependencies/tools.ts</a></div>
+      <pre data-start="243" data-line="248"><code class="language-typescript">    windows: [&#39;docker-credential-wincred&#39;],
+    wsl:     [],
+  };
+
+  async download(context: DownloadContext): Promise&lt;void&gt; {
+    const version = context.dependencies[this.name].version;
+    const assets = selectAssets(context, this.name, { platform: context.goPlatform, arch: context.goArch });
+    // starting with the 0.7.0 the upstream releases have a broken ad-hoc signature
+    const codesign = context.platform === &#39;darwin&#39;;
+
+    await Promise.all(assets.map((asset) =&gt; {</code></pre>
+    <p>The loosening is necessary for guest dependencies. Note the compile-time check was narrower than it looks: the old <code>readDependencyManifest</code> returned <code>manifest as DependencyManifest</code> from a <code>Partial</code>, so a name declared in <code>DependencyVersions</code> but missing from the YAML was already <code>undefined</code> at runtime. What is lost is the check that <code>name</code> is a declared key at all.</p>
+    <p>Fix: throw a named error, as <code>selectAssets</code> already does.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Stale comment says &quot;checksums&quot; where the code resolves assets <span class="pill pill-claude">Claude</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/rddepman.ts#L309-L319">scripts/rddepman.ts</a></div>
+      <pre data-start="309" data-line="314"><code class="language-ts">    const commitMessage = `Bump ${ dependency.name } from ${ printable(currentVersion) } to ${ printable(latestVersion) }`;
+
+    // Compute fresh checksums before branching so that an upstream verification
+    // failure aborts the bump before any git state changes.
+    console.log(`Resolving assets for ${ dependency.name } ${ printable(latestVersion) }...`);
+    const newAssets = await dependency.getAssets(latestVersion);
+
+    git(&#39;checkout&#39;, &#39;-b&#39;, branchName, MAIN_BRANCH);
+    git(&#39;add&#39;, ...await dependency.updateManifest(latestVersion, newAssets));
+    git(&#39;commit&#39;, &#39;--signoff&#39;, &#39;--message&#39;, commitMessage);
+    // GitHub accepts an app installation token only as the password, so</code></pre>
+    <p>The log line beneath it already says &quot;Resolving assets&quot;. Reword the comment to match.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> Stale module comment in <code>global.ts</code> <span class="pill pill-claude">Claude</span> <span class="pill pill-codex">Codex</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p>&quot;Every global dependency whose version and checksums live in <code>dependencies.yaml</code>&quot; — entries now record <code>version</code> and <code>assets</code>. The file falls outside this diff, so fixing it is optional here.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The shared manifest header omits <code>yarn rddepman guest</code> <span class="pill pill-claude">Claude</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>MANIFEST_HEADER</code> is emitted verbatim into both manifests and says only &quot;Regenerated by <code>yarn rddepman</code>&quot;. A contributor who reads <code>rdd/dependencies.yaml</code> and runs the bare command regenerates the <em>host</em> manifest and sees no change. Name the subcommand in the header, or in the <code>Distro</code>/<code>Nerdctl</code> docstrings.</p>
+    </div>
+    <div class="card card-suggestion">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Add a zero-match test for <code>selectAsset</code> <span class="pill pill-claude">Claude</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+    <p>Only the ambiguous &quot;found 2&quot; branch is asserted. The &quot;found 0&quot; branch is what separates the loud install failures from the silent one in I2, so it deserves a test of its own.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><strong>The whole-manifest rewrite can blank sibling assets during an ordinary bump, not just a regenerate</strong> (in-scope) <span class="pill pill-claude">Claude</span>. <code>updateManifest</code> rebuilds the entire file from the in-memory model, so if <code>checkDependencies</code> ever runs against an un-migrated manifest, the resulting PR carries one dependency&#39;s real assets and <code>assets: []</code> for every sibling. Post-merge the workflow always reads the migrated <code>main</code>, so the exposure is a manual <code>workflow_dispatch</code> branching off the old <code>origin/main</code>. This is the same mechanism as I1, reached through the bump path rather than <code>--regenerate</code>.</li>
+    </ul>
+    <p>  One correction to the original observation: it argued that a bad PR &quot;fails its own postinstall (<code>selectAsset</code> &#39;found 0&#39;)&quot;. That holds for <code>helm</code>, <code>dockerCLI</code>, <code>wix</code>, and <code>steve</code>, but not for the credential helpers, which take the <code>selectAssets</code> path and pass — that is exactly I2.</p>
+    <ul>
+      <li><em></em><code>selectAsset</code> requires the caller to know a dependency&#39;s format multiplicity<em></em> (future) <span class="pill pill-claude">Claude</span>. <code>distro</code> ships four assets (<code>{amd64,arm64} × {raw,tar}</code>), so <code>selectAsset</code> without a <code>format</code> matches two and throws. The planned Go downloader must pass <code>format</code>; the contract deserves a note, since the TS side has no consumer yet.</li>
+      <li><em></em><code>Distro.getAssets</code> downloads all four distro images concurrently just to hash them<em></em> (future) [Consolidator]. <code>Promise.all(cartesian(ARCHES, FORMATS))</code> fetches four compressed images to temp files on every guest bump. On a GitHub-hosted runner this is the most disk- and bandwidth-intensive step rddepman performs. Worth watching once the guest workflow runs on a real bump.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li>The self-describing asset schema pairs an immutable, version-pinned <code>url</code> with its <code>checksum</code>, so install paths no longer re-derive URLs and the manifest is directly consumable by the planned Go downloader. <span class="pill pill-gemini">Gemini</span> <span class="pill pill-claude">Claude</span></li>
+      <li><code>serializeAsset</code> fixes key order, keeping YAML diffs clean however the asset object was built. <span class="pill pill-claude">Claude</span></li>
+      <li><code>parseAsset</code> validates platform, arch, and checksum at file-read time with per-field messages. <span class="pill pill-claude">Claude</span></li>
+      <li><code>regenerable = false</code> isolates the one dependency whose version lives in <code>package.json</code> rather than the manifest. <span class="pill pill-claude">Claude</span></li>
+      <li>Storing the <code>sha256:</code> prefix documents the algorithm for readers while <code>parseSha256Checksum</code> normalizes case, so consumers compare hex with <code>===</code>. I verified this end to end: <code>hashFile</code> emits lowercase, <code>download()</code> compares with <code>===</code>, and the parser lowercases. <span class="pill pill-gemini">Gemini</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The new spec covers the round-trip, header emission, legacy tolerance, and the full <code>selectAsset</code>/<code>selectAssets</code>/<code>assetChecksum</code> matrix. The suite runs and passes (13 tests) under the repo&#39;s ESM invocation.</p>
+    <p>Two agents overstated its strength. Gemini called the coverage &quot;excellent&quot; and Claude &quot;solid&quot;, but the three parameterized validation cases are inert (I3), so <code>parseAsset</code> is untested in practice. Remaining gaps, in risk order:</p>
+    <ol>
+      <li><code>parseAsset</code> platform / arch / checksum / <code>format</code> rejection — currently vacuous or absent (I3).</li>
+      <li><code>selectAsset</code> zero-match, the branch that distinguishes I2&#39;s silent path (S5).</li>
+      <li><code>regenerateAssets</code> skipping a non-regenerable dependency while preserving its entry — the mechanism I1 shows is broken. A test here would have caught I1.</li>
+      <li><code>readDependencyManifest</code> rejection of a missing <code>version</code> or a non-array <code>assets</code>.</li>
+    </ol>
+    <p>Per-dependency <code>getAssets</code> methods reach the network and remain untested; that is pre-existing and reasonable.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Exported symbols carry good docstrings. Three comments contradict the code: the <code>regenerateAssets</code> comment (S2), the <code>global.ts</code> header (S3), and the manifest header&#39;s silence on the <code>guest</code> subcommand (S4).</p>
+    <p>More seriously, the <code>readDependencyManifest</code> docstring promises that the legacy tolerance lets <code>rddepman --regenerate</code> migrate an old manifest. I1 shows it does not; the docstring should either describe the limitation or the code should honor it.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Clean, and I verified each commit stands alone. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2f3bdba06"><code>2f3bdba06</code></a> introduces the schema, migrates the host manifest and every host install path, adds the tests, and adds the host-only <code>configs</code>/<code>parseArgs</code>/<code>--regenerate</code> machinery with no reference to <code>Distro</code>/<code>Nerdctl</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1cdf838a9"><code>1cdf838a9</code></a> adds the guest manifest, the two guest classes, <code>GUEST_DEP_VERSIONS_PATH</code>, the <code>guest</code> config entry, and the CI step. No fixups; the messages match the diffs.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>Legacy-schema tolerance with a removal plan</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/lib/dependencies.ts#L175-L179"><code>scripts/lib/dependencies.ts:175-179</code></a> states the tolerance exists so <code>--regenerate</code> can migrate an old manifest, and should be removed once this lands. Both manifests ship migrated, so the tolerance is dead on merge. I1 is the finding that the advertised migration does not work; the removal plan itself is sound.</li>
+      <li><strong>Electron is not regenerable</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/electron.ts#L35-L37"><code>scripts/dependencies/electron.ts:35-37</code></a>. Consistent with <code>getAssets</code> throwing on a version mismatch. I1 is the unhandled consequence.</li>
+      <li><strong>Guest dependencies have no host install</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/distro.ts#L28-L30"><code>distro.ts:28-30</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/nerdctl.ts#L25-L27"><code>nerdctl.ts:25-27</code></a> reject with &quot;staged by the build, not by postinstall&quot;. Verified: neither class appears in <code>postinstall.ts</code>, so the rejection is an unreachable guard.</li>
+      <li><strong>Buildx darwin has no upstream checksum</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/2f3bdba063f888e92f3260279350be237d6fbbc1/scripts/dependencies/tools.ts#L121-L130"><code>tools.ts:121-130</code></a> hashes darwin without upstream verification, citing the upstream bug. Unchanged behavior.</li>
+      <li><em></em><code>fetchUpstreamChecksums</code> and <code>downloadAndHash</code> are out of scope<em></em> — both predate this PR and this diff adds no lines to either. Their sidecar-parsing and basename-aliasing logic remains untested, but that is pre-existing.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude"><span class="pill pill-claude">Claude</span> <a href="#claude" class="pilcrow">&#182;</a></h3>
+    <p>Claude produced the most thorough analysis and the only design work worth the name, tracing the whole-manifest-rewrite hazard through both the <code>--regenerate</code> path and the ordinary bump path, and correctly predicting that it self-heals on merge. It also verified the commit split by checking that commit 1 compiles without referencing <code>Distro</code>/<code>Nerdctl</code> — the only agent to check that claim rather than assert it. Its miss is instructive: it reached the same rewrite mechanism as Codex&#39;s I1 but filed it as a design observation with a mitigation (&quot;any bad PR fails its own postinstall&quot;) that its own sibling finding disproves, because it never noticed <code>selectAssets</code> returns an empty array where <code>selectAsset</code> throws. It also called the new spec &quot;solid&quot; without running it. Its four suggestions were all real and all confirmed.</p>
+    <h3 id="codex"><span class="pill pill-codex">Codex</span> <a href="#codex" class="pilcrow">&#182;</a></h3>
+    <p>Codex was the only agent to surface a production defect, and it surfaced both of them. Its terse format — two findings, no design section, no padding — carried a better signal-to-token ratio than the other two combined. Both findings were correct on mechanism, though it mislabeled each as a &quot;regression&quot;: I1&#39;s <code>--regenerate</code> is new code in this PR, and while I2 genuinely is a regression, Codex reached that verdict without checking the merge-base (I verified <code>lookupChecksum</code> threw, which is what makes the label stick). It reported it could not run the new Jest suite because the worktree has no <code>node_modules</code> — an honest limitation the other two shared but only Codex disclosed.</p>
+    <h3 id="gemini"><span class="pill pill-gemini">Gemini</span> <a href="#gemini" class="pilcrow">&#182;</a></h3>
+    <p>Gemini returned zero findings across all severities and marked all twelve files &quot;Reviewed, no issues&quot;. Worse than silence, it affirmatively praised the two things that are broken: it listed &quot;Robust Migration Path&quot; as a strength, describing the exact <code>assets: []</code> tolerance that erases Electron&#39;s checksums, and called the spec&#39;s coverage &quot;excellent&quot; when three of its validation tests are inert. Its remaining strengths are accurate but generic. As expected, it skipped <code>git blame</code> and could not distinguish new code from carried-over code. One of its observations — that the <code>sha256:</code> prefix keeps hex comparison safe — I verified independently and it holds.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude</span> Opus 4.8</th><th><span class="pill pill-codex">Codex</span> GPT 5.5</th><th><span class="pill pill-gemini">Gemini</span> 3.1 Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>14m 01s</td><td>5m 56s</td><td>6m 20s</td></tr>
+        <tr><td>Findings</td><td>5S</td><td>2I 1S</td><td>none</td></tr>
+        <tr><td>Tool calls</td><td>22 (Read 15, Bash 7)</td><td>45 (shell 45)</td><td>—</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>0</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>6</td><td>2</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>12</td><td>12</td><td>12</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>4</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>5S</strong></td><td><strong>2I 1S</strong></td><td><strong>none</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Codex I1 kept its Important severity but was reclassified from &quot;regression&quot; to &quot;gap&quot;: <code>--regenerate</code> does not exist at the merge-base, so it introduces no regression. Codex I2 retained both its severity and its &quot;regression&quot; label after I confirmed at the merge-base that <code>lookupChecksum</code> threw on a missing checksum. No findings were dropped as false positives. One finding (I3) originated in consolidation rather than from any agent.</p>
+    <p>Codex delivered the most value: two real defects, zero noise. Claude was the strongest all-round reviewer and the only source of actionable suggestions, but its one blind spot (<code>selectAssets</code> vs <code>selectAsset</code>) let a shipped regression through. Gemini contributed negative value on this PR — a reviewer who certifies broken code as robust costs more attention than one who says nothing. The most important finding of the review, I3, was found by none of them: all three read the test file and all three took a passing test suite as evidence the tests test something.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>[ ] When a review&#39;s changed files include a test file, run the test suite before consolidating, then verify that each new test fails when the behavior it names is broken. A test whose fixture aborts in an earlier validation layer passes while exercising nothing; a bare <code>rejects.toThrow()</code> or <code>expect(fn).toThrow()</code> with no message matcher cannot distinguish the intended error from an unintended one. Flag any new negative-path test that asserts only that <em>something</em> threw.</li>
+      <li>[ ] When one agent reports a defect in a code path and another agent reports the same code path as a strength, treat the disagreement as a finding to adjudicate against the code, not as a split verdict to report. Reproduce the mechanism directly before crediting either. Agents that scan a diff without executing it systematically over-trust migration and compatibility shims, whose failure modes appear only when the shim&#39;s output is fed back through the writer.</li>
+      <li>[ ] Before accepting a finding&#39;s &quot;regression&quot; label, confirm the cited construct exists at the merge-base. New subcommands, new flags, and new code paths cannot regress prior behavior; label them gaps. Conversely, a fail-loud to fail-silent change is a regression only if the prior code actually threw — read the removed error path, do not infer it from the diff&#39;s shape.</li>
+      <li>[ ] Treat <code>Promise.all(xs.map(...))</code>, <code>for (const x of xs)</code>, and similar iteration over a collection returned by a lookup as a silent-success candidate whenever the lookup can return empty. Compare against sibling call sites: if one lookup helper throws on no-match and another returns an empty collection, every caller of the second needs an explicit arity check. This pattern hides best in refactors that replace per-item lookups with a single filtered query.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[ ] [repo] Jest in this repo requires the ESM invocation: <code>npx cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js &lt;path&gt;</code>. A bare <code>npx jest</code> fails with <code>SyntaxError: Cannot use import statement outside a module</code> on the octokit import, and specs under <code>scripts/</code> additionally need the <code>@jest-environment node</code> docblock or they fail with <code>ReferenceError: TextDecoder is not defined</code>. Do not report either failure as a defect in the code under review.</li>
+      <li>[ ] [repo] Agent worktrees created for review have no <code>node_modules</code>, so agents cannot run the test suite or <code>tsc</code>. Run test-execution checks from the main checkout instead, and read any agent&#39;s claim about type-consistency or test outcomes as static tracing rather than verified execution.</li>
+      <li>[ ] [repo] <code>scripts/dependencies/*.ts</code> classes are registered in <code>scripts/dependencies/global.ts</code> (host) and in the <code>configs</code> map in <code>scripts/rddepman.ts</code>. A dependency class is only installed at postinstall if it also appears in the lists in <code>scripts/postinstall.ts</code>. When reviewing a new dependency class, check all three registries: absence from <code>postinstall.ts</code> is what makes a <code>download()</code> that rejects an unreachable guard rather than a bug.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-go.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-diff.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-typescript.min.js"></script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
