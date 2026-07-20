@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260720-153217-pr-569</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260720-153217-pr-569</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-20 15:32</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of target)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/569" class="gh-ref" data-title="RDA: Restore update preferences" data-state="open" data-type="pr">#569</a> — RDA: Restore update preferences</td></tr>
+      <tr><td>Branch</td><td><code>rda/settings/update</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bf7e2b7b7"><code>bf7e2b7b7</code></a> RDA: regenerated rdd-client<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/259cc8618"><code>259cc8618</code></a> RDA: Support immediately-modified preferences<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de975284f"><code>de975284f</code></a> RDA: implement updates in main window<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c78c72e91"><code>c78c72e91</code></a> RDA: Restore app prefs dialog<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/551f79d0b"><code>551f79d0b</code></a> RDA: Unit tests: Fix SystemPreferences</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1"><code>551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 4.8</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; roll back the optimistic value on a failed immediate write (I1); record why the updater path is dormant (I2)</td></tr>
+      <tr><td>Wall-clock time</td><td><code>19 min 56 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This PR re-backs the auto-update checkbox onto the daemon&#39;s <code>App.spec</code>, adds an immediate-write path for preferences applied outside the Apply/Cancel dialog, and re-enables the Application pane in the preferences window. Two issues dominate: a rejected immediate write leaves an optimistic value stuck in the store with no error surface, and nothing in the main process wires up the updater, so the restored main-window checkbox never renders.</p>
+    <p>All four reviewers independently found the failed-write problem (I1), the strongest signal in this review. Codex and Claude both traced the missing updater wiring (I2); it predates this PR but bears directly on the PR&#39;s stated goal. The remaining twelve suggestions are mostly comment, dead-code, and typing cleanups. Two Gemini 3.5 Flash findings failed verification; the retro reconciles both.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="pkg/rancher-desktop/store/preferences.ts">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> A failed immediate write leaves a stale value on screen and reports nothing <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L186-L200">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="186" data-line="191-195"><code class="language-ts">    if (_.get(getters.committed, key) === value) {
+      // Reverting a change; remove it from the changes list, so the UI does not
+      // allow committing if all changes are being reverted.
+      const { [key]: _unused, ...modified } = state.changes;
+      commit(&#39;SET_CHANGES&#39;, modified);
+    } else {
+      commit(&#39;SET_CHANGES&#39;, { ...state.changes, [key]: value });
+    }
+
+    return commitChanges(this, context, { [key]: value });
+  },
+
+  /**
+   * Commit the current set of changes to the backend.
+   * @returns Whether the commit was successful.</code></pre>
+    <p><code>writeNow</code> records the new value in <code>state.changes</code> before the patch, and nothing removes it when the patch fails. The <code>preferences</code> getter merges <code>state.changes</code> over the committed spec, and <code>RdCheckbox</code> reads its state from that getter (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/form/RdCheckbox.vue#L50"><code>RdCheckbox.vue:50</code></a>), so the box keeps showing a setting that was never stored.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/form/RdCheckbox.vue#L45-L55">pkg/rancher-desktop/components/form/RdCheckbox.vue</a></div>
+      <pre data-start="45" data-line="50"><code class="language-markup">  },
+});
+
+const store = useStore();
+const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
+const value = computed(() =&gt; !!_.get(preferences.value, preferenceName, false));
+const isLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;](preferenceName));
+
+function onUpdate(value: boolean) {
+  if (immediate) {
+    store.dispatch(&#39;preferences/writeNow&#39;, { key: preferenceName, value });</code></pre>
+    <p>The store plugin at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L413-L418"><code>preferences.ts:413-418</code></a> clears a key only once <code>app.spec</code> matches it, which never happens for a rejected write.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L408-L423">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="408" data-line="413-418"><code class="language-typescript">          // This could happen if the user deletes the app from under us.
+          return;
+        }
+        const modified = structuredClone(toRaw(store.state.preferences.changes));
+        let changed = false;
+        for (const [key, value] of Object.entries(modified)) {
+          if (_.get(app.spec, key) === value) {
+            delete modified[key as keyof Changes];
+            changed = true;
+          }
+        }
+        if (changed) {
+          store.commit(&#39;preferences/SET_CHANGES&#39;, modified);
+        }
+      },
+      { deep: true },</code></pre>
+    <p><code>patchApp</code> records the reason in <code>errorStatus</code>, but only <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/Alert.vue#L28"><code>Preferences/Alert.vue:28</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/ModalFooter.vue#L16"><code>Preferences/ModalFooter.vue:16</code></a> render it, and both live in the preferences window. The main window shows nothing. <code>RdCheckbox.onUpdate</code> also discards the boolean <code>writeNow</code> returns.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/Alert.vue#L23-L33">pkg/rancher-desktop/components/Preferences/Alert.vue</a></div>
+      <pre data-start="23" data-line="28"><code class="language-markup">  },
+});
+
+const store = useStore();
+
+const errorStatus = computed(() =&gt; store.state.preferences.errorStatus);
+const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
+const alert = computed(() =&gt; severity ? alertMap[severity] : &#39;&#39;);
+const alertText = computed(() =&gt; {
+  if (errorStatus.value) {
+    if (errorStatus.value.details?.causes?.length) {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/ModalFooter.vue#L11-L21">pkg/rancher-desktop/components/Preferences/ModalFooter.vue</a></div>
+      <pre data-start="11" data-line="16"><code class="language-markup">  cancel: [],
+}&gt;();
+
+const store = useStore();
+const canApply = computed(() =&gt; store.getters[&#39;preferences/canApply&#39;]);
+const errorStatus = computed(() =&gt; store.state.preferences.errorStatus);
+
+function cancel() {
+  emit(&#39;cancel&#39;);
+}
+</code></pre>
+    <p>Fix: make <code>writeNow</code> async and drop the optimistic entry when the commit fails, so the checkbox snaps back to the committed value.</p>
+      <pre><code class="language-ts">    const succeeded = await commitChanges(this, context, { [key]: value });
+
+    if (!succeeded) {
+      const { [key]: _rejected, ...reverted } = state.changes;
+      commit(&#39;SET_CHANGES&#39;, reverted);
+    }
+
+    return succeeded;</code></pre>
+    <p>Surfacing <code>errorStatus</code> in the main window is a larger change; if that is out of scope, leave a TODO.</p>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/General.vue">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> Nothing wires the updater into the main process, so the restored main-window checkbox never renders <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/General.vue#L59-L70">pkg/rancher-desktop/pages/General.vue</a></div>
+      <pre data-start="59" data-line="64-65"><code class="language-ts">  store.dispatch(&#39;page/setHeader&#39;, {
+    title:       store.getters[&#39;i18n/t&#39;](&#39;general.title&#39;, { productName: packageJson.productName }),
+    description: store.getters[&#39;i18n/t&#39;](&#39;general.description&#39;),
+    icon:        &#39;icon icon-rancher-desktop&#39;,
+  });
+  ipcRenderer.on(&#39;update-state&#39;, onUpdateState);
+  ipcRenderer.send(&#39;update-state&#39;);
+});
+
+onBeforeUnmount(() =&gt; {
+  ipcRenderer.removeListener(&#39;update-state&#39;, onUpdateState);
+});</code></pre>
+    <p>No handler answers this request. The <code>ipcMain.on(&#39;update-state&#39;, …)</code> handler at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/main/update/index.ts#L67"><code>pkg/rancher-desktop/main/update/index.ts:67</code></a> registers as a module side effect, but <code>background.ts</code> never imports <code>@pkg/main/update</code>. Every reference repo-wide is <code>import type</code>, which TypeScript erases, so the side effect never runs. <code>updateState</code> stays <code>null</code>, <code>updatePossible</code> is false (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/UpdateStatus.vue#L130"><code>UpdateStatus.vue:130</code></a>), and the <code>v-if</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/UpdateStatus.vue#L6"><code>UpdateStatus.vue:6</code></a> hides the checkbox this PR restored. <code>update-apply</code> is equally unhandled.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/main/update/index.ts#L62-L72">pkg/rancher-desktop/main/update/index.ts</a></div>
+      <pre data-start="62" data-line="67"><code class="language-typescript">  configured: false, available: false, downloaded: false,
+};
+/** The version of the update that has finished downloading, if any. */
+let stagedVersion: string | undefined;
+
+Electron.ipcMain.on(&#39;update-state&#39;, () =&gt; {
+  window.send(&#39;update-state&#39;, updateState);
+});
+
+Electron.ipcMain.on(&#39;update-apply&#39;, () =&gt; {
+  if (!autoUpdater || process.env.RD_FORCE_UPDATES_ENABLED) {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/UpdateStatus.vue#L1-L11">pkg/rancher-desktop/components/UpdateStatus.vue</a></div>
+      <pre data-start="1" data-line="6"><code class="language-markup">&lt;template&gt;
+  &lt;div&gt;
+    &lt;div class=&quot;version&quot;&gt;
+      &lt;version /&gt;
+      &lt;rd-checkbox
+        v-if=&quot;updatePossible&quot;
+        :preference=&quot;preference&quot;
+        :immediate=&quot;true&quot;
+        class=&quot;updatesEnabled&quot;
+        label=&quot;Check for updates automatically&quot;
+      /&gt;</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/UpdateStatus.vue#L125-L135">pkg/rancher-desktop/components/UpdateStatus.vue</a></div>
+      <pre data-start="125" data-line="130"><code class="language-markup">const store = useStore();
+
+const applying = ref(false);
+const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
+const updatesEnabled = computed(() =&gt; !!_.get(preferences.value, preference, false));
+const updatePossible = computed(() =&gt; !!updateState?.configured);
+const hasUpdate = computed(() =&gt; updatesEnabled.value &amp;&amp; !!updateState?.available);
+const updateReady = computed(() =&gt; hasUpdate.value &amp;&amp; !!updateState?.downloaded &amp;&amp; !updateState?.error);
+
+const statusMessage = computed(() =&gt; {
+  if (updateState?.error) {</code></pre>
+    <p>This predates the PR: <code>background.ts</code> at merge-base <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/377f05fd"><code>377f05fd</code></a> also omits the import, so it is a pre-existing gap, not a regression. It still matters here, because only the dialog half of the restored preference works. The dialog checkbox has no <code>updatePossible</code> gate, so it renders and persists the value, but nothing consumes it.</p>
+    <p>Fix: either initialize the updater in <code>background.ts</code> (which already uses the side-effect idiom for <code>@pkg/main/rdd-ctl</code>), or add a TODO in <code>General.vue</code> so the dormant path reads as deliberate.</p>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/store/__tests__/preferences.spec.ts">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The new <code>writeNow</code> action and the <code>immediate</code> branch have no tests <span class="pill pill-claude">Claude Opus 4.8</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/__tests__/preferences.spec.ts#L227-L237">pkg/rancher-desktop/store/__tests__/preferences.spec.ts</a></div>
+      <pre data-start="227" data-line="232"><code class="language-ts">      await actions.modify(context, { key: &#39;running&#39;, value: false });
+      await promise;
+    });
+  });
+
+  describe(&#39;commit&#39;, () =&gt; {
+    it(&#39;should set error if app is missing&#39;, async() =&gt; {
+      rootGetters[&#39;rdd/app&#39;] = undefined as any;
+      const context = makeContext();
+      const result = await actions.commit.call(null as any, context);
+</code></pre>
+    <p>This spec covers <code>modify</code>, <code>commit</code>, <code>setError</code>, <code>clear</code>, <code>generatePatch</code>, and the plugin, including abort sequencing and the generation-watch handshake. It has no <code>writeNow</code> block, and this PR does not add one, though <code>writeNow</code> introduces a genuinely new interaction between the optimistic overlay and a single-key commit.</p>
+    <p><code>UpdateStatus.spec.ts:45</code> stubs <code>RdCheckbox</code> out entirely, so the <code>immediate</code> branch that selects between <code>writeNow</code> and <code>modify</code> is never exercised either.</p>
+    <p>Fix: mirror the existing <code>commit</code> block for <code>writeNow</code>, covering a successful write that leaves other staged keys untouched, a revert-to-committed value that removes the key, and a rejected patch that clears the optimistic entry. The third case fails today and pins I1.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/preferences.ts">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The <code>writeNow</code> comment and docstring describe something the window architecture forbids <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L179-L189">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="179" data-line="184"><code class="language-ts">   * @returns Whether the commit was successful.
+   * @note Calling this will abort any in-flight validation requests, as well as
+   *       any in-flight commit requests.
+   */
+  writeNow(context, { key, value }: { key: RecursiveLeafKeys&lt;AppSpec&gt;, value: FieldType&lt;AppSpec, typeof key&gt; }) {
+    // Update `state.changes` in case the pref dialog is open.
+    const { state, getters, commit } = context;
+    if (_.get(getters.committed, key) === value) {
+      // Reverting a change; remove it from the changes list, so the UI does not
+      // allow committing if all changes are being reverted.
+      const { [key]: _unused, ...modified } = state.changes;</code></pre>
+    <p>The preferences dialog runs in its own <code>BrowserWindow</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/window/preferences.ts#L18"><code>window/preferences.ts:18</code></a> calls <code>createWindow(&#39;preferences&#39;, …)</code>), so it has a separate renderer and a separate Vuex store. It can never observe this store&#39;s <code>state.changes</code>. What the block actually buys is optimistic feedback for the checkbox in the current window, through the <code>preferences</code> getter.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/window/preferences.ts#L13-L23">pkg/rancher-desktop/window/preferences.ts</a></div>
+      <pre data-start="13" data-line="18"><code class="language-typescript">
+/**
+ * Open the main window; if it is already open, focus it.
+ */
+export function openPreferences() {
+  const window = createWindow(&#39;preferences&#39;, `${ webRoot }/index.html#preferences`, {
+    title:           &#39;Rancher Desktop - Preferences&#39;,
+    width:           768,
+    height:          512,
+    autoHideMenuBar: true,
+    resizable:       false,</code></pre>
+    <p>The docstring above it (line 177, &quot;without going through the local state&quot;) contradicts the body for the same reason: the body writes to local state on every call.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L172-L182">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="172" data-line="177"><code class="language-typescript">    // is whether doing a `commit` will be accepted.
+    await patchApp(context, state.changes, modifySerializer, &#39;All&#39;);
+  },
+
+  /**
+   * Write the given preference to the backend directly, without going through the local state.
+   * This is used for preferences that do not go through the normal dialog.
+   * @returns Whether the commit was successful.
+   * @note Calling this will abort any in-flight validation requests, as well as
+   *       any in-flight commit requests.
+   */</code></pre>
+    <p>Fix: say what the code does.</p>
+      <pre><code class="language-ts">    // Record the value in `state.changes` so the control reflects it
+    // immediately, before the server round-trip completes.</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/preferences.ts">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The revert/set block is duplicated verbatim between <code>modify</code> and <code>writeNow</code> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L181-L198">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="181" data-line="186-193"><code class="language-ts">   *       any in-flight commit requests.
+   */
+  writeNow(context, { key, value }: { key: RecursiveLeafKeys&lt;AppSpec&gt;, value: FieldType&lt;AppSpec, typeof key&gt; }) {
+    // Update `state.changes` in case the pref dialog is open.
+    const { state, getters, commit } = context;
+    if (_.get(getters.committed, key) === value) {
+      // Reverting a change; remove it from the changes list, so the UI does not
+      // allow committing if all changes are being reverted.
+      const { [key]: _unused, ...modified } = state.changes;
+      commit(&#39;SET_CHANGES&#39;, modified);
+    } else {
+      commit(&#39;SET_CHANGES&#39;, { ...state.changes, [key]: value });
+    }
+
+    return commitChanges(this, context, { [key]: value });
+  },
+
+  /**</code></pre>
+    <p>Byte-identical to <code>modify</code> at lines 156-163, comment included. The PR extracted <code>commitChanges</code> to share the commit path between <code>commit</code> and <code>writeNow</code>, but left this half copied. Fixing I1 will edit one copy and invite drift.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L151-L168">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="151" data-line="156-163"><code class="language-typescript">   */
+  async modify(context, { key, value }: { key: RecursiveLeafKeys&lt;AppSpec&gt;, value: FieldType&lt;AppSpec, typeof key&gt; }) {
+    // Apply the changes immediately, so the UI can reflect the new state.
+    const { state, getters, commit } = context;
+    // Merge the state with the new preferences.
+    if (_.get(getters.committed, key) === value) {
+      // Reverting a change; remove it from the changes list, so the UI does not
+      // allow committing if all changes are being reverted.
+      const { [key]: _unused, ...modified } = state.changes;
+      commit(&#39;SET_CHANGES&#39;, modified);
+    } else {
+      commit(&#39;SET_CHANGES&#39;, { ...state.changes, [key]: value });
+    }
+
+    // Wait for any in-progress commit to finish, to avoid validating a state
+    // that will never be committed.
+    await pendingCommit;
+</code></pre>
+    <p>Fix: extract a <code>recordChange(context, key, value)</code> helper and call it from both actions.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>sudoAllowedTooltip</code> is now dead, and the block that used it cannot be uncommented <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue#L2-L13">pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue</a></div>
+      <pre data-start="2" data-line="7-8"><code class="language-ts">import RdCheckbox from &#39;@pkg/components/form/RdCheckbox.vue&#39;;
+import RdFieldset from &#39;@pkg/components/form/RdFieldset.vue&#39;;
+
+defineOptions({ name: &#39;preferences-application-general&#39; });
+
+// TODO: Move this to i18n.
+const sudoAllowedTooltip = `
+  If checked, Rancher Desktop will attempt to acquire administrative
+  credentials (&quot;sudo access&quot;) when starting for some operations.  This
+  allows for enhanced functionality, including bridged networking and
+  default docker socket support.  Changes will only be applied next time
+  Rancher Desktop starts.</code></pre>
+    <p>The only reference to <code>sudoAllowedTooltip</code> sits inside the HTML comment added at lines 19-33, which the template compiler strips, so the constant is unreachable. The commented markup also references <code>platform</code>, <code>isSudoAllowed</code>, <code>isPreferenceLocked</code>, and <code>onChange</code>, none of which survived the <code>&lt;script setup&gt;</code> conversion, and it passes <code>:value</code> / <code>@update:value</code> to <code>RdCheckbox</code>, an API the component dropped for the <code>preference</code> prop.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue#L14-L38">pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue</a></div>
+      <pre data-start="14" data-line="19-33"><code class="language-markup">`;
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div class=&quot;application-general&quot;&gt;
+    &lt;!-- We don&#39;t have sudo access at this point
+    &lt;rd-fieldset
+      v-if=&quot;platform !== &#39;win32&#39;&quot;
+      data-test=&quot;administrativeAccess&quot;
+      legend-text=&quot;Administrative Access&quot;
+      :legend-tooltip=&quot;sudoAllowedTooltip&quot;
+    &gt;
+      &lt;rd-checkbox
+        label=&quot;Allow to acquire administrative credentials (sudo access)&quot;
+        :value=&quot;isSudoAllowed&quot;
+        :is-locked=&quot;isPreferenceLocked(&#39;application.adminAccess&#39;)&quot;
+        @update:value=&quot;onChange(&#39;application.adminAccess&#39;, $event)&quot;
+      /&gt;
+    &lt;/rd-fieldset&gt;
+  --&gt;
+    &lt;rd-fieldset
+      data-test=&quot;automaticUpdates&quot;
+      legend-text=&quot;Automatic Updates&quot;
+    &gt;
+      &lt;rd-checkbox</code></pre>
+    <p>Fix: delete the constant, its TODO, and the commented block. Git history preserves the markup, and restoring it means rewriting it against the new API anyway.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/General.vue">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The commented-out <code>&lt;telemetry-opt-in&gt;</code> uses a prop the component does not have <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/General.vue#L15-L30">pkg/rancher-desktop/pages/General.vue</a></div>
+      <pre data-start="15" data-line="20-25"><code class="language-html">      preference=&quot;application.updates.enabled&quot;
+      :update-state=&quot;updateState&quot;
+      @apply=&quot;onUpdateApply&quot;
+    /&gt;
+    &lt;hr&gt;
+    &lt;!--
+    &lt;telemetry-opt-in
+      preference=&quot;application.telemetry.enabled&quot;
+    /&gt;
+    &lt;hr&gt;
+    --&gt;
+    &lt;div class=&quot;network-status&quot;&gt;
+      &lt;network-status /&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+    <p><code>TelemetryOptIn</code> is no longer imported here, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/TelemetryOptIn.vue#L7-L16"><code>TelemetryOptIn.vue:7-16</code></a> declares <code>telemetry</code> and <code>isTelemetryLocked</code> props with an <code>updateTelemetry</code> emit. It has no <code>preference</code> prop, and its inner <code>&lt;rd-checkbox :value :is-locked @update:value&gt;</code> targets the old <code>RdCheckbox</code> API. Uncommenting this would not work.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/TelemetryOptIn.vue#L2-L21">pkg/rancher-desktop/components/TelemetryOptIn.vue</a></div>
+      <pre data-start="2" data-line="7-16"><code class="language-markup">import RdCheckbox from &#39;@pkg/components/form/RdCheckbox.vue&#39;;
+
+export default {
+  components: { RdCheckbox },
+  props:      {
+    // misc
+    telemetry: {
+      type:    Boolean,
+      default: false,
+    },
+    isTelemetryLocked: {
+      type:    Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    toggleTelemetry(value) {
+      this.$emit(&#39;updateTelemetry&#39;, value);
+    },
+  },</code></pre>
+    <p>Fix: drop the block, or leave a one-line TODO naming what has to migrate, instead of markup that reads as ready to re-enable.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyApplication.vue">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Store state destructured at setup rather than read through a computed <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/BodyApplication.vue#L10-L20">pkg/rancher-desktop/components/Preferences/BodyApplication.vue</a></div>
+      <pre data-start="10" data-line="15"><code class="language-ts">import Tab from &#39;@pkg/components/Tabbed/Tab.vue&#39;;
+
+defineOptions({ name: &#39;preferences-body-application&#39; });
+
+const store = useStore();
+const { navigation } = store.state[&#39;transient-preferences&#39;];
+const activeTab = computed((): typeof navigation.preferences.application =&gt; navigation.preferences.application || &#39;general&#39;);
+
+const componentFromTab: ComputedRef&lt;Component&gt; = computed(() =&gt; {
+  return ({
+    general:     PreferencesApplicationGeneral,</code></pre>
+    <p>This works today. Both <code>transient-preferences</code> mutations change <code>state.navigation</code> in place, <code>SET_ALL</code> through <code>_.merge</code> and <code>navigate</code> through <code>_.set</code>, so the captured proxy stays live and <code>activeTab</code> stays reactive. But the pattern depends on that invariant holding forever: a future mutation that replaces the <code>navigation</code> object would silently freeze this pane, with no error to point at. The sibling at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/Preferences.vue#L22"><code>pages/Preferences.vue:22</code></a> already reads it through a computed.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/Preferences.vue#L17-L27">pkg/rancher-desktop/pages/Preferences.vue</a></div>
+      <pre data-start="17" data-line="22"><code class="language-markup">  layout: &#39;preferences&#39;,
+});
+
+const store = useStore();
+
+const navigation = computed(() =&gt; store.state[&#39;transient-preferences&#39;].navigation);
+const committed = computed(() =&gt; store.getters[&#39;preferences/committed&#39;]);
+const hasPreferences = computed(() =&gt; Object.keys(committed.value).length &gt; 0);
+const navItems = computed(() =&gt; preferencesNavItems.map(({ name }) =&gt; name));
+const currentNavItem = computed(() =&gt; navigation.value.preferences.top);
+</code></pre>
+    <p>Fix: <code>const navigation = computed(() =&gt; store.state[&#39;transient-preferences&#39;].navigation);</code> and read <code>navigation.value</code> in <code>activeTab</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyApplication.vue">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The <code>navigate</code> dispatch is neither awaited nor caught <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/BodyApplication.vue#L24-L34">pkg/rancher-desktop/components/Preferences/BodyApplication.vue</a></div>
+      <pre data-start="24" data-line="29"><code class="language-ts">});
+
+function tabSelected({ tab }: { tab: Component }) {
+  const newTab = tab.name as typeof activeTab.value;
+  if (activeTab.value !== newTab) {
+    store.dispatch(&#39;transient-preferences/navigate&#39;, { &#39;preferences.application&#39;: newTab });
+  }
+}
+
+&lt;/script&gt;
+</code></pre>
+    <p>The action awaits <code>ipcRenderer.invoke(&#39;transient-preferences/set&#39;, …)</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/transient-preferences.ts#L43"><code>store/transient-preferences.ts:43</code></a>. A rejected invoke becomes an unhandled promise rejection with nothing shown to the user. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/Preferences.vue#L29"><code>pages/Preferences.vue:29</code></a> awaits the same action inside an async handler.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/transient-preferences.ts#L38-L48">pkg/rancher-desktop/store/transient-preferences.ts</a></div>
+      <pre data-start="38" data-line="43"><code class="language-typescript">}[keyof NavigationInputUnion];
+
+export const actions = {
+  async navigate({ state, commit }, navigation: NavigationInput) {
+    commit(&#39;navigate&#39;, navigation);
+    await ipcRenderer.invoke(&#39;transient-preferences/set&#39;, toRaw(state));
+  },
+} satisfies ActionTree&lt;TransientPreferencesState&gt;;
+
+export const plugins: Plugin&lt;RootState&gt;[] = [
+  // Load the state from the main process.</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/Preferences.vue#L24-L34">pkg/rancher-desktop/pages/Preferences.vue</a></div>
+      <pre data-start="24" data-line="29"><code class="language-markup">const hasPreferences = computed(() =&gt; Object.keys(committed.value).length &gt; 0);
+const navItems = computed(() =&gt; preferencesNavItems.map(({ name }) =&gt; name));
+const currentNavItem = computed(() =&gt; navigation.value.preferences.top);
+
+async function navChanged(current: preferencesNavItemName) {
+  await store.dispatch(&#39;transient-preferences/navigate&#39;, { &#39;preferences.top&#39;: current });
+}
+async function closePreferences() {
+  // Clear any uncommitted changes, so the next time we open the window we
+  // reset any modifications.
+  await store.dispatch(&#39;preferences/clear&#39;);</code></pre>
+    <p>Fix: <code>void store.dispatch(…).catch(err =&gt; console.error(&#39;Failed to persist tab selection&#39;, err));</code></p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyApplication.vue">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> <code>tabSelected</code> reads <code>tab.name</code> through a type that does not describe it <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/BodyApplication.vue#L21-L32">pkg/rancher-desktop/components/Preferences/BodyApplication.vue</a></div>
+      <pre data-start="21" data-line="26-27"><code class="language-ts">    behavior:    PreferencesApplicationBehavior,
+    environment: PreferencesApplicationEnvironment,
+  } as const)[activeTab.value];
+});
+
+function tabSelected({ tab }: { tab: Component }) {
+  const newTab = tab.name as typeof activeTab.value;
+  if (activeTab.value !== newTab) {
+    store.dispatch(&#39;transient-preferences/navigate&#39;, { &#39;preferences.application&#39;: newTab });
+  }
+}
+</code></pre>
+    <p><code>tab</code> is typed as a Vue <code>Component</code> definition, whose <code>name</code> is the component&#39;s registered name. At runtime the payload carries the child instance, so <code>tab.name</code> resolves to the <code>name</code> prop and the code works. The type is lying about which <code>name</code> this is, and the <code>as</code> cast hides it.</p>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Tabbed/index.vue#L192"><code>Tabbed/index.vue:192</code></a> emits <code>{ tab: selected, selectedName: selected.name }</code>, so the value is already available under a name that means what it says.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Tabbed/index.vue#L187-L197">pkg/rancher-desktop/components/Tabbed/index.vue</a></div>
+      <pre data-start="187" data-line="192"><code class="language-markup">
+      for ( const tab of sortedTabs ) {
+        tab.active = (tab.name === selected.name);
+      }
+
+      this.$emit(&#39;changed&#39;, { tab: selected, selectedName: selected.name });
+      this.activeTabName = selected.name;
+    },
+
+    selectNext(direction) {
+      const { sortedTabs } = this;</code></pre>
+    <p>Fix: destructure <code>selectedName</code> and drop the cast through <code>Component</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/tsconfig.json">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> <code>@/*</code> added without <code>resolveJsonModule</code> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/tsconfig.json#L14-L26">pkg/rancher-desktop/tsconfig.json</a></div>
+      <pre data-start="14" data-line="19-21"><code class="language-json">    &quot;sourceMap&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;noEmit&quot;: false,
+    &quot;experimentalDecorators&quot;: true,
+    &quot;paths&quot;: {
+      &quot;@/*&quot;: [
+        &quot;../../*&quot;
+      ],
+      &quot;@pkg/*&quot;: [
+        &quot;./*&quot;
+      ],
+      &quot;@rdd-client&quot;: [
+        &quot;../rdd-client/index&quot;</code></pre>
+    <p>The mapping resolves <code>@/package.json</code> for <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/General.vue#L36"><code>General.vue:36</code></a> and the two pre-existing importers, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/layouts/default.vue#L34"><code>layouts/default.vue:34</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/KubernetesError.vue#L64"><code>pages/KubernetesError.vue:64</code></a>. But this tsconfig sets no <code>resolveJsonModule</code>, which the root <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/tsconfig.json#L19"><code>tsconfig.json:19</code></a> does, and it declares no <code>extends</code>, so it inherits nothing. Under this config the import still reports &quot;Consider using <code>--resolveJsonModule</code>&quot;. No build script reads this file, so the cost is IDE diagnostics only.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/General.vue#L31-L41">pkg/rancher-desktop/pages/General.vue</a></div>
+      <pre data-start="31" data-line="36"><code class="language-markup">
+&lt;script lang=&quot;ts&quot; setup&gt;
+import { onBeforeUnmount, onMounted, ref } from &#39;vue&#39;;
+import { useStore } from &#39;vuex&#39;;
+
+import packageJson from &#39;@/package.json&#39; with { type: &#39;json&#39; };
+import NetworkStatus from &#39;@pkg/components/NetworkStatus.vue&#39;;
+import UpdateStatus from &#39;@pkg/components/UpdateStatus.vue&#39;;
+import type { UpdateState } from &#39;@pkg/main/update&#39;;
+import { ipcRenderer } from &#39;@pkg/utils/ipcRenderer&#39;;
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/layouts/default.vue#L29-L39">pkg/rancher-desktop/layouts/default.vue</a></div>
+      <pre data-start="29" data-line="34"><code class="language-markup">    &lt;ActionMenu data-testid=&quot;actionmenu&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import packageJson from &#39;@/package.json&#39; with { type: &#39;json&#39; };
+import ActionMenu from &#39;@pkg/components/ActionMenu.vue&#39;;
+import Nav from &#39;@pkg/components/Nav.vue&#39;;
+import StatusBar from &#39;@pkg/components/StatusBar.vue&#39;;
+import TheTitle from &#39;@pkg/components/TheTitle.vue&#39;;
+import { mapTypedActions, mapTypedGetters, mapTypedState } from &#39;@pkg/entry/store&#39;;</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/pages/KubernetesError.vue#L59-L69">pkg/rancher-desktop/pages/KubernetesError.vue</a></div>
+      <pre data-start="59" data-line="64"><code class="language-markup">&lt;script lang=&quot;ts&quot;&gt;
+import os from &#39;os&#39;;
+
+import { defineComponent } from &#39;vue&#39;;
+
+import packageJson from &#39;@/package.json&#39; with { type: &#39;json&#39; };
+import { ipcRenderer } from &#39;@pkg/utils/ipcRenderer&#39;;
+
+export default defineComponent({
+  name:   &#39;kubernetes-error-dialog&#39;,
+  layout: &#39;dialog&#39;,</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/tsconfig.json#L14-L24">tsconfig.json</a></div>
+      <pre data-start="14" data-line="19"><code class="language-json">    &quot;esModuleInterop&quot;: true,
+    &quot;allowJs&quot;: true,
+    &quot;sourceMap&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;experimentalDecorators&quot;: true,
+    &quot;resolveJsonModule&quot;: true,
+    &quot;paths&quot;: {
+      &quot;@/*&quot;: [
+        &quot;./*&quot;
+      ],
+      &quot;@pkg/*&quot;: [</code></pre>
+    <p>Fix: add <code>&quot;resolveJsonModule&quot;: true</code> alongside <code>experimentalDecorators</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/ts-helpers.ts">
+      <div class="finding-title" id="S9">
+        <span class="finding-num">S9.</span> One type-plumbing change is inert, the other deserves a comment <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S9" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/ts-helpers.ts#L58-L68">pkg/rancher-desktop/store/ts-helpers.ts</a></div>
+      <pre data-start="58" data-line="63"><code class="language-ts">    payloadType extends MutationsPayloadType&lt;Modules[moduleName][&#39;mutations&#39;]&gt;[mutationType],
+  &gt;(type: fullMutationType&lt;moduleName, mutationType&gt;, payload: payloadType, commitOptions: CommitOptions &amp; { root: true }): void;
+}
+
+// Copies from the vuex definition, but using our override ActionContext above.
+type ActionHandler&lt;S, R, M, G&gt; = (this: Store&lt;R&gt;, context: ActionContext&lt;S, M, G&gt;, payload?: any) =&gt; any;
+export interface ActionObject&lt;S, R, M, G&gt; {
+  root?:   boolean;
+  handler: ActionHandler&lt;S, R, M, G&gt;;
+}
+type Action&lt;S, R, M, G&gt; = ActionHandler&lt;S, R, M, G&gt; | ActionObject&lt;S, R, M, G&gt;;</code></pre>
+    <p>Widening <code>this</code> from <code>Store&lt;RootState&gt;</code> to <code>Store&lt;R&gt;</code> changes nothing today: <code>ActionTree</code> defaults <code>R</code> to <code>RootState</code> and its other branch hard-codes <code>RootState</code>, and no caller passes anything else.</p>
+    <p>The line 27 change is the substantive one. Making <code>moduleName&lt;S&gt;</code> require mutual assignability stops a module whose state is a supertype, or <code>any</code> from the untyped <code>.js</code> modules, from matching every <code>S</code>. That reasoning is worth a comment, since the nested conditional does not show it.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/ts-helpers.ts#L22-L32">pkg/rancher-desktop/store/ts-helpers.ts</a></div>
+      <pre data-start="22" data-line="27"><code class="language-typescript">};
+
+type moduleNames = keyof Modules;
+type mutationTypes&lt;MN extends moduleNames&gt; = keyof Modules[MN][&#39;mutations&#39;] &amp; string;
+type fullMutationType&lt;MN extends moduleNames, MT extends mutationTypes&lt;MN&gt;&gt; = `${ MN }/${ MT }`;
+type moduleName&lt;S&gt; = { [MN in moduleNames]: S extends ReturnType&lt;Modules[MN][&#39;state&#39;]&gt; ? ReturnType&lt;Modules[MN][&#39;state&#39;]&gt; extends S ? MN : never : never }[moduleNames];
+type moduleFor&lt;S&gt; = moduleName&lt;S&gt; extends never ? never : Modules[moduleName&lt;S&gt;];
+type mutationsFor&lt;S&gt; = moduleFor&lt;S&gt; extends { mutations: any } ? moduleFor&lt;S&gt;[&#39;mutations&#39;] : MutationsType&lt;S&gt; &amp; MutationTree&lt;S&gt;;
+type gettersFor&lt;S&gt; = moduleFor&lt;S&gt; extends { getters: any } ? moduleFor&lt;S&gt;[&#39;getters&#39;] : GetterTree&lt;S, any&gt;;
+
+export type RootGetters = UnionToIntersection&lt;{</code></pre>
+    <p>Fix: comment line 27, and either drop the line 63 change or note which caller will need the generic.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/preferences.ts">
+      <div class="finding-title" id="S10">
+        <span class="finding-num">S10.</span> The action payload type does not tie <code>value</code> to <code>key</code> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S10" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L178-L188">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="178" data-line="183"><code class="language-ts">   * This is used for preferences that do not go through the normal dialog.
+   * @returns Whether the commit was successful.
+   * @note Calling this will abort any in-flight validation requests, as well as
+   *       any in-flight commit requests.
+   */
+  writeNow(context, { key, value }: { key: RecursiveLeafKeys&lt;AppSpec&gt;, value: FieldType&lt;AppSpec, typeof key&gt; }) {
+    // Update `state.changes` in case the pref dialog is open.
+    const { state, getters, commit } = context;
+    if (_.get(getters.committed, key) === value) {
+      // Reverting a change; remove it from the changes list, so the UI does not
+      // allow committing if all changes are being reverted.</code></pre>
+    <p><code>typeof key</code> resolves to the declared parameter type, <code>RecursiveLeafKeys&lt;AppSpec&gt;</code>, not to the literal a caller passes. <code>value</code> therefore widens to the union of every leaf type in <code>AppSpec</code>, so a boolean key accepts a string. <code>modify</code> has the same signature, so this predates the PR and applies to both.</p>
+    <p>Fix: make the actions generic over <code>K extends RecursiveLeafKeys&lt;AppSpec&gt;</code> so <code>value</code> narrows to <code>FieldType&lt;AppSpec, K&gt;</code>. Worth checking that Vuex&#39;s <code>dispatch</code> typing propagates the parameter before committing to it.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/__tests__/SystemPreferences.spec.js">
+      <div class="finding-title" id="S11">
+        <span class="finding-num">S11.</span> An unrelated pre-existing test fix rides along in this PR <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S11" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/__tests__/SystemPreferences.spec.js#L5-L18">pkg/rancher-desktop/components/__tests__/SystemPreferences.spec.js</a></div>
+      <pre data-start="5" data-line="10-13"><code class="language-js">
+function createWrappedPage(props) {
+  return mount(SystemPreferences, {
+    props,
+    global: {
+      directives: {
+        &#39;clean-tooltip&#39;: {},
+        tooltip:         {},
+      },
+    },
+  });
+}
+
+const baseProps = {</code></pre>
+    <p>The <code>v-clean-tooltip</code> directive reaches <code>SystemPreferences</code> through <code>RdFieldset</code>, and it landed in commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/66c5e9336"><code>66c5e9336</code></a> (&quot;UI: Tooltips: Fix HTML escaping&quot;, 2025-08-19), well before this branch. So commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/551f79d0b"><code>551f79d0b</code></a> repairs a pre-existing test problem that has nothing to do with update preferences.</p>
+    <p>The fix itself is correct and welcome. Splitting it into its own commit would let bisect attribute it properly.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/__tests__/UpdateStatus.spec.ts">
+      <div class="finding-title" id="S12">
+        <span class="finding-num">S12.</span> Inconsistent key alignment in the reworked spec<a href="#S12" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/__tests__/UpdateStatus.spec.ts#L95-L105">pkg/rancher-desktop/components/__tests__/UpdateStatus.spec.ts</a></div>
+      <pre data-start="95" data-line="100"><code class="language-ts">        .toBeFalsy();
+    });
+
+    it(&#39;hides when there is nothing to display&#39;, () =&gt; {
+      const wrapper = wrap({
+        preference:     &#39;application.updates.enabled&#39;,
+        updateState: { available: true } as UpdateState,
+      }, { &#39;application.updates.enabled&#39;: true });
+
+      expect(wrapper.get({ ref: &#39;updateStatus&#39; }).text())
+        .toEqual(&#39;&#39;);</code></pre>
+    <p>Seven of the twelve rewritten cases kept the padding that aligned the old <code>updateState:</code> key, while five (lines 57, 66, 75, 86, 170) use the alignment that now fits. I ran eslint on the file and it exits 0, so nothing enforces this; it shows up only when reading the diff.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/__tests__/UpdateStatus.spec.ts#L52-L62">pkg/rancher-desktop/components/__tests__/UpdateStatus.spec.ts</a></div>
+      <pre data-start="52" data-line="57"><code class="language-typescript">
+describe(&#39;UpdateStatus.vue&#39;, () =&gt; {
+  describe(&#39;update visibility&#39;, () =&gt; {
+    it(&#39;shows updates when available&#39;, () =&gt; {
+      const wrapper = wrap({
+        preference:  &#39;application.updates.enabled&#39;,
+        updateState: { available: true, downloaded: true } as UpdateState,
+      }, { &#39;application.updates.enabled&#39;: true });
+
+      expect(wrapper.findComponent({ ref: &#39;updateInfo&#39; }).exists()).toBeTruthy();
+    });</code></pre>
+    <p>Fix: align all twelve the same way. Purely cosmetic, and easy to fold into whatever commit addresses I1.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Two write semantics chosen by a boolean prop on a shared form component</strong> <em>(future)</em> <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> — <code>RdCheckbox</code> branches on <code>immediate</code> to pick between <code>preferences/modify</code> (batched, dry-run validated, applied on Apply) and <code>preferences/writeNow</code> (committed at once, no Apply gate). Their failure semantics differ sharply: <code>modify</code> reports through the dialog&#39;s <code>Alert</code> and <code>ModalFooter</code>, <code>writeNow</code> reports nowhere (I1). As more preferences move to the main window, that asymmetry multiplies. Letting the container supply the write strategy, rather than a boolean on the leaf, would force a container with no error surface to declare one.</li>
+      <li><strong>The preference and its consumer live in different processes</strong> <em>(in-scope)</em> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> — the renderer&#39;s Vuex store persists <code>application.updates.enabled</code>, while the updater runs in the Electron main process. Nothing currently bridges them (I2). A main-process watcher on the App resource that owns updater lifecycle and broadcasts <code>UpdateState</code> would also pick up preference changes made through the CLI, without renderer-specific IPC.</li>
+      <li><strong>Immediate writes skip the validation round-trip</strong> <em>(future)</em> <span class="pill pill-claude">Claude Opus 4.8</span> — <code>modify</code> sends a <code>dryRun: &#39;All&#39;</code> patch before committing; <code>writeNow</code> goes straight to the live patch. That is fine for a boolean. Applied later to a numeric or string preference, the user would get a hard rejection with no inline feedback. Worth documenting on the <code>immediate</code> prop.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>Extracting <code>commitChanges</code> so <code>commit</code> and <code>writeNow</code> share one path, including the generation-watch handshake and the <code>skipResolve</code> interrupt protocol, is the right factoring; the existing <code>commit</code> tests kept passing unmodified. <span class="pill pill-claude">Claude Opus 4.8</span></li>
+      <li>Replacing <code>marked(markdown) as string</code> with <code>marked(markdown, { async: false })</code> removes an unsound cast. I confirmed marked 18.0.5 declares the narrowing overload at <code>node_modules/marked/lib/marked.d.ts:698-701</code>. <span class="pill pill-claude">Claude Opus 4.8</span></li>
+      <li>Swapping <code>setData({ applying: true })</code> for a real <code>trigger(&#39;click&#39;)</code> upgrades that test from poking internal state to exercising <code>applyUpdate</code>. <span class="pill pill-claude">Claude Opus 4.8</span></li>
+      <li><code>preferencesNavItemName</code> with <code>as const satisfies</code> gives the nav a closed type, and the cast in <code>transientPreferences.ts</code> is the minimum needed to widen the literal. <span class="pill pill-claude">Claude Opus 4.8</span></li>
+      <li>Moving the preference key, value lookup, and lock state into <code>RdCheckbox</code> simplifies every parent and gives the ongoing migration one consistent pattern. <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>No reviewer executed the suite: the agent worktrees have no <code>node_modules</code>, so every type and test claim in this report is a static trace. The one exception is eslint, which I ran from the main checkout against <code>UpdateStatus.spec.ts</code>; it exits 0.</p>
+    <p>Ranked by risk:</p>
+    <ol>
+      <li><em></em><code>writeNow</code> failure path<em></em> — untested, and a single test asserting the rollback would catch I1.</li>
+      <li><em></em><code>writeNow</code> alongside pending dialog changes<em></em> — untested. <code>writeNow</code> commits only its own key while <code>state.changes</code> may hold others; nothing checks that the rest survive.</li>
+      <li><em></em><code>RdCheckbox</code>&#39;s <code>immediate</code> branch<em></em> — untested. <code>UpdateStatus.spec.ts:45</code> stubs the component out, so no spec asserts which action a click dispatches.</li>
+      <li><em></em><code>writeNow</code> racing an in-flight dialog commit<em></em> — untested. <code>modify</code> has an equivalent abort test at <code>preferences.spec.ts:180</code>.</li>
+      <li><em></em>The <code>updatePossible</code> gate<em></em> — untested, and it is the state the app is actually in today (I2). Nearly every case in <code>UpdateStatus.spec.ts</code> omits <code>configured</code>, so the checkbox is absent and no assertion notices.</li>
+      <li><em></em><code>BodyApplication</code> tab switching<em></em> — no spec exists for the re-enabled pane. <code>componentFromTab</code> maps <code>behavior</code> and <code>environment</code> to components whose tabs are commented out.</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The generated client models match the Go types: <code>IoRancherdesktopAppV1alpha1AppSpecApplicationUpdates.ts</code> declares <code>&#39;enabled&#39;?: boolean</code> against <code>Enabled *bool</code> with <code>+kubebuilder:default=true</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/rdd/pkg/apis/app/v1alpha1/app_types.go#L184-L189"><code>rdd/pkg/apis/app/v1alpha1/app_types.go:184-189</code></a>, and <code>rdd/docs/design/api_app.md</code> already documents the field.</p>
+    <p>Two comments in <code>preferences.ts</code> contradict the code they sit on (S1). The new <code>immediate</code> prop on <code>RdCheckbox</code> has no doc comment, which matters more than usual because it selects between two actions with different validation and error-reporting behavior.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The four feature commits are cleanly separated and each stands alone: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bf7e2b7b7"><code>bf7e2b7b7</code></a> regenerates the client, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/259cc8618"><code>259cc8618</code></a> adds the store and <code>RdCheckbox</code> plumbing, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de975284f"><code>de975284f</code></a> wires the main window, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c78c72e91"><code>c78c72e91</code></a> restores the dialog. The messages match their diffs. The fifth, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/551f79d0b"><code>551f79d0b</code></a>, repairs an unrelated pre-existing test failure and would be better on its own (S11).</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L120-L123"><code>store/preferences.ts:120-123</code></a><em></em> — <code>isPreferenceLocked</code> always returns false, with a TODO pointing at deployment profiles (issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/513" class="gh-ref" data-title="Implement deployment profiles" data-state="open" data-type="issue">#513</a>). This PR removes <code>General.vue</code>&#39;s <code>get-locked-fields</code> call and <code>UpdateStatus</code>&#39;s <code>isAutoUpdateLocked</code> prop, routing lock state through the stub instead. No behavior changes today, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/background.ts#L336"><code>background.ts:336</code></a> already returns <code>{}</code> for <code>get-locked-fields</code>, but one more consumer now depends on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/513" class="gh-ref" data-title="Implement deployment profiles" data-state="open" data-type="issue">#513</a>. Other callers in <code>FirstRun.vue</code> and <code>Troubleshooting.vue</code> keep the handler alive.</li>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/ApplicationGeneral.vue#L19"><code>ApplicationGeneral.vue:19</code></a><em></em> — &quot;We don&#39;t have sudo access at this point&quot; explains why the admin-access fieldset stays disabled. S3 addresses the stale bindings inside it, not the decision.</li>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Preferences/BodyApplication.vue#L45"><code>BodyApplication.vue:45</code></a><em></em> — &quot;Environment has nothing yet&quot; explains why that tab is commented out.</li>
+      <li><em></em><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/store/preferences.ts#L255"><code>store/preferences.ts:255</code></a><em></em> — &quot;TODO: Handle array values&quot; in <code>generatePatch</code>, untouched here and not exercised by a boolean preference.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-4-8"><span class="pill pill-claude">Claude Opus 4.8</span> <a href="#claude-opus-4-8" class="pilcrow">&#182;</a></h3>
+    <p>The most complete review of the four, and the only one to explain <em>why</em> the <code>writeNow</code> comment is wrong rather than just noting the contradiction: it traced the preferences dialog to <code>createWindow(&#39;preferences&#39;, …)</code> and concluded a separate renderer cannot observe this store, which is the insight behind S1. Its calibration was the best on display. Where Gemini 3.5 Flash filed the <code>BodyApplication</code> destructure as an important regression, Claude filed the same observation as a suggestion and named the invariant that keeps it working today, which is what my own reading found. It also volunteered a verification caveat nobody asked for, stating that the absent <code>node_modules</code> made every type and test claim a static trace. That single paragraph did more for trust in the review than any finding in it.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Codex contributed the one finding that changes how this PR should be read: nothing imports <code>@pkg/main/update</code>, so the restored main-window checkbox never renders. It got there by chaining the IPC send to the module side effect to the bundle entry point, a four-hop trace the other agents either skipped or reached later. It also labeled the finding a gap rather than a regression, which the merge-base check confirmed. The weakness is the opposite of thoroughness: it filed zero suggestions and buried the docstring contradiction inside its Documentation Assessment, so cleanups it plainly noticed never surfaced as actionable items.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>A short review that was right about everything it said. Its I1 write-up independently reached the same mechanism I verified, including the detail that <code>General.vue</code> has neither a Cancel button nor an <code>errorStatus</code> display, which is what makes the stale value permanent. Its single suggestion checked out against <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/551f79d0bcf4b4db7e1d1d560d55be474f9bc8a1/pkg/rancher-desktop/components/Tabbed/index.vue#L192"><code>Tabbed/index.vue:192</code></a>. As expected it skipped <code>git blame</code>, so it could not date the <code>SystemPreferences</code> fix, and the terseness costs it: one suggestion from a 21-file diff leaves cleanups on the table that Claude picked up.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found I1 correctly and independently, then spent two of its three Important slots on claims that did not survive. It asserted that <code>marked(markdown, { async: false })</code> types as <code>string | Promise&lt;string&gt;</code> and would fail the production build; the installed <code>marked@18.0.5</code> declaration file has an explicit <code>async: false</code> overload returning <code>string</code>, so the PR&#39;s change is strictly an improvement over the cast it replaced. It also called the <code>BodyApplication</code> destructure a reactivity regression without checking that both mutations write in place. Both were stated with confident prose and precise line citations, which is the failure shape most likely to survive into a report unchecked. Worth noting for future runs: the two Gemini models share a family, so convergence between them should count as one opinion, but here they diverged, and Pro raised neither false positive.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 4.8</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>11m 49s</td><td>10m 10s</td><td>6m 10s</td><td>4m 02s</td></tr>
+        <tr><td>Findings</td><td>3I 9S</td><td>2I 1S</td><td>1I 1S</td><td>1I 2S</td></tr>
+        <tr><td>Tool calls</td><td>51 (Bash 41, Read 10)</td><td>—</td><td>38 (run<em>shell</em>command 38)</td><td>32 (read<em>file 19, grep</em>search 9, glob 2)</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>3</td><td>1</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>8</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>21</td><td>21</td><td>21</td><td>21</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>3I 9S</strong></td><td><strong>2I 1S</strong></td><td><strong>1I 1S</strong></td><td><strong>1I 2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Two Gemini 3.5 Flash findings changed status. Its I1 (<code>BodyApplication</code> destructure, reported as an important regression) became suggestion S5 after I confirmed that <code>SET_ALL</code> merges through <code>_.merge</code> and <code>navigate</code> writes through <code>_.set</code>, so <code>state.navigation</code> is never replaced and the captured proxy stays reactive. Its I3 (marked typing) was dropped as a false positive against <code>node_modules/marked/lib/marked.d.ts:698-701</code>. One reassignment rather than a severity change: Codex reported the <code>writeNow</code> docstring contradiction inside its Documentation Assessment, and I promoted it into S1 alongside Claude&#39;s version, which supplies the architectural reason.</p>
+    <p>Claude Opus 4.8 delivered the most value overall, both in volume and in calibration. But the single most consequential finding came from Codex: without I2, a reader would conclude this PR ships a working main-window toggle, when the control never renders. That one is worth confirming with the author before merge, since it may well be deliberate staging.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <p><strong>Verify typed-API claims against the installed declaration file.</strong> When a finding claims that a call into a typed third-party API fails to compile, or returns a wider type than the surrounding code assumes, open the installed declaration file and read the overloads before reporting it. Library entry points often narrow their return type on a literal option value, so reasoning from the general signature produces a confident, well-cited false positive. Quote the declaration and line that makes the call fail; if you cannot find one, drop the finding.</p>
+    <p><strong>Cap severity on findings whose failure requires a change that has not happened.</strong> When the failure mode needs a future refactor, a hypothetical object replacement, or a caller that does not exist, report it as a suggestion rather than a defect, and name both the invariant that currently prevents the failure and the code enforcing it. Reactivity, caching, and identity-comparison findings attract this shape. The observation is often worth making, but stating it as a present bug inflates severity and sends the author hunting for a failure they cannot reproduce.</p>
+    <p><strong>Confirm that a producer exists for every event or request a consumer issues.</strong> When reviewing code that subscribes to an event, sends an IPC request, or waits on a channel from another process, verify that something registers the corresponding handler, and that the registering module is reachable from the program&#39;s entry point. Registration performed as an import side effect is dead when nothing imports the module, and type-only imports are erased at compile time, so they never trigger it. A consumer wired to an absent producer compiles, passes type checks, and silently does nothing.</p>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <p><em></em>[repo] Vue is pinned at 3.5.x, so destructuring <code>defineProps</code> in <code>&lt;script setup&gt;</code> keeps reactivity.<em></em> The compiler rewrites destructured bindings back to prop accesses. Do not flag a destructured prop as a lost-reactivity bug in this repo; check the pinned Vue version in <code>package.json</code> before raising that class of finding.</p>
+    <p><strong>[repo] Each Electron window runs its own renderer with its own Vuex store.</strong> The preferences dialog is a separate <code>BrowserWindow</code> created by <code>pkg/rancher-desktop/window/preferences.ts</code>, not a modal inside the main window. Renderer stores share no state across windows; anything that must cross a window boundary goes through IPC or the daemon. Treat any comment or code that assumes one window can observe another&#39;s store state as a defect.</p>
+    <p><em></em>[repo] <code>background.ts</code> at the repo root is the sole Electron main-process entry.<em></em> Main-process modules register their <code>ipcMain</code> handlers as import side effects, so a module missing from that file&#39;s imports never registers anything, and its renderer-side callers hang silently. When a finding concerns main-process behavior, check that file&#39;s import list first.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.json={property:{pattern:/(^|[^\\])"(?:\\.|[^\\"\r\n])*"(?=\s*:)/,lookbehind:!0,greedy:!0},string:{pattern:/(^|[^\\])"(?:\\.|[^\\"\r\n])*"(?!\s*:)/,lookbehind:!0,greedy:!0},comment:{pattern:/\/\/.*|\/\*[\s\S]*?(?:\*\/|$)/,greedy:!0},number:/-?\b\d+(?:\.\d+)?(?:e[+-]?\d+)?\b/i,punctuation:/[{}[\],]/,operator:/:/,boolean:/\b(?:false|true)\b/,null:{pattern:/\bnull\b/,alias:"keyword"}},Prism.languages.webmanifest=Prism.languages.json;
+!function(e){e.languages.typescript=e.languages.extend("javascript",{"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,lookbehind:!0,greedy:!0,inside:null},builtin:/\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/}),e.languages.typescript.keyword.push(/\b(?:abstract|declare|is|keyof|readonly|require)\b/,/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,/\btype\b(?=\s*(?:[\{*]|$))/),delete e.languages.typescript.parameter,delete e.languages.typescript["literal-property"];var s=e.languages.extend("typescript",{});delete s["class-name"],e.languages.typescript["class-name"].inside=s,e.languages.insertBefore("typescript","function",{decorator:{pattern:/@[$\w\xA0-\uFFFF]+/,inside:{at:{pattern:/^@/,alias:"operator"},function:/^[\s\S]+/}},"generic-function":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,greedy:!0,inside:{function:/^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,generic:{pattern:/<[\s\S]+/,alias:"class-name",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
