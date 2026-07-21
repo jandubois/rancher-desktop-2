@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260720-202335-pr-571</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260720-202335-pr-571</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-07-20 20:23</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of target)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/571" class="gh-ref" data-title="RDA: Preferences: Add kube versions" data-state="open" data-type="pr">#571</a> — RDA: Preferences: Add kube versions</td></tr>
+      <tr><td>Branch</td><td><code>rda/settings/kube-version</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1386b2824"><code>1386b2824</code></a> RDA: prefs: k3s version selector<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4616a9abb"><code>4616a9abb</code></a> RDA: E2E: Add basic Kubernetes preferences tests</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4616a9abb73faec82c7cfa064cd47d0456ca1354"><code>4616a9abb73faec82c7cfa064cd47d0456ca1354</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 4.8</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the selector works, but four offered versions install a nonexistent k3s artifact, the new E2E test passes against an empty dropdown, and the offline label states something that is never true</td></tr>
+      <tr><td>Wall-clock time</td><td><code>16 min 46 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR re-enables the Kubernetes version selector, backing it with a new <code>kubernetes</code> Vuex module that watches the daemon&#39;s <code>k3s-versions</code> ConfigMap, plus a <code>network</code> module. The plumbing is sound and reuses existing watch infrastructure. Three problems stand out: four catalog versions map to <code>+k3s3</code> builds provisioning cannot construct, the new E2E test asserts only fieldset visibility against a harness supplying no versions, and the offline label rests on a premise RD2 no longer has.</p>
+    <p>Findings are grouped by theme: version-identity correctness (I1), test efficacy (I2), and the offline/network subsystem (I3, I4). No reviewer raised a Critical issue.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/app/lima-template.yaml">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Four offered versions install a k3s build that does not exist <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/app/app/lima-template.yaml#L101-L111">rdd/pkg/controllers/app/app/lima-template.yaml</a></div>
+      <pre data-start="101" data-line="106"><code class="language-yaml">    DOCKER_ACTION=$([[ $PARAM_CONTAINER_ENGINE = moby ]] &amp;&amp; echo enable || echo disable)
+    systemctl &quot;$CONTAINERD_ACTION&quot; containerd.service buildkitd.service
+    systemctl &quot;$DOCKER_ACTION&quot; docker.service docker.socket
+
+    if [[ $PARAM_KUBERNETES_ENABLED == &quot;true&quot; ]]; then
+        export INSTALL_K3S_VERSION=&quot;v${PARAM_KUBERNETES_VERSION}+k3s1&quot;
+        INSTALLED_VERSION=&quot;&quot;
+        # awk must read to EOF; `{print; exit}` closes the pipe while k3s
+        # is still writing, and the SIGPIPE propagates via pipefail + errexit.
+        [[ -x /usr/local/bin/k3s ]] &amp;&amp; INSTALLED_VERSION=$(/usr/local/bin/k3s --version | awk &#39;NR==1{print $3}&#39;)
+        if [[ $INSTALL_K3S_VERSION != &quot;${INSTALLED_VERSION}&quot; ]]; then</code></pre>
+    <p>The ConfigMap maps a bare version to its exact k3s release, but the UI writes only the bare key into <code>spec.kubernetes.version</code> and provisioning reconstructs the release by appending a hardcoded <code>+k3s1</code>. Four of the 35 catalog entries end in <code>+k3s3</code>: <code>v1.32.11</code>, <code>v1.33.7</code>, <code>v1.34.3</code>, and <code>v1.35.0</code>. Selecting any of them requests an artifact that was never published.</p>
+    <p>Reconciliation: this is a <strong>gap</strong>, not a regression. The <code>+k3s1</code> line is byte-identical at the merge-base, and none of the four is a channel tip, so before this PR no GUI path could select them. The PR makes a latent defect reachable.</p>
+    <p>Fix: carry the exact release through. <code>versions[bareVersion]</code> already holds <code>v1.33.7+k3s3</code>; pass that into the template and treat the parameter as complete rather than rebuilding it.</p>
+    </div>
+    <div class="card card-important" data-file="e2e/preferences.e2e.spec.ts">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The new E2E test passes against an empty, disabled selector <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/preferences.e2e.spec.ts#L191-L201">e2e/preferences.e2e.spec.ts</a></div>
+      <pre data-start="191" data-line="196"><code class="language-ts">
+    await kubernetes.nav.click();
+
+    await expect(kubernetes.nav).toHaveClass(&#39;preferences-nav-item active&#39;);
+    await expect(kubernetes.kubernetesToggle).toBeVisible();
+    await expect(kubernetes.kubernetesVersion).toBeVisible();
+    // await expect(kubernetes.kubernetesOptions).toBeVisible();
+  });
+
+  test.fixme(&#39;should navigate to WSL and render integrations tab&#39;, async() =&gt; {
+    test.skip(os.platform() !== &#39;win32&#39;, &#39;WSL nav item not available on macOS &amp; Linux&#39;);</code></pre>
+    <p>The harness starts the daemon with <code>rdd service start --controllers=</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/utils/TestUtils.ts#L359-L360"><code>e2e/utils/TestUtils.ts:359-360</code></a>) and then launches only the mock controller, so the <code>k3sversions</code> controller never runs and no <code>k3s-versions</code> ConfigMap exists.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/utils/TestUtils.ts#L354-L365">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="354" data-line="359-360"><code class="language-typescript">      [&#39;service&#39;, &#39;delete&#39;],
+      { env, stdio: [&#39;ignore&#39;, rddLogs, rddLogs] });
+    await spawnFile(
+      path.join(topSrcDir, &#39;rdd&#39;, &#39;bin&#39;, exeName(&#39;rdd&#39;)),
+      [&#39;service&#39;, &#39;start&#39;, &#39;--controllers=&#39;, &#39;--wait=false&#39;],
+      { env, stdio: [&#39;ignore&#39;, rddLogs, rddLogs] });
+  } finally {
+    await expect(util.promisify(rddLogs.close.bind(rddLogs))(), &#39;failed to close RDD logs&#39;)
+      .resolves.toBeUndefined();
+  }
+
+  // The mock controller does not daemonize; launch it in the background.</code></pre>
+    <p>The <code>&lt;rd-fieldset data-test=&quot;kubernetesVersion&quot;&gt;</code> renders unconditionally while both <code>&lt;optgroup&gt;</code>s are <code>v-if</code>-gated on non-empty lists, so this assertion holds the instant the component mounts. It would equally pass against a broken watch, a wrong namespace, or a ConfigMap whose JSON fails to parse. That is the entire round trip the PR exists to build.</p>
+    <p>Fix: enable the <code>app</code> controller group in the harness, then assert on rendered data. Check <code>await expect(select.locator(&#39;option&#39;)).not.toHaveCount(0)</code>, then <code>selectOption</code>, then confirm the App spec took the value.</p>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> &quot;(cached versions only)&quot; is never true — the list is embedded, not fetched <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L43-L54">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="43" data-line="48-49"><code class="language-ts">  const recommended = new Set(Object.values(channels.value ?? {}));
+  return Object.keys(versions.value ?? {})
+    .filter(v =&gt; !recommended.has(v))
+    .sort(semverCompareDesc);
+});
+const kubernetesVersionLabel = computed(() =&gt;
+  `Kubernetes version${ cachedVersionsOnly.value ? &#39; (cached versions only)&#39; : &#39;&#39; }`);
+const isKubernetesDisabled = computed(() =&gt; !preferences.value?.kubernetes?.enabled);
+const isPreferenceLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+
+function semverCompareDesc(a: string, b: string) {
+  try {</code></pre>
+    <p><code>cachedVersionsOnly</code> is just <code>state.network.offline</code>. The version list comes from a <code>//go:embed k3s-versions.json</code> blob compiled into the daemon (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/app/k3sversions/controllers/k3s_versions.go#L34"><code>rdd/pkg/controllers/app/k3sversions/controllers/k3s_versions.go:34</code></a>), and neither getter filters on connectivity, so the dropdown is byte-identical online and off. The label asserts a degradation that cannot occur.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/app/k3sversions/controllers/k3s_versions.go#L29-L39">rdd/pkg/controllers/app/k3sversions/controllers/k3s_versions.go</a></div>
+      <pre data-start="29" data-line="34"><code class="language-go">	// Channels is a mapping from a channel alias (e.g. &quot;stable&quot;, &quot;latest&quot;, &quot;1.32&quot;)
+	// to a concrete semver string (e.g. &quot;1.32.4&quot;).
+	Channels map[string]string
+}
+
+//go:embed k3s-versions.json
+var k3sVersionsDataString string
+
+// k3sVersions is the parsed k3s versions data.
+var k3sVersions = sync.OnceValues(func() (K3sVersions, error) {
+	var parsed k3sVersionsJSON</code></pre>
+    <p>The wording comes from RD1, where the list genuinely arrived over the network; the translation keys still carry it under <code>firstRun.kubernetesVersion.cachedOnly</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/assets/translations/en-us.yaml#L182"><code>pkg/rancher-desktop/assets/translations/en-us.yaml:182</code></a>). Note the label misleads in the other direction too: k3s <em>artifacts</em> still download during provisioning, so an offline user is told versions are cached when installing one will fail.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/assets/translations/en-us.yaml#L177-L187">pkg/rancher-desktop/assets/translations/en-us.yaml</a></div>
+      <pre data-start="177" data-line="182"><code class="language-yaml">  name: &#39;{productName}&#39;
+  update: &quot;There&#39;s one last step to finish updating Rancher Desktop&quot;
+firstRun:
+  kubernetesVersion:
+    legend: Kubernetes Version
+    cachedOnly: (cached versions only)
+  ok: OK
+marketplace:
+  title: Extensions
+  noResults: No extension found for the search criteria
+  tabs:</code></pre>
+    <p>Fix: drop the suffix. Line 14 is the <code>network</code> module&#39;s only consumer, so this and I4 resolve together.</p>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/store/network.ts">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> <code>update-network-status</code> has no emitter left in the tree <span class="pill pill-claude">Claude Opus 4.8</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/store/network.ts#L24-L36">pkg/rancher-desktop/store/network.ts</a></div>
+      <pre data-start="24" data-line="29-31"><code class="language-ts">    };
+
+    window.addEventListener(&#39;online&#39;, updateNetworkState);
+    window.addEventListener(&#39;offline&#39;, updateNetworkState);
+
+    ipcRenderer.on(&#39;update-network-status&#39;, (_event, status) =&gt; {
+      store.commit(&#39;network/SET_OFFLINE&#39;, !status);
+    });
+
+    // Set the initial state.
+    updateNetworkState();
+  },
+];</code></pre>
+    <p>The only sender is <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/main/tray.ts#L234"><code>pkg/rancher-desktop/main/tray.ts:234</code></a>, and nothing in the tree imports that module; a grep across <code>pkg/rancher-desktop/main/</code> and <code>background.ts</code> for <code>tray</code> returns zero hits outside the file itself. So <code>navigator.onLine</code> alone drives the store&#39;s <code>offline</code> state.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/main/tray.ts#L229-L239">pkg/rancher-desktop/main/tray.ts</a></div>
+      <pre data-start="229" data-line="234"><code class="language-typescript">      this.currentNetworkStatus = networkStatus.OFFLINE;
+    } else {
+      this.currentNetworkStatus = await checkConnectivity(&#39;k3s.io&#39;) ? networkStatus.CONNECTED : networkStatus.OFFLINE;
+    }
+    mainEvents.emit(&#39;update-network-status&#39;, this.currentNetworkStatus === networkStatus.CONNECTED);
+    send(&#39;update-network-status&#39;, this.currentNetworkStatus === networkStatus.CONNECTED);
+    this.updateMenu();
+  }
+
+  protected buildFromConfig() {
+    try {</code></pre>
+    <p>That is a weaker signal than the dead branch suggests. The tray&#39;s value came from a reachability probe against <code>k3s.io</code>, whereas <code>navigator.onLine</code> reports only that an interface is up, which stays true behind a captive portal or with just a VM bridge.</p>
+    <p>Fix: with I3 applied this file goes away. If the module survives, drop the listener until an emitter exists.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/kubernetes.ts">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> ConfigMap watch is unfiltered — it streams every ConfigMap in the namespace <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/store/kubernetes.ts#L6-L21">pkg/rancher-desktop/store/kubernetes.ts</a></div>
+      <pre data-start="6" data-line="11-16"><code class="language-ts">import * as RDDClient from &#39;@rdd-client&#39;;
+
+type KubernetesState = ReturnType&lt;typeof state&gt;;
+
+const resources = [
+  defineResource({
+    name:       &#39;configMaps&#39;,
+    type:       &#39;ConfigMap&#39;,
+    path:       (namespace: string) =&gt; `/api/v1/namespaces/${ namespace }/configmaps`,
+    makeClient: config =&gt; config.makeApiClient(RDDClient.CoreV1Api),
+  }),
+] as const;
+
+export const state = () =&gt; ({
+  ...resourceState(resources),
+  error: undefined as Error | undefined,</code></pre>
+    <p>The App namespace also holds the LimaVM template ConfigMap carrying a full lima.yaml (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/lima/limavm/controller.go#L228-L232"><code>rdd/pkg/controllers/lima/limavm/controller.go:228-232</code></a>); every change re-commits the list and re-runs both getters&#39; <code>JSON.parse</code>, producing fresh identities that re-render the select for an unrelated resource. The daemon exports <code>DesiredLabels()</code> precisely so consumers can filter, and <code>defineResource</code> supports <code>labelSelector</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/lima/limavm/controller.go#L223-L237">rdd/pkg/controllers/lima/limavm/controller.go</a></div>
+      <pre data-start="223" data-line="228-232"><code class="language-go">	if err != nil {
+		return fmt.Errorf(&quot;failed to fetch template data: %w&quot;, err)
+	}
+
+	// Create template ConfigMap with label
+	templateConfigMap := &amp;corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      limavm.GetTemplateConfigMapName(),
+			Namespace: limavm.Namespace,
+			Labels: map[string]string{
+				controllers.TemplateConfigMapLabel: &quot;true&quot;,
+			},
+			Finalizers: []string{
+				base.OwnedFinalizerFor(v1alpha1.LimaVMKind),
+			},</code></pre>
+    <p>Fix: add <code>labelSelector: () =&gt; &#39;app.kubernetes.io/name=rdd-k3s-versions&#39;</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/kubernetes.ts">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> No unit coverage for the getters or the grouping logic <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>tryParseJSON</code>, both getters, and the <code>selectedVersion</code> / <code>recommendedVersions</code> / <code>nonRecommendedVersions</code> computeds are pure, easily-testable logic with no test at any layer. The repo convention exists: <code>pkg/rancher-desktop/store/__tests__/</code> already holds <code>preferences.spec.ts</code>. The channel-name filter <code>/^v?\d+\.\d+/</code> in particular decides whether a label like <code>1.32</code> is shown, and will drift silently when the bundled JSON changes shape.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The displayed version can differ from the one in the spec <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L23-L33">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="23" data-line="28"><code class="language-ts">    channels.value?.latest,
+    ...Object.values(channels.value ?? {}).sort(semverCompareDesc),
+    ...Object.keys(versions.value ?? {}).sort(semverCompareDesc),
+  ];
+  const fallback = preferences.value?.kubernetes?.version;
+  return candidates.find(v =&gt; v &amp;&amp; v in (versions.value ?? {})) ?? fallback;
+});
+/** recommendedVersions is a list of tuples, `[version, channels]` */
+const recommendedVersions = computed(() =&gt; {
+  const recommended = new Set(Object.values(channels.value ?? {}));
+  return Object.keys(versions.value ?? {}).filter(v =&gt; recommended.has(v)).map(v =&gt; {</code></pre>
+    <p>When <code>spec.kubernetes.version</code> names a version absent from the catalog, <code>find</code> skips it and returns a channel tip instead, so the dropdown shows a version the spec does not hold and nothing writes it back. The same divergence occurs harmlessly before the ConfigMap loads.</p>
+    <p>Reconciliation: both reviewers rated this higher and described mechanisms that do not hold. The validating webhook rejects any version outside the same map the ConfigMap is built from (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/app/app/controllers/app_webhook.go#L60"><code>rdd/pkg/controllers/app/app/controllers/app_webhook.go:60</code></a>), which makes the state near-unreachable, so treat it as defensive polish. One proposed fix (return the saved version unconditionally) would be worse: with no matching <code>&lt;option&gt;</code> the browser sets <code>selectedIndex = -1</code> and the select renders blank.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/rdd/pkg/controllers/app/app/controllers/app_webhook.go#L55-L65">rdd/pkg/controllers/app/app/controllers/app_webhook.go</a></div>
+      <pre data-start="55" data-line="60"><code class="language-go">	if k8s.Enabled &amp;&amp; k8s.Version == &quot;&quot; {
+		return nil, errors.New(&quot;spec.kubernetes.version must not be empty when spec.kubernetes.enabled is true&quot;)
+	}
+
+	if k8s.Version != &quot;&quot; {
+		if _, ok := v.supportedK8sVersions[k8s.Version]; !ok {
+			return nil, fmt.Errorf(&quot;spec.kubernetes.version %q is not supported; see the bundled k3s-versions.json for valid versions&quot;, k8s.Version)
+		}
+	}
+
+	if err := v.validateVirtualMachine(app.Spec.VirtualMachine); err != nil {</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="e2e/preferences.e2e.spec.ts">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> Leftovers from the E2E rewrite <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/preferences.e2e.spec.ts#L2-L12">e2e/preferences.e2e.spec.ts</a></div>
+      <pre data-start="2" data-line="7"><code class="language-ts">
+import { test, expect, _electron } from &#39;@playwright/test&#39;;
+
+import { NavPage } from &#39;./pages/nav-page&#39;;
+import { PreferencesPage } from &#39;./pages/preferences&#39;;
+import { createDefaultSettings, startRancherDesktop, teardown, tool } from &#39;./utils/TestUtils&#39;;
+
+import { reopenLogs } from &#39;@pkg/utils/logging&#39;;
+
+import type { ElectronApplication, Page } from &#39;@playwright/test&#39;;
+</code></pre>
+    <p>Dropping <code>createDefaultSettings()</code> from <code>beforeAll</code> and <code>tool(&#39;rdctl&#39;, &#39;reset&#39;, ...)</code> / <code>reopenLogs()</code> from <code>afterAll</code> left three imports unused; <code>reopenLogs</code> pulls a main-process module into a spec for nothing (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/preferences.e2e.spec.ts#L9"><code>e2e/preferences.e2e.spec.ts:9</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/preferences.e2e.spec.ts#L4-L14">e2e/preferences.e2e.spec.ts</a></div>
+      <pre data-start="4" data-line="9"><code class="language-typescript">
+import { NavPage } from &#39;./pages/nav-page&#39;;
+import { PreferencesPage } from &#39;./pages/preferences&#39;;
+import { createDefaultSettings, startRancherDesktop, teardown, tool } from &#39;./utils/TestUtils&#39;;
+
+import { reopenLogs } from &#39;@pkg/utils/logging&#39;;
+
+import type { ElectronApplication, Page } from &#39;@playwright/test&#39;;
+
+let page: Page;
+</code></pre>
+    <p>Line 197 keeps a commented-out assertion, and the page object still declares <code>kubernetesOptions</code> and <code>kubernetesVersionLockedFields</code>, which no live test references (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/pages/preferences/kubernetes.ts#L8"><code>e2e/pages/preferences/kubernetes.ts:8</code></a>). eslint&#39;s <code>no-unused-vars</code> is disabled repo-wide, so none of this fails CI.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/e2e/pages/preferences/kubernetes.ts#L3-L13">e2e/pages/preferences/kubernetes.ts</a></div>
+      <pre data-start="3" data-line="8"><code class="language-typescript">export class KubernetesNav {
+  readonly page:                          Page;
+  readonly nav:                           Locator;
+  readonly kubernetesToggle:              Locator;
+  readonly kubernetesVersion:             Locator;
+  readonly kubernetesOptions:             Locator;
+  readonly kubernetesVersionLockedFields: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.nav = page.locator(&#39;[data-test=&quot;nav-kubernetes&quot;]&#39;);</code></pre>
+    <p>Fix: prune the imports and the dead locators, as the commit already did for <code>kubernetesPort</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>:selected</code> on each <code>&lt;option&gt;</code> is redundant under <code>v-model</code> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L112-L122">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="112" data-line="117"><code class="language-html">        &gt;
+          &lt;option
+            v-for=&quot;item in recommendedVersions&quot;
+            :key=&quot;item[0]&quot;
+            :value=&quot;item[0]&quot;
+            :selected=&quot;item[0] === selectedVersion&quot;
+          &gt;
+            {{ formatRecommendedVersion(item) }}
+          &lt;/option&gt;
+        &lt;/optgroup&gt;
+        &lt;optgroup</code></pre>
+    <p><code>RdSelect</code> drives selection through <code>v-model=&quot;selectedValue&quot;</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/RdSelect.vue#L52"><code>pkg/rancher-desktop/components/RdSelect.vue:52</code></a>), which overwrites whatever these bindings set. Inherited from the pre-existing commented-out block, they are inert and invite a future reader to &quot;fix&quot; selection by editing them. The same applies at line 130.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/RdSelect.vue#L47-L57">pkg/rancher-desktop/components/RdSelect.vue</a></div>
+      <pre data-start="47" data-line="52"><code class="language-markup">    class=&quot;rd-select-container&quot;
+    :class=&quot;$attrs.class&quot;
+  &gt;
+    &lt;select
+      v-bind=&quot;$attrs&quot;
+      v-model=&quot;selectedValue&quot;
+      :class=&quot;{ locked: isLocked &amp;&amp; !$attrs.disabled }&quot;
+      :disabled=&quot;!!$attrs.disabled || isLocked&quot;
+      @input=&quot;overrideInput($event)&quot;
+    &gt;
+      &lt;slot name=&quot;default&quot;&gt;</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L125-L135">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="125" data-line="130"><code class="language-markup">        &gt;
+          &lt;option
+            v-for=&quot;item in nonRecommendedVersions&quot;
+            :key=&quot;item&quot;
+            :value=&quot;item&quot;
+            :selected=&quot;item === selectedVersion&quot;
+          &gt;
+            {{ item }}
+          &lt;/option&gt;
+        &lt;/optgroup&gt;
+      &lt;/rd-select&gt;</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> <code>semver</code> subpath import deviates from 17 other call sites <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L1-L7">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="1" data-line="2"><code class="language-ts">&lt;script lang=&quot;ts&quot; setup&gt;
+import semverCompare from &#39;semver/functions/compare&#39;;
+import { computed, onBeforeMount, onBeforeUnmount } from &#39;vue&#39;;
+import { useStore } from &#39;vuex&#39;;
+
+import RdSelect from &#39;@pkg/components/RdSelect.vue&#39;;
+import RdCheckbox from &#39;@pkg/components/form/RdCheckbox.vue&#39;;</code></pre>
+    <p>Every other import in the repo uses <code>import semver from &#39;semver&#39;</code>. Note this is style only: semver 7.8.5 ships no <code>exports</code> map and <code>@types/semver/functions/compare.d.ts</code> exists, so resolution and type-checking both work.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> Three new user-facing strings bypass i18n <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+    <p>&quot;Recommended Versions&quot;, &quot;Other Versions&quot; (line 124), and the computed legend (line 49) are hardcoded. Keys for the legend and cached suffix already exist at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/assets/translations/en-us.yaml#L180-L182"><code>pkg/rancher-desktop/assets/translations/en-us.yaml:180-182</code></a>. Weigh this against the surrounding convention: the adjacent <code>legend-text=&quot;Kubernetes&quot;</code> and <code>ApplicationGeneral.vue</code> also hardcode English, so it reads as a tree-wide decision the PR inherited.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/assets/translations/en-us.yaml#L175-L187">pkg/rancher-desktop/assets/translations/en-us.yaml</a></div>
+      <pre data-start="175" data-line="180-182"><code class="language-yaml">##############################
+app:
+  name: &#39;{productName}&#39;
+  update: &quot;There&#39;s one last step to finish updating Rancher Desktop&quot;
+firstRun:
+  kubernetesVersion:
+    legend: Kubernetes Version
+    cachedOnly: (cached versions only)
+  ok: OK
+marketplace:
+  title: Extensions
+  noResults: No extension found for the search criteria
+  tabs:</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L44-L54">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="44" data-line="49"><code class="language-markup">  return Object.keys(versions.value ?? {})
+    .filter(v =&gt; !recommended.has(v))
+    .sort(semverCompareDesc);
+});
+const kubernetesVersionLabel = computed(() =&gt;
+  `Kubernetes version${ cachedVersionsOnly.value ? &#39; (cached versions only)&#39; : &#39;&#39; }`);
+const isKubernetesDisabled = computed(() =&gt; !preferences.value?.kubernetes?.enabled);
+const isPreferenceLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+
+function semverCompareDesc(a: string, b: string) {
+  try {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L119-L129">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="119" data-line="124"><code class="language-markup">            {{ formatRecommendedVersion(item) }}
+          &lt;/option&gt;
+        &lt;/optgroup&gt;
+        &lt;optgroup
+          v-if=&quot;nonRecommendedVersions.length &gt; 0&quot;
+          label=&quot;Other Versions&quot;
+        &gt;
+          &lt;option
+            v-for=&quot;item in nonRecommendedVersions&quot;
+            :key=&quot;item&quot;
+            :value=&quot;item&quot;</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/kubernetes.ts">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> Both getters repeat the same lookup and magic string <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/store/kubernetes.ts#L35-L45">pkg/rancher-desktop/store/kubernetes.ts</a></div>
+      <pre data-start="35" data-line="40"><code class="language-ts">  }
+}
+
+export const getters = {
+  k3sVersions(state) {
+    const configMap = state.configMaps?.find(cm =&gt; cm.metadata?.name === &#39;k3s-versions&#39;);
+    const versions = configMap?.data?.versions;
+
+    return tryParseJSON&lt;Record&lt;string, string&gt;&gt;(versions);
+  },
+  k3sChannels(state) {</code></pre>
+    <p>Duplicated verbatim at line 46. Extract a <code>k3sVersionsConfigMap</code> getter so Vuex memoizes the lookup once, and lift the name to a module constant.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/store/kubernetes.ts#L41-L51">pkg/rancher-desktop/store/kubernetes.ts</a></div>
+      <pre data-start="41" data-line="46"><code class="language-typescript">    const versions = configMap?.data?.versions;
+
+    return tryParseJSON&lt;Record&lt;string, string&gt;&gt;(versions);
+  },
+  k3sChannels(state) {
+    const configMap = state.configMaps?.find(cm =&gt; cm.metadata?.name === &#39;k3s-versions&#39;);
+    const channels = configMap?.data?.channels;
+
+    return tryParseJSON&lt;Record&lt;string, string&gt;&gt;(channels);
+  },
+} satisfies GetterTree&lt;KubernetesState&gt;;</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="S9">
+        <span class="finding-num">S9.</span> <code>channels</code> is shadowed inside <code>formatRecommendedVersion</code> <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S9" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L57-L67">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="57" data-line="62"><code class="language-ts">    return String(b).localeCompare(String(a));
+  }
+}
+
+function formatRecommendedVersion(input: readonly [string, string[]]) {
+  const [version, channels] = input;
+  if (channels.length === 0) {
+    return version;
+  }
+  return `${ version } (${ channels.join(&#39;, &#39;) })`;
+}</code></pre>
+    <p>Line 16&#39;s <code>channels</code> is the <code>ComputedRef</code> for the channel map; this binding is a <code>string[]</code> of channel names for one version. Legal, but a reader hitting <code>channels.join(&#39;, &#39;)</code> four lines later has to re-derive which is in scope. Rename to <code>channelNames</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue">
+      <div class="finding-title" id="S10">
+        <span class="finding-num">S10.</span> Lifecycle dispatches are unhandled promises <span class="pill pill-claude">Claude Opus 4.8</span><a href="#S10" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue#L69-L79">pkg/rancher-desktop/components/Preferences/BodyKubernetes.vue</a></div>
+      <pre data-start="69" data-line="74"><code class="language-ts">function onVersionChanged(value: string) {
+  store.dispatch(&#39;preferences/modify&#39;, { key: &#39;kubernetes.version&#39;, value });
+}
+
+onBeforeMount(() =&gt; {
+  store.dispatch(&#39;kubernetes/watchResources&#39;, [&#39;configMaps&#39;]);
+});
+onBeforeUnmount(() =&gt; {
+  store.dispatch(&#39;kubernetes/unwatchResources&#39;, [&#39;configMaps&#39;]);
+});
+</code></pre>
+    <p><code>watchResources</code> awaits the <code>_watchersInitialized</code> latch and throws when setup has not run, so a rejected <code>setupResourceWatch</code> surfaces as an unhandled rejection. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/pages/Volumes.vue#L187"><code>pages/Volumes.vue:187</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/pages/Images.vue#L80"><code>pages/Images.vue:80</code></a> both attach handlers. The nearest neighbor, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/pages/Preferences.vue#L60"><code>pages/Preferences.vue:60</code></a>, omits one, so the PR matches its immediate surroundings. Worth fixing in both places.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/pages/Volumes.vue#L182-L192">pkg/rancher-desktop/pages/Volumes.vue</a></div>
+      <pre data-start="182" data-line="187"><code class="language-markup">      }
+      return null;
+    },
+  },
+  beforeMount() {
+    this.watchResources([&#39;volumes&#39;]).catch(error =&gt; {
+      this.SET_ERROR({ source: &#39;volumes&#39;, error });
+    });
+  },
+  mounted() {
+    this.setHeader({</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/pages/Images.vue#L75-L85">pkg/rancher-desktop/pages/Images.vue</a></div>
+      <pre data-start="75" data-line="80"><code class="language-markup">    },
+  },
+
+  beforeMount() {
+    this.setHeader({ title: this.t(&#39;images.title&#39;) });
+    this.watchResources([&#39;namespaces&#39;, &#39;images&#39;]).catch(error =&gt; {
+      this.SET_ERROR({ source: &#39;images&#39;, error });
+    });
+  },
+
+  mounted() {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4616a9abb73faec82c7cfa064cd47d0456ca1354/pkg/rancher-desktop/pages/Preferences.vue#L55-L65">pkg/rancher-desktop/pages/Preferences.vue</a></div>
+      <pre data-start="55" data-line="60"><code class="language-markup">    await store.dispatch(&#39;transient-preferences/navigate&#39;, { &#39;preferences.top&#39;: navItems.value[idx] });
+  }
+}
+
+onBeforeMount(() =&gt; {
+  store.dispatch(&#39;rdd/watchResources&#39;, [&#39;apps&#39;]);
+  ipcRenderer.on(&#39;route&#39;, navigateToTab);
+});
+onBeforeUnmount(() =&gt; {
+  ipcRenderer.removeListener(&#39;route&#39;, navigateToTab);
+  store.dispatch(&#39;rdd/unwatchResources&#39;, [&#39;apps&#39;]);</code></pre>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <p><strong>Concerns</strong></p>
+    <ul>
+      <li><em></em>The <code>network</code> module has one consumer and a false premise<em></em> <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 4.8</span>. A namespaced Vuex module, two <code>window</code> listeners, and a dead IPC channel exist to append seven words to one fieldset legend, and the words are wrong (I3, I4). Deleting <code>store/network.ts</code> and its two lines in <code>entry/store.ts</code> removes all three at once. A genuine &quot;your version list is stale&quot; signal would come from the daemon, via the ConfigMap&#39;s own metadata, so the module is not scaffolding for that future either.</li>
+      <li><em></em><code>NetworkStatus.vue</code> already tracks network state<em></em> <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 4.8</span>. The component registers the same <code>update-network-status</code> / <code>online</code> / <code>offline</code> handlers the new plugin does, plus a <code>pageshow</code> handler the plugin lacks, whose comment explains it catches changes missed while the preferences window was closed. If the module survives I3, repoint the component at the store so there is one source of truth.</li>
+      <li><strong>Exact artifact identity is lost between catalog and provisioning</strong> <em>(in-scope)</em> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>. The ConfigMap models bare version → exact k3s release, but the App and Lima handoff keeps only the bare value. Preserving the exact release internally and deriving the display label separately forecloses I1 structurally, where patching the one template line only fixes today&#39;s four entries.</li>
+      <li><strong>Module naming</strong> <em>(future)</em> <span class="pill pill-claude">Claude Opus 4.8</span>. <code>store/kubernetes.ts</code> reads as &quot;state of the Kubernetes cluster&quot; but holds one ConfigMap watch and two version getters, while <code>store/rdd.ts</code> already watches ConfigMaps. Low urgency: the name fits once the module holds real cluster state.</li>
+    </ul>
+    <p><strong>Strengths</strong></p>
+    <ul>
+      <li>Reusing <code>defineResource</code>/<code>resourceWatchActions</code> inherits reconnect, refcounted start/stop, and namespace-change rewatch for free <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+      <li>Refcounting the watch to the component&#39;s mount lifecycle keeps the ConfigMap stream off the main window entirely <span class="pill pill-claude">Claude Opus 4.8</span>.</li>
+      <li><code>tryParseJSON</code> returning <code>undefined</code> rather than throwing keeps a malformed ConfigMap from taking down the preferences render <span class="pill pill-claude">Claude Opus 4.8</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Ranked by risk:</p>
+    <ol>
+      <li><strong>ConfigMap → dropdown round trip.</strong> Nothing asserts a version reaches the UI, and the harness supplies none (I2). A wrong namespace, stalled watch, or parse failure all ship green.</li>
+      <li><strong>Version grouping and sorting.</strong> <code>recommendedVersions</code>, <code>nonRecommendedVersions</code>, and <code>formatRecommendedVersion</code> have no coverage at any layer (S2).</li>
+      <li><em></em><code>selectedVersion</code> fallback chain.<em></em> Five candidate sources, none exercised; the realistic cases each produce a different UI (S3).</li>
+      <li><strong>Selection writes through to the App spec.</strong> No test dispatches <code>preferences/modify</code> with <code>kubernetes.version</code> and confirms the webhook accepts the patch.</li>
+      <li><em></em>Non-<code>+k3s1</code> catalog entries.<em></em> No test covers a version whose exact release carries a different suffix. That is the gap that lets I1 exist.</li>
+    </ol>
+    <p>All four reviewers ran without <code>node_modules</code>, so every claim about Jest or <code>tsc</code> outcomes in the source reviews is static tracing, not executed. No reviewer reported running a test suite.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>k3sVersions</code> and <code>k3sChannels</code> carry no doc comment stating their shape: bare-version keys mapping to full k3s version strings. Neither the name nor <code>Record&lt;string, string&gt;</code> conveys it. The sibling <code>store/rdd.ts</code> documents its getters, and <code>store/network.ts</code> documents nothing.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Clean. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1386b2824"><code>1386b2824</code></a> is the feature (component plus two stores plus registration), <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4616a9abb"><code>4616a9abb</code></a> is the test change; neither patches the other and both messages match their diffs.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR leaves most preference tabs and their tests disabled (<code>test.fixme</code>, the commented-out options fieldset). This matches the repo&#39;s known migration state, where most <code>Body*.vue</code> components are dormant pending the App-spec switch.</p>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>None. The PR has no review comments.</p>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude Opus 4.8]</strong> Produced the deepest trace, and its two unique Important findings both survived verification: that nothing imports <code>main/tray.ts</code> (making the IPC listener dead) and that the version list is a <code>//go:embed</code> blob (making the offline label unfalsifiable). Alone among the four, it asked whether the concepts behind the new code still exist, where the others checked only internal consistency. It also caught the stale repo-context namespace entry. Its weak spot was severity calibration: two of its five Important findings were quality gaps, not defects, and its S2 asserted a blank-select mechanism that cannot occur, since <code>find</code> always succeeds once <code>versions</code> is non-empty. It missed I1 entirely.</p>
+    <p><strong>[Codex GPT 5.6 Sol]</strong> Found the single highest-value defect, the <code>+k3s1</code> reconstruction against four <code>+k3s3</code> catalog entries, by reading across the renderer, the ConfigMap JSON, and the Lima template. It was the only reviewer to cross the TypeScript/Go boundary on version identity. It also independently identified the harness&#39;s <code>--controllers=</code> gap. Its findings were tightly scoped with exact line citations, and every one held up. It over-applied the <code>regression</code> label: I1&#39;s root cause is byte-identical at the merge-base, and S1&#39;s hardcoded strings match the surrounding convention.</p>
+    <p><strong>[Gemini 3.1 Pro]</strong> Contributed one confirmed suggestion and one genuinely useful process observation: the repo-context namespace entry contradicts the reconciler. It reported no Important findings at all, which undersells the change. Its one design concern was a false positive that a single file read would have refuted: it claimed <code>RdFieldset</code> wraps its slot in a <code>.content</code> div, breaking a child-combinator locator, but the component renders the slot as a direct child of <code>&lt;fieldset&gt;</code>. It hit a 429 and recovered on backoff.</p>
+    <p><strong>[Gemini 3.5 Flash]</strong> The shortest review, and the only one whose headline finding lost severity in consolidation: its I1 required a state the validating webhook prevents, and its proposed fix would render a blank select. It did contribute the one observation nobody else made, the <code>semver</code> subpath import, though its stated rationale (resolution and type-check risk) is wrong for this dependency. Three of its six coverage-summary entries were marked &quot;no issues&quot; in files where confirmed Important findings sit.</p>
+    <p>The two Gemini reviewers share a model family; where they converged (the redundant <code>:selected</code> bindings) treat that as one opinion, not two.</p>
+    <p><strong>Summary</strong></p>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 4.8</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>9m 39s</td><td>8m 44s</td><td>8m 06s</td><td>4m 31s</td></tr>
+        <tr><td>Findings</td><td>3I 8S</td><td>3I 1S</td><td>1S</td><td>2S</td></tr>
+        <tr><td>Tool calls</td><td>48 (Bash 36, Read 12)</td><td>—</td><td>31 (run<em>shell</em>command 31)</td><td>51 (grep<em>search 25, read</em>file 24, update_topic 2)</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>3</td><td>2</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>5</td><td>2</td><td>0</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>3I 8S</strong></td><td><strong>3I 1S</strong></td><td><strong>1S</strong></td><td><strong>2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>2 (I→S)</td><td>0</td><td>0</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Reconciliation: Claude I3 unfiltered ConfigMap watch → suggestion S1 (churn in a single-user control plane, not a defect); Claude I5 missing unit tests → suggestion S2 (coverage gap, folded into Testing Assessment); Flash I1 version override → suggestion S3, merged with Claude S2 after both mechanisms were corrected against the webhook contract; Gemini&#39;s broken-locator design concern dropped as a false positive.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li><code>[repo]</code> <strong>UPDATE</strong> — The existing entry stating the <code>k3s-versions</code> ConfigMap lives in the <code>rdd-system</code> namespace is wrong. <code>K3sVersionsReconciler</code> creates it in <code>app.Spec.Namespace</code> (the same namespace the renderer&#39;s <code>rdd-connection.namespace</code> resolves to), owned by the App and cleaned up with it. The stale entry misleads: it invites a reviewer to flag correct namespace handling as a bug. Replace with: &quot;The supported-k3s-versions data ships as a core <code>ConfigMap</code> named <code>k3s-versions</code> in the App&#39;s own namespace (<code>app.Spec.Namespace</code>), labelled <code>app.kubernetes.io/name=rdd-k3s-versions</code> and created by the <code>k3sversions</code> controller from a <code>//go:embed</code> blob. <code>DesiredLabels()</code> is exported so renderer watches can filter on it. The design doc <code>docs/design/api_k3sversion.md</code> describes an older CRD-based design — do not treat it as the contract.&quot;</li>
+      <li><code>[repo]</code> <strong>ADD</strong> — The e2e harness starts the daemon with <code>rdd service start --controllers=</code> and runs only the mock controller, so no embedded controller&#39;s resources exist during Playwright runs. Any UI backed by a controller-created resource renders empty there, and an assertion that only checks element visibility will pass against that empty state. When reviewing a test for controller-backed UI, verify the harness enables the controller group that serves the resource before crediting the test with covering it.</li>
+      <li><code>[repo]</code> <strong>ADD</strong> — <code>spec.kubernetes.version</code> carries a bare semver, and the guest provisioning script rebuilds the full k3s release by appending a hardcoded <code>+k3s1</code> suffix. The bundled catalog maps each bare version to its exact release, and some entries use a higher suffix. When reviewing code that moves a Kubernetes version between the catalog, the App spec, and the guest, check whether the exact release survives the trip or is reconstructed from the bare value.</li>
+    </ul>
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>When a change adds a UI affordance whose label or behaviour describes a system state (offline, cached, degraded, read-only), verify that state is still reachable in the current architecture rather than only that the code computing it is correct. A rewrite commonly carries a label and its plumbing forward after designing away the condition the label describes, and a reviewer checking only internal consistency will pass it. Trace the state back to the component that produces it and confirm that producer is still wired in.</li>
+      <li>When a finding proposes changing which value a UI control binds to, check the proposed value against the control&#39;s rendered option set before accepting the fix. Binding a value with no corresponding option makes a <code>&lt;select&gt;</code> render blank, so a fix framed as &quot;always respect the stored value&quot; can be worse than the divergence it corrects.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+!function(e){e.languages.typescript=e.languages.extend("javascript",{"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,lookbehind:!0,greedy:!0,inside:null},builtin:/\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/}),e.languages.typescript.keyword.push(/\b(?:abstract|declare|is|keyof|readonly|require)\b/,/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,/\btype\b(?=\s*(?:[\{*]|$))/),delete e.languages.typescript.parameter,delete e.languages.typescript["literal-property"];var s=e.languages.extend("typescript",{});delete s["class-name"],e.languages.typescript["class-name"].inside=s,e.languages.insertBefore("typescript","function",{decorator:{pattern:/@[$\w\xA0-\uFFFF]+/,inside:{at:{pattern:/^@/,alias:"operator"},function:/^[\s\S]+/}},"generic-function":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,greedy:!0,inside:{function:/^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,generic:{pattern:/<[\s\S]+/,alias:"class-name",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
