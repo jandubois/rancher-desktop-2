@@ -174,8 +174,8 @@ done
 
 # Desktop integration files
 mkdir -p share/applications share/metainfo
-mv resources/linux/rancher-desktop.desktop share/applications/rancher-desktop.desktop
-mv resources/linux/rancher-desktop.appdata.xml share/metainfo/rancher-desktop.appdata.xml
+mv resources/linux/%{name}.desktop share/applications/%{name}.desktop
+mv resources/linux/%{name}.appdata.xml share/metainfo/%{name}.appdata.xml
 
 %install
 mkdir -p "%{buildroot}%{_prefix}/bin" "%{buildroot}/opt/%{name}"
@@ -185,7 +185,7 @@ rm -rf ./share
 cp -ra ./* "%{buildroot}/opt/%{name}"
 
 # Link to the binary
-ln -sf "/opt/%{name}/rancher-desktop" "%{buildroot}%{_bindir}/rancher-desktop"
+ln -sf "/opt/%{name}/%{name}" "%{buildroot}%{_bindir}/%{name}"
 
 %post
 # This is needed to ensure Debian packages have proper file permissions;
@@ -198,9 +198,9 @@ true
 /opt/%{name}*
 %exclude /opt/%{name}/chrome-sandbox
 %attr(4755,root,root) /opt/%{name}/chrome-sandbox
-%{_bindir}/rancher-desktop
-%{_prefix}/share/applications/rancher-desktop.desktop
+%{_bindir}/%{name}
+%{_prefix}/share/applications/%{name}.desktop
 %{_prefix}/share/icons/hicolor/*
-%{_prefix}/share/metainfo/rancher-desktop.appdata.xml
+%{_prefix}/share/metainfo/%{name}.appdata.xml
 
 %changelog
