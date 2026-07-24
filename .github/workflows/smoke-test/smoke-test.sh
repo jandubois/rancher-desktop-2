@@ -186,7 +186,7 @@ install_linux() {
     RDD="/opt/rancher-desktop-2/resources/linux/bin/rdd"
     export RDD_VM_CPUS
 
-    /opt/rancher-desktop-2/rancher-desktop &
+    /opt/rancher-desktop-2/rancher-desktop-2 &
 }
 
 # Helper function on Windows to verify the signature of a file (provided as the
@@ -281,7 +281,7 @@ wait_for_backend() {
     while [[ $(date +%s) -lt $deadline ]]; do
         if [[ -n "${APPIMAGE_PID:-}" ]] && [[ -z "${RDD:-}" ]]; then
             local rd_pid
-            rd_pid=$(pidof --separator $'\n' rancher-desktop | sort -n | head -n 1 || echo missing)
+            rd_pid=$(pidof --separator $'\n' rancher-desktop-2 | sort -n | head -n 1 || echo missing)
             if [[ -e "/proc/$rd_pid/exe" ]]; then
                 # The AppImage initialization is complete, we can locate rdd and poll for status.
                 RDD=$(dirname "$(readlink "/proc/$rd_pid/exe")")/resources/linux/bin/rdd

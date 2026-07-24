@@ -218,7 +218,7 @@ class Builder {
   }
 
   protected async createLinuxResources(config: Configuration) {
-    const appData = 'packaging/linux/rancher-desktop.appdata.xml';
+    const appData = 'packaging/linux/rancher-desktop-2.appdata.xml';
     const input = await fs.promises.readFile(appData, 'utf-8');
     const doc = new DOMParser().parseFromString(input, 'text/xml');
 
