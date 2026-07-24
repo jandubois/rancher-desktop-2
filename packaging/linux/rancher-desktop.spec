@@ -184,6 +184,10 @@ cp -ra ./share "%{buildroot}%{_prefix}"
 rm -rf ./share
 cp -ra ./* "%{buildroot}/opt/%{name}"
 
+# Chromium's sandbox helper must be setuid root. Set the mode here because
+# debbuild ignores the attributes given in the file list.
+chmod 4755 "%{buildroot}/opt/%{name}/chrome-sandbox"
+
 # Link to the binary
 ln -sf "/opt/%{name}/%{name}" "%{buildroot}%{_bindir}/%{name}"
 
@@ -196,8 +200,6 @@ true
 %defattr(-,root,root,-)
 %dir /opt/%{name}
 /opt/%{name}*
-%exclude /opt/%{name}/chrome-sandbox
-%attr(4755,root,root) /opt/%{name}/chrome-sandbox
 %{_bindir}/%{name}
 %{_prefix}/share/applications/%{name}.desktop
 %{_prefix}/share/icons/hicolor/*

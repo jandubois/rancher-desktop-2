@@ -68,12 +68,24 @@ install_linux_fedora() {
     dnf --assumeyes install "${PACKAGE_NAME}-${version}"
 }
 
+# Chromium only uses its setuid sandbox when the helper is setuid root, so a
+# packaging mistake here degrades the sandbox silently.
+verify_sandbox_helper() {
+    local sandbox="/opt/${PACKAGE_NAME}/chrome-sandbox" mode
+    mode=$(stat --format='%a %U' "$sandbox")
+    if [[ "$mode" != "4755 root" ]]; then
+        printf "%s is '%s', expected '4755 root'\n" "$sandbox" "$mode" >&2
+        exit 1
+    fi
+}
+
 main() {
     RD_VERSION=$(grep --only-matching '\([0-9]\+\.[0-9]\+\)' <<< "$RD_VERSION")
     source /etc/os-release
     for id in ${ID:-} ${ID_LIKE:-}; do
         if [[ "$(type -t "install_linux_$id")" == function ]]; then
             eval "install_linux_$id"
+            verify_sandbox_helper
             exit 0
         fi
     done
