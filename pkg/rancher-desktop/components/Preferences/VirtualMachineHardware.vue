@@ -3,7 +3,7 @@ import { computed, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 
 import SystemPreferences from '@pkg/components/SystemPreferences.vue';
-import { quantityToScalar } from '@rdd-client';
+import parseQuantity from '@pkg/utils/parseQuantity';
 
 defineOptions({ name: 'preferences-virtual-machine-hardware' });
 
@@ -14,7 +14,7 @@ const isPreferenceLocked = computed(() => store.getters['preferences/isPreferenc
 const memoryInGB = computed(() => {
   // quantityToScalar will return BigInts in our case; convert it to gigabytes,
   // at which point it should be reasonable for us.
-  const memoryInBytes = BigInt(quantityToScalar(preferences.value?.virtualMachine?.memory ?? '2Gi'));
+  const memoryInBytes = parseQuantity(preferences.value?.virtualMachine?.memory ?? '2Gi');
   return Number(memoryInBytes / gigaScale);
 });
 const hostInfo = computed(() => store.state.rdd.hostInfos?.[0]);
