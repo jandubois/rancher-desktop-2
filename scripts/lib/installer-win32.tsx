@@ -36,12 +36,20 @@ async function getElectronBuilderConfig(appDir: string): Promise<Record<string, 
  * Given an unpacked application directory, return the application version.
  */
 function getAppVersion(appDir: string): string {
-  const packageVersion = getPackageJson(appDir).version;
-  // We have a git describe style version, 1.2.3-1234-gabcdef
-  const [, semver, offset] = /^v?(\d+\.\d+\.\d+)(?:-(\d+))?/.exec(packageVersion) ?? [];
+  return getPackageJson(appDir).version;
+}
+
+/**
+ * Convert an application version into the all-numeric form that Windows
+ * Installer requires for ProductVersion.  A `git describe` style version,
+ * 1.2.3-1234-gabcdef, keeps the commit count as a fourth field; a prerelease
+ * tag has no numeric equivalent, so 2.0.0-alpha.1 collapses to 2.0.0.
+ */
+function getProductVersion(appVersion: string): string {
+  const [, semver, offset] = /^v?(\d+\.\d+\.\d+)(?:-(\d+))?/.exec(appVersion) ?? [];
 
   if (!semver) {
-    throw new Error(`Could not parse version string ${ packageVersion }`);
+    throw new Error(`Could not parse version string ${ appVersion }`);
   }
 
   return offset ? `${ semver }.${ offset }` : semver;
@@ -67,6 +75,7 @@ export async function buildCustomAction(): Promise<string> {
  */
 export default async function buildInstaller(workDir: string, appDir: string, outDir: string): Promise<string> {
   const appVersion = getAppVersion(appDir);
+  const productVersion = getProductVersion(appVersion);
   const electronBuilderConfig = await getElectronBuilderConfig(appDir);
   const { productName } = electronBuilderConfig;
   // Strip any versions, to avoid `Rancher Desktop 2 Setup 1.2.3.msi`.
@@ -77,7 +86,7 @@ export default async function buildInstaller(workDir: string, appDir: string, ou
   await writeUpdateConfig(appDir);
   const fileList = await generateFileList(appDir);
   const template = await fs.promises.readFile(path.join(process.cwd(), 'build', 'wix', 'main.wxs'), 'utf-8');
-  const output = Mustache.render(template, { appVersion, fileList });
+  const output = Mustache.render(template, { productVersion, fileList });
   const wixDir = path.join(process.cwd(), 'resources', 'host', 'wix');
 
   console.log('Writing out WiX definition...');
