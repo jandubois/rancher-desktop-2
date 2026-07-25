@@ -40,12 +40,12 @@ describe('transient-preferences', () => {
     it('SET_ALL should assign incoming partial preferences onto state', () => {
       const state = stateFn();
 
-      state.navigation.preferences.application = 'environment';
+      state.navigation.preferences.application = 'general';
       mutations.SET_ALL(state, { __test: { value: 123 } } as any);
 
       expect((state as any).__test.value).toBe(123);
       // It should not have removed existing keys.
-      expect(state.navigation.preferences.application).toBe('environment');
+      expect(state.navigation.preferences.application).toBe('general');
     });
 
     it('navigate should set navigation keys using dot notation', () => {
