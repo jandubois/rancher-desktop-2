@@ -7,20 +7,19 @@ import parseQuantity from '@pkg/utils/parseQuantity';
 
 defineOptions({ name: 'preferences-virtual-machine-hardware' });
 
-const gigaScale = BigInt(2) ** BigInt(30);
+const gigaScale = 2 ** 30;
 const store = useStore();
 const preferences = computed(() => store.getters['preferences/preferences']);
 const isPreferenceLocked = computed(() => store.getters['preferences/isPreferenceLocked']);
 const memoryInGB = computed(() => {
-  // quantityToScalar will return BigInts in our case; convert it to gigabytes,
-  // at which point it should be reasonable for us.
+  // parseQuantity returns bytes; that is unreasonable for UI, so convert to GiB.
   const memoryInBytes = parseQuantity(preferences.value?.virtualMachine?.memory ?? '2Gi');
-  return Number(memoryInBytes / gigaScale);
+  return Math.floor(memoryInBytes / gigaScale);
 });
 const hostInfo = computed(() => store.state.rdd.hostInfos?.[0]);
 const availMemoryInGB = computed(() => {
-  const memoryInBytes = BigInt(hostInfo.value?.status?.memory || BigInt(2) * gigaScale);
-  return Number(memoryInBytes / gigaScale);
+  const memoryInBytes = hostInfo.value?.status?.memory || 2 * gigaScale;
+  return Math.floor(memoryInBytes / gigaScale);
 });
 const availNumCPUs = computed(() => hostInfo.value?.status?.cpus || 1);
 
