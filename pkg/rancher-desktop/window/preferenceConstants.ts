@@ -1,6 +1,4 @@
-import _ from 'lodash';
-
-import type { Alpha } from '@pkg/utils/typeUtils';
+import { kebabCase, KebabCase } from '@pkg/utils/string-utils';
 
 /**
  * prefItemData is the list of navigation items and their associated tabs for
@@ -83,10 +81,6 @@ export const preferencesNavItems = prefItemData.filter((item: navItemEntry) =>
 
 export const preferencesNavItemsMap = mapNavItems(preferencesNavItems);
 
-type KebabCase<T extends string> = T extends `${ infer Head }${ infer Tail }`
-  ? `${ Head extends Alpha<Head> ? Lowercase<Head> : KebabCase<Tail> extends `-${ string }` ? '' : '-' }${ KebabCase<Tail> }`
-  : T;
-
 type PreferenceNavTabDefaults = {
   [K in keyof typeof preferencesNavItemsMap as KebabCase<K>]:
   (typeof preferencesNavItemsMap)[K] extends { tabs: readonly ([infer T, string])[] } ? T : never;
@@ -95,12 +89,13 @@ type PreferenceNavTabDefaults = {
 /**
  * preferencesNavTabDefaults is the default navigation state for the preferences
  * window for the tabs of each top level navigation item.
+ * @note For pages with no tabs, the type will be `page-name: never`.
  */
 const preferencesNavTabDefaults = Object.fromEntries(prefItemData
   .filter((item): item is typeof item & { tabs: readonly ([string, string])[] } => {
     return 'tabs' in item && item.tabs?.length > 0 && !!item.tabs[0];
   }).map(item => {
-    return [_.kebabCase(item.name), item.tabs[0][0]] as const;
+    return [kebabCase(item.name), item.tabs[0][0]] as const;
   })) as PreferenceNavTabDefaults;
 
 /**

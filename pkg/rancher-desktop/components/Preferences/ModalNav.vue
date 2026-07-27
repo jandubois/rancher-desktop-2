@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import kebabCase from 'lodash/kebabCase';
-
 import NavItem from '@pkg/components/Preferences/ModalNavItem.vue';
 import type { preferencesNavItem } from '@pkg/window/preferenceConstants';
 
@@ -22,11 +20,6 @@ function navClicked(tabName: preferencesNavItemName) {
     emit('nav-changed', tabName);
   }
 }
-
-function navToKebab(navItem: preferencesNavItemName): string {
-  return `nav-${ kebabCase(navItem) }`;
-}
-
 </script>
 
 <template>
@@ -34,7 +27,7 @@ function navToKebab(navItem: preferencesNavItemName): string {
     <nav-item
       v-for="navItem in navItems"
       :key="navItem.name"
-      :data-testid="navToKebab(navItem.name)"
+      :data-testid="`nav-${navItem.name}`"
       :name="navItem.name"
       :active="currentNavItem === navItem.name"
       @click="navClicked"
