@@ -24,7 +24,7 @@
       <template #header-middle>
         <div class="header-middle">
           <div v-if="supportsNamespaces">
-            <label>Namespace</label>
+            <label>{{ t('generic.namespace') }}</label>
             <select
               :value="currentNamespace"
               class="select-namespace"
@@ -103,7 +103,6 @@ type RowItem = Volume & Required<Pick<Volume, 'status' | 'metadata'>> & {
 
 export default defineComponent({
   name:       'Volumes',
-  title:      'Volumes',
   components: { SortableTable, Banner },
   data() {
     return {
@@ -189,10 +188,7 @@ export default defineComponent({
     });
   },
   mounted() {
-    this.setHeader({
-      title:       this.t('volumes.title'),
-      description: '',
-    });
+    this.setHeader({ titleKey: 'volumes.title' });
   },
   beforeUnmount() {
     this.unwatchResources(['volumes']);

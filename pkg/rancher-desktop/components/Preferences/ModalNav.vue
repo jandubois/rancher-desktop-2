@@ -2,13 +2,15 @@
 import kebabCase from 'lodash/kebabCase';
 
 import NavItem from '@pkg/components/Preferences/ModalNavItem.vue';
-import type { preferencesNavItemName } from '@pkg/window/preferenceConstants';
+import type { preferencesNavItem } from '@pkg/window/preferenceConstants';
+
+type preferencesNavItemName = preferencesNavItem['name'];
 
 defineOptions({ name: 'preferences-nav' });
 
 const { currentNavItem, navItems } = defineProps<{
-  currentNavItem: preferencesNavItemName;
-  navItems:       preferencesNavItemName[];
+  currentNavItem: preferencesNavItem['name'];
+  navItems:       preferencesNavItem[];
 }>();
 
 const emit = defineEmits<{
@@ -31,13 +33,13 @@ function navToKebab(navItem: preferencesNavItemName): string {
   <div class="preferences-nav">
     <nav-item
       v-for="navItem in navItems"
-      :key="navItem"
-      :data-testid="navToKebab(navItem)"
-      :name="navItem"
-      :active="currentNavItem === navItem"
+      :key="navItem.name"
+      :data-testid="navToKebab(navItem.name)"
+      :name="navItem.name"
+      :active="currentNavItem === navItem.name"
       @click="navClicked"
     >
-      {{ navItem }}
+      {{ t(navItem.labelKey) }}
     </nav-item>
   </div>
 </template>

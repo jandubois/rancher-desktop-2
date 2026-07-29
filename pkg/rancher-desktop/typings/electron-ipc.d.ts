@@ -16,6 +16,8 @@ export interface IpcMainEvents {
   'settings-read':         () => void;
   'factory-reset':         (keepSystemImages: boolean) => void;
   'update-network-status': (status: boolean) => void;
+  /** The locale has been changed; also emitted on initialization. */
+  'i18n/locale-change':    (locale: string) => void;
 
   // #region backend
   /** The app status has changed.  The input is the status conditions on the app. */
@@ -93,6 +95,8 @@ export interface IpcMainInvokeEvents {
   'settings-write':      (arg: RecursivePartial<import('@pkg/config/settings').Settings>) => void;
   'show-message-box':    (options: Electron.MessageBoxOptions) => Electron.MessageBoxReturnValue;
   'show-message-box-rd': (options: Electron.MessageBoxOptions, modal?: boolean) => any;
+  /** Fetch the raw RSS XML of the Rancher Desktop blog. */
+  'get-blog-feed':       () => string;
 
   // #region extensions
   /** Execute the given command and return the results. */

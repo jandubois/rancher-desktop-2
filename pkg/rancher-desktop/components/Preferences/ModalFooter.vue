@@ -37,14 +37,14 @@ function apply() {
         class="btn role-secondary"
         @click="cancel"
       >
-        Cancel
+        {{ t('generic.cancel') }}
       </button>
       <button
         class="btn role-primary"
         :disabled="!canApply"
         @click="apply"
       >
-        Apply
+        {{ t('generic.apply') }}
       </button>
     </div>
   </div>

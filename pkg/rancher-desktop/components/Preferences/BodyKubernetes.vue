@@ -10,6 +10,7 @@ import RdFieldset from '@pkg/components/form/RdFieldset.vue';
 defineOptions({ name: 'preferences-body-kubernetes' });
 
 const store = useStore();
+const t = computed(() => store.getters['i18n/t']);
 const preferences = computed(() => store.getters['preferences/preferences']);
 const cachedVersionsOnly = computed(() => store.state.network.offline);
 const versions = computed(() => store.getters['kubernetes/k3sVersions']);
@@ -46,7 +47,9 @@ const nonRecommendedVersions = computed(() => {
     .sort(semverCompareDesc);
 });
 const kubernetesVersionLabel = computed(() =>
-  `Kubernetes version${ cachedVersionsOnly.value ? ' (cached versions only)' : '' }`);
+  cachedVersionsOnly.value
+    ? t.value('kubernetesPrefs.version.legendTextCached')
+    : t.value('kubernetesPrefs.version.legendText'));
 const isKubernetesDisabled = computed(() => !preferences.value?.kubernetes?.enabled);
 const isPreferenceLocked = computed(() => store.getters['preferences/isPreferenceLocked']);
 
@@ -70,6 +73,11 @@ function onVersionChanged(value: string) {
   store.dispatch('preferences/modify', { key: 'kubernetes.version', value });
 }
 
+function onWarningClick(event: MouseEvent) {
+  event.preventDefault();
+  store.dispatch('transient-preferences/navigateByClick', event);
+}
+
 onBeforeMount(() => {
   store.dispatch('kubernetes/watchResources', ['configMaps']);
 });
@@ -83,10 +91,10 @@ onBeforeUnmount(() => {
   <div class="preferences-body">
     <rd-fieldset
       data-test="kubernetesToggle"
-      legend-text="Kubernetes"
+      :legend-text="t('kubernetesPrefs.kubernetes.legendText')"
     >
       <rd-checkbox
-        label="Enable Kubernetes"
+        :label="t('kubernetesPrefs.kubernetes.label')"
         preference="kubernetes.enabled"
       />
     </rd-fieldset>
@@ -108,7 +116,7 @@ onBeforeUnmount(() => {
           -->
         <optgroup
           v-if="recommendedVersions.length > 0"
-          label="Recommended Versions"
+          :label="t('kubernetesPrefs.version.recommendedVersions')"
         >
           <option
             v-for="item in recommendedVersions"
@@ -121,7 +129,7 @@ onBeforeUnmount(() => {
         </optgroup>
         <optgroup
           v-if="nonRecommendedVersions.length > 0"
-          label="Other Versions"
+          :label="t('kubernetesPrefs.version.otherVersions')"
         >
           <option
             v-for="item in nonRecommendedVersions"
@@ -137,10 +145,10 @@ onBeforeUnmount(() => {
     <!--
     <rd-fieldset
       data-test="kubernetesOptions"
-      legend-text="Options"
+      :legend-text="t('kubernetesPrefs.options.legendText')"
     >
       <rd-checkbox
-        label="Enable Traefik"
+        :label="t('kubernetesPrefs.options.traefik')"
         :disabled="isKubernetesDisabled"
         :value="preferences.kubernetes.options.traefik"
         :is-locked="isPreferenceLocked('kubernetes.options.traefik')"
@@ -150,7 +158,7 @@ onBeforeUnmount(() => {
     <!-- Don't disable Spinkube option when Wasm is disabled; let validation deal with it  -->
     <!--
       <rd-checkbox
-        label="Install Spin Operator"
+        :label="t('kubernetesPrefs.options.spinkube')"
         :disabled="isKubernetesDisabled"
         :value="preferences.experimental.kubernetes.options.spinkube"
         :is-locked="isPreferenceLocked('experimental.kubernetes.options.spinkube')"
@@ -161,13 +169,12 @@ onBeforeUnmount(() => {
           v-if="spinOperatorIncompatible"
           #below
         >
-          <banner color="warning">
-            Spin operator requires
-            <a
-              href="#"
-              @click.prevent="($root as any).navigate('Container Engine', 'general')"
-            >WebAssembly</a>
-            to be enabled.
+          <banner
+            color="warning"
+            @click.prevent="onWarningClick"
+          >
+            --><!-- v-clean-html: the translated warning embeds a link --><!--
+            <span v-clean-html="t('kubernetesPrefs.options.spinkubeWarning')" />
           </banner>
         </template>
       </rd-checkbox>

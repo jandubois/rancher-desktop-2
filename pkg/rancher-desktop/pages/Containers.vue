@@ -25,7 +25,7 @@
       <template #header-middle>
         <div class="header-middle">
           <div v-if="supportsNamespaces">
-            <label>Namespace</label>
+            <label>{{ t('generic.namespace') }}</label>
             <select
               class="select-namespace"
               :value="currentNamespace"
@@ -167,12 +167,13 @@ type RowItem = Container & {
 
 export default defineComponent({
   name:       'Containers',
-  title:      'Containers',
   components: { SortableTable, ContainerStatusBadge, Banner },
   data() {
     return {
-      collapsed:                   {},
-      headers:              [
+      // The type cast is necessary to correctly type `collapsed`.
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      collapsed: {} as Record<string, boolean>,
+      headers:   [
         {
           name:  'containerState',
           label: this.t('containers.manage.table.header.state'),
@@ -276,8 +277,7 @@ export default defineComponent({
   },
   mounted() {
     this.setHeader({
-      title:       this.t('containers.title'),
-      description: '',
+      titleKey: 'containers.title',
     });
   },
   beforeUnmount() {
@@ -294,19 +294,19 @@ export default defineComponent({
     getContainerActions(container: Container) {
       return [
         {
-          label:      'Info',
+          label:      this.t('containers.manage.table.action.info'),
           action:     'viewInfo',
           enabled:    true,
           bulkable:   false,
         },
         {
-          label:      'Start',
+          label:      this.t('containers.manage.table.action.start'),
           action:     'startContainer',
           enabled:    this.isStopped(container),
           bulkable:   true,
         },
         {
-          label:      'Stop',
+          label:      this.t('containers.manage.table.action.stop'),
           action:     'stopContainer',
           enabled:    this.isRunning(container) || this.isPaused(container),
           bulkable:   true,
@@ -324,7 +324,7 @@ export default defineComponent({
           bulkable:   true,
         },
         {
-          label:      'Restart',
+          label:      this.t('containers.manage.table.action.restart'),
           action:     'restartContainer',
           enabled:    this.isRunning(container),
           bulkable:   true,

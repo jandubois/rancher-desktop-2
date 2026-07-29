@@ -21,11 +21,11 @@ const { currentNavItem } = defineProps({
 
 const componentFromNavItem: ComputedRef<Component> = computed(() => {
   return ({
-    Application:        PreferencesBodyApplication,
-    'Container Engine': PreferencesBodyContainerEngine,
-    Kubernetes:         PreferencesBodyKubernetes,
-    'Virtual Machine':  PreferencesBodyVirtualMachine,
-    WSL:                PreferencesBodyWsl,
+    application:        PreferencesBodyApplication,
+    'container-engine': PreferencesBodyContainerEngine,
+    kubernetes:         PreferencesBodyKubernetes,
+    'virtual-machine':  PreferencesBodyVirtualMachine,
+    wsl:                PreferencesBodyWsl,
   } as const)[currentNavItem];
 });
 </script>

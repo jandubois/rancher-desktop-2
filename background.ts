@@ -8,6 +8,7 @@ import semver from 'semver';
 
 import { Steve } from '@pkg/backend/steve';
 import { Help } from '@pkg/config/help';
+import { initMainI18n, onLocaleChange, t } from '@pkg/main/i18n';
 import { getIpcMainProxy } from '@pkg/main/ipcMain';
 import mainEvents from '@pkg/main/mainEvents';
 import buildApplicationMenu from '@pkg/main/mainmenu';
@@ -93,6 +94,7 @@ Electron.app.whenReady().then(async() => {
 
     await setupNetworking();
 
+    initMainI18n();
     initUI();
   } catch (ex: any) {
     console.error(`Error starting up: ${ ex }`, ex.stack);
@@ -110,16 +112,18 @@ function initUI() {
 
   buildApplicationMenu();
 
-  Electron.app.setAboutPanelOptions({
+  const updateAboutPanel = () => Electron.app.setAboutPanelOptions({
     // TODO: Update this to 2021-... as dev progresses
     // also needs to be updated in electron-builder.yml
     copyright:          'Copyright © 2021-2026 SUSE LLC',
     applicationName:    `${ Electron.app.name } by SUSE`,
-    applicationVersion: `Version ${ process.env.RD_VERSION }`,
+    applicationVersion: `${ t('product.version') } ${ process.env.RD_VERSION }`,
     iconPath:           path.join(paths.resources, 'icons', 'logo-square-512.png'),
   });
   // TODO: Tray.getInstance().show();
 
+  updateAboutPanel();
+  onLocaleChange(updateAboutPanel);
   window.openMain();
 }
 

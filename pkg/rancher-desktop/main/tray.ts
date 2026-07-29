@@ -9,6 +9,7 @@ import { KubeConfig } from '@kubernetes/client-node';
 import Electron from 'electron';
 
 import { Settings } from '@pkg/config/settings';
+import { onLocaleChange, t } from '@pkg/main/i18n';
 import { getIpcMainProxy } from '@pkg/main/ipcMain';
 import mainEvents from '@pkg/main/mainEvents';
 import { checkConnectivity } from '@pkg/main/networking';
@@ -32,19 +33,20 @@ export class Tray {
   private networkState:            boolean | undefined;
   private runBuildFromConfigTimer: NodeJS.Timeout | null = null;
   private kubeConfigWatchers:      fs.FSWatcher[] = [];
+  private offLocaleChange:         () => void = () => {};
 
   protected contextMenuItems: Electron.MenuItemConstructorOptions[] = [
     {
       id:      'state',
       enabled: false,
-      label:   'Kubernetes is starting',
+      label:   t('tray.state.starting'),
       type:    'normal',
       icon:    path.join(paths.resources, 'icons', 'kubernetes-icon-black.png'),
     },
     {
       id:      'network-status',
       enabled: false,
-      label:   `Network status: ${ this.currentNetworkStatus }`,
+      label:   t('tray.networkStatus', { status: t(`product.networkStatusValues.${ this.currentNetworkStatus }`) }),
       type:    'normal',
       icon:    '',
     },
@@ -60,7 +62,7 @@ export class Tray {
     { type: 'separator' },
     {
       id:    'main',
-      label: 'Open main window',
+      label: t('tray.openMainWindow'),
       type:  'normal',
       click() {
         openMain();
@@ -69,7 +71,7 @@ export class Tray {
     /* TODO: https://github.com/rancher-sandbox/rancher-desktop-app/issues/26
     {
       id:    'preferences',
-      label: 'Open preferences dialog',
+      label: t('tray.openPreferences'),
       type:  'normal',
       click: openPreferences,
     },
@@ -78,7 +80,7 @@ export class Tray {
     {
       id:      'dashboard',
       enabled: false,
-      label:   'Open cluster dashboard',
+      label:   t('tray.openDashboard'),
       type:    'normal',
       click:   openDashboard,
     },
@@ -87,7 +89,7 @@ export class Tray {
     /* TODO: https://github.com/rancher-sandbox/rancher-desktop-app/issues/39
     {
       id:      'contexts',
-      label:   'Kubernetes Contexts',
+      label:   t('tray.kubernetesContexts'),
       type:    'submenu',
       submenu: [],
     },
@@ -95,7 +97,7 @@ export class Tray {
     { type: 'separator' },
     {
       id:    'quit',
-      label: `Quit ${ Electron.app.name }`,
+      label: t('tray.quitRancherDesktop'),
       role:  'quit',
       type:  'normal',
     },
@@ -130,11 +132,11 @@ export class Tray {
   private constructor(settings: Settings) {
     this.settings = settings;
     this.trayMenu = new Electron.Tray(this.trayIconSet.starting);
-    this.trayMenu.setToolTip(Electron.app.name);
+    this.trayMenu.setToolTip(t('tray.tooltip'));
     const menuItem = this.contextMenuItems.find(item => item.id === 'container-engine');
 
     if (menuItem) {
-      menuItem.label = `Container engine: ${ this.settings.containerEngine.name }`;
+      menuItem.label = t('tray.containerEngine', { name: this.settings.containerEngine.name });
     }
 
     // Discover k8s contexts
@@ -153,6 +155,12 @@ export class Tray {
 
     mainEvents.on('backend-locked-update', this.backendStateEvent);
     mainEvents.emit('backend-locked-check');
+
+    // Refresh labels after the i18n module has loaded the new locale.
+    this.offLocaleChange = onLocaleChange(() => {
+      this.updateContexts();
+      this.updateMenu();
+    });
 
     // If the network connectivity diagnostic changes results, update it here.
     mainEvents.on('diagnostics-event', payload => {
@@ -204,6 +212,7 @@ export class Tray {
    */
   public hide() {
     this.trayMenu.destroy();
+    this.offLocaleChange();
     ipcMainProxy.removeListener('update-network-status', this.updateNetworkStatusEvent);
     if (this.runBuildFromConfigTimer) {
       clearTimeout(this.runBuildFromConfigTimer);
@@ -263,8 +272,9 @@ export class Tray {
       return;
     }
 
-    const logo = this.trayIconSet.starting;
+    this.trayMenu.setToolTip(t('tray.tooltip'));
 
+    const logo = this.trayIconSet.starting;
     // TODO: Update the tray icon and state based on backend state.
 
     const containerEngineMenu = this.contextMenuItems.find(item => item.id === 'container-engine');
@@ -272,14 +282,29 @@ export class Tray {
     if (containerEngineMenu) {
       const containerEngine = this.settings.containerEngine.name;
 
-      containerEngineMenu.label = containerEngine === 'containerd' ? containerEngine : `dockerd (${ containerEngine })`;
+      containerEngineMenu.label = t('tray.containerEngine', { name: containerEngine === 'containerd' ? containerEngine : `dockerd (${ containerEngine })` });
       containerEngineMenu.icon = containerEngine === 'containerd' ? path.join(paths.resources, 'icons', 'containerd-icon-color.png') : '';
     }
     const networkStatusItem = this.contextMenuItems.find(item => item.id === 'network-status');
 
     if (networkStatusItem) {
-      networkStatusItem.label = `Network status: ${ this.currentNetworkStatus }`;
+      networkStatusItem.label = t('tray.networkStatus', { status: t(`product.networkStatusValues.${ this.currentNetworkStatus }`) });
     }
+
+    // Refresh all translatable labels so they update on locale changes.
+    const menuLabels: Record<string, string> = {
+      main:        t('tray.openMainWindow'),
+      preferences: t('tray.openPreferences'),
+      dashboard:   t('tray.openDashboard'),
+      contexts:    t('tray.kubernetesContexts'),
+      quit:        t('tray.quitRancherDesktop'),
+    };
+
+    this.contextMenuItems
+      .filter(item => item.id && item.id in menuLabels)
+      .forEach((item) => {
+        item.label = menuLabels[item.id!];
+      });
 
     this.contextMenuItems
       .filter(item => item.id && ['preferences', 'dashboard', 'contexts', 'quit'].includes(item.id))
@@ -318,7 +343,7 @@ export class Tray {
       return;
     }
     if (ctxs.length === 0) {
-      contextsMenu.submenu = [{ label: 'None found' }];
+      contextsMenu.submenu = [{ label: t('tray.noneFound') }];
     } else {
       contextsMenu.submenu = ctxs.map(val => ({
         label:   val.name,
