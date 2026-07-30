@@ -22,6 +22,7 @@ export class ContainersPage {
   async waitForContainerToAppear(containerId: string, timeout = 30_000) {
     const containerRow = this.getContainerRow(containerId);
     await expect(containerRow).toBeVisible({ timeout });
+    return containerRow;
   }
 
   async clickContainerAction(containerId: string, action: ActionString) {
