@@ -40,7 +40,15 @@ class E2ETestRunner extends events.EventEmitter {
    * @returns The new child process.
    */
   spawn(title: string, command: string, ...args: string[]): childProcess.ChildProcess {
-    const promise = buildUtils.spawn(command, ...args);
+    const promise = buildUtils.spawn(command, ...args, {
+      env: {
+        ...process.env,
+        // Disable playwright's TypeScript ESM support, which is incompatible
+        // with our build system; we use `tsx` manually below.  See:
+        // https://github.com/microsoft/playwright/issues/41402#issuecomment-4777462252
+        PW_DISABLE_TS_ESM: '1',
+      },
+    });
 
     promise
       .then(() => this.exit())
@@ -56,9 +64,15 @@ class E2ETestRunner extends events.EventEmitter {
   #testProcess: null | childProcess.ChildProcess = null;
   startTestProcess(): Promise<void> {
     const args = processArgsForPlaywright(process.argv);
-    const spawnArgs = ['node_modules/@playwright/test/cli.js', 'test', '--config=e2e/config/playwright-config.ts'];
+    const spawnArgs = [
+      // Run playwright under tsx, so it goes through the same TypeScript
+      // compilation pipeline as the main app.  Otherwise, we encounter errors
+      // importing files without using the `.js` suffix.
+      'node_modules/tsx/dist/cli.mjs',
+      'node_modules/@playwright/test/cli.js',
+      'test', '--config=e2e/config/playwright-config.ts'];
 
-    this.#testProcess = this.spawn('Test process', 'node', ...spawnArgs, ...args);
+    this.#testProcess = this.spawn('Test process', process.execPath, ...spawnArgs, ...args);
 
     return new Promise((resolve, reject) => {
       this.#testProcess?.on('exit', (code: number, signal: string) => {

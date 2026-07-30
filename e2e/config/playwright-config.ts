@@ -24,4 +24,8 @@ const config = defineConfig({
   },
 });
 
+// Playwright's default stack trace hook does not understand that we're using tsx
+// to run the tests; remove it to use NodeJS's default source map support.
+delete (Error as any).prepareStackTrace;
+
 export default config;
