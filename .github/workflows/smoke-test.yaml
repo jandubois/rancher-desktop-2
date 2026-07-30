@@ -60,8 +60,8 @@ jobs:
         # its target branch. A published release's target has moved on, so use its tag.
         commitish=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate \
           --jq '.[] | select(.tag_name == env.RELEASE_TAG)
-                    | if .draft then .target_commitish else .tag_name end' \
-          | head -1)
+                    | if .draft then .target_commitish else .tag_name end')
+        commitish=${commitish%%$'\n'*} # drafts can share a tag name; take the first
         RELEASE_COMMIT=$(gh api \
           "repos/${GITHUB_REPOSITORY}/commits/${commitish:-$RELEASE_TAG}" --jq .sha)
         if [[ -z "$RELEASE_COMMIT" ]]; then

@@ -23,6 +23,7 @@ PACKAGE_NAME="rancher-desktop-2"
 verify_package_commit() {
     local version=$1 built_from
     if [[ -z "${RD_COMMIT:-}" ]]; then
+        printf "RD_COMMIT is empty; skipping the stale-package check\n" >&2
         return
     fi
     built_from=${version%%-*}    # drop the packaging release suffix
