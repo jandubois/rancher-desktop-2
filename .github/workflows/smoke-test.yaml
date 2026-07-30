@@ -56,10 +56,11 @@ jobs:
     - name: Resolve the release commit
       run: |
         set -o xtrace
-        # A draft release has no tag ref yet, so go through the release's
-        # target rather than resolving the tag.
+        # OBS builds from the release branch head, so a draft compares against
+        # its target branch. A published release's target has moved on, so use its tag.
         commitish=$(gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate \
-          --jq ".[] | select(.tag_name == \"${RELEASE_TAG}\") | .target_commitish" \
+          --jq '.[] | select(.tag_name == env.RELEASE_TAG)
+                    | if .draft then .target_commitish else .tag_name end' \
           | head -1)
         RELEASE_COMMIT=$(gh api \
           "repos/${GITHUB_REPOSITORY}/commits/${commitish:-$RELEASE_TAG}" --jq .sha)
