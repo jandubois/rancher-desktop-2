@@ -2,7 +2,6 @@ import { shell } from 'electron';
 
 import mainEvents from '@pkg/main/mainEvents';
 import type { TransientPreferencesState } from '@pkg/types/transientPreferences';
-import { kebabCase } from '@pkg/utils/string-utils';
 
 type PrefNav = TransientPreferencesState['navigation']['preferences'];
 /** TopKey is any key for the top-level preferences. */
@@ -36,9 +35,8 @@ class PreferencesHelp {
     const transientPreferences = await mainEvents.invoke('transient-preferences/get');
     const { preferences } = transientPreferences.navigation;
     const { top } = preferences;
-    const current = kebabCase(top);
-    const tab = current in preferences ? `/${ preferences[current] }` as const : '';
-    const key = `${ current }${ tab }` as const;
+    const tab = top in preferences ? `/${ preferences[top] }` as const : '';
+    const key = `${ top }${ tab }` as const;
     let url = baseUrl;
 
     if (key in this.mapping) {

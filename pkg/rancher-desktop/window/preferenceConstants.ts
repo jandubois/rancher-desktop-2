@@ -1,10 +1,10 @@
-import { kebabCase, KebabCase } from '@pkg/utils/string-utils';
+import type { KebabCase } from '@pkg/utils/string-utils';
 
 /**
  * prefItemData is the list of navigation items and their associated tabs for
  * the preferences window.
  */
-const prefItemData = [
+const prefItemData = defineNavItems([
   {
     name:     'application',
     labelKey: 'preferences.nav.application',
@@ -45,7 +45,7 @@ const prefItemData = [
   //   ],
   // },
   { name: 'kubernetes', labelKey: 'preferences.nav.kubernetes' },
-] as const satisfies navItemEntry[];
+] as const);
 
 /**
  * Represents a navigation item entry in the preferences window.
@@ -55,6 +55,42 @@ interface navItemEntry {
   name:        string;
   labelKey:    string;
   tabs?:       readonly [string, string][];
+}
+
+/**
+ * EnforceKebabNames is a type that ensures that the following properties of
+ * each navigation item is in kebab case:
+ * - The `name` property of the navigation item.
+ * - The first element of each tuple in the `tabs` property of the navigation item.
+ */
+type EnforceKebabNames<T extends readonly navItemEntry[]> = {
+  [I in keyof T]:
+  T[I] extends { name: infer N extends string }
+    ? Omit<T[I], 'name' | 'tabs'> & {
+      name: KebabCase<N>;
+    } & (
+        T[I] extends { tabs: infer Tabs extends readonly unknown[] }
+          ? {
+            tabs: {
+              [J in keyof Tabs]:
+              Tabs[J] extends [infer U extends string, infer V extends string]
+                ? [KebabCase<U>, V]
+                : never
+            }
+          }
+          : unknown
+      )
+    : T[I];
+};
+
+/**
+ * defineNavItems is a helper function that enforces the correct types for
+ * {@link prefItemData}.
+ */
+function defineNavItems<const T extends readonly navItemEntry[]>(
+  items: EnforceKebabNames<T>,
+): EnforceKebabNames<T> {
+  return items;
 }
 
 /**
@@ -82,7 +118,7 @@ export const preferencesNavItems = prefItemData.filter((item: navItemEntry) =>
 export const preferencesNavItemsMap = mapNavItems(preferencesNavItems);
 
 type PreferenceNavTabDefaults = {
-  [K in keyof typeof preferencesNavItemsMap as KebabCase<K>]:
+  [K in keyof typeof preferencesNavItemsMap]:
   (typeof preferencesNavItemsMap)[K] extends { tabs: readonly ([infer T, string])[] } ? T : never;
 };
 
@@ -95,7 +131,7 @@ const preferencesNavTabDefaults = Object.fromEntries(prefItemData
   .filter((item): item is typeof item & { tabs: readonly ([string, string])[] } => {
     return 'tabs' in item && item.tabs?.length > 0 && !!item.tabs[0];
   }).map(item => {
-    return [kebabCase(item.name), item.tabs[0][0]] as const;
+    return [item.name, item.tabs[0][0]] as const;
   })) as PreferenceNavTabDefaults;
 
 /**
