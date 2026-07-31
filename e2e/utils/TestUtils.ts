@@ -5,17 +5,20 @@ import childProcess from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { rootCertificates } from 'node:tls';
 import util from 'node:util';
 
 import { expect, _electron, ElectronApplication, TestInfo } from '@playwright/test';
 import _, { GetFieldType } from 'lodash';
 import { Page } from 'playwright-core';
+import { Agent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
 
 import packageMeta from '@/package.json' with { type: 'json' };
 import { defaultSettings, Settings } from '@pkg/config/settings';
 import { spawnFile } from '@pkg/utils/childProcess';
 import paths from '@pkg/utils/paths';
 import { RecursivePartial, RecursiveTypes } from '@pkg/utils/typeUtils';
+import * as RDDClient from '@rdd-client';
 
 let currentTest: undefined | {
   file:            string,
@@ -402,4 +405,22 @@ export async function startSlowerDesktop(testInfo: TestInfo): Promise<[ElectronA
   const page = await electronApp.firstWindow();
 
   return [electronApp, page];
+}
+
+/**
+ * Get the RDD config.  The returned cleanup function should be called at the
+ * end of the test.
+ */
+export async function getRDDConfig(): Promise<[RDDClient.KubeConfig, () => void]> {
+  const configText = await rdd('service', 'config');
+  const config = RDDClient.KubeConfig.fromString(configText);
+  // Allow `fetch()` to accept the CAs from the config, so that clients can talk
+  // to the API server.
+  const ca = config.clusters.map(c => {
+    expect(c.caData).toEqual(expect.any(String));
+    return Buffer.from(String(c.caData), 'base64');
+  });
+  const dispatcher = getGlobalDispatcher();
+  setGlobalDispatcher(new Agent({ connect: { ca: [...ca, ...rootCertificates] } }));
+  return [config, () => setGlobalDispatcher(dispatcher)];
 }

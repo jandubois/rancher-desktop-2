@@ -1,3 +1,5 @@
+import { randomBytes } from 'node:crypto';
+
 import { expect, test, ElectronApplication, Page } from '@playwright/test';
 
 import { ContainerInspectPage } from './pages/container-inspect-page';
@@ -6,69 +8,80 @@ import { ContainerShellPage } from './pages/container-shell-page';
 import { ContainerStatsPage } from './pages/container-stats-page';
 import { ContainersPage } from './pages/containers-page';
 import { NavPage } from './pages/nav-page';
-import { startSlowerDesktop, teardown, tool } from './utils/TestUtils';
+import { getRDDConfig, startSlowerDesktop, teardown, tool } from './utils/TestUtils';
 
-import { ContainerEngine } from '@pkg/config/settings';
+import * as RDDClient from '@rdd-client';
 
 let page: Page;
 
-test.describe.fixme('Containers Tests', () => {
+test.describe.configure({ mode: 'serial' });
+
+test.describe('Containers', () => {
   let electronApp: ElectronApplication;
-  let testContainerId: string;
-  let testContainerName: string;
+  let containersPage: ContainersPage;
+  let client: RDDClient.ContainersRancherdesktopIoV1alpha1Api;
+  let namespace: string;
+  let rddConfigCleanup = () => {};
 
   test.beforeAll(async({ colorScheme }, testInfo) => {
-    [electronApp, page] = await startSlowerDesktop(testInfo, {
-      kubernetes:      { enabled: false },
-      containerEngine: { name: ContainerEngine.MOBY, allowedImages: { enabled: false } },
-    });
+    [electronApp, page] = await startSlowerDesktop(testInfo);
+    const [rddConfig, cleanup] = await getRDDConfig();
+    rddConfigCleanup = cleanup;
+    client = rddConfig.makeApiClient(RDDClient.ContainersRancherdesktopIoV1alpha1Api);
 
     const navPage = new NavPage(page);
     await navPage.waitForAppSettled();
+
+    const apps = await rddConfig.makeApiClient(RDDClient.AppRancherdesktopIoV1alpha1Api)
+      .listApp();
+    namespace = apps.items[0].spec!.namespace!;
   });
 
   test.afterAll(async({ colorScheme }, testInfo) => {
-    if (testContainerId) {
-      try {
-        await tool('docker', 'rm', '-f', testContainerId);
-      } catch (error) {}
-    }
     await teardown(electronApp, testInfo);
+    rddConfigCleanup();
   });
+
+  /**
+   * Return the first container that has the given mock log writer label
+   */
+  async function getContainerByLogsWriter(writer: string) {
+    const containers = await client.listContainerForAllNamespaces();
+    const container = containers.items.find(d => {
+      return (d.status?.labels?.['io.rancherdesktop.mock.logs.writer'] ?? '') === writer;
+    });
+    expect(container, `expected container with logs writer ${ writer }`).toBeDefined();
+    if (!container) {
+      // This only exists to let TypeScript know that container is defined after the expect() above.
+      throw new Error(`No container found with logs writer ${ writer }`);
+    }
+    return container;
+  }
+
+  /**
+   * Return some unspecified container.
+   */
+  async function getAnyContainer() {
+    const containers = await client.listContainerForAllNamespaces();
+    expect(containers.items.length).toBeGreaterThan(0);
+    return containers.items[0];
+  }
 
   test('should navigate to containers page', async() => {
     const navPage = new NavPage(page);
-    const containersPage = await navPage.navigateTo('Containers');
+    containersPage = await navPage.navigateTo('Containers');
 
     await expect(navPage.mainTitle).toHaveText('Containers');
     await containersPage.waitForTableToLoad();
   });
 
-  test('should create and display test container', async() => {
-    testContainerName = `test-logs-container-${ Date.now() }`;
+  test('should display test container', async() => {
+    const testContainer = await getAnyContainer();
+    const testContainerId = testContainer.metadata!.name!;
+    const testContainerName = testContainer.status!.name;
 
-    const output = await tool(
-      'docker',
-      'run',
-      '--detach',
-      '--name',
-      testContainerName,
-      'alpine',
-      'sh',
-      '-c',
-      'echo "Starting"; for i in $(seq 1 10); do echo "L$i: msg$i"; done; echo "Finished"',
-    );
-    testContainerId = output.trim();
-
-    expect(testContainerId).toMatch(/^[a-f0-9]{64}$/);
-
-    await page.reload();
-
-    const navPage = new NavPage(page);
-    const containersPage = await navPage.navigateTo('Containers');
-    await containersPage.waitForTableToLoad();
-
-    await containersPage.waitForContainerToAppear(testContainerId);
+    const row = await containersPage.waitForContainerToAppear(testContainerId);
+    await expect(row.locator('.container-name-link')).toHaveText(testContainerName);
     await containersPage.viewContainerInfo(testContainerId);
 
     await page.waitForURL(`**/containers/info/${ testContainerId }**`, {
@@ -77,7 +90,6 @@ test.describe.fixme('Containers Tests', () => {
   });
 
   test('should display container logs page', async() => {
-    // The info page now defaults to the Info tab; navigate to Logs explicitly.
     await page.getByTestId('tab-logs').click();
 
     const containerLogsPage = new ContainerLogsPage(page);
@@ -109,30 +121,55 @@ test.describe.fixme('Containers Tests', () => {
   });
 
   test('should show container information', async() => {
+    const testContainer = await getAnyContainer();
+    const testContainerName = testContainer.status!.name;
     const containerLogsPage = new ContainerLogsPage(page);
 
     await expect(containerLogsPage.containerInfo).toBeVisible();
 
-    await expect(containerLogsPage.containerName).toContainText(
-      testContainerName,
-    );
+    await expect(containerLogsPage.containerName).toContainText(testContainerName);
     await expect(containerLogsPage.containerState).not.toBeEmpty();
   });
 
   test('should display logs content', async() => {
-    const containerLogsPage = new ContainerLogsPage(page);
+    const container = await getContainerByLogsWriter('labels');
+    const containerId = container.metadata!.name!;
 
+    // Navigate to a container using the "labels" mock log writer...
+    containersPage = await new NavPage(page).navigateTo('Containers');
+    await containersPage.waitForTableToLoad();
+    await containersPage.waitForContainerToAppear(containerId);
+    await containersPage.viewContainerInfo(containerId);
+    await page.getByTestId('tab-logs').click();
+
+    const containerLogsPage = new ContainerLogsPage(page);
     await containerLogsPage.waitForLogsToLoad();
 
-    await expect(containerLogsPage.terminal).toContainText('L1: msg1');
+    // At this point, the logs just contain the labels.
+    expect(container.status?.labels).toHaveProperty(['io.rancherdesktop.mock.logs.writer'], 'labels');
+    expect(container.status?.labels).toHaveProperty(['org.opencontainers.image.vendor'], 'openSUSE Project');
+    await expect(containerLogsPage.terminal).toContainText('org.opencontainers.image.vendor');
   });
 
   test('should support log search', async() => {
+    const container = await getContainerByLogsWriter('ten');
+    expect(container).toHaveProperty('metadata.name', expect.any(String));
+    const containerId = container.metadata!.name!;
+
+    // Navigate to a container using the "count" mock log writer...
+    containersPage = await new NavPage(page).navigateTo('Containers');
+    await containersPage.waitForTableToLoad();
+    await containersPage.waitForContainerToAppear(containerId);
+    await containersPage.viewContainerInfo(containerId);
+    await page.getByTestId('tab-logs').click();
+
     const containerLogsPage = new ContainerLogsPage(page);
 
+    // Wait for all the relevant text to show up before proceeding.
+    await expect(containerLogsPage.terminal).toContainText('[Line 2]');
     await expect(containerLogsPage.searchInput).toBeVisible();
 
-    const searchTerm = 'msg';
+    const searchTerm = 'Line';
     await containerLogsPage.searchLogs(searchTerm);
 
     const searchHighlight = page.locator('span.xterm-decoration-top');
@@ -145,17 +182,17 @@ test.describe.fixme('Containers Tests', () => {
       },
     );
 
-    await expect(highlightedRow).toContainText('L1: msg1');
+    await expect(highlightedRow).toContainText('[Line 1]');
 
     await containerLogsPage.searchNextButton.click();
 
     await expect(searchHighlight).toBeVisible();
-    await expect(highlightedRow).toContainText('L2: msg2');
+    await expect(highlightedRow).toContainText('[Line 2]');
 
     await containerLogsPage.searchPrevButton.click();
 
     await expect(searchHighlight).toBeVisible();
-    await expect(highlightedRow).toContainText('L1: msg1');
+    await expect(highlightedRow).toContainText('[Line 1]');
 
     await containerLogsPage.searchClearButton.click();
     await expect(containerLogsPage.searchInput).toBeEmpty();
@@ -166,164 +203,142 @@ test.describe.fixme('Containers Tests', () => {
   });
 
   test('should handle terminal scrolling', async() => {
-    const scrollTestContainerName = `test-scroll-container-${ Date.now() }`;
-    let scrollTestContainerId = '';
+    const container = await getContainerByLogsWriter('hundred');
+    expect(container).toHaveProperty('metadata.name', expect.any(String));
+    const scrollTestContainerId = container.metadata!.name!;
 
-    try {
-      const output = await tool(
-        'docker',
-        'run',
-        '--detach',
-        '--name',
-        scrollTestContainerName,
-        'alpine',
-        'sh',
-        '-c',
-        'for i in $(seq 1 100); do echo "Line $i:"; done; sleep 1',
-      );
-      scrollTestContainerId = output.trim();
+    const navPage = new NavPage(page);
+    const containersPage = await navPage.navigateTo('Containers');
 
-      const navPage = new NavPage(page);
-      const containersPage = await navPage.navigateTo('Containers');
+    await containersPage.waitForTableToLoad();
+    await containersPage.waitForContainerToAppear(scrollTestContainerId);
+    await containersPage.viewContainerInfo(scrollTestContainerId);
 
-      await page.reload();
-      await containersPage.waitForTableToLoad();
+    await page.waitForURL(`**/containers/info/${ scrollTestContainerId }**`, {
+      timeout: 10_000,
+    });
 
-      await containersPage.waitForContainerToAppear(scrollTestContainerId);
-      await containersPage.viewContainerInfo(scrollTestContainerId);
+    await page.getByTestId('tab-logs').click();
 
-      await page.waitForURL(`**/containers/info/${ scrollTestContainerId }**`, {
-        timeout: 10_000,
-      });
+    const containerLogsPage = new ContainerLogsPage(page);
+    await containerLogsPage.waitForLogsToLoad();
 
-      await page.getByTestId('tab-logs').click();
+    const terminalRows = containerLogsPage.terminal.locator('.xterm-rows');
+    const lastLine = terminalRows.getByText('[Line 100]', { exact: false });
+    const firstLine = terminalRows.getByText('[Line 1]', { exact: false });
 
-      const containerLogsPage = new ContainerLogsPage(page);
-      await containerLogsPage.waitForLogsToLoad();
+    await expect(lastLine).toBeVisible();
+    await expect(firstLine).not.toBeVisible();
 
-      const terminalRows = containerLogsPage.terminal.locator('.xterm-rows');
-      const lastLine = terminalRows.getByText('Line 100:', { exact: false });
-      const firstLine = terminalRows.getByText('Line 1:', { exact: false });
+    await containerLogsPage.scrollToTop();
 
-      await expect(lastLine).toBeVisible();
-      await expect(firstLine).not.toBeVisible();
+    await expect(firstLine).toBeVisible();
+    await expect(lastLine).not.toBeVisible();
 
-      await containerLogsPage.scrollToTop();
+    await containerLogsPage.scrollToBottom();
 
-      await expect(firstLine).toBeVisible();
-      await expect(lastLine).not.toBeVisible();
-
-      await containerLogsPage.scrollToBottom();
-
-      await expect(lastLine).toBeVisible();
-      await expect(firstLine).not.toBeVisible();
-    } finally {
-      if (scrollTestContainerId) {
-        try {
-          await tool('docker', 'rm', '-f', scrollTestContainerId);
-        } catch (cleanupError) {}
-      }
-    }
+    await expect(lastLine).toBeVisible();
+    await expect(firstLine).not.toBeVisible();
   });
 
   test('should output logs if container not exited', async() => {
-    const longRunningContainerName = `test-not-exited-logs-${ Date.now() }`;
-    let longRunningContainerId = '';
+    const container = await getContainerByLogsWriter('loop');
+    expect(container).toHaveProperty('metadata.name', expect.any(String));
+    const loopContainerId = container.metadata!.name!;
 
-    try {
-      const output = await tool(
-        'docker',
-        'run',
-        '--detach',
-        '--name',
-        longRunningContainerName,
-        'alpine',
-        'sh',
-        '-c',
-        'while true; do echo "Log $(date +%s)"; sleep 2; done',
-      );
-      longRunningContainerId = output.trim();
+    const navPage = new NavPage(page);
+    const containersPage = await navPage.navigateTo('Containers');
 
-      const navPage = new NavPage(page);
-      const containersPage = await navPage.navigateTo('Containers');
+    await page.reload();
+    await containersPage.waitForTableToLoad();
 
-      await page.reload();
-      await containersPage.waitForTableToLoad();
+    await containersPage.waitForContainerToAppear(loopContainerId);
+    await containersPage.viewContainerInfo(loopContainerId);
 
-      await containersPage.waitForContainerToAppear(longRunningContainerId);
-      await containersPage.viewContainerInfo(longRunningContainerId);
+    await page.waitForURL(`**/containers/info/${ loopContainerId }**`, {
+      timeout: 10000,
+    });
 
-      await page.waitForURL(`**/containers/info/${ longRunningContainerId }**`, {
-        timeout: 10000,
-      });
+    await page.getByTestId('tab-logs').click();
 
-      await page.getByTestId('tab-logs').click();
+    const containerLogsPage = new ContainerLogsPage(page);
+    await containerLogsPage.waitForLogsToLoad();
 
-      const containerLogsPage = new ContainerLogsPage(page);
-      await containerLogsPage.waitForLogsToLoad();
+    const locator = containerLogsPage.terminal.locator('.xterm-screen');
+    await expect(locator.getByText(/\[Line \d+\]/).nth(1)).toBeVisible();
 
-      const locator = containerLogsPage.terminal.locator('.xterm-screen');
-      await expect(locator.getByText(/Log \d+/).nth(1)).toBeVisible();
-
-      await expect(containerLogsPage.terminal).toContainText('Log ');
-
-      await tool('docker', 'rm', '-f', longRunningContainerId);
-    } finally {
-      if (longRunningContainerId) {
-        try {
-          await tool('docker', 'rm', '-f', longRunningContainerId);
-        } catch (cleanupError) {}
-      }
-    }
+    await expect(containerLogsPage.terminal).toContainText('Line ');
   });
 
   test('should auto-refresh containers list', async() => {
     const containersPage = new ContainersPage(page);
-    const autoRefreshContainerName = `auto-refresh-test-${ Date.now() }`;
-    let autoRefreshContainerId = '';
+    const containerId = randomBytes(32).toString('hex');
+    let container: RDDClient.IoRancherdesktopContainersV1alpha1Container | undefined;
 
     try {
       const navPage = new NavPage(page);
       await navPage.navigateTo('Containers');
       await containersPage.waitForTableToLoad();
+      const containers = await client.listNamespacedContainer({ namespace });
+      await expect(containersPage.containers).toHaveCount(containers.items.length);
+      await expect(containersPage.getContainerRow(containerId)).toBeHidden();
 
-      // Remove all existing containers to ensure clean state
-      try {
-        const existingContainers = await tool('docker', 'ps', '--all', '--quiet');
-        const containerIds = existingContainers.trim().split(/\s+/);
+      container = await client.createNamespacedContainer({
+        namespace,
+        body:      {
+          apiVersion: 'containers.rancherdesktop.io/v1alpha1',
+          kind:       'Container',
+          metadata:   {
+            name: containerId,
+            namespace,
+          },
+          spec:       {
+            image: 'alpine',
+            args:  ['sleep', 'infinity'],
+          },
+        },
+      });
+      expect(container).toHaveProperty('metadata.name', containerId);
+      container = await client.patchNamespacedContainerStatus({
+        name:      containerId,
+        namespace,
+        body:      {
+          status: {
+            name:      'test_container',
+            namespace: 'k8s.io',
+            image:     `sha256:${ randomBytes(32).toString('hex') }`,
+            path:      '/bin/false',
+          },
+        },
+      }, RDDClient.setHeaderOptions(
+        'Content-Type', RDDClient.PatchStrategy.MergePatch));
 
-        if (containerIds.length > 0) {
-          await tool('docker', 'rm', '--force', ...containerIds);
-        }
-      } catch {}
-
-      await expect(containersPage.containers).toHaveCount(0);
-
-      const output = await tool(
-        'docker',
-        'run',
-        '--detach',
-        '--name',
-        autoRefreshContainerName,
-        'alpine',
-        'sleep',
-        'infinity',
+      await expect(client.listNamespacedContainer({ namespace })).resolves.toEqual(
+        expect.objectContaining({
+          items: expect.arrayContaining([
+            expect.objectContaining({
+              metadata: expect.objectContaining({
+                name: containerId,
+              }),
+            }),
+          ]),
+        }),
       );
-      autoRefreshContainerId = output.trim();
+      await expect(containersPage.getContainerRow(containerId)).toBeVisible();
 
-      await expect(
-        containersPage.getContainerRow(autoRefreshContainerId),
-      ).toBeVisible();
+      await client.deleteNamespacedContainer({
+        namespace,
+        name: containerId,
+      });
 
-      await tool('docker', 'rm', '--force', autoRefreshContainerId);
-
-      await expect(
-        containersPage.getContainerRow(autoRefreshContainerId),
-      ).toBeHidden();
+      await expect(containersPage.getContainerRow(containerId)).toBeHidden();
     } finally {
-      if (autoRefreshContainerId) {
+      if (container) {
         try {
-          await tool('docker', 'rm', '-f', autoRefreshContainerId);
+          await client.deleteNamespacedContainer({
+            namespace,
+            name: containerId,
+          });
         } catch {}
       }
     }
@@ -336,10 +351,7 @@ test.describe.fixme('Container Shell Tab', () => {
   let unsupportedContainerId: string;
 
   test.beforeAll(async({ colorScheme }, testInfo) => {
-    [electronApp, page] = await startSlowerDesktop(testInfo, {
-      kubernetes:      { enabled: false },
-      containerEngine: { name: ContainerEngine.MOBY, allowedImages: { enabled: false } },
-    });
+    [electronApp, page] = await startSlowerDesktop(testInfo);
 
     const navPage = new NavPage(page);
     await navPage.waitForAppSettled();
@@ -444,10 +456,7 @@ test.describe.fixme('Container Info Tab', () => {
   let infoContainerId: string;
 
   test.beforeAll(async({ colorScheme }, testInfo) => {
-    [electronApp, page] = await startSlowerDesktop(testInfo, {
-      kubernetes:      { enabled: false },
-      containerEngine: { name: ContainerEngine.MOBY, allowedImages: { enabled: false } },
-    });
+    [electronApp, page] = await startSlowerDesktop(testInfo);
 
     const navPage = new NavPage(page);
     await navPage.waitForAppSettled();
@@ -551,10 +560,7 @@ test.describe.fixme('Container Stats Tab', () => {
   let stoppedContainerId: string;
 
   test.beforeAll(async({ colorScheme }, testInfo) => {
-    [electronApp, page] = await startSlowerDesktop(testInfo, {
-      kubernetes:      { enabled: false },
-      containerEngine: { name: ContainerEngine.MOBY, allowedImages: { enabled: false } },
-    });
+    [electronApp, page] = await startSlowerDesktop(testInfo);
 
     const navPage = new NavPage(page);
     await navPage.waitForAppSettled();
