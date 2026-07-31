@@ -39,12 +39,12 @@ export default defineComponent({
         {
           label:       this.t('pathManagement.options.rcFiles.label'),
           value:       'rcFiles',
-          description: this.t('pathManagement.options.rcFiles.description', { }, true),
+          description: this.t('pathManagement.options.rcFiles.description'),
         },
         {
           label:       this.t('pathManagement.options.manual.label'),
           value:       'manual',
-          description: this.t('pathManagement.options.manual.description', { }, true),
+          description: this.t('pathManagement.options.manual.description'),
         },
       ];
     },
@@ -55,7 +55,7 @@ export default defineComponent({
       return this.showLabel ? this.t('pathManagement.label') : '';
     },
     tooltip(): string {
-      return this.showLabel ? this.t('pathManagement.tooltip', { }, true) : '';
+      return this.showLabel ? this.t('pathManagement.tooltip') : '';
     },
   },
   methods: {

@@ -8,7 +8,7 @@ import PreferencesVirtualMachineHardware from '@pkg/components/Preferences/Virtu
 import PreferencesVirtualMachineVolumes from '@pkg/components/Preferences/VirtualMachineVolumes.vue';
 import RdTabbed from '@pkg/components/Tabbed/RdTabbed.vue';
 import Tab from '@pkg/components/Tabbed/Tab.vue';
-import { preferencesNavItems } from '@pkg/window/preferenceConstants';
+import { preferencesNavItemsMap } from '@pkg/window/preferenceConstants';
 
 import type { ComputedRef } from 'vue';
 
@@ -20,7 +20,7 @@ const store = useStore();
 const preferences = computed(() => store.getters['preferences/preferences']);
 const navigation = computed(() => store.state['transient-preferences'].navigation);
 const activeTab = computed((): tabName => navigation.value?.preferences?.['virtual-machine'] || 'hardware');
-const tabs = computed(() => preferencesNavItems['Virtual Machine'].tabs);
+const tabs = computed(() => preferencesNavItemsMap['virtual-machine'].tabs);
 
 const componentFromTab: ComputedRef<Component> = computed(() => {
   return ({
@@ -52,9 +52,9 @@ function tabSelected({ selectedName }: { selectedName: tabName }) {
   >
     <template #tabs>
       <tab
-        v-for="([name, label], index) in tabs"
+        v-for="([name, labelKey], index) in tabs"
         :key="name"
-        :label="label"
+        :label-key="labelKey"
         :name="name"
         :weight="tabs.length - index"
       />

@@ -56,7 +56,7 @@ export default defineComponent({
   mounted() {
     this.$store.dispatch(
       'page/setHeader',
-      { title: this.t('portForwarding.title') },
+      { titleKey: 'portForwarding.title' },
     );
     ipcRenderer.on('settings-update', (event, settings) => {
       // TODO: put in a status bar

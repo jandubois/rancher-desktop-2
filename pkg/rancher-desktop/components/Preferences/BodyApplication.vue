@@ -49,20 +49,20 @@ function tabSelected({ selectedName }: { selectedName: tabName }) {
       Environment has nothing yet
       <tab
         v-if="!isPlatformWindows"
-        label="Environment"
+        label-key="preferences.tabs.environment"
         name="environment"
         :weight="1"
       />
       -->
       <!--
       <tab
-        label="Behavior"
+        label-key="preferences.tabs.behavior"
         name="behavior"
         :weight="2"
       />
       -->
       <tab
-        label="General"
+        label-key="preferences.tabs.general"
         name="general"
         :weight="3"
       />

@@ -8,26 +8,45 @@ import type { Alpha } from '@pkg/utils/typeUtils';
  */
 const prefItemData = [
   {
-    name: 'Application',
-    tabs: [['general', 'General']/* 'behavior', 'environment' */],
+    name:     'application',
+    labelKey: 'preferences.nav.application',
+    tabs:     [
+      ['general', 'preferences.tabs.general'],
+      /* 'behavior', 'environment' */
+    ],
   },
   {
     // For now, show the Virtual Machine tab on all platforms, per
     // https://github.com/rancher-sandbox/rancher-desktop-2/issues/581
     // applicable: () => process.platform === 'darwin' || process.platform === 'linux',
-    name:      'Virtual Machine',
-    tabs:      [['hardware', 'Hardware']/*, ['volumes', 'Volumes'], ['network', 'Network'], ['emulation', 'Emulation'] */],
+    name:      'virtual-machine',
+    labelKey: 'preferences.nav.virtualMachine',
+    tabs:      [
+      ['hardware', 'preferences.tabs.hardware'],
+      // ['volumes', 'preferences.tabs.volumes'],
+      // ['network', 'preferences.tabs.network'],
+      // ['emulation', 'preferences.tabs.emulation'],
+    ],
   },
   // {
   //   applicable: () => process.platform === 'win32',
-  //   name:      'WSL',
-  //   tabs:      [['integrations', 'Integrations'], ['network', 'Network'], ['proxy', 'Proxy']],
+  //   name:      'wsl',
+  //   labelKey:  'preferences.nav.wsl',
+  //   tabs:      [
+  //     ['integrations', 'preferences.tabs.integrations'],
+  //     ['network', 'preferences.tabs.network'],
+  //     ['proxy', 'preferences.tabs.proxy'],
+  //   ],
   // },
   // {
-  //   name: 'Container Engine',
-  //   tabs: [['general', 'General']/*, ['allowed-images', 'Allowed Images'] */],
+  //   name: 'container-engine',
+  //   labelKey: 'preferences.nav.containerEngine',
+  //   tabs: [
+  //     ['general', 'preferences.tabs.general'],
+  //     ['allowed-images', 'preferences.tabs.allowedImages'],
+  //   ],
   // },
-  { name: 'Kubernetes' },
+  { name: 'kubernetes', labelKey: 'preferences.nav.kubernetes' },
 ] as const satisfies navItemEntry[];
 
 /**
@@ -36,6 +55,7 @@ const prefItemData = [
 interface navItemEntry {
   applicable?: () => boolean;
   name:        string;
+  labelKey:    string;
   tabs?:       readonly [string, string][];
 }
 
@@ -49,24 +69,27 @@ type navItemResult<T extends readonly navItemEntry[]> = {
 };
 
 /**
- * Filters the navigation items based on the current platform.
+ * Given filtered navigation items, returns a mapping of top level navigation
+ * item name to a list of the tabs available for that navigation item.
  */
-function filterNavItems<T extends readonly navItemEntry[]>(items: T): navItemResult<T> {
+function mapNavItems<T extends readonly navItemEntry[]>(items: T): navItemResult<T> {
   return Object.fromEntries(items
-    .filter(item => item.applicable?.() ?? true)
     .map((item, index) => [item.name, (({ name, applicable, ...rest }) => ({ ...rest, index }))(item)] as const),
   ) as navItemResult<T>;
 }
 
-export const preferencesNavItems = filterNavItems(prefItemData);
+export const preferencesNavItems = prefItemData.filter((item: navItemEntry) =>
+  item.applicable?.() ?? true);
+
+export const preferencesNavItemsMap = mapNavItems(preferencesNavItems);
 
 type KebabCase<T extends string> = T extends `${ infer Head }${ infer Tail }`
   ? `${ Head extends Alpha<Head> ? Lowercase<Head> : KebabCase<Tail> extends `-${ string }` ? '' : '-' }${ KebabCase<Tail> }`
   : T;
 
 type PreferenceNavTabDefaults = {
-  [K in keyof typeof preferencesNavItems as KebabCase<K>]:
-  (typeof preferencesNavItems)[K] extends { tabs: readonly ([infer T, string])[] } ? T : never;
+  [K in keyof typeof preferencesNavItemsMap as KebabCase<K>]:
+  (typeof preferencesNavItemsMap)[K] extends { tabs: readonly ([infer T, string])[] } ? T : never;
 };
 
 /**
@@ -90,6 +113,11 @@ export const preferencesNavDefaults = {
 };
 
 /**
+ * preferencesNavItem is the type of the top level navigation items.
+ */
+export type preferencesNavItem = typeof prefItemData[number];
+
+/**
  * preferencesNavItemName is the type of the top level navigation item names.
  */
-export type preferencesNavItemName = typeof prefItemData[number]['name'];
+export type preferencesNavItemName = preferencesNavItem['name'];

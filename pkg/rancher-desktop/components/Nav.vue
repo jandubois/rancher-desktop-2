@@ -10,7 +10,7 @@
           :class="{ 'rd-link-active': isRouteActive(item.route) }"
           :to="item.route"
         >
-          {{ routes[item.route].name }}
+          {{ routeLabel(item.route) }}
           <badge-state
             v-if="item.error"
             color="bg-error"
@@ -20,7 +20,7 @@
           <i
             v-if="item.experimental"
             v-tooltip="{
-              content: t('prefs.experimental', undefined, true),
+              content: t('prefs.experimental'),
               placement: 'right',
             }"
             :class="`icon icon-flask`"
@@ -62,8 +62,6 @@
 </template>
 
 <script lang="ts">
-import os from 'os';
-
 import { BadgeState } from '@rancher/components';
 import { PropType, defineComponent } from 'vue';
 import { RouteRecordNormalized } from 'vue-router';
@@ -82,6 +80,18 @@ type ExtensionWithUI = ExtensionState & {
   metadata: { ui: { 'dashboard-tab': { title: string } } };
 };
 
+const routeLabelKeys = {
+  '/General':         'general.navLabel',
+  '/Containers':      'containers.title',
+  '/Volumes':         'volumes.title',
+  '/PortForwarding':  'portForwarding.title',
+  '/Images':          'images.title',
+  '/Snapshots':       'snapshots.title',
+  '/Troubleshooting': 'troubleshooting.title',
+  '/Diagnostics':     'diagnostics.title',
+  '/Extensions':      'marketplace.title',
+} as const;
+
 export default defineComponent({
   name:       'Nav',
   components: {
@@ -93,7 +103,7 @@ export default defineComponent({
   },
   props: {
     items: {
-      type:      Array as PropType<{ route: string; error?: number; experimental?: boolean }[]>,
+      type:      Array as PropType<{ route: keyof typeof routeLabelKeys; error?: number; experimental?: boolean }[]>,
       required:  true,
       validator: (value: { route: string, error?: number }[]) => {
         const routes = router.getRoutes().reduce((paths: Record<string, RouteRecordNormalized>, route) => {
@@ -124,12 +134,10 @@ export default defineComponent({
       // their names based on the paths given.
       routes: this.$router.getRoutes().reduce((paths: Record<string, RouteRecordNormalized>, route) => {
         paths[route.path] = route;
-        if (route.name === 'Supporting Utilities' && os.platform() === 'win32') {
-          route.name = 'WSL Integrations';
-        }
 
         return paths;
       }, {}),
+
     };
   },
   computed: {
@@ -143,6 +151,11 @@ export default defineComponent({
     },
   },
   methods: {
+    routeLabel(route: keyof typeof routeLabelKeys): string {
+      const key = routeLabelKeys[route];
+
+      return key ? this.t(key) : this.routes[route]?.name as string ?? route;
+    },
     extensionRoute({ id, metadata }: { id: string, metadata: any }) {
       const { ui: { 'dashboard-tab': { root, src } } } = metadata;
 

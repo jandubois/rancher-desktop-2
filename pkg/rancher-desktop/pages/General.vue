@@ -2,11 +2,12 @@
   <div class="general">
     <div>
       <ul>
-        <li>Project Discussions: <b>#rancher-desktop</b> in <a href="https://slack.rancher.io/">Rancher Users</a> Slack</li>
+        <!-- v-clean-html: the translated string embeds a link -->
+        <li v-clean-html="t('general.projectDiscussions')" />
         <li class="project-links">
-          <span>Project Links:</span>
-          <a href="https://github.com/rancher-sandbox/rancher-desktop">Homepage</a>
-          <a href="https://github.com/rancher-sandbox/rancher-desktop/issues">Issues</a>
+          <span>{{ t('general.projectLinks') }}</span>
+          <a href="https://github.com/rancher-sandbox/rancher-desktop">{{ t('general.homepage') }}</a>
+          <a href="https://github.com/rancher-sandbox/rancher-desktop/issues">{{ t('general.issues') }}</a>
         </li>
       </ul>
     </div>
@@ -16,16 +17,7 @@
       :update-state="updateState"
       @apply="onUpdateApply"
     />
-    <hr>
-    <!--
-    <telemetry-opt-in
-      preference="application.telemetry.enabled"
-    />
-    <hr>
-    -->
-    <div class="network-status">
-      <network-status />
-    </div>
+    <blog-feed />
   </div>
 </template>
 
@@ -33,16 +25,12 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 
-import packageJson from '@/package.json' with { type: 'json' };
-import NetworkStatus from '@pkg/components/NetworkStatus.vue';
+import BlogFeed from '@pkg/components/BlogFeed.vue';
 import UpdateStatus from '@pkg/components/UpdateStatus.vue';
 import type { UpdateState } from '@pkg/main/update';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
-defineOptions({
-  name:  'General',
-  title: 'General',
-});
+defineOptions({ name: 'General' });
 
 const store = useStore();
 const updateState = ref<UpdateState | null>(null);
@@ -57,9 +45,10 @@ function onUpdateState(_event: Electron.IpcRendererEvent, state: UpdateState) {
 
 onMounted(() => {
   store.dispatch('page/setHeader', {
-    title:       store.getters['i18n/t']('general.title', { productName: packageJson.productName }),
-    description: store.getters['i18n/t']('general.description'),
-    icon:        'icon icon-rancher-desktop',
+    titleKey:       'general.title',
+    descriptionKey: 'general.description',
+    icon:           'icon icon-rancher-desktop',
+    action:         'AutoUpdateCheckbox',
   });
   ipcRenderer.on('update-state', onUpdateState);
   ipcRenderer.send('update-state');
@@ -76,6 +65,9 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
+  // Fill the body so the blog feed can claim whatever height is left over.
+  flex: 1;
+  min-height: 0;
 
   ul {
     margin-bottom: 0;

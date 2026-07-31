@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { mount } from '@vue/test-utils';
 
 import mockModules from '@pkg/utils/testUtils/mockModules';
+import { t } from '@pkg/utils/testUtils/translations';
 import {
   IoRancherdesktopContainersV1alpha1Container as Container,
   IoRancherdesktopContainersV1alpha1ContainerStatusStatusEnum as ContainerStatus,
@@ -77,7 +78,7 @@ describe('Containers methods', () => {
             commit:   jest.fn(),
             dispatch: jest.fn(),
           },
-          t: (s: string) => s,
+          t,
         },
         stubs: {
           T: { template: '<span></span>' },
@@ -106,7 +107,7 @@ describe('Containers methods', () => {
     expect(wrapper.vm.getContainerActions(running)).toEqual(expect.arrayContaining([
       expect.objectContaining({
         action:   'restartContainer',
-        label:    'Restart',
+        label:    t('containers.manage.table.action.restart'),
         bulkable: true,
         enabled:  true,
       }),
@@ -114,7 +115,7 @@ describe('Containers methods', () => {
     expect(wrapper.vm.getContainerActions(stopped)).toEqual(expect.arrayContaining([
       expect.objectContaining({
         action:   'restartContainer',
-        label:    'Restart',
+        label:    t('containers.manage.table.action.restart'),
         bulkable: true,
         enabled:  false,
       }),

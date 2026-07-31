@@ -10,7 +10,7 @@ import PreferencesHeader from '@pkg/components/Preferences/ModalHeader.vue';
 import PreferencesNav from '@pkg/components/Preferences/ModalNav.vue';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 import { Direction } from '@pkg/utils/typeUtils';
-import { preferencesNavItemName, preferencesNavItems } from '@pkg/window/preferenceConstants';
+import { preferencesNavItemName, preferencesNavItems as navItems } from '@pkg/window/preferenceConstants';
 
 defineOptions({
   name:   'preferences-modal',
@@ -22,7 +22,6 @@ const store = useStore();
 const navigation = computed(() => store.state['transient-preferences'].navigation);
 const committed = computed(() => store.getters['preferences/committed']);
 const hasPreferences = computed(() => Object.keys(committed.value).length > 0);
-const navItems = computed(() => Object.keys(preferencesNavItems) as preferencesNavItemName[]);
 const currentNavItem = computed(() => navigation.value.preferences.top);
 
 async function navChanged(current: preferencesNavItemName) {
@@ -50,9 +49,10 @@ async function navigateToTab(_event: Electron.IpcRendererEvent, args: { name?: p
 
   if (direction) {
     const dir = (direction === 'forward' ? 1 : -1);
-    const idx = (navItems.value.length + navItems.value.indexOf(currentNavItem.value) + dir) % navItems.value.length;
+    const currentIndex = navItems.findIndex((item) => item.name === currentNavItem.value);
+    const idx = (navItems.length + currentIndex + dir) % navItems.length;
 
-    await store.dispatch('transient-preferences/navigate', { 'preferences.top': navItems.value[idx] });
+    await store.dispatch('transient-preferences/navigate', { 'preferences.top': navItems[idx].name });
   }
 }
 

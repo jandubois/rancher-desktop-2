@@ -1,84 +1,64 @@
 <template>
-  <div>
-    <div class="version">
-      <version />
-      <rd-checkbox
-        v-if="updatePossible"
-        :preference="preference"
-        :immediate="true"
-        class="updatesEnabled"
-        label="Check for updates automatically"
-      />
-    </div>
-    <card
-      v-if="hasUpdate"
-      ref="updateInfo"
-      :show-highlight-border="false"
-    >
-      <template #title>
-        <div class="type-title">
-          <h3>Update Available</h3>
-        </div>
-      </template>
-      <template #body>
-        <div ref="updateStatus">
-          <p>
-            {{ statusMessage }}
-          </p>
-          <p
-            v-if="updateReady"
-            class="update-notification"
+  <div class="update-status">
+    <template v-if="hasUpdate">
+      <h3>{{ t('updateStatus.updateAvailable') }}</h3>
+      <card
+        ref="updateInfo"
+        :show-highlight-border="false"
+      >
+        <template #body>
+          <div ref="updateStatus">
+            <p>
+              {{ statusMessage }}
+            </p>
+            <p
+              v-if="updateReady"
+              class="update-notification"
+            >
+              {{ t('updateStatus.restartToApply') }}
+            </p>
+          </div>
+          <details
+            v-if="detailsMessage"
+            class="release-notes"
           >
-            Restart the application to apply the update.
+            <summary>{{ t('updateStatus.releaseNotes') }}</summary>
+            <div
+              ref="releaseNotes"
+              v-html="detailsMessage"
+            />
+          </details>
+        </template>
+        <template #actions>
+          <button
+            v-if="updateReady"
+            ref="applyButton"
+            class="btn role-secondary"
+            :disabled="applying"
+            @click="applyUpdate"
+          >
+            {{ applyMessage }}
+          </button>
+          <span v-else />
+        </template>
+      </card>
+    </template>
+    <template v-else-if="unsupportedUpdateAvailable">
+      <h3>{{ t('updateStatus.unsupported.title') }}</h3>
+      <card :show-highlight-border="false">
+        <template #body>
+          <p>
+            {{ t('updateStatus.unsupported.message') }}
           </p>
-        </div>
-        <details
-          v-if="detailsMessage"
-          class="release-notes"
-        >
-          <summary>Release Notes</summary>
-          <div
-            ref="releaseNotes"
-            v-html="detailsMessage"
-          />
-        </details>
-      </template>
-      <template #actions>
-        <button
-          v-if="updateReady"
-          ref="applyButton"
-          class="btn role-secondary"
-          :disabled="applying"
-          @click="applyUpdate"
-        >
-          {{ applyMessage }}
-        </button>
-        <span v-else />
-      </template>
-    </card>
-    <card
-      v-else-if="unsupportedUpdateAvailable"
-      :show-highlight-border="false"
-    >
-      <template #title>
-        <div class="type-title">
-          <h3>Latest Version Not Supported</h3>
-        </div>
-      </template>
-      <template #body>
-        <p>
-          A newer version of Rancher Desktop is available, but not supported on your system.
-        </p>
-        <br>
-        <p>
-          For more information please see
-          <a href="https://docs.rancherdesktop.io/getting-started/installation">the installation documentation</a>.
-        </p>
-      </template>
-      <template #actions>
-        <div />
-      </template>
-    </card>
+          <br>
+          <!-- v-clean-html: the translated string embeds a link -->
+          <p v-clean-html="t('updateStatus.unsupported.seeDocumentation')" />
+        </template>
+        <template #actions>
+          <div />
+        </template>
+      </card>
+    </template>
   </div>
 </template>
 
@@ -90,8 +70,6 @@ import { marked } from 'marked';
 import { computed, PropType, ref } from 'vue';
 import { useStore } from 'vuex';
 
-import Version from '@pkg/components/Version.vue';
-import RdCheckbox from '@pkg/components/form/RdCheckbox.vue';
 import { UpdateState } from '@pkg/main/update';
 import type { RecursiveLeafKeysOfType } from '@pkg/utils/typeUtils';
 
@@ -127,7 +105,6 @@ const store = useStore();
 const applying = ref(false);
 const preferences = computed(() => store.getters['preferences/preferences']);
 const updatesEnabled = computed(() => !!_.get(preferences.value, preference, false));
-const updatePossible = computed(() => !!updateState?.configured);
 const hasUpdate = computed(() => updatesEnabled.value && !!updateState?.available);
 const updateReady = computed(() => hasUpdate.value && !!updateState?.downloaded && !updateState?.error);
 
@@ -180,10 +157,53 @@ function applyUpdate() {
 </script>
 
 <style lang="scss" scoped>
-  .version {
+  // Shrink so long release notes scroll inside the card, not push the blog off.
+  .update-status {
     display: flex;
-    justify-content: space-between
+    flex-direction: column;
+    min-height: 0;
+
+    // Match the blog feed's heading above its box.
+    h3 {
+      margin-bottom: 0.75rem;
+    }
   }
+
+  // Keep the card tall enough to read the notes once they are open.
+  .update-status:has(.release-notes[open]) {
+    min-height: 14rem;
+  }
+
+  :deep(.card-container) {
+    // Drop the Card's grid margin so the box aligns with the blog box.
+    margin-left: 0;
+    margin-right: 0;
+    // Fill and shrink past the Card's 100px minimum, so the body scrolls.
+    flex: 1;
+    min-height: 0;
+  }
+
+  // Hide the empty title and <hr> the Card draws with no title slot.
+  :deep(.card-title),
+  :deep(.card-wrap > hr) {
+    display: none;
+  }
+
+  // card-wrap is a plain block here; make it a column so the body can scroll.
+  :deep(.card-wrap) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  // Scroll long notes inside the card; anchor to the top (the Card centres it).
+  :deep(.card-body) {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    justify-content: flex-start;
+  }
+
   .update-notification {
     font-weight: 900;
   }

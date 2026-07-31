@@ -76,7 +76,7 @@ export default defineComponent({
   },
 
   beforeMount() {
-    this.setHeader({ title: this.t('images.title') });
+    this.setHeader({ titleKey: 'images.title' });
     this.watchResources(['namespaces', 'images']).catch(error => {
       this.SET_ERROR({ source: 'images', error });
     });

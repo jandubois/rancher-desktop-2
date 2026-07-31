@@ -2,7 +2,6 @@
  * This module contains code for handling image-processor events (containerd/nerdctl, moby/docker).
  */
 
-import { getIpcMainProxy } from '@pkg/main/ipcMain';
 import Logging from '@pkg/utils/logging';
 
 const console = Logging.images;
@@ -46,7 +45,7 @@ export class ImageEventHandler {
         event.reply('images-process-ended', 0);
       } catch (err) {
         await Electron.dialog.showMessageBox({
-          message: `Error trying to delete image ${ imageName } (${ imageID }):\n\n ${ isUnixError(err) ? err.stderr : '' } `,
+          message: t('imageEvents.deleteError', { name: imageName, id: imageID, error: isUnixError(err) ? err.stderr : '' }),
           type:    'error',
         });
         event.reply('images-process-ended', 1);
@@ -62,7 +61,7 @@ export class ImageEventHandler {
         event.reply('images-process-ended', 0);
       } catch (err) {
         await Electron.dialog.showMessageBox({
-          message: `Error trying to delete images ${ imageIDs }`,
+          message: t('imageEvents.deleteBatchError', { ids: String(imageIDs) }),
           type:    'error',
         });
         event.reply('images-process-ended', 1);
@@ -71,9 +70,9 @@ export class ImageEventHandler {
 
     ipcMainProxy.on('do-image-build', async(event, taggedImageName) => {
       const options: any = {
-        title:      'Pick the build directory',
+        title:      t('imageEvents.buildTitle'),
         properties: ['openFile'],
-        message:    'Please select the Dockerfile to use (could have a different name)',
+        message:    t('imageEvents.buildMessage'),
       };
 
       if (this.#lastBuildDirectory) {
@@ -149,7 +148,7 @@ export class ImageEventHandler {
           code = err.code;
         }
         Electron.dialog.showMessageBox({
-          message: `Error trying to scan ${ taggedImageName }:\n\n ${ isUnixError(err) ? err.stderr : '' } `,
+          message: t('imageEvents.scanError', { name: taggedImageName, error: isUnixError(err) ? err.stderr : '' }),
           type:    'error',
         }).catch((err) => {
           console.log('messageBox failure: ', err);
@@ -169,7 +168,7 @@ export class ImageEventHandler {
           code = err.code;
         }
         Electron.dialog.showMessageBox({
-          message: `Error trying to push ${ taggedImageName }:\n\n ${ isUnixError(err) ? err.stderr : '' } `,
+          message: t('imageEvents.pushError', { name: taggedImageName, error: isUnixError(err) ? err.stderr : '' }),
           type:    'error',
         }).catch((err) => {
           console.log('messageBox failure: ', err);

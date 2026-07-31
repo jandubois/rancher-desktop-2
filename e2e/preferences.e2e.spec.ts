@@ -93,7 +93,7 @@ test.describe('Preferences Dialog', () => {
       await virtualMachine.nav.click();
 
       await expect(virtualMachine.nav).toHaveClass('preferences-nav-item active');
-      await expect(prefPage.body).toHaveAttribute('data-test-component', 'Virtual Machine');
+      await expect(prefPage.body).toHaveAttribute('data-test-component', 'virtual-machine');
     });
 
     test('should render hardware tab', async() => {
@@ -203,7 +203,7 @@ test.describe('Preferences Dialog', () => {
       await kubernetes.nav.click();
 
       await expect(kubernetes.nav).toHaveClass('preferences-nav-item active');
-      await expect(prefPage.body).toHaveAttribute('data-test-component', 'Kubernetes');
+      await expect(prefPage.body).toHaveAttribute('data-test-component', 'kubernetes');
     });
 
     test('Kubernetes enabled checkbox should exist', async() => {
