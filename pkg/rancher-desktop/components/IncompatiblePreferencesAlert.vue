@@ -2,6 +2,7 @@
 import { Banner } from '@rancher/components';
 import { PropType, defineComponent } from 'vue';
 
+import { mapTypedActions } from '@pkg/entry/store';
 import type { preferencesNavItem as NavItem } from '@pkg/window/preferenceConstants';
 
 export type CompatiblePrefs = {
@@ -40,9 +41,7 @@ export default defineComponent({
     },
   },
   methods: {
-    navigate(info: CompatiblePrefs[number]) {
-      (this.$root as any).navigate(info.navItemName, info.tabName);
-    },
+    ...mapTypedActions('transient-preferences', ['navigateByClick']),
   },
 });
 </script>
@@ -59,7 +58,8 @@ export default defineComponent({
     >
       <a
         href="#"
-        @click.prevent="navigate(pref)"
+        :data-navigate="pref.tabName ? `${pref.navItemName},${pref.tabName}` : pref.navItemName"
+        @click.prevent="navigateByClick"
       >
         {{ pref.title }}
       </a>
