@@ -1,73 +1,62 @@
 /**
  * Parse a Kubernetes-style quantity string into bytes.
- * @note Values are truncated toward zero.
+ * @note As this does not use BigInt, numbers beyond the usual range
+ * (Number.MIN/MAX_SAFE_INTEGER) will not be supported correctly.
+ * @note This means exabytes (EB/EiB) and beyond will not be supported correctly.
  */
-export default function parseQuantity(value: string | undefined): bigint {
+export default function parseQuantity(value: string | number | undefined): number {
   if (value === undefined) {
-    return 0n;
+    return 0;
+  }
+
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) {
+      throw new Error(`Malformed quantity: ${ value }`);
+    }
+    return value;
   }
 
   const trimmed = value.trim();
 
   if (!trimmed) {
-    return 0n;
+    return 0;
   }
 
-  const [, numeral, rawSuffix] = /^([+-]?[0-9.]+)\s*([^0-9.]\S*)?$/.exec(trimmed) ?? [];
-  if (numeral === undefined) {
+  const [numeral = ''] = /^[+-]?[0-9.]+(?:[eE][+-]?[0-9]+$)?/.exec(trimmed) ?? [];
+  const suffix = trimmed.slice(numeral.length).trim();
+  if (!numeral) {
     throw new Error(`Malformed quantity: ${ trimmed }`);
   }
-  const suffix = rawSuffix?.replace(/B$/, '') ?? ''; // remove trailing B if present
 
-  let scale = 1n; // Negative scale means divide.
-  const scaleMapping: Record<string, bigint> = {
-    '': 1n,
-    n:  -(10n ** 9n),
-    u:  -(10n ** 6n),
-    µ:  -(10n ** 6n),
-    μ:  -(10n ** 6n),
-    m:  -(10n ** 3n),
-    k:  10n ** 3n,
-    K:  10n ** 3n,
-    M:  10n ** 6n,
-    G:  10n ** 9n,
-    T:  10n ** 12n,
-    P:  10n ** 15n,
-    E:  10n ** 18n,
-    Ki: 2n ** 10n,
-    Mi: 2n ** 20n,
-    Gi: 2n ** 30n,
-    Ti: 2n ** 40n,
-    Pi: 2n ** 50n,
-    Ei: 2n ** 60n,
+  const scaleMapping: Record<string, number> = {
+    '': 1,
+    n:  10 ** -9,
+    u:  10 ** -6,
+    m:  10 ** -3,
+    k:  10 ** 3,
+    M:  10 ** 6,
+    G:  10 ** 9,
+    T:  10 ** 12,
+    P:  10 ** 15,
+    E:  10 ** 18, // Loses precision.
+    Ki: 2 ** 10,
+    Mi: 2 ** 20,
+    Gi: 2 ** 30,
+    Ti: 2 ** 40,
+    Pi: 2 ** 50,
+    Ei: 2 ** 60, // Loses precision.
   };
+  const scale: number | undefined = scaleMapping[suffix];
 
-  if (suffix in scaleMapping) {
-    scale = scaleMapping[suffix];
-  } else {
-    const [, sign, exponent] = /^[eE]([+-]?)(\d+)$/.exec(suffix) ?? [];
-    if (exponent !== undefined) {
-      scale *= 10n ** BigInt(exponent);
-      if (sign === '-') {
-        scale = -scale;
-      }
-    } else {
-      throw new Error(`Unknown units: ${ rawSuffix || trimmed }`);
-    }
+  if (typeof scale !== 'number') {
+    throw new Error(`Unknown units: ${ suffix }`);
   }
 
-  const [, sign, whole, fraction = '0'] = /^([+-]?)([0-9]+)?(?:\.([0-9]+))?$/.exec(numeral) ?? [];
+  const parsedNumeral = Number(numeral);
 
-  if (whole === undefined) {
+  if (Number.isNaN(parsedNumeral)) {
     throw new Error(`Malformed quantity: ${ trimmed }`);
   }
 
-  const denom = 10n ** BigInt(fraction.length);
-  const numer = (BigInt(whole) * denom + BigInt(fraction)) * (sign === '-' ? -1n : 1n);
-
-  if (scale < 0n) {
-    return numer / (-scale * denom);
-  }
-
-  return (numer * scale) / denom;
+  return parsedNumeral * scale;
 }

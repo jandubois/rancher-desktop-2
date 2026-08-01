@@ -35,10 +35,8 @@ class PreferencesHelp {
     const transientPreferences = await mainEvents.invoke('transient-preferences/get');
     const { preferences } = transientPreferences.navigation;
     const { top } = preferences;
-    type topKeys = Exclude<keyof typeof preferences, 'top'>;
-    const current = top.toLowerCase().replace(/ /g, '-') as topKeys;
-    const tab = current in preferences ? `/${ preferences[current] }` as const : '';
-    const key = `${ current }${ tab }` as const;
+    const tab = top in preferences ? `/${ preferences[top] }` as const : '';
+    const key = `${ top }${ tab }` as const;
     let url = baseUrl;
 
     if (key in this.mapping) {
