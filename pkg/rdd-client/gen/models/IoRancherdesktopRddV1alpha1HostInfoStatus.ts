@@ -21,9 +21,9 @@ export class IoRancherdesktopRddV1alpha1HostInfoStatus {
     */
     'cpus'?: number;
     /**
-    * memory is the total host RAM in bytes.
+    * memory is the total host RAM as a Kubernetes resource quantity (e.g. \"16Gi\").
     */
-    'memory'?: number;
+    'memory'?: any;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -39,8 +39,8 @@ export class IoRancherdesktopRddV1alpha1HostInfoStatus {
         {
             "name": "memory",
             "baseName": "memory",
-            "type": "number",
-            "format": "int64"
+            "type": "any",
+            "format": ""
         }    ];
 
     static getAttributeTypeMap() {
