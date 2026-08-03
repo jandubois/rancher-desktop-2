@@ -12,6 +12,7 @@ import (
 	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -52,16 +53,18 @@ func (r *HostInfoReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	}
 
 	info := hostinfo.Detect()
+	// BinarySI so the quantity reads as "16Gi" rather than a byte count.
+	memory := resource.NewQuantity(info.Memory, resource.BinarySI)
 
 	patch := client.MergeFrom(hi.DeepCopy())
 	hi.Status.CPUs = info.CPUs
-	hi.Status.Memory = info.Memory
+	hi.Status.Memory = memory
 
 	if err := r.Status().Patch(ctx, &hi, patch); err != nil {
 		log.Error(err, "Failed to update HostInfo status")
 		return ctrl.Result{}, err
 	}
-	log.Info("Updated HostInfo status", "cpus", info.CPUs, "memory", info.Memory)
+	log.Info("Updated HostInfo status", "cpus", info.CPUs, "memory", memory)
 	return ctrl.Result{}, nil
 }
 

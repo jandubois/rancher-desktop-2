@@ -32,8 +32,13 @@ local_setup_file() {
 
 @test "HostInfo has memory of at least 2 GiB" {
     run -0 rdd ctl get hostinfo system -o jsonpath='{.status.memory}'
-    # 2 GiB = 2147483648 bytes
-    assert_output_ge 2147483648
+    run -0 quantity_to_bytes "${output}"
+    assert_output_ge $((2 * 1024 ** 3))
+}
+
+@test "HostInfo lists memory as a binary quantity" {
+    run -0 rdd ctl get hostinfo system --no-headers
+    assert_output --regexp '^system +[0-9]+ +[0-9]+(Ki|Mi|Gi|Ti) *$'
 }
 
 @test "rdd set --help lists virtualMachine properties" {

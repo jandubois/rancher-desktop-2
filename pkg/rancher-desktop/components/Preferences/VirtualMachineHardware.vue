@@ -18,7 +18,7 @@ const memoryInGB = computed(() => {
 });
 const hostInfo = computed(() => store.state.rdd.hostInfos?.[0]);
 const availMemoryInGB = computed(() => {
-  const memoryInBytes = hostInfo.value?.status?.memory || 2 * gigaScale;
+  const memoryInBytes = parseQuantity(hostInfo.value?.status?.memory) || 2 * gigaScale;
   return Math.floor(memoryInBytes / gigaScale);
 });
 const availNumCPUs = computed(() => hostInfo.value?.status?.cpus || 1);

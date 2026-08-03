@@ -15,15 +15,15 @@ describe('VirtualMachineHardware', () => {
   function makeStore({
     memory = '4Gi',
     cpus = 3,
-    hostMemoryBytes = 16 * 2 ** 30,
+    hostMemory = '16Gi',
     hostCPUs = 8,
     locked = new Set<string>(['virtualMachine.memory']),
   }: {
-    memory?:          string | number;
-    cpus?:            number;
-    hostMemoryBytes?: number;
-    hostCPUs?:        number;
-    locked?:          Set<string>;
+    memory?:     string | number;
+    cpus?:       number;
+    hostMemory?: string | number;
+    hostCPUs?:   number;
+    locked?:     Set<string>;
   } = {}) {
     const modify = jest.fn();
     const watchResources = jest.fn();
@@ -46,7 +46,7 @@ describe('VirtualMachineHardware', () => {
           state:      () => ({
             hostInfos: [{
               status: {
-                memory: hostMemoryBytes,
+                memory: hostMemory,
                 cpus:   hostCPUs,
               },
             }],
@@ -94,6 +94,21 @@ describe('VirtualMachineHardware', () => {
     const systemPrefs = wrapper.findComponent(SystemPreferences);
 
     expect(systemPrefs.props('memoryInGB')).toBe(expectedGiB);
+  });
+
+  test.each([
+    ['24Gi', 24],
+    ['16777216Ki', 16],
+    [8 * (2 ** 30), 8],
+  ])('computes availMemoryInGB from hostInfo.status.memory=%p', (hostMemory, expectedGiB) => {
+    const { store } = makeStore({ hostMemory });
+    const wrapper = shallowMount(VirtualMachineHardware, {
+      global: { plugins: [store] },
+    });
+
+    const systemPrefs = wrapper.findComponent(SystemPreferences);
+
+    expect(systemPrefs.props('availMemoryInGB')).toBe(expectedGiB);
   });
 
   test('watches hostInfos on mount and unwatches on unmount', () => {

@@ -53,3 +53,29 @@ assert_output_lt() {
             fail
     fi
 }
+
+# quantity_to_bytes - Print the byte count of a Kubernetes resource quantity
+# Only the binary forms rdd emits are accepted; anything else is a bug worth failing on.
+quantity_to_bytes() { # <quantity>
+    local -i exponent
+
+    if [[ ! $1 =~ ^([0-9]+)(Ki|Mi|Gi|Ti)?$ ]]; then
+        # shellcheck disable=SC2312 # We're intentionally failing anyway.
+        batslib_print_kv_single_or_multi 8 \
+            'expected' 'an integer with an optional binary suffix, e.g. 16Gi' \
+            'actual' "$1" |
+            batslib_decorate 'not a binary resource quantity' |
+            fail
+        return $?
+    fi
+
+    case ${BASH_REMATCH[2]} in
+    Ki) exponent=1 ;;
+    Mi) exponent=2 ;;
+    Gi) exponent=3 ;;
+    Ti) exponent=4 ;;
+    *) exponent=0 ;; # No suffix, so the quantity is already a byte count.
+    esac
+
+    echo $((BASH_REMATCH[1] * (1024 ** exponent)))
+}
