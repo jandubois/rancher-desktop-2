@@ -5,6 +5,7 @@
 package v1alpha1
 
 import (
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -17,16 +18,17 @@ type HostInfoStatus struct {
 	// cpus is the number of logical CPUs on the host.
 	// +optional
 	CPUs int `json:"cpus,omitempty"`
-	// memory is the total host RAM in bytes.
+	// memory is the total host RAM as a Kubernetes resource quantity
+	// (e.g. "16Gi").
 	// +optional
-	Memory int64 `json:"memory,omitempty"`
+	Memory *resource.Quantity `json:"memory,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,path=hostinfos,categories="all"
 // +kubebuilder:printcolumn:name="CPUs",type=integer,JSONPath=".status.cpus"
-// +kubebuilder:printcolumn:name="Memory",type=integer,JSONPath=".status.memory"
+// +kubebuilder:printcolumn:name="Memory",type=string,JSONPath=".status.memory"
 
 // HostInfo is a cluster-scoped singleton that exposes host hardware limits
 // (CPU count and total memory) so that clients such as the GUI can determine

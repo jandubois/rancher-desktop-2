@@ -2,6 +2,10 @@
 
 package v1alpha1
 
+import (
+	resource "k8s.io/apimachinery/pkg/api/resource"
+)
+
 // HostInfoStatusApplyConfiguration represents a declarative configuration of the HostInfoStatus type for use
 // with apply.
 //
@@ -9,8 +13,9 @@ package v1alpha1
 type HostInfoStatusApplyConfiguration struct {
 	// cpus is the number of logical CPUs on the host.
 	CPUs *int `json:"cpus,omitempty"`
-	// memory is the total host RAM in bytes.
-	Memory *int64 `json:"memory,omitempty"`
+	// memory is the total host RAM as a Kubernetes resource quantity
+	// (e.g. "16Gi").
+	Memory *resource.Quantity `json:"memory,omitempty"`
 }
 
 // HostInfoStatusApplyConfiguration constructs a declarative configuration of the HostInfoStatus type for use with
@@ -30,7 +35,7 @@ func (b *HostInfoStatusApplyConfiguration) WithCPUs(value int) *HostInfoStatusAp
 // WithMemory sets the Memory field in the declarative configuration to the given value
 // and returns the receiver, so that objects can be built by chaining "With" function invocations.
 // If called multiple times, the Memory field is set to the value of the last call.
-func (b *HostInfoStatusApplyConfiguration) WithMemory(value int64) *HostInfoStatusApplyConfiguration {
+func (b *HostInfoStatusApplyConfiguration) WithMemory(value resource.Quantity) *HostInfoStatusApplyConfiguration {
 	b.Memory = &value
 	return b
 }

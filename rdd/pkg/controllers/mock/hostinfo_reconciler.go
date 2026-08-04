@@ -7,6 +7,7 @@ package mock
 import (
 	"context"
 
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -38,8 +39,9 @@ func (r *hostInfoReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctr
 	if _, err := controllerutil.CreateOrUpdate(ctx, r, &hi, nil); err != nil {
 		return ctrl.Result{}, err
 	}
+	memory := resource.MustParse("12Gi")
 	hi.Status.CPUs = 32
-	hi.Status.Memory = 12 * 1024 * 1024 * 1024
+	hi.Status.Memory = &memory
 	if err := r.Status().Update(ctx, &hi); err != nil {
 		logger.Error(err, "Failed to update HostInfo status", "name", hi.Name)
 		return ctrl.Result{}, err

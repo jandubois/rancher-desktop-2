@@ -39,3 +39,23 @@ local_setup() {
     run assert_output_lt 1
     assert_failure
 }
+
+@test 'quantity without a suffix is a byte count' {
+    run -0 quantity_to_bytes 4096
+    assert_output 4096
+}
+
+@test 'quantity with a binary suffix is scaled' {
+    run -0 quantity_to_bytes 16Gi
+    assert_output 17179869184
+}
+
+@test 'decimal suffixes are rejected' {
+    run quantity_to_bytes 16G
+    assert_failure
+}
+
+@test 'fractional coefficients are rejected' {
+    run quantity_to_bytes 2.5Gi
+    assert_failure
+}
