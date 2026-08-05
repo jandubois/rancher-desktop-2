@@ -61,6 +61,13 @@ const de = {
   greet:  'Hallo {name}',
 };
 
+beforeEach(() => {
+  // Clear the cache so that each test starts with a clean slate.
+  for (const key of Object.keys(i18n._intlCache)) {
+    delete i18n._intlCache[key as keyof typeof i18n._intlCache];
+  }
+});
+
 describe('i18n store getters', () => {
   let state: ReturnType<typeof makeState>;
   let getters: ReturnType<typeof makeGetters>;

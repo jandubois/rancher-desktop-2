@@ -1,66 +1,71 @@
 import { IntlMessageFormat } from 'intl-messageformat';
-import { MutationTree } from 'vuex';
 
-import { ActionTree, GetterTree, MutationsType } from './ts-helpers';
 import packageJson from '../../../package.json' with { type: 'json' };
 
-import { LOCALE } from '@pkg/config/cookies';
 import { getVendor } from '@pkg/config/private-label';
-import { RootState } from '@pkg/entry/store';
+import type { RootState } from '@pkg/entry/store';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 import { get } from '@pkg/utils/object';
-import { availableLocales, loadTranslations } from '@pkg/utils/translationLoader';
+import { availableLocales, loadTranslations, type LocaleString } from '@pkg/utils/translationLoader';
+
+import type { ActionTree, GetterTree, MutationsType } from './ts-helpers';
+import type { MutationTree, Plugin } from 'vuex';
 
 type I18nState = ReturnType<typeof state>;
 
-// Formatters can't be serialized into state
-const intlCache: Record<string, IntlMessageFormat | string> = {};
-let ipcListenersBound = false;
+/**
+ * A cache of translation keys (as `<locale>/<key>`) to the corresponding
+ * message (or formatter) for the current locale.
+ * @note This is only exported for testing; do not use this.
+ * @note This is cleared on locale change.
+ * @note This is not part of the state because formatter instances do not work
+ *   well there; also, this is shared between different states (i.e. windows).
+ * @internal
+ */
+export const _intlCache: Record<`${ LocaleString }/${ string }`, IntlMessageFormat | string> = {};
 
-export const state = function() {
-  const out = {
-    default:      'en-us',
-    selected:     null as string | null,
-    available:    [...availableLocales],
-    translations: { 'en-us': loadTranslations('en-us') } as Record<string, Record<string, unknown>>,
-  };
-
-  return out;
-};
+export const state = () => ({
+  default:      'en-us' as LocaleString,
+  selected:     null as LocaleString | null,
+  available:    [...availableLocales],
+  translations: { 'en-us': loadTranslations('en-us') } as Partial<Record<LocaleString, Record<string, unknown>>>,
+});
 
 export const getters = {
   availableLocales(state, getters) {
+    const current: LocaleString = getters.current;
     const labelled = state.available.map((locale) => {
-      const nativeName = get(state.translations[locale], `locale.${ locale }`);
-      const translatedName =
-        get(state.translations[getters.current()], `locale.${ locale }`) ??
+      const nativeName: string = get(state.translations[locale], `locale.${ locale }`);
+      const translatedName: string =
+        get(state.translations[current], `locale.${ locale }`) ??
         get(state.translations[state.default], `locale.${ locale }`);
 
       if ( !nativeName || !translatedName || nativeName === translatedName ) {
-        return [locale, nativeName ?? translatedName ?? locale];
+        return [locale, nativeName ?? translatedName ?? locale] as const;
       }
 
-      return [locale, `${ nativeName } (${ translatedName })`];
+      return [locale, `${ nativeName } (${ translatedName })`] as const;
     });
 
     // Sort by the label the user reads, collated in the selected locale.
     // Fall back to the default when the selection is not a bundled locale,
     // because Intl.Collator rejects an unknown tag. The selection is null
     // until init runs, and older settings can carry 'none'.
-    const collationLocale = state.available.includes(getters.current()) ? getters.current() : state.default;
+    const collationLocale = state.available.includes(current) ? current : state.default;
     const collator = new Intl.Collator(collationLocale);
 
     labelled.sort(([, a], [, b]) => collator.compare(a, b));
 
-    return Object.fromEntries(labelled);
+    return Object.fromEntries(labelled) as Record<LocaleString, string>;
   },
 
   t: (state, getters) => (key: string, args?: Record<string, unknown>) => {
-    const cacheKey = `${ getters.current() }/${ key }`;
-    let formatter = intlCache[cacheKey];
+    const current: LocaleString = getters.current;
+    const cacheKey = `${ current }/${ key }` as const;
+    let formatter = _intlCache[cacheKey];
 
     if ( !formatter ) {
-      let msg = get(state.translations[getters.current()], key);
+      let msg = get(state.translations[current], key);
 
       if ( !msg ) {
         msg = get(state.translations[state.default], key);
@@ -89,7 +94,7 @@ export const getters = {
           // Uses the selected locale for formatting even when falling back to
           // English text. Acceptable: plural rules rarely diverge for the
           // strings used here.
-          formatter = new IntlMessageFormat(msg, getters.current());
+          formatter = new IntlMessageFormat(msg, current);
         } catch (e) {
           console.error(`Malformed ICU pattern for key "${ key }":`, e);
           formatter = msg;
@@ -98,7 +103,7 @@ export const getters = {
         formatter = msg;
       }
 
-      intlCache[cacheKey] = formatter;
+      _intlCache[cacheKey] = formatter;
     }
 
     if ( typeof formatter === 'string' ) {
@@ -118,36 +123,29 @@ export const getters = {
         // degrade to the raw pattern like the main-process interpolator.
         console.error(`Cannot format translation for key "${ key }":`, e);
 
-        return get(state.translations[getters.current()], key) ?? get(state.translations[state.default], key);
+        return get(state.translations[current], key) ?? get(state.translations[state.default], key);
       }
     }
   },
 
   exists: (state, getters) => (key: string) => {
-    const cacheKey = `${ getters.current() }/${ key }`;
+    const current: LocaleString = getters.current;
+    const cacheKey = `${ current }/${ key }` as const;
 
-    if ( intlCache[cacheKey] ) {
+    if ( _intlCache[cacheKey] ) {
       return true;
     }
 
-    let msg = get(state.translations[state.default], key);
-
-    if ( !msg && state.selected ) {
-      msg = get(state.translations[getters.current()], key);
-    }
-
-    if ( msg !== undefined ) {
-      return true;
-    }
-
-    return false;
+    return [current, state.default].some((locale) => {
+      return get(state.translations[locale], key) !== undefined;
+    });
   },
 
-  current: state => () => {
+  current(state) {
     return state.selected ?? state.default;
   },
 
-  default: state => () => {
+  default(state) {
     return state.default;
   },
 
@@ -176,17 +174,17 @@ export const getters = {
 } satisfies GetterTree<I18nState>;
 
 export const mutations = {
-  loadTranslations(state, { locale, translations }: { locale: string, translations: Record<string, unknown> }) {
+  loadTranslations(state, { locale, translations }: { locale: LocaleString, translations: Record<string, unknown> }) {
     state.translations[locale] = translations;
   },
 
-  setSelected(state, locale: string) {
+  setSelected(state, locale: LocaleString) {
     state.selected = locale;
   },
 } satisfies MutationsType<I18nState> & MutationTree<I18nState>;
 
 export const actions = {
-  async init({ state, commit, dispatch }) {
+  async init({ state, dispatch }) {
     // Load all translation files so availableLocales can show native names.
     // Acceptable overhead with a small number of locales; revisit if locale
     // count grows significantly.
@@ -196,33 +194,14 @@ export const actions = {
         .map(locale => dispatch('load', locale)),
     );
 
-    // The main process passes the resolved locale as a URL param, so the first
-    // paint is already localized; the cookie is a fallback for a window opened
-    // without one. Later changes arrive via settings-update below.
-    const urlLocale = new URLSearchParams(window.location.search).get('locale');
-    let selected = urlLocale || this.$cookies.get(LOCALE, { parseJSON: false });
-
-    if ( !selected ) {
-      selected = state.default;
-    }
-
-    if (!ipcListenersBound) {
-      ipcListenersBound = true;
-
-      // Listen for settings changes (from preferences UI or rdctl) to sync locale.
-      ipcRenderer.on('settings-update', (_, settings) => {
-        const locale = settings?.application?.locale || state.default;
-
-        if ( locale !== state.selected ) {
-          dispatch('switchTo', locale);
-        }
-      });
-    }
+    // Default to the locale stored in local storage; we will pick up the
+    // locale from the app once that exists.
+    const selected = localStorage.getItem('locale') as LocaleString | null || state.default;
 
     return dispatch('switchTo', selected);
   },
 
-  load({ commit }, locale: string) {
+  load({ commit }, locale: LocaleString) {
     const translations = loadTranslations(locale);
 
     commit('loadTranslations', { locale, translations });
@@ -230,7 +209,7 @@ export const actions = {
     return true;
   },
 
-  async switchTo({ state, commit, dispatch }, locale: string) {
+  async switchTo({ state, commit, dispatch }, locale: LocaleString) {
     if ( !locale ) {
       locale = state.default;
     }
@@ -239,27 +218,35 @@ export const actions = {
       try {
         await dispatch('load', locale);
       } catch (e) {
+        console.error(`Failed to load translations for locale "${ locale }":`, e);
         if ( locale !== 'en-us' ) {
           // Try to show something...
-
-          commit('setSelected', 'en-us');
-
-          return;
+          locale = 'en-us';
         }
       }
     }
 
-    for (const key of Object.keys(intlCache)) {
-      delete intlCache[key];
+    for (const key of Object.keys(_intlCache)) {
+      delete _intlCache[key as keyof typeof _intlCache];
     }
 
     commit('setSelected', locale);
-    this.$cookies.set(LOCALE, locale, {
-      encode: x => x,
-      maxAge: 86400 * 365,
-      secure: true,
-      path:   '/',
-    });
+    localStorage.setItem('locale', locale);
+    ipcRenderer.send('i18n/locale-change', locale);
   },
 
 } satisfies ActionTree<I18nState, RootState, typeof mutations, typeof getters>;
+
+export const plugins: Plugin<RootState>[] = [
+  // Update the selected locale when it has been set from the preferences.
+  function(store) {
+    store.watch(
+      (state, getters) => getters['preferences/preferences']?.application?.locale,
+      (newLocale: LocaleString | undefined) => {
+        if (newLocale && newLocale !== store.state.i18n.selected) {
+          store.dispatch('i18n/switchTo', newLocale);
+        }
+      },
+    );
+  },
+];
