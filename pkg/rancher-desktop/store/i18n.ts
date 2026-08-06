@@ -249,4 +249,18 @@ export const plugins: Plugin<RootState>[] = [
       },
     );
   },
+  // Update the _displayed_ locale when the local storage value has changed;
+  // this happens to the main window when the preferences dialog was changed
+  // without saving.
+  function(store) {
+    addEventListener('storage', (event) => {
+      if ( event.key === 'locale' ) {
+        const newLocale = event.newValue as LocaleString | null;
+
+        if (newLocale && newLocale !== store.state.i18n.selected) {
+          store.dispatch('i18n/switchTo', newLocale);
+        }
+      }
+    });
+  },
 ];
