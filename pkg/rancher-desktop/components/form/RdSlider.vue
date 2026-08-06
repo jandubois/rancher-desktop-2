@@ -10,6 +10,9 @@ export default defineComponent({
   components: {
     VueSlider, RdFieldset, RdInput,
   },
+  emits: {
+    change: (value: number) => Number.isInteger(value),
+  },
   props: {
     label: {
       type:    String,
@@ -20,16 +23,19 @@ export default defineComponent({
       required: true,
     },
     min: {
-      type:     Number,
-      required: true,
+      type:      Number,
+      required:  true,
+      validator: (value: number) => Number.isInteger(value),
     },
     max: {
-      type:     Number,
-      required: true,
+      type:      Number,
+      required:  true,
+      validator: (value: number) => Number.isInteger(value),
     },
     interval: {
-      type:    Number,
-      default: 1,
+      type:      Number,
+      default:   1,
+      validator: (value: number) => Number.isInteger(value),
     },
     marks: {
       type:     Array,
@@ -49,8 +55,16 @@ export default defineComponent({
     },
   },
   methods: {
-    updatedVal(value: string) {
-      this.$emit('change', value);
+    updatedVal(value: number) {
+      // When `value` is from the text box, it may not parse as a number (i.e.
+      // it is NaN); guard against that.
+      if (Number.isInteger(value)) {
+        this.$emit('change', value);
+      }
+    },
+    blur(event: FocusEvent) {
+      const target = event.target as HTMLInputElement;
+      target.value = this.value.toString();
     },
   },
 });
@@ -66,8 +80,13 @@ export default defineComponent({
         type="number"
         class="slider-input"
         :value="value"
+        :min="min"
+        :max="max"
+        :step="interval"
+        :disabled="disabled"
         :is-locked="isLocked"
-        @input="updatedVal($event.target.value)"
+        @input="updatedVal(parseInt($event.target.value, 10))"
+        @blur="blur($event)"
       >
         <template #after>
           <div class="empty-content" />
