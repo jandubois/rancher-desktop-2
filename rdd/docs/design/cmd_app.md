@@ -92,7 +92,9 @@ docker run --rm hello-world
 
 ## `rdd shell-profile`
 
-It prints a list of shell commands to STDOUT to put the `~/.rd2/bin` directory on the `PATH` and load completions for `rdd` and any bundled utilities (`docker`, `helm`, ...).
+> **Not implemented yet.** `rdd shell-profile` is a planned command. PATH management (see below) does **not** use it today; it writes the `export PATH` line directly.
+
+It would print a list of shell commands to STDOUT to put the `~/.rd2/bin` directory on the `PATH` and load completions for `rdd` and any bundled utilities (`docker`, `helm`, ...).
 
 ```console
 $ rdd shell-profile bash --path --completions
@@ -103,9 +105,13 @@ source <(helm completions bash)
 ...
 ```
 
-This is also the command the "path management" inserts into the users shell profile, e.g.
+What PATH management actually inserts today is the literal `export PATH` line, fenced by markers so it can be updated or removed later (on an `addPath` change, or on deletion) without disturbing the rest of the file:
 
 ```bash
-source <(~/.rd2/bin/rdd shell-profile bash --path)
+### MANAGED BY RANCHER DESKTOP 2 START (DO NOT EDIT)
+export PATH="$HOME/.rd2/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP 2 END (DO NOT EDIT)
 ```
+
+With `addPath: back` the line is `export PATH="$PATH:$HOME/.rd2/bin"` instead; csh/tcsh and fish get the equivalent line for their syntax. Completions are not configured today — that is what the planned `rdd shell-profile` would add.
 

@@ -60,6 +60,7 @@ import (
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/engine"
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/k3sversions"
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/kubernetes"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/pathmanagement"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
 	// Import built-in system controllers.
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/builtin/namespace"
@@ -536,6 +537,13 @@ func Delete(ctx context.Context, timeout time.Duration) error {
 	// registration, which the next `rdd svc create` would boot against a
 	// missing disk.
 	wsl.UnregisterInstanceDistros(ctx, instance.LimaHome())
+	// Remove this instance's PATH edits before deleting the bin directory, so the
+	// user isn't left with a block in their shell startup files (or the Windows
+	// user Environment) pointing at a directory that no longer exists. Best-effort:
+	// a failure here shouldn't stop the instance from being deleted.
+	if err := pathmanagement.Unwind(ctx); err != nil {
+		logrus.WithError(err).Warn("Failed to remove PATH management entries")
+	}
 	_ = os.RemoveAll(instance.ShortDir())
 	return os.RemoveAll(instance.Dir())
 }

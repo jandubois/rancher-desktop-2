@@ -71,16 +71,21 @@ func Test_computeSettledCondition(t *testing.T) {
 	engine := func(reason, message string, status metav1.ConditionStatus, gen int64) metav1.Condition {
 		return cond(v1alpha1.AppConditionContainerEngineReady, reason, message, status, gen)
 	}
+	pathMgmt := func(reason, message string, status metav1.ConditionStatus, gen int64) metav1.Condition {
+		return cond(v1alpha1.AppConditionPathManagementReady, reason, message, status, gen)
+	}
 
 	tests := []struct {
-		name              string
-		app               *v1alpha1.App
-		engineEnabled     bool
-		kubernetesEnabled bool
-		templateOutOfDate bool
-		wantStatus        metav1.ConditionStatus
-		wantReason        string
-		wantMessage       string
+		name                  string
+		app                   *v1alpha1.App
+		addPath               v1alpha1.AddPathStrategy
+		engineEnabled         bool
+		kubernetesEnabled     bool
+		templateOutOfDate     bool
+		pathManagementEnabled bool
+		wantStatus            metav1.ConditionStatus
+		wantReason            string
+		wantMessage           string
 	}{
 		{
 			name:          "no Running condition yet",
@@ -347,16 +352,155 @@ func Test_computeSettledCondition(t *testing.T) {
 			wantReason:        v1alpha1.AppSettledReasonApplyingTemplate,
 			wantMessage:       settledMessageApplyingTemplate,
 		},
+		{
+			// PATH management enabled but no condition yet: hold Settled false.
+			name: "path management enabled but not yet reported holds Settled false",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+			),
+			addPath:               v1alpha1.AddPathFront,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionFalse,
+			wantReason:            v1alpha1.AppSettledReasonWaitingForPathManagement,
+			wantMessage:           settledMessageWaitingForPathManagement,
+		},
+		{
+			name: "stale path management observed generation holds Settled false",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonApplied, "PATH management applied", metav1.ConditionTrue, 1),
+			),
+			addPath:               v1alpha1.AddPathFront,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionFalse,
+			wantReason:            v1alpha1.AppSettledReasonPathManagementStale,
+			wantMessage:           settledMessagePathManagementStale,
+		},
+		{
+			name: "failed path management surfaces its reason and message",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonFailed, "cannot write .zshrc", metav1.ConditionFalse, 2),
+			),
+			addPath:               v1alpha1.AddPathFront,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionFalse,
+			wantReason:            v1alpha1.PathManagementReasonFailed,
+			wantMessage:           "cannot write .zshrc",
+		},
+		{
+			// Under the manual default the user opted out of PATH management, so a
+			// permanent failure (a hand-edited dotfile with a dangling marker,
+			// reported as Malformed) is one we can't repair and must not block
+			// Settled for unrelated settings.
+			name: "manual strategy ignores a permanent (malformed) path management failure",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonMalformed, "cannot parse .zshrc", metav1.ConditionFalse, 2),
+			),
+			addPath:               v1alpha1.AddPathManual,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionTrue,
+			wantReason:            v1alpha1.AppSettledReasonSettled,
+			wantMessage:           settledMessageSettled,
+		},
+		{
+			// A repairable failure (I/O, read-only home) over an intact block does
+			// gate under manual: the reconciler requeues and clears it, so --wait
+			// shouldn't report success over a residue that's about to go away.
+			name: "manual strategy waits on a repairable path management failure",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonFailed, "cannot write .zshrc", metav1.ConditionFalse, 2),
+			),
+			addPath:               v1alpha1.AddPathManual,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionFalse,
+			wantReason:            v1alpha1.PathManagementReasonFailed,
+			wantMessage:           "cannot write .zshrc",
+		},
+		{
+			// Switching to manual still runs a removal, so Settled must wait for
+			// the reconciler to observe the current generation even though the
+			// stale condition is only Applied, not a failure.
+			name: "manual strategy still waits for a stale condition",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonApplied, "PATH management applied", metav1.ConditionTrue, 1),
+			),
+			addPath:               v1alpha1.AddPathManual,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionFalse,
+			wantReason:            v1alpha1.AppSettledReasonPathManagementStale,
+			wantMessage:           settledMessagePathManagementStale,
+		},
+		{
+			// Manual also waits for the first report: the reconciler still runs
+			// and writes a condition, so a nil one means it hasn't caught up yet.
+			name: "manual strategy waits for the first path management report",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+			),
+			addPath:               v1alpha1.AddPathManual,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionFalse,
+			wantReason:            v1alpha1.AppSettledReasonWaitingForPathManagement,
+			wantMessage:           settledMessageWaitingForPathManagement,
+		},
+		{
+			name: "path management ready at current generation settles",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonApplied, "PATH management applied", metav1.ConditionTrue, 2),
+			),
+			addPath:               v1alpha1.AddPathFront,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionTrue,
+			wantReason:            v1alpha1.AppSettledReasonSettled,
+			wantMessage:           settledMessageSettled,
+		},
+		{
+			// When path management is not enabled its condition is ignored,
+			// even if absent, so Settled still reaches True.
+			name: "path management disabled ignores its condition",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+			),
+			engineEnabled:         true,
+			pathManagementEnabled: false,
+			wantStatus:            metav1.ConditionTrue,
+			wantReason:            v1alpha1.AppSettledReasonSettled,
+			wantMessage:           settledMessageSettled,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			tt.app.Spec.Application.AddPath = tt.addPath
 			got := computeSettledCondition(tt.app, settledInputs{
-				engineEnabled:     tt.engineEnabled,
-				kubernetesEnabled: tt.kubernetesEnabled,
-				templateUpToDate:  !tt.templateOutOfDate,
+				engineEnabled:         tt.engineEnabled,
+				kubernetesEnabled:     tt.kubernetesEnabled,
+				templateUpToDate:      !tt.templateOutOfDate,
+				pathManagementEnabled: tt.pathManagementEnabled,
 			})
 			assert.Equal(t, got.Type, v1alpha1.AppConditionSettled)
 			assert.Equal(t, got.Status, tt.wantStatus)
@@ -403,6 +547,46 @@ func Test_engineEnabled(t *testing.T) {
 
 			r := &AppReconciler{Discovery: tt.discovery}
 			assert.Equal(t, r.engineEnabled(t.Context()), tt.want)
+		})
+	}
+}
+
+func Test_pathManagementEnabled(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		discovery ControllerDiscovery
+		want      bool
+	}{
+		{
+			name:      "nil discovery returns false",
+			discovery: nil,
+			want:      false,
+		},
+		{
+			name:      "path management present in discovery returns true",
+			discovery: fakeDiscovery{enabled: []string{"app", "lima", "path-management"}},
+			want:      true,
+		},
+		{
+			name:      "path management absent from discovery returns false",
+			discovery: fakeDiscovery{enabled: []string{"app", "lima"}},
+			want:      false,
+		},
+		{
+			name:      "discovery error defaults to true so the wait does not return prematurely",
+			discovery: fakeDiscovery{err: errors.New("kube-apiserver unreachable")},
+			want:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			r := &AppReconciler{Discovery: tt.discovery}
+			assert.Equal(t, r.pathManagementEnabled(t.Context()), tt.want)
 		})
 	}
 }

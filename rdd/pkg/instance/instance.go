@@ -131,6 +131,13 @@ var LimaHome = sync.OnceValue(func() string {
 	return filepath.Join(ShortDir(), "lima")
 })
 
+// BinDir returns the directory holding this instance's user-facing executables
+// (e.g., ~/.rd2/bin). This is the directory the path-management controller adds
+// to the user's PATH.
+var BinDir = sync.OnceValue(func() string {
+	return filepath.Join(ShortDir(), "bin")
+})
+
 // KubeConfig returns the path to the instance's standalone kubeconfig
 // (e.g., ~/.rd2/kube.config). It holds only the rancher-desktop-{instance}
 // context and is published alongside the ~/.kube/config merge, so rdd run

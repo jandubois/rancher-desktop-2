@@ -67,19 +67,15 @@ Except for the backgrounding of the control plane process all other actions are 
 
 ### Setting up `PATH` and shell completions
 
-`rdd start` has installed additional utilities to `~/.rd2/bin`, but now that directory must be added to the `PATH` as well:
+`rdd start` has installed additional utilities to `~/.rd2/bin`, and that directory must be added to the `PATH`. Unless `spec.application.addPath` is `manual`, PATH management does this automatically: it writes a marker-fenced `export PATH` line into the user's shell startup files (the first existing of `~/.bash_profile`, `~/.bash_login`, `~/.profile`, plus `~/.bashrc` and `~/.zshrc`, with the equivalent for csh/tcsh and fish):
 
 ```bash
-export PATH="$HOME/.rd2/bin:$PATH
+### MANAGED BY RANCHER DESKTOP 2 START (DO NOT EDIT)
+export PATH="$HOME/.rd2/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP 2 END (DO NOT EDIT)
 ```
 
-An alternative is run use [rdd shell-profile](cmd_app.md#rdd-shell-profile); it can also configure shell completions for `rdd` and the additional utilities.
-
-```bash
-source <(rdd shell-profile bash --path --completions)
-```
-
-This is the command that is being added by path-management to `~/.bash_profile`.
+The markers let a later `rdd set application.addPath=...` (or an instance deletion) update or remove just this block, leaving the rest of the file alone. Shell completions for `rdd` and the bundled utilities are not configured today; the planned [`rdd shell-profile`](cmd_app.md#rdd-shell-profile) command would add both `PATH` and completions in one line, but it is not implemented yet.
 
 ### Docker Context
 
