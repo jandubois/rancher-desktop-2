@@ -155,7 +155,7 @@ func (r *imageReconciler) updateImage(
 
 func (r *imageReconciler) SetupWithManager(ctx context.Context, mgr ctrl.Manager) error {
 	var errs []error
-	if err := base.IndexFields(ctx, &containersv1alpha1.Image{}, mgr); err != nil {
+	if err := base.IndexCRDFields(ctx, &containersv1alpha1.Image{}, mgr); err != nil {
 		errs = append(errs, err)
 	}
 
