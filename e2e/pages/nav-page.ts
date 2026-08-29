@@ -53,10 +53,9 @@ export class NavPage {
       if (!stderr.includes('has been started: true')) {
         return false;
       }
-      // Check CRDs first, to avoid error messages when apps are not registered yet.
-      const AppsCRDSuffix = '/apps.app.rancherdesktop.io';
-      const crds = await rdd('ctl', 'get', 'crds', '--output=name');
-      if (!crds.split('\n').some(line => line.trim().endsWith(AppsCRDSuffix))) {
+      // Check API resources first, to avoid error messages when apps are not registered yet.
+      const resources = JSON.parse(await rdd('ctl', 'api-resources', '--output=json'));
+      if (!resources.resources.some((resource: { name: string }) => resource.name === 'apps')) {
         return false;
       }
       const rawApps = await rdd('ctl', 'get', 'apps', '--output=json');
