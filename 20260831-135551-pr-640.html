@@ -232,7 +232,7 @@ summary { cursor: pointer; font-weight: 600; }
 
     <div class="card card-neutral">
     <p>This PR adds an <code>ImagePullRequest</code> reconciler, a validating webhook, progress status fields, and a moby-backed <code>pullImage</code>, alongside a <code>Complete</code>→<code>Settled</code> condition rename and a reconciler split. The state machine is careful and unusually well unit-tested. Five Important defects survived verification: the bulk reconcile path discards every requeue, two documented failure reasons are unreachable, a stale progress callback writes onto a recreated request, the refactor lost workqueue coalescing, and progress writes are unthrottled.</p>
-    <p>Four reviewers ran. Codex timed out without emitting a review, but the probe tests it left in <code>.scratch/</code> were recovered, executed, and contributed two findings no other reviewer raised (I3, S2). Findings marked <em>reproduced</em> below come with a failing test written and run against the review SHA; <code>go build</code> and <code>go test -race</code> are otherwise clean on every changed package.</p>
+    <p>Four reviewers ran. Codex timed out without emitting a review, but the probe tests it left in <code>.scratch/</code> were recovered, executed, and contributed two findings no other reviewer raised (I3, S2). Findings marked <em>reproduced</em> or <em>measured</em> are backed by the programs under Reproductions below, each executed against the review SHA; <code>go build</code> and <code>go test -race</code> are otherwise clean on every changed package.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -920,6 +920,258 @@ MSYS* | MINGW*)
       <li>[ ] [repo] The engine reconciler is a cluster-scoped singleton whose <code>reconcileWatcher</code> pass is object-independent and issues several List calls per invocation. When reviewing changes to its event handlers, check whether mirror-resource events still map to a single constant workqueue key: giving each object its own key defeats the workqueue&#39;s dedup and turns a fullSync burst from O(N) into O(N²).</li>
       <li>[ ] [repo] <code>*Request</code> CRDs in this repo use paired <code>Settled</code> and <code>Failed</code> conditions, where <code>Settled=True</code> marks any terminal state and <code>Failed</code> distinguishes the outcome; a successful request carries <code>Failed=False, Reason=Succeeded</code>. Only <code>ImagePullRequest</code> has a controller — the other <code>*Request</code> types exist as CRD schema with no reconciler, so a finding that one of them &quot;does nothing&quot; is expected, not a defect.</li>
     </ul>
+    </div>
+    <hr>
+    <h2 id="reproductions">Reproductions <a href="#reproductions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every finding marked <em>reproduced</em> or <em>measured</em> is backed by one of the programs below. Each was written into a worktree checked out at the review SHA (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0efdad7a03677e561561d1d1cd5fb46235b7a350"><code>0efdad7a03677e561561d1d1cd5fb46235b7a350</code></a>), executed, and then removed; the worktree was confirmed clean afterwards and the suite re-run green.</p>
+    <h3 id="i3-s2-codex-s-recovered-probes">I3, S2 — Codex&#39;s recovered probes <a href="#i3-s2-codex-s-recovered-probes" class="pilcrow">&#182;</a></h3>
+    <p>Codex emitted no review, but left these in <code>.scratch/</code>. Dropped into <code>rdd/pkg/controllers/app/engine/controllers/</code> and run with <code>go test -v -run TestReviewProbe</code>, all three fail: the first is a second route to I1 needing no restart scenario, the second is I3, the third is S2.</p>
+      <pre><code class="language-go">package controllers
+
+import (
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+	apimeta &quot;k8s.io/apimachinery/pkg/api/meta&quot;
+	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+	&quot;k8s.io/apimachinery/pkg/types&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+
+	containersv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+)
+
+// Reproduces the post-restart scenario: an ImagePullRequest persisted as
+// Settled=False/Pulling with a stale LastUpdateTime, no in-memory state
+// (the daemon restarted), reconciled through the engine-became-available
+// bulk path.
+func TestStrandProbeBulkTimeoutLosesRequeue(t *testing.T) {
+	stale := metav1.NewTime(time.Now().UTC().Add(-10 * time.Minute))
+	req := &amp;containersv1alpha1.ImagePullRequest{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      &quot;pull-request&quot;,
+			Namespace: &quot;rancher-desktop&quot;,
+			UID:       types.UID(&quot;pull-request-uid&quot;),
+		},
+		Spec: containersv1alpha1.ImagePullRequestSpec{RepoTag: &quot;alpine:latest&quot;},
+		Status: containersv1alpha1.ImagePullRequestStatus{
+			LastUpdateTime: stale,
+		},
+	}
+	apimeta.SetStatusCondition(&amp;req.Status.Conditions, metav1.Condition{
+		Type:    containersv1alpha1.ImagePullRequestConditionSettled,
+		Status:  metav1.ConditionFalse,
+		Reason:  &quot;Pulling&quot;,
+		Message: &quot;pulling image \&quot;alpine:latest\&quot;&quot;,
+	})
+
+	engine := &amp;testEngine{}
+	r := &amp;EngineReconciler{
+		Client:                newEngineImagePullReconcilerTestClient(t, req),
+		engine:                engine,
+		imagePullRequestState: map[types.UID]imagePullRequestState{},
+		watcherCtx:            t.Context(),
+	}
+
+	// Engine-became-available: empty UID drives the bulk branch.
+	result, err := r.reconcileImagePullRequest(t.Context(), engineRequest{
+		Kind:           containersv1alpha1.ImagePullRequestKind,
+		NamespacedName: types.NamespacedName{Namespace: &quot;rancher-desktop&quot;},
+	})
+	assert.NilError(t, err)
+
+	state := r.imagePullRequestState[req.UID]
+	t.Logf(&quot;returned result           = %#v&quot;, result)
+	t.Logf(&quot;in-memory desiredReason   = %q&quot;, state.desiredReason)
+
+	updated := &amp;containersv1alpha1.ImagePullRequest{}
+	assert.NilError(t, r.Get(t.Context(), client.ObjectKeyFromObject(req), updated))
+	settled := apimeta.FindStatusCondition(updated.Status.Conditions, containersv1alpha1.ImagePullRequestConditionSettled)
+	t.Logf(&quot;persisted Settled         = status=%v reason=%q&quot;, settled.Status, settled.Reason)
+
+	if state.desiredReason != failedConditionReasonZeroValue &amp;&amp; result.RequeueAfter == 0 {
+		t.Errorf(&quot;STRANDED: desiredReason=%q queued in memory but RequeueAfter=0; &quot;+
+			&quot;nothing will apply it and the object stays Settled=%v/%q&quot;,
+			state.desiredReason, settled.Status, settled.Reason)
+	}
+}</code></pre>
+    <p>Observed output:</p>
+      <pre><code class="language-plaintext">--- FAIL: TestReviewProbeBulkPreservesRequeue
+    bulk reconcile dropped child requeue:
+      reconcile.Result{Requeue:false, RequeueAfter:0, Priority:(*int)(nil)}
+--- FAIL: TestReviewProbeStaleProgressDoesNotUpdateRecreatedRequest
+    stale pull updated recreated request: uid=new status={Start:1, Current:2, Total:3,
+      Units:&quot;bytes&quot;, Conditions:[{Type:&quot;Settled&quot;, Status:&quot;False&quot;, Reason:&quot;Pulling&quot;,
+      Message:&quot;pulling image \&quot;busybox:latest\&quot;&quot;}]}
+--- FAIL: TestReviewProbeDeleteCancelsWithoutEngine
+    deleted request was not cancelled without an engine: cause=&lt;nil&gt;</code></pre>
+    <p>The second failure is the one to read closely: the status written onto the recreated <code>busybox:latest</code> request carries progress from the old <code>alpine:latest</code> pull.</p>
+    <h3 id="i1-bulk-reconcile-strands-a-request">I1 — bulk reconcile strands a request <a href="#i1-bulk-reconcile-strands-a-request" class="pilcrow">&#182;</a></h3>
+    <p>Dropped into <code>rdd/pkg/controllers/app/engine/controllers/</code> and run with <code>go test -run TestStrandProbeBulkTimeoutLosesRequeue</code>.</p>
+      <pre><code class="language-go">package controllers
+
+import (
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+	apimeta &quot;k8s.io/apimachinery/pkg/api/meta&quot;
+	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+	&quot;k8s.io/apimachinery/pkg/types&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+
+	containersv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+)
+
+// Reproduces the post-restart scenario: an ImagePullRequest persisted as
+// Settled=False/Pulling with a stale LastUpdateTime, no in-memory state
+// (the daemon restarted), reconciled through the engine-became-available
+// bulk path.
+func TestStrandProbeBulkTimeoutLosesRequeue(t *testing.T) {
+	stale := metav1.NewTime(time.Now().UTC().Add(-10 * time.Minute))
+	req := &amp;containersv1alpha1.ImagePullRequest{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      &quot;pull-request&quot;,
+			Namespace: &quot;rancher-desktop&quot;,
+			UID:       types.UID(&quot;pull-request-uid&quot;),
+		},
+		Spec: containersv1alpha1.ImagePullRequestSpec{RepoTag: &quot;alpine:latest&quot;},
+		Status: containersv1alpha1.ImagePullRequestStatus{
+			LastUpdateTime: stale,
+		},
+	}
+	apimeta.SetStatusCondition(&amp;req.Status.Conditions, metav1.Condition{
+		Type:    containersv1alpha1.ImagePullRequestConditionSettled,
+		Status:  metav1.ConditionFalse,
+		Reason:  &quot;Pulling&quot;,
+		Message: &quot;pulling image \&quot;alpine:latest\&quot;&quot;,
+	})
+
+	engine := &amp;testEngine{}
+	r := &amp;EngineReconciler{
+		Client:                newEngineImagePullReconcilerTestClient(t, req),
+		engine:                engine,
+		imagePullRequestState: map[types.UID]imagePullRequestState{},
+		watcherCtx:            t.Context(),
+	}
+
+	// Engine-became-available: empty UID drives the bulk branch.
+	result, err := r.reconcileImagePullRequest(t.Context(), engineRequest{
+		Kind:           containersv1alpha1.ImagePullRequestKind,
+		NamespacedName: types.NamespacedName{Namespace: &quot;rancher-desktop&quot;},
+	})
+	assert.NilError(t, err)
+
+	state := r.imagePullRequestState[req.UID]
+	t.Logf(&quot;returned result           = %#v&quot;, result)
+	t.Logf(&quot;in-memory desiredReason   = %q&quot;, state.desiredReason)
+
+	updated := &amp;containersv1alpha1.ImagePullRequest{}
+	assert.NilError(t, r.Get(t.Context(), client.ObjectKeyFromObject(req), updated))
+	settled := apimeta.FindStatusCondition(updated.Status.Conditions, containersv1alpha1.ImagePullRequestConditionSettled)
+	t.Logf(&quot;persisted Settled         = status=%v reason=%q&quot;, settled.Status, settled.Reason)
+
+	if state.desiredReason != failedConditionReasonZeroValue &amp;&amp; result.RequeueAfter == 0 {
+		t.Errorf(&quot;STRANDED: desiredReason=%q queued in memory but RequeueAfter=0; &quot;+
+			&quot;nothing will apply it and the object stays Settled=%v/%q&quot;,
+			state.desiredReason, settled.Status, settled.Reason)
+	}
+}</code></pre>
+    <p>Observed output:</p>
+      <pre><code class="language-plaintext">    returned result           = reconcile.Result{Requeue:false, RequeueAfter:0, Priority:(*int)(nil)}
+    in-memory desiredReason   = &quot;PullTimeout&quot;
+    persisted Settled         = status=False reason=&quot;Pulling&quot;
+    STRANDED: desiredReason=&quot;PullTimeout&quot; queued in memory but RequeueAfter=0;
+    nothing will apply it and the object stays Settled=False/&quot;Pulling&quot;
+--- FAIL: TestStrandProbeBulkTimeoutLosesRequeue (0.05s)</code></pre>
+    <p>Applying the proposed fix (accumulate the smallest non-zero <code>RequeueAfter</code>) makes this probe pass and makes the shipped test fail, which is how the pinned assertion was found:</p>
+      <pre><code class="language-plaintext">--- FAIL: TestEngineImagePullRequestReconcileBulkProcessesPendingRequests (0.00s)
+    image_pull_request_reconciler_test.go:174: assertion failed:
+      {false 30s &lt;nil&gt;} (result reconcile.Result) != {false 0s &lt;nil&gt;} (reconcile.Result)</code></pre>
+    <h3 id="i4-lost-workqueue-coalescing">I4 — lost workqueue coalescing <a href="#i4-lost-workqueue-coalescing" class="pilcrow">&#182;</a></h3>
+    <p>Same package; run with <code>go test -v -run TestQueueProbeCoalescing</code>. It compares the merge-base key scheme against this PR&#39;s using the real client-go workqueue.</p>
+      <pre><code class="language-go">package controllers
+
+import (
+	&quot;testing&quot;
+
+	&quot;k8s.io/apimachinery/pkg/types&quot;
+	&quot;k8s.io/client-go/util/workqueue&quot;
+
+	containersv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+)
+
+// Models a fullSync burst of N mirror events arriving before the worker
+// drains the queue, under the merge-base key scheme vs. this PR&#39;s.
+func TestQueueProbeCoalescing(t *testing.T) {
+	const n = 500
+
+	// Merge-base: every Container/Image/Volume event mapped to the single
+	// request {Name: &quot;app&quot;}.
+	base := workqueue.NewTypedWithConfig(workqueue.TypedQueueConfig[types.NamespacedName]{Name: &quot;base&quot;})
+	for range n {
+		base.Add(types.NamespacedName{Name: appName})
+	}
+	t.Logf(&quot;merge-base scheme: %d events enqueued -&gt; queue depth %d&quot;, n, base.Len())
+
+	// This PR: enqueueRequestsForKind gives every object its own key.
+	pr := workqueue.NewTypedWithConfig(workqueue.TypedQueueConfig[engineRequest]{Name: &quot;pr&quot;})
+	for i := range n {
+		pr.Add(engineRequest{
+			Kind:           containersv1alpha1.ContainerKind,
+			NamespacedName: types.NamespacedName{Namespace: &quot;rancher-desktop&quot;, Name: string(rune(&#39;a&#39; + i%26)) + string(rune(i))},
+			UID:            types.UID(string(rune(i))),
+		})
+	}
+	t.Logf(&quot;this PR&#39;s scheme:  %d events enqueued -&gt; queue depth %d&quot;, n, pr.Len())
+}</code></pre>
+    <p>Observed output:</p>
+      <pre><code class="language-plaintext">    merge-base scheme: 500 events enqueued -&gt; queue depth 1
+    this PR&#39;s scheme:  500 events enqueued -&gt; queue depth 500</code></pre>
+    <h3 id="s1-context-afterfunc-retention">S1 — `context.AfterFunc` retention <a href="#s1-context-afterfunc-retention" class="pilcrow">&#182;</a></h3>
+    <p>A standalone <code>main.go</code> (module <code>afterfunc</code>, <code>go 1.26</code>), run with <code>go run .</code>. It registers N shutdown hooks the way the reconciler does, with and without calling the returned <code>stop</code>, and reports heap retained after a GC.</p>
+      <pre><code class="language-go">package main
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;runtime&quot;
+)
+
+func measure(n int, keep bool) uint64 {
+	parent, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	stops := make([]func() bool, 0, n)
+	runtime.GC()
+	var before runtime.MemStats
+	runtime.ReadMemStats(&amp;before)
+	for range n {
+		_, pullCancel := context.WithCancelCause(context.WithoutCancel(context.Background()))
+		stop := context.AfterFunc(parent, func() { pullCancel(nil) })
+		if keep {
+			stop() // what the fix would do
+		}
+		pullCancel(nil) // pull finished
+		_ = stops
+	}
+	runtime.GC()
+	var after runtime.MemStats
+	runtime.ReadMemStats(&amp;after)
+	runtime.KeepAlive(parent)
+	return after.HeapAlloc - before.HeapAlloc
+}
+
+func main() {
+	const n = 100000
+	fmt.Printf(&quot;stop() NOT called (current code): %d bytes retained for %d pulls\n&quot;, measure(n, false), n)
+	fmt.Printf(&quot;stop() called (proposed fix):     %d bytes retained for %d pulls\n&quot;, measure(n, true), n)
+}</code></pre>
+    <p>Observed output:</p>
+      <pre><code class="language-plaintext">stop() NOT called (current code): 27511160 bytes retained for 100000 pulls
+stop() called (proposed fix):     18446744073709551128 bytes retained for 100000 pulls</code></pre>
+    <p>27,511,160 / 100,000 = ~275 bytes retained per pull. The second figure is an unsigned underflow of a negative delta — with <code>stop()</code> called the heap ends <em>smaller</em> than the baseline, i.e. nothing is retained.</p>
     </div>
   </main>
   <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
