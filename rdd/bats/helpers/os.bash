@@ -11,7 +11,15 @@ Darwin)
     OS=darwin
     ;;
 Linux)
-    if grep --quiet WSL2 </proc/sys/kernel/osrelease; then # spellchecker:ignore
+    if is_wsl; then
+        if [[ ! -e /proc/sys/fs/binfmt_misc/WSLInterop ]]; then
+            # WSLInterop is missing; we will die later because we can't spawn
+            # Windows processes.  Die early for better debugging.
+            # To run Linux tests on Windows, run in a VM or a container.
+            # shellcheck disable=SC2016 # We want to print the literal command, not expand it.
+            echo 'WSL detected, but WSL interop is missing.  Try `wsl --shutdown`.' >&2
+            exit 1
+        fi
         OS=windows
     else
         OS=linux
@@ -54,6 +62,11 @@ is_windows() {
 # Both report OS=windows, but behave differently from WSL.
 is_msys() {
     [[ "${UNAME}" == MSYS* || "${UNAME}" == MINGW* ]]
+}
+
+is_wsl() {
+    # `wslpath` exists and is a symlink to `/init`; we are running under WSL.
+    [[ /bin/wslpath -ef /init ]]
 }
 
 is_unix() {
