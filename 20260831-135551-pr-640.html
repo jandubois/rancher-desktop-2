@@ -288,6 +288,7 @@ summary { cursor: pointer; font-weight: 600; }
 	assert.Assert(t, state.cancel != nil)
 </code></pre>
     <p>Fix: accumulate the smallest non-zero <code>RequeueAfter</code> across the loop and return it.</p>
+    <p>Reproduction: <a href="#i1-bulk-reconcile-strands-a-request">Reproductions → I1</a>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler.go">
       <div class="finding-title" id="I2">
@@ -354,6 +355,7 @@ summary { cursor: pointer; font-weight: 600; }
     <p><code>onProgress</code> re-fetches by name/namespace with no UID check, so an in-flight pull keeps writing after its request is deleted and a new one is created under the same name. The guard exists elsewhere in the same file — <code>reconcileImagePullRequestTerminalReason:320</code> checks <code>latest.UID != imagePullRequest.UID</code> with the comment &quot;The request was deleted and recreated; don&#39;t apply the reason&quot; — but the progress path never got it.</p>
     <p>Reproduced: an <code>alpine:latest</code> pull&#39;s progress callback, fired after the request was replaced by a <code>busybox:latest</code> one of the same name, wrote <code>Start:1 Current:2 Total:3</code> and a <code>Settled=False/Pulling</code> condition onto the new object. Requests named deterministically by the caller (or recreated after the TTL sweep) hit this directly.</p>
     <p>Fix: carry the UID into <code>onProgress</code> and skip the update when it does not match, mirroring line 320.</p>
+    <p>Reproduction: <a href="#i3-s2-codex-s-recovered-probes">Reproductions → I3, S2</a>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="I4">
@@ -396,6 +398,7 @@ summary { cursor: pointer; font-weight: 600; }
 	// return on actionsErr would stall every mirror&#39;s finalizer behind
 	// a single stuck container action: the next reconcile would hit</code></pre>
     <p>Fix: return a constant key for every kind except <code>ImagePullRequestKind</code>.</p>
+    <p>Measurement: <a href="#i4-lost-workqueue-coalescing">Reproductions → I4</a>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler.go">
       <div class="finding-title" id="I5">
@@ -441,6 +444,7 @@ summary { cursor: pointer; font-weight: 600; }
     <p><code>AfterFunc</code> registers a child on <code>r.watcherCtx</code> via <code>propagateCancel</code> (<code>GOROOT/src/context/context.go:326-330</code>); the entry is removed only by the returned <code>stop</code> or by the parent&#39;s cancellation. Cancelling <code>pullContext</code> does not unregister it, and <code>watcherCtx</code> lives for the whole manager, so every pull adds a permanent entry.</p>
     <p>Measured: 100,000 registrations retain 27,511,160 bytes — about 275 bytes per pull, never reclaimed. Calling <code>stop()</code> retains nothing. Small in absolute terms but unbounded, which is why it sits here rather than under Important; all three reviewers that raised it rated it higher.</p>
     <p>Fix: keep the returned stop function and call it once the pull terminates, alongside the <code>defer cancel()</code> in <code>onComplete</code>.</p>
+    <p>Measurement: <a href="#s1-context-afterfunc-retention">Reproductions → S1</a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler.go">
       <div class="finding-title" id="S2">
@@ -490,6 +494,7 @@ func (r *EngineReconciler) reconcileSingleImagePullRequest(
 	ctx context.Context,</code></pre>
     <p>Reproduced: with <code>r.engine == nil</code> and a live cancel func in the state map, reconciling a deleted request leaves <code>context.Cause(pullCtx) == nil</code>.</p>
     <p>Fix: move the <code>e == nil</code> check below the deletion and settled branches — neither needs an engine.</p>
+    <p>Reproduction: <a href="#i3-s2-codex-s-recovered-probes">Reproductions → I3, S2</a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/image_types.go">
       <div class="finding-title" id="S3">
