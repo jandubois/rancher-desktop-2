@@ -205,6 +205,14 @@ summary { cursor: pointer; font-weight: 600; }
   pre code { font-size: 0.72rem; }
 }
 
+/* Reproducers — collapsed, so a long proof keeps the next finding on screen */
+details.repro { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.repro > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.repro > summary:hover { background: #eef1f4; }
+details.repro[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.repro pre { border-radius: 0 !important; }
+details.repro .code-file-header { margin-top: 0; border-radius: 0; }
+
   </style>
 </head>
 <body>
@@ -265,7 +273,8 @@ summary { cursor: pointer; font-weight: 600; }
 	fishPath := filepath.Join(fishDir, &quot;config.fish&quot;)
 	if present {</code></pre>
     <p><code>managedlines.Manage</code> creates a missing file, so this loop writes <code>~/.tcshrc</code> for every user who opts in, including those keeping all their configuration in <code>~/.cshrc</code>. tcsh reads <code>~/.tcshrc</code> <em>instead of</em> <code>~/.cshrc</code> when it exists, so a brand-new <code>~/.tcshrc</code> takes over and the user&#39;s aliases, <code>setenv</code> lines and prompt stop being sourced. The bash login files already implement first-existing precedence 40 lines above; <code>.tcshrc</code> needs the mirror-image rule.</p>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">home := t.TempDir()
 os.WriteFile(filepath.Join(home, &quot;.cshrc&quot;), []byte(&quot;setenv EDITOR vim\nalias ll ls -l\n&quot;), 0o644)
 applyPosix(home, filepath.Join(home, &quot;.config&quot;), &quot;/home/u/.rd2/bin&quot;, appv1alpha1.AddPathFront, pStart, pEnd)
@@ -280,6 +289,7 @@ if err == nil &amp;&amp; !strings.Contains(string(tc), &quot;EDITOR&quot;) {
         ### MANAGED BY RANCHER DESKTOP 2 END (DO NOT EDIT)
     PROBE RESULT: new .tcshrc does not carry the user&#39;s .cshrc settings (EDITOR/alias lost for tcsh)
 --- FAIL: TestProbeTcshrcShadowsCshrc</code></pre>
+      </details>
     <p>Fix: always manage <code>.cshrc</code>, and touch <code>.tcshrc</code> only when it already exists.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go">
@@ -302,7 +312,8 @@ if err == nil &amp;&amp; !strings.Contains(string(tc), &quot;EDITOR&quot;) {
 			if err := managedlines.Manage(p, start, end, []string{posixLine}, true); err != nil {
 				return err</code></pre>
     <p><code>fileExists</code> follows symlinks and <code>atomicfile</code> resolves them, so when one login file is a symlink to another — <code>.bash_profile</code> → <code>.profile</code>, a common dotfiles layout — the loop writes the block to the resolved target on the first iteration, then reaches the same target again under its own name and removes it because <code>added</code> is now true. The feature silently does nothing for login shells, with no error.</p>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">home := t.TempDir()
 os.WriteFile(filepath.Join(home, &quot;.profile&quot;), []byte(&quot;# user profile\n&quot;), 0o644)
 os.Symlink(filepath.Join(home, &quot;.profile&quot;), filepath.Join(home, &quot;.bash_profile&quot;))
@@ -316,6 +327,7 @@ if !strings.Contains(string(b), pStart) {
         # user profile
     PROBE RESULT: no login file carries the PATH block; login shells never get /home/u/.rd2/bin on PATH
 --- FAIL: TestProbeSymlinkedLoginFile</code></pre>
+      </details>
     <p>Fix: <code>os.Stat</code> the first file written and skip later entries that <code>os.SameFile</code> reports as the same inode.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/pathlist.go">
@@ -361,7 +373,8 @@ if !strings.Contains(string(b), pStart) {
   user&#39;s knowledge; the GUI is expected to send `front` explicitly when the user opts in.
 
 - **spec.namespace**: The namespace where the owned `LimaVM` and its ConfigMaps are created. Defaults to `default`. **Immutable after creation** — changing it would orphan resources in the original namespace.</code></pre>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">for _, current := range []string{
 	`C:\Windows;C:\Windows\System32;`, `C:\Windows;;C:\Windows\System32`,
 	`;C:\Windows`, `C:\Windows;C:\Windows\System32`,
@@ -373,6 +386,7 @@ if !strings.Contains(string(b), pStart) {
 manual: current=&quot;C:\\Windows;;C:\\Windows\\System32&quot; -&gt; updated=&quot;C:\\Windows;C:\\Windows\\System32&quot; changed=true
 manual: current=&quot;;C:\\Windows&quot;                       -&gt; updated=&quot;C:\\Windows&quot; changed=true
 manual: current=&quot;C:\\Windows;C:\\Windows\\System32&quot;  -&gt; updated=&quot;C:\\Windows;C:\\Windows\\System32&quot; changed=false</code></pre>
+      </details>
     <p>Fix: drop empty segments only when the strategy actually adds an entry, so <code>manual</code> is a no-op unless our own entry is present.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/util/managedlines/managedlines.go">
@@ -393,7 +407,8 @@ manual: current=&quot;C:\\Windows;C:\\Windows\\System32&quot;  -&gt; updated=&qu
 }
 </code></pre>
     <p>The doc comment justifies this with &quot;we were the ones who created it&quot;, but nothing records who did. A file the user already had and one <code>Manage</code> created are indistinguishable once emptied. Empty startup files are common. <code>zsh-newuser-install</code> writes an empty <code>~/.zshrc</code> when the user declines the wizard, and <code>touch ~/.bashrc</code> is a documented setup step for several tools. <code>front</code> then <code>manual</code> deletes it. For <code>~/.zshrc</code> that makes zsh re-run its first-run wizard; for <code>~/.bash_profile</code> it changes bash&#39;s login-file resolution.</p>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">p := filepath.Join(t.TempDir(), &quot;.zshrc&quot;)
 os.WriteFile(p, nil, 0o644) // the user&#39;s pre-existing empty ~/.zshrc
 managedlines.Manage(p, qStart, qEnd, []string{`export PATH=&quot;/home/u/.rd2/bin:$PATH&quot;`}, true)
@@ -404,6 +419,7 @@ if _, err := os.Stat(p); os.IsNotExist(err) {
       <pre><code class="language-text">=== RUN   TestProbeEmptyPreexistingFileDeleted
     PROBE RESULT: the user&#39;s pre-existing empty ~/.zshrc was DELETED by switching to manual
 --- FAIL: TestProbeEmptyPreexistingFileDeleted</code></pre>
+      </details>
     <p>Fix: make the deletion opt-in. Pass a flag from the one call site that does create the file (the <code>!added</code> login-file fallback), and write an empty file everywhere else. Note that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1c5f935e6b714eec189dc7e7708862cf78eb88a8/rdd/pkg/util/managedlines/managedlines_test.go#L76"><code>managedlines_test.go:76</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1c5f935e6b714eec189dc7e7708862cf78eb88a8/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix_test.go#L110"><code>pathmanagement_unix_test.go:110</code></a> both pin the current behavior.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/util/managedlines/managedlines.go">
@@ -424,7 +440,8 @@ if _, err := os.Stat(p); os.IsNotExist(err) {
 
 	return lines[:startIdx], lines[startIdx+1 : endIdx], lines[endIdx+1:], true, nil</code></pre>
     <p>The error names neither path nor marker, <code>Manage</code> returns it unwrapped, and <code>applyPosix</code> returns at the first failure. A user who hand-deletes one end marker from <code>~/.bash_profile</code> therefore gets no block in <code>.bashrc</code>, <code>.zshrc</code>, <code>.cshrc</code> or <code>config.fish</code> either, and <code>Reconcile</code> retries forever logging a message that names no file.</p>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">home := t.TempDir()
 bad := filepath.Join(home, &quot;.bash_profile&quot;) // user hand-deleted the END marker
 os.WriteFile(bad, []byte(&quot;# mine\n&quot;+rStart+&quot;\nexport PATH=x\n&quot;), 0o644)
@@ -442,6 +459,7 @@ for _, n := range []string{&quot;.bashrc&quot;, &quot;.zshrc&quot;, &quot;.cshrc
       .tcshrc: NOT managed (blocked by the bad file)
     PROBE RESULT: error names no file, so the user cannot find the broken dotfile
 --- FAIL: TestProbeOneBadFileBlocksTheRest</code></pre>
+      </details>
     <p>Fix: wrap the path into the error in <code>Manage</code>, and accumulate with <code>errors.Join</code> in <code>applyPosix</code> so the remaining files still converge.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go">
@@ -475,7 +493,8 @@ func (r *PathManagementReconciler) Reconcile(ctx context.Context, _ ctrl.Request
 
 // preserveAllInstanceLogs moves .log files from each Lima instance directory
 // to the service log directory before the instance directories are deleted.</code></pre>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">home := t.TempDir()
 t.Setenv(&quot;HOME&quot;, home)
 r := &amp;PathManagementReconciler{
@@ -493,6 +512,7 @@ t.Logf(&quot;Reconcile with no App: result=%+v err=%v&quot;, res, err)</code></p
         export PATH=&quot;…/.rd2/bin:$PATH&quot;
         ### MANAGED BY RANCHER DESKTOP 2 END (DO NOT EDIT)
 --- FAIL: TestProbeAppDeletionLeavesBlock</code></pre>
+      </details>
     <p>Fix: add a finalizer that runs <code>apply(ctx, AddPathManual)</code>, or call it from <code>service.Delete</code> before the <code>RemoveAll</code>. The latter also covers deleting a service that has no App.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go">
@@ -531,7 +551,8 @@ t.Logf(&quot;Reconcile with no App: result=%+v err=%v&quot;, res, err)</code></p
 			return nil
 		}
 		return r.Status().Update(ctx, latest)</code></pre>
-    <p>Reproducer:</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-go">app := &amp;appv1alpha1.App{ObjectMeta: metav1.ObjectMeta{Name: &quot;app&quot;},
 	Spec: appv1alpha1.AppSpec{Application: appv1alpha1.ApplicationSpec{AddPath: appv1alpha1.AddPathFront}}}
 cl := fake.NewClientBuilder().WithScheme(probeScheme(t)).
@@ -545,6 +566,7 @@ t.Logf(&quot;PROBE RESULT: conditions after a successful apply: %d&quot;, len(go
     PROBE RESULT: App status conditions after a successful apply: 0
     PROBE RESULT: no condition records the PATH outcome, so Settled cannot depend on it
 --- FAIL: TestProbeNoStatusCondition</code></pre>
+      </details>
     <p>Fix: add a <code>PathManagementReady</code> condition stamped with <code>observedGeneration</code>, and gate <code>Settled</code> on it when discovery reports the controller enabled.</p>
     </div>
     <hr>
@@ -680,12 +702,15 @@ func splitByMarkers(lines []string, startMarker, endMarker string) (before, mana
 		return lines, nil, nil, false, nil
 	case startIdx &lt; 0 || endIdx &lt; 0:</code></pre>
     <p><code>slices.Index</code> finds the first marker only. A file that ends up with two blocks keeps both forever while <code>front</code>/<code>back</code> is set, putting the bin directory on PATH twice. The realistic route there is a CRLF conversion after we write. Our markers gain <code>\r</code>, stop matching, and a second block is appended. But it stops at two, because the new block matches on later runs. Round 1&#39;s S4 and this round&#39;s Gemini finding both described it as unbounded growth.</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
       <pre><code class="language-text">=== RUN   TestProbeCRLFConvertedBlock
     PROBE RESULT: 2 start marker(s) after re-reconcile   (stable at 2, not growing)
 === RUN   TestProbeDuplicateBlockWhilePresent
     after present-reconcile 1: 2 block(s)
     after present-reconcile 2: 2 block(s)
     after present-reconcile 3: 2 block(s)</code></pre>
+      </details>
     <p>Fix: scan for the last end marker instead of the first, or strip a trailing <code>\r</code> before comparing markers.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_windows.go">
