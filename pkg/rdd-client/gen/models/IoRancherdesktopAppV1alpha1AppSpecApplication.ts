@@ -18,6 +18,17 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopAppV1alpha1AppSpecApplication {
     /**
+    * addPath controls whether and where the Rancher Desktop bin directory
+    * (~/.rd<suffix>/bin) is added to the user's PATH, by editing their shell
+    * startup files (Unix) or the user Environment (Windows):
+    *   - "front":  prepend, so the bin directory wins   (bin:$PATH)
+    *   - "back":   append,  so existing PATH entries win ($PATH:bin)
+    *   - "manual": leave PATH alone; remove any lines a previous front/back added.
+    * It defaults to "manual" so CLI-created instances don't touch shell startup
+    * files unasked; the GUI sends "front" when the user opts in.
+    */
+    'addPath'?: string;
+    /**
     * locale is the language/locale to use for the Rancher Desktop App.
     */
     'locale'?: string;
@@ -28,6 +39,12 @@ export class IoRancherdesktopAppV1alpha1AppSpecApplication {
     static readonly mapping: {[index: string]: string} | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
+        {
+            "name": "addPath",
+            "baseName": "addPath",
+            "type": "string",
+            "format": ""
+        },
         {
             "name": "locale",
             "baseName": "locale",

@@ -67,6 +67,9 @@ const (
 	settledMessageKubernetesStale      = "Kubernetes context needs to be synchronized"
 	settledMessageLimaVMNotReached     = "LimaVM has not yet reached "
 	settledMessageApplyingTemplate     = "Applying the configuration change to the VM"
+
+	settledMessageWaitingForPathManagement = "Waiting for PATH management condition"
+	settledMessagePathManagementStale      = "PATH management needs to be synchronized"
 )
 
 // AppReconciler reconciles the singleton App resource and manages its LimaVM lifecycle.
@@ -113,6 +116,21 @@ func (r *AppReconciler) kubernetesEnabled(ctx context.Context) bool {
 		return true
 	}
 	return slices.Contains(enabled, v1alpha1.KubernetesControllerName)
+}
+
+// pathManagementEnabled reports whether PathManagementReady should gate Settled.
+// On discovery errors it defaults to true so the wait does not return
+// prematurely while discovery is transiently unavailable.
+func (r *AppReconciler) pathManagementEnabled(ctx context.Context) bool {
+	if r.Discovery == nil {
+		return false
+	}
+	enabled, err := r.Discovery.GetEnabledControllers(ctx)
+	if err != nil {
+		logf.FromContext(ctx).Error(err, "Failed to query controller-manager discovery; assuming path management is enabled")
+		return true
+	}
+	return slices.Contains(enabled, v1alpha1.PathManagementControllerName)
 }
 
 func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesPort int) (string, error) {
@@ -493,6 +511,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 	// writers 409-loop through controller-runtime requeues.
 	engineEnabled := r.engineEnabled(ctx)
 	kubernetesEnabled := r.kubernetesEnabled(ctx)
+	pathManagementEnabled := r.pathManagementEnabled(ctx)
 	if err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		latest := &v1alpha1.App{}
 		if err := r.Get(ctx, client.ObjectKeyFromObject(&app), latest); err != nil {
@@ -516,9 +535,10 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 		// briefly stale against latest, but the next reconcile re-derives them
 		// and corrects Settled.
 		settled := computeSettledCondition(latest, settledInputs{
-			engineEnabled:     engineEnabled,
-			kubernetesEnabled: kubernetesEnabled,
-			templateUpToDate:  templateUpToDate,
+			engineEnabled:         engineEnabled,
+			kubernetesEnabled:     kubernetesEnabled,
+			templateUpToDate:      templateUpToDate,
+			pathManagementEnabled: pathManagementEnabled,
 		})
 		changed = apimeta.SetStatusCondition(&latest.Status.Conditions, settled) || changed
 		if !changed {
@@ -546,6 +566,9 @@ type settledInputs struct {
 	// templateUpToDate is false when the LimaVM has not yet restarted into the
 	// current template; it holds Settled at False with reason ApplyingTemplate.
 	templateUpToDate bool
+	// pathManagementEnabled is false when no controller writes
+	// PathManagementReady; in that case the PATH management condition is ignored.
+	pathManagementEnabled bool
 }
 
 // computeSettledCondition derives Settled from the feeding conditions
@@ -566,6 +589,7 @@ func computeSettledCondition(app *v1alpha1.App, in settledInputs) metav1.Conditi
 	runningCond := apimeta.FindStatusCondition(app.Status.Conditions, v1alpha1.AppConditionRunning)
 	engineCond := apimeta.FindStatusCondition(app.Status.Conditions, v1alpha1.AppConditionContainerEngineReady)
 	kubeCond := apimeta.FindStatusCondition(app.Status.Conditions, v1alpha1.AppConditionKubernetesReady)
+	pathCond := apimeta.FindStatusCondition(app.Status.Conditions, v1alpha1.AppConditionPathManagementReady)
 	desiredRunning := app.Spec.Running
 
 	settled := metav1.Condition{
@@ -668,7 +692,55 @@ func computeSettledCondition(app *v1alpha1.App, in settledInputs) metav1.Conditi
 		settled.Reason = v1alpha1.AppSettledReasonSettled
 		settled.Message = settledMessageSettled
 	}
+
+	// PATH management runs host-side, independent of the VM, so it gates every
+	// otherwise-settled outcome (running or stopped). Only downgrade a True
+	// result: the engine/kubernetes/VM reasons above are more specific, so a
+	// still-pending PATH edit should not mask them.
+	//
+	// Freshness always gates: even manual does work (removing a block a previous
+	// front/back left behind), so we can't report Settled until the reconciler
+	// has caught up to the current generation, or `rdd set addPath=manual --wait`
+	// would return while the block is still in the startup files.
+	//
+	// A failure gates when the user opted in (front/back), and also under manual
+	// when it's repairable. Under manual the user asked us to leave PATH alone, so
+	// once the reconciler has observed the current generation, a *permanent*
+	// failure — a startup file the user hand-edited into an unparseable state,
+	// reported as PathManagementReasonMalformed — must not block Settled for
+	// unrelated settings: the reconciler can't repair it and gating would wedge
+	// Settled forever. A *repairable* failure (I/O, read-only home, full disk)
+	// over an intact block still gates: the reconciler requeues and clears it, so
+	// `rdd set addPath=manual --wait` shouldn't report success over a residue that
+	// is about to go away. Both are recorded on PathManagementReady regardless.
+	pathManaged := effectiveAddPath(app) != v1alpha1.AddPathManual
+	if settled.Status == metav1.ConditionTrue && in.pathManagementEnabled {
+		switch {
+		case pathCond == nil:
+			settled.Status = metav1.ConditionFalse
+			settled.Reason = v1alpha1.AppSettledReasonWaitingForPathManagement
+			settled.Message = settledMessageWaitingForPathManagement
+		case pathCond.ObservedGeneration < app.Generation:
+			settled.Status = metav1.ConditionFalse
+			settled.Reason = v1alpha1.AppSettledReasonPathManagementStale
+			settled.Message = settledMessagePathManagementStale
+		case pathCond.Status != metav1.ConditionTrue &&
+			(pathManaged || pathCond.Reason != v1alpha1.PathManagementReasonMalformed):
+			settled.Status = metav1.ConditionFalse
+			settled.Reason = pathCond.Reason
+			settled.Message = pathCond.Message
+		}
+	}
 	return settled
+}
+
+// effectiveAddPath returns the addPath strategy with the empty (unset) value
+// resolved to its default, matching the PATH management reconciler.
+func effectiveAddPath(app *v1alpha1.App) v1alpha1.AddPathStrategy {
+	if s := app.Spec.Application.AddPath; s != "" {
+		return s
+	}
+	return v1alpha1.AddPathManual
 }
 
 // runningLimaVMMessage builds the Settled message when LimaVM's

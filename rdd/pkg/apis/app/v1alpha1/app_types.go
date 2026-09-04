@@ -20,6 +20,9 @@ const EngineControllerName = "engine"
 // KubernetesControllerName is the registry name of the Kubernetes context controller.
 const KubernetesControllerName = "kubernetes"
 
+// PathManagementControllerName is the registry name of the PATH management controller.
+const PathManagementControllerName = "path-management"
+
 // App condition types.
 //
 // Load-bearing invariant: every condition written to App status must stamp
@@ -60,6 +63,15 @@ const (
 	// App reconciler flips it back to True. `rdd set` waits on this
 	// condition.
 	AppConditionSettled = "Settled"
+
+	// AppConditionPathManagementReady goes True once the PATH management
+	// controller has applied spec.application.addPath for the current
+	// generation: the bin directory is present in (front/back) or absent from
+	// (manual) the user's shell startup files and, on Windows, the user
+	// Environment. It stamps the App's generation into ObservedGeneration; a
+	// failed edit sets it False with reason Failed, so Settled and `rdd set`
+	// can observe the failure instead of reporting success.
+	AppConditionPathManagementReady = "PathManagementReady"
 )
 
 // Reasons for the Settled condition. Consumers branch on these
@@ -89,6 +101,34 @@ const (
 	// into the current template, so a spec change that rewrote the template is
 	// not yet in effect.
 	AppSettledReasonApplyingTemplate = "ApplyingTemplate"
+
+	// AppSettledReasonWaitingForPathManagement means the PATH management
+	// controller has not yet written PathManagementReady.
+	AppSettledReasonWaitingForPathManagement = "WaitingForPathManagement"
+
+	// AppSettledReasonPathManagementStale means the PATH management controller
+	// has not yet observed the current generation.
+	AppSettledReasonPathManagementStale = "PathManagementStale"
+)
+
+// Reasons for the PathManagementReady condition.
+const (
+	// PathManagementReasonApplied means spec.application.addPath was applied
+	// for the current generation.
+	PathManagementReasonApplied = "Applied"
+
+	// PathManagementReasonFailed means applying spec.application.addPath
+	// failed with a transient error (I/O, permissions, a full disk); the
+	// message carries the underlying error. It's repairable, so the reconciler
+	// keeps retrying and it gates Settled until it clears.
+	PathManagementReasonFailed = "Failed"
+
+	// PathManagementReasonMalformed means a startup file was hand-edited into a
+	// state we can't parse (a lone marker, or markers in the wrong order), so the
+	// block can't be removed. Only the user can fix the file, so unlike Failed
+	// it's permanent: it doesn't gate Settled under manual (which would wedge it
+	// forever) and doesn't block App deletion.
+	PathManagementReasonMalformed = "Malformed"
 )
 
 // Reasons for the KubernetesReady condition.
@@ -177,11 +217,47 @@ type ApplicationSpec struct {
 	// +optional
 	// +kubebuilder:default={enabled:true}
 	Updates ApplicationUpdatesSpec `json:"updates,omitempty"`
+	// addPath controls whether and where the Rancher Desktop bin directory
+	// (~/.rd<suffix>/bin) is added to the user's PATH, by editing their shell
+	// startup files (Unix) or the user Environment (Windows):
+	//   - "front":  prepend, so the bin directory wins   (bin:$PATH)
+	//   - "back":   append,  so existing PATH entries win ($PATH:bin)
+	//   - "manual": leave PATH alone; remove any lines a previous front/back added.
+	// It defaults to "manual" so CLI-created instances don't touch shell startup
+	// files unasked; the GUI sends "front" when the user opts in.
+	//
+	// On Windows the user Environment Path is a plain semicolon-separated list
+	// with nowhere to fence our entry, so under "manual" we can't tell an entry
+	// we added from one the user typed. We therefore remove the bin directory
+	// only when it sits at the very front or back of Path (the two spots
+	// front/back would have written) and leave a copy the user placed in the
+	// middle alone. The trade-off: an entry parked at either end is treated as
+	// ours and removed, so a user who wants the bin directory at the front or
+	// back on Windows must use "front"/"back", not place it there under
+	// "manual". Unix files use start/end markers, so only our own block is
+	// touched regardless of position.
+	// +optional
+	// +kubebuilder:validation:Enum=front;back;manual
+	// +kubebuilder:default=manual
+	AddPath AddPathStrategy `json:"addPath,omitempty"`
 	// locale is the language/locale to use for the Rancher Desktop App.
 	// +optional
 	// +kubebuilder:default="en-us"
 	Locale string `json:"locale,omitempty"`
 }
+
+// AddPathStrategy selects whether and where the Rancher Desktop bin directory is
+// added to the user's PATH.
+type AddPathStrategy string
+
+const (
+	// AddPathFront prepends the bin directory (bin:$PATH).
+	AddPathFront AddPathStrategy = "front"
+	// AddPathBack appends the bin directory ($PATH:bin).
+	AddPathBack AddPathStrategy = "back"
+	// AddPathManual leaves PATH unmanaged.
+	AddPathManual AddPathStrategy = "manual"
+)
 
 // ApplicationUpdatesSpec defines settings for the Rancher Desktop App's update
 // mechanism.  RDD generally does not do anything with these.
