@@ -243,6 +243,12 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
     <p>All four reviewers ran, and the two that reached I1 (Codex and Claude) found different faces of it. I reproduced both faces against the round-5 tree to settle the regression label, and tested Claude&#39;s proposed patch, which fixes one face and makes the other worse. Thirteen suggestions follow; seven are round-5 suggestions the delta did not touch, kept at the same severity for their one permitted re-raise.</p>
     </div>
     <hr>
+    <h2 id="resolution">Resolution <a href="#resolution" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I2 was fixed after this report, at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a424678c4"><code>a424678c4</code></a> (2026-09-04). The deletion branch now retries a repairable unwind on a 5 s interval within a 30 s grace window measured from <code>deletionTimestamp</code>, then releases the finalizer anyway. Only <code>reconciler.go</code> and its test changed. Verified with this report&#39;s own reproducer: with a fresh timestamp the App keeps the finalizer and requeues after 5 s; past the window it deletes. I1 and every suggestion below still stand at that SHA.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
