@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260904-113153-pr-638</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers — collapsed, so a long proof keeps the next finding on screen */
+details.repro { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.repro > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.repro > summary:hover { background: #eef1f4; }
+details.repro[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.repro pre { border-radius: 0 !important; }
+details.repro .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260904-113153-pr-638</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-04 11:31</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>6 (of PR 638)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/Nino-K">@Nino-K</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/638" class="gh-ref" data-title="Add PATH management to the App controller" data-state="open" data-type="pr">#638</a> — Add PATH management to the App controller</td></tr>
+      <tr><td>Branch</td><td><code>path-management</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bbc90d6c2"><code>bbc90d6c2</code></a> Add PATH management to the App controller</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bbc90d6c2672a8d1503d2b8340ea68e74c724d68"><code>bbc90d6c2672a8d1503d2b8340ea68e74c724d68</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the round-6 delta closes all four round-5 Importants, but two others survive, both proven by execution</td></tr>
+      <tr><td>Wall-clock time</td><td><code>40 min 5 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 6 closes all four of round 5&#39;s Important findings; I confirmed each by execution. Bypassing the new cross-process lock loses a block on every trial. Two Important findings remain, both about what the code does when an edit cannot be completed. One is pre-existing and went unseen for five rounds; round 6&#39;s own deletion fix introduces the other.</p>
+    <p>All four reviewers ran, and the two that reached I1 (Codex and Claude) found different faces of it. I reproduced both faces against the round-5 tree to settle the regression label, and tested Claude&#39;s proposed patch, which fixes one face and makes the other worse. Thirteen suggestions follow; seven are round-5 suggestions the delta did not touch, kept at the same severity for their one permitted re-raise.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/util/managedlines/managedlines.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Removal reports success over an unbalanced marker, leaving a live <code>export PATH</code> line or a permanently unparseable file <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L140-L150">rdd/pkg/util/managedlines/managedlines.go</a></div>
+      <pre data-start="140" data-line="145"><code class="language-go">			if rel := slices.Index(lines[i+1:], endMarker); rel &gt;= 0 {
+				i += rel + 1 // skip to the end marker; the loop&#39;s i++ moves past it
+				continue
+			}
+		}
+		result = append(result, lines[i])
+	}
+	return result
+}
+
+// computeTargetContents works out what the file should contain, given its</code></pre>
+    <p><code>stripBlocks</code> keeps an unbalanced marker as ordinary text, and <code>splitByMarkers</code> treats the same marker as fatal once no complete pair remains (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L115"><code>managedlines.go:115</code></a>). Removing our block flips one state into the other, and <code>Manage</code> returns <code>nil</code>, so the reconciler writes <code>PathManagementReady=Applied</code>. A lone start marker leaves its <code>export PATH</code> line active, so <code>manual</code> reports a removal that did not happen. A lone end marker leaves a file that every later pass rejects as <code>Malformed</code>; under <code>front</code>/<code>back</code> that pins <code>Settled</code> at <code>False</code> forever, so <code>rdd set application.addPath=front --wait</code> never returns.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L110-L120">rdd/pkg/util/managedlines/managedlines.go</a></div>
+      <pre data-start="110" data-line="115"><code class="language-go">
+	switch {
+	case startIdx &lt; 0 &amp;&amp; endIdx &lt; 0:
+		return markerSplit{before: lines}, nil
+	case startIdx &lt; 0 || endIdx &lt; 0:
+		return markerSplit{}, fmt.Errorf(&quot;%w: exactly one of the delimiter lines is present&quot;, ErrMalformedBlock)
+	case startIdx &gt;= endIdx:
+		return markerSplit{}, fmt.Errorf(&quot;%w: the delimiter lines are in the wrong order&quot;, ErrMalformedBlock)
+	}
+
+	rest := lines[endIdx+1:]</code></pre>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">	// A: complete block + a stray START marker with a live line after it.
+	original := startMarker + &quot;\nexport PATH=valid:$PATH\n&quot; + endMarker + &quot;\n&quot; +
+		startMarker + &quot;\nexport PATH=stale:$PATH\n&quot;
+	// Control: the same file with the second block properly closed.
+	// B: complete block + a stray END marker.
+	&quot;# user\n&quot; + startMarker + &quot;\nexport PATH=x\n&quot; + endMarker + &quot;\n# leftover\n&quot; + endMarker + &quot;\n&quot;</code></pre>
+      <pre><code class="language-text">A stray-START removal:  err=&lt;nil&gt;  file=&quot;# TEST BLOCK START\nexport PATH=stale:$PATH\n&quot;
+A balanced control:     err=&lt;nil&gt;  file=&quot;&quot;                       (both blocks removed)
+B stray-END removal:    err=&lt;nil&gt;  file=&quot;# user\n# leftover\n# TEST BLOCK END\n&quot;
+B next reconcile:       err=...: managed block is malformed: exactly one of the delimiter lines is present
+B switch back to front: err=...: managed block is malformed: exactly one of the delimiter lines is present
+B control, no stray:    remove err=&lt;nil&gt;, next pass err=&lt;nil&gt;
+same two inputs at 3f2f011d3 (round 5): byte-identical results -&gt; gap, not a regression</code></pre>
+      </details>
+    <p>Fix: reject an unbalanced marker with <code>ErrMalformedBlock</code> from a single pass over the file, as Codex proposes, so the user is told about the residue. Do not take the narrower patch of dropping unbalanced markers inside <code>stripBlocks</code>. I applied it: face B clears, but face A becomes <code>&quot;export PATH=stale:$PATH\n&quot;</code>, with the marker gone and the live line still there, unattributable.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> A repairable unwind failure blocks App deletion forever, including for a startup file that never held our block<a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L90-L104">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="90" data-line="95-99"><code class="language-go">		// clears it, and blocking would strand the App in Terminating forever, so
+		// log and release the finalizer anyway (best-effort, like service.Delete).
+		// A transient failure (I/O, read-only home, full disk) over an intact
+		// block can clear, so requeue and keep the finalizer until the block is
+		// actually gone.
+		if err := r.apply(ctx, appv1alpha1.AddPathManual, false); err != nil {
+			if !permanentPathError(err) {
+				log.Error(err, &quot;Failed to unwind PATH management before App deletion; will retry&quot;)
+				return ctrl.Result{}, err
+			}
+			log.Error(err, &quot;Managed block is malformed; releasing finalizer without removing it&quot;)
+		}
+		controllerutil.RemoveFinalizer(&amp;app, pathManagementFinalizer)
+		if err := r.Update(ctx, &amp;app); err != nil {
+			return ctrl.Result{}, err</code></pre>
+    <p>Round 5&#39;s I3 asked the finalizer to stop abandoning removable blocks. The fix requeues instead, with no bound, since controller-runtime backs off to a 1000 s cap and never gives up (<code>controller-runtime@v0.24.1/pkg/controller/controller.go:252-257</code>). <code>applyPosix</code> reads all eight startup files and joins their errors, so one unreadable file that never held our block makes every unwind repairable, and the App stays in <code>Terminating</code> permanently. <code>rdd ctl delete app</code> and the <code>rdd ctl wait --for=delete</code> in five BATS teardowns never complete. Windows is worse. No code path there produces <code>ErrMalformedBlock</code>, so <code>permanentPathError</code> is always false and a policy-locked <code>HKCU\Environment</code> has no escape.</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">	// Our block is in .zshrc and is perfectly removable.
+	// .cshrc is mode 0000 and has NEVER held our block.
+	os.WriteFile(filepath.Join(home, &quot;.cshrc&quot;), []byte(&quot;# unrelated\n&quot;), 0o000)
+	for i := 1; i &lt;= 5; i++ { r.Reconcile(ctx, reconcile.Request{}) }
+	os.Chmod(csh, 0o644)                      // counterfactual: nothing else changes
+	// Control: the malformed case the fix targets.</code></pre>
+      <pre><code class="language-text">unrelated-unreadable  reconcile 1: err=true finalizerHeld=true
+unrelated-unreadable  reconcile 5: err=true finalizerHeld=true
+after chmod 644       reconcile 6: err=false finalizerHeld=false
+malformed control     reconcile 1: err=false finalizerHeld=false</code></pre>
+      </details>
+    <p>Fix: bound the retry by keeping the finalizer for a few attempts, then releasing it and logging, so a permanently unreadable dotfile cannot strand the App. Failing that, scope the unwind&#39;s error to files that actually contain our markers, so an unrelated unreadable file cannot hold deletion.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>permanentPathError</code> inverts its own contract under one extra wrap <span class="pill pill-claude">Claude Opus 5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L209-L219">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="209" data-line="214"><code class="language-go">// every cause is permanent do we stop retrying and drop the manual Settled gate.
+func permanentPathError(err error) bool {
+	if err == nil {
+		return false
+	}
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		causes := joined.Unwrap()
+		if len(causes) == 0 {
+			return false
+		}
+		for _, cause := range causes {</code></pre>
+    <p>The direct type assertion holds only while <code>apply</code> returns <code>applyPosix</code>&#39;s <code>errors.Join</code> untouched, which it does today. One <code>fmt.Errorf(&quot;...: %w&quot;, err)</code> anywhere on the way out defeats it; control falls to <code>errors.Is</code> at line 226, which walks a joined error and matches if <em>any</em> cause does. All-must-be-permanent silently becomes any-is-permanent, which drops the <code>manual</code> <code>Settled</code> gate and releases the deletion finalizer over a repairable I/O error.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L221-L231">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="221" data-line="226"><code class="language-go">				return false
+			}
+		}
+		return true
+	}
+	return errors.Is(err, managedlines.ErrMalformedBlock)
+}
+
+// acquirePathLock takes the shared PATH lock and returns a function that
+// releases it. It blocks up to pathManagementLockTimeout; a stuck holder surfaces
+// as an error so the reconcile requeues rather than hanging.</code></pre>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-text">bare mixed join      -&gt; false (want false)
+same join, wrapped   -&gt; true  (want false)
+bare all-malformed   -&gt; true  (want true)</code></pre>
+      </details>
+    <p>Fix: use <code>errors.As</code> against the multi-unwrap interface, and add the wrapped case to <code>TestPermanentPathError</code>&#39;s table.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Nothing actually stops retrying a permanent failure, which is what the new sentinel promises <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L130-L140">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="130" data-line="135"><code class="language-go">			reason = appv1alpha1.PathManagementReasonMalformed
+		}
+		if condErr := r.setCondition(ctx, app.Name, app.Generation, metav1.ConditionFalse, reason, err.Error()); condErr != nil {
+			log.Error(condErr, &quot;Failed to record PathManagementReady failure&quot;)
+		}
+		return ctrl.Result{}, err
+	}
+	log.V(1).Info(&quot;Applied PATH management&quot;, &quot;strategy&quot;, strategy, &quot;binDir&quot;, r.BinDir)
+	if err := r.setCondition(ctx, app.Name, app.Generation, metav1.ConditionTrue, appv1alpha1.PathManagementReasonApplied, &quot;PATH management applied&quot;); err != nil {
+		return ctrl.Result{}, err
+	}</code></pre>
+    <p><code>ErrMalformedBlock</code>&#39;s doc comment says the classification &quot;lets callers tell it apart from a transient I/O error and stop retrying forever&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L28-L32"><code>managedlines.go:28-32</code></a>). Two of the three callers do: the <code>Settled</code> gate and the deletion finalizer. This one does not. A <code>Malformed</code> file requeues under exponential backoff for the life of the daemon, logging at error level roughly every 16 minutes while <code>Settled</code> reports success. The retry is defensible, since it is how the controller notices the user repairing the file; nothing at line 135 says so.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L23-L37">rdd/pkg/util/managedlines/managedlines.go</a></div>
+      <pre data-start="23" data-line="28-32"><code class="language-go">	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/atomicfile&quot;
+)
+
+// fileMode is used for startup files we create.
+const fileMode = 0o644
+
+// ErrMalformedBlock marks a file the user hand-edited into a state we can&#39;t
+// parse: a lone marker, or the end marker before the start. It&#39;s permanent —
+// only the user can fix the file, so retrying can&#39;t clear the block — which lets
+// callers tell it apart from a transient I/O error and stop retrying forever.
+var ErrMalformedBlock = errors.New(&quot;managed block is malformed&quot;)
+
+// Manage adds (present=true) or removes (present=false) managedLines between
+// startMarker and endMarker in the file at path. The write is atomic, and text
+// outside the block isn&#39;t touched.</code></pre>
+    <p>Fix: either return <code>ctrl.Result{}, nil</code> for the permanent case, or say at line 135 that only a user edit can clear the condition, so the requeue is intended.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/app/v1alpha1/app_types.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>AppConditionPathManagementReady</code>&#39;s doc still says a failed edit uses reason <code>Failed</code> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/apis/app/v1alpha1/app_types.go#L66-L78">rdd/pkg/apis/app/v1alpha1/app_types.go</a></div>
+      <pre data-start="66" data-line="71-73"><code class="language-go">
+	// AppConditionPathManagementReady goes True once the PATH management
+	// controller has applied spec.application.addPath for the current
+	// generation: the bin directory is present in (front/back) or absent from
+	// (manual) the user&#39;s shell startup files and, on Windows, the user
+	// Environment. It stamps the App&#39;s generation into ObservedGeneration; a
+	// failed edit sets it False with reason Failed, so Settled and `rdd set`
+	// can observe the failure instead of reporting success.
+	AppConditionPathManagementReady = &quot;PathManagementReady&quot;
+)
+
+// Reasons for the Settled condition. Consumers branch on these
+// values; the App reconciler also forwards the Running condition&#39;s</code></pre>
+    <p>This round added <code>PathManagementReasonMalformed</code> and routed the unparseable case to it, but left this comment naming <code>Failed</code> as the only failure reason. The same comment also says <code>manual</code> means the bin directory is &quot;absent from&quot; the user&#39;s Windows Environment, which the intended middle-entry rule contradicts (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/pathlist.go#L26-L32"><code>pathlist.go:26-32</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/pathlist.go#L21-L37">rdd/pkg/controllers/app/pathmanagement/controllers/pathlist.go</a></div>
+      <pre data-start="21" data-line="26-32"><code class="language-go">// manual is more careful. Windows has no fenced block like the Unix startup
+// files, so we can&#39;t tell an entry we added from one the user typed by value
+// alone. We therefore only remove a binDir entry that sits at the very front or
+// back of the Path — the two positions front/back would have written. An entry
+// the user placed in the middle is a deliberate choice, so manual leaves it
+// alone. &quot;Middle&quot; means a real, unrelated entry sits on both sides of ours:
+// anchoring on the other entries (not the raw front/back of the Path) makes one
+// pass a fixed point, so a duplicated entry that would otherwise slide to an edge
+// on the next apply is removed now. The consequence, which the docs call out, is
+// that a user who wants binDir at the front or back must use front/back: under
+// manual an entry parked at either end is treated as ours and removed. Empty
+// segments are only tidied up when we&#39;re actually adding our entry.
+//
+// forceRemove overrides the manual middle-entry rule and drops every binDir
+// entry regardless of position. Service deletion uses it to fully unwind before
+// removing the bin directory, so a middle entry isn&#39;t left pointing at a
+// directory that no longer exists.</code></pre>
+    <p>Fix: name both reasons here and qualify the Windows <code>manual</code> claim to the front and back positions.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/cmd_app.md">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The rewritten docs call a substituted example the literal output <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/cmd_app.md#L103-L113">rdd/docs/design/cmd_app.md</a></div>
+      <pre data-start="103" data-line="108"><code class="language-markdown">source &lt;(docker completions bash)
+source &lt;(helm completions bash)
+...
+```
+
+What PATH management actually inserts today is the literal `export PATH` line, fenced by markers so it can be updated or removed later (on an `addPath` change, or on deletion) without disturbing the rest of the file:
+
+```bash
+### MANAGED BY RANCHER DESKTOP 2 START (DO NOT EDIT)
+export PATH=&quot;$HOME/.rd2/bin:$PATH&quot;
+### MANAGED BY RANCHER DESKTOP 2 END (DO NOT EDIT)</code></pre>
+    <p>The block below it shows <code>export PATH=&quot;$HOME/.rd2/bin:$PATH&quot;</code>. <code>posixPathLine</code> formats <code>r.BinDir</code>, an expanded absolute path rooted at <code>os.UserHomeDir()</code>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix_test.go#L46"><code>pathmanagement_unix_test.go:46</code></a> pins exactly that. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/bootstrap.md#L61"><code>bootstrap.md:61</code></a> shows the same form. The two are equivalent in effect, so the behaviour is right and only the wording is wrong. But &quot;literal&quot; is a promise this round&#39;s rewrite made to correct a previous false claim.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix_test.go#L41-L51">rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix_test.go</a></div>
+      <pre data-start="41" data-line="46"><code class="language-go">	t.Setenv(&quot;HOME&quot;, home)
+	t.Setenv(&quot;XDG_CONFIG_HOME&quot;, filepath.Join(home, &quot;xdg-config-home&quot;))
+	r := &amp;PathManagementReconciler{BinDir: filepath.Join(home, &quot;.rd2&quot;, &quot;bin&quot;), Suffix: &quot;2&quot;}
+
+	zshrc := filepath.Join(home, &quot;.zshrc&quot;)
+	block := r.startMarker() + &quot;\nexport PATH=\&quot;&quot; + r.BinDir + &quot;:$PATH\&quot;\n&quot; + r.endMarker() + &quot;\n&quot;
+	assert.NilError(t, os.WriteFile(zshrc, []byte(&quot;keep\n&quot;+block), 0o644))
+
+	assert.NilError(t, r.Unwind(context.Background()))
+
+	// The block is gone; the user&#39;s own content stays.</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/bootstrap.md#L56-L66">rdd/docs/design/bootstrap.md</a></div>
+      <pre data-start="56" data-line="61"><code class="language-markdown">  * The `App` controller is notified of the status change of the `LimaVM` object and detects that the VM is running. It now monitors the VM to check when the `docker.sock` is accepting requests.
+
+  * It creates a `rancher-desktop-2` docker context. If there is no current context, or if the context isn&#39;t accepting connections, then it makes the new context the default.
+
+  * It sets the status of the `App` object to `ready`.
+
+* `rdd start` is notified that the `App` status has changed. It verifies that the status is &quot;ready&quot; and exits.
+
+Except for the backgrounding of the control plane process all other actions are performed in-process and don&#39;t spawn subprocesses.
+
+## PATH and docker/kube context settings</code></pre>
+    <p>Fix: show an expanded path in both files, or drop &quot;literal&quot; and say the resolved bin directory is interpolated.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controller.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>--controllers=app</code> does not enable path management <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controller.go#L42-L53">rdd/pkg/controllers/app/pathmanagement/controller.go</a></div>
+      <pre data-start="42" data-line="47-48"><code class="language-go">func (c *controller) GetName() string {
+	return appv1alpha1.PathManagementControllerName
+}
+
+func (c *controller) GetAPIGroup() string {
+	// We only use the app CRD, so there is no extra group to register.
+	return &quot;&quot;
+}
+
+func (c *controller) GetCRDData() string {
+	return &quot;&quot;
+}</code></pre>
+    <p><code>shouldEnableController</code> matches a selector token against the API group or the controller name (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/service/cmd/service.go#L637-L653"><code>service.go:637-653</code></a>), and <code>&quot;&quot;</code> matches neither. Codex re-ran it through the real selector this round: <code>controllers=app:false</code>, <code>controllers=path-management:true</code>. <code>set.bats</code> boots with <code>setup_rdd_control_plane &quot;app&quot;</code>, so the suite closest to this feature runs without the controller. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/external/main.go#L65"><code>pkg/external/main.go:65</code></a> goes further and <em>panics</em> on a group mismatch, so the blank import round 4 suggested for <code>cmd/app-controller/main.go</code> would abort startup.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/service/cmd/service.go#L632-L658">rdd/pkg/service/cmd/service.go</a></div>
+      <pre data-start="632" data-line="637-653"><code class="language-go">				included = true
+			}
+			continue
+		}
+
+		// Check if it matches the API group
+		if part == apiGroup {
+			if isExclusion {
+				excluded = true
+			} else {
+				included = true
+			}
+			continue
+		}
+
+		// Check if it matches the specific controller
+		if part == controllerName {
+			if isExclusion {
+				excluded = true
+			} else {
+				included = true
+			}
+			continue
+		}
+	}
+
+	// Return true if included and not excluded</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/external/main.go#L60-L70">rdd/pkg/external/main.go</a></div>
+      <pre data-start="60" data-line="65"><code class="language-go">	var controllersToStart []base.Controller
+
+	for _, controller := range base.GetAllControllers() {
+		// A mistaken blank import can pull a foreign-group controller into this
+		// registry. Panic so the build-time bug surfaces immediately.
+		if group := controller.GetAPIGroup(); group != apiGroupName {
+			panic(fmt.Sprintf(&quot;controller %q registered in API group %q, expected %q&quot;,
+				controller.GetName(), group, apiGroupName))
+		}
+		shouldStart, err := shouldStartController(ctx, config, controller.GetName(), setupLog)
+		if err != nil {</code></pre>
+    <p>Fix: return <code>&quot;app&quot;</code>, matching the engine controller, and keep <code>GetCRDData()</code> empty.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/cmd/rdd/set.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> Two exhaustive descriptions of what <code>Settled</code> gates on still omit PATH management <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>set.go</code> is not in this PR&#39;s changed-file set at all, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/cmd_app.md#L15"><code>cmd_app.md:15</code></a> closes its list with &quot;and on …&quot; without the new gate. <code>api_app.md</code> was updated twice this round; these two were not. Someone debugging a <code>--wait</code> timeout on <code>WaitingForPathManagement</code> has no reason to look at <code>PathManagementReady</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/cmd_app.md#L10-L20">rdd/docs/design/cmd_app.md</a></div>
+      <pre data-start="10" data-line="15"><code class="language-markdown">
+If the App resource does not exist, it is created with default settings before the specified values are applied.
+
+By default, `rdd set` waits for the reconcile chain to settle before returning. Every property change — `running`, `containerEngine.name`, `kubernetes.enabled`, or any combination — waits for the App&#39;s `Settled` condition to reach `True` with `ObservedGeneration` matching the post-patch generation.
+
+`Settled` goes `False` whenever the App controller sees a generation it has not yet caught up with, and back to `True` once the LimaVM has reached a terminal phase (Started or Stopped), the engine controller has processed the current generation, and — when `kubernetes.enabled` is true — the Kubernetes controller has confirmed the k3s API server and merged the kubeconfig.
+
+The `ObservedGeneration` filter prevents a stale `Settled=True` from a previous reconcile from prematurely satisfying the wait.
+
+- `--dry-run`: Validate changes against the API server&#39;s admission controller without persisting them. If the App does not exist, it is created with defaults (the VM will not start) so the admission controller can validate the patch. The wait is skipped in dry-run mode.
+- `--wait`: Wait for the desired state after the patch is accepted (default `true`). Pass `--wait=false` to return as soon as the patch is accepted.</code></pre>
+    <p>Fix: append the gate to both, with the freshness-always and failure-under-<code>front</code>/<code>back</code>-or-repairable-<code>manual</code> split <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/api_app.md#L181-L193"><code>api_app.md:181-193</code></a> now describes.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/cmd_service.md">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> <code>cmd_service.md</code> does not mention the host-side edit <code>rdd svc delete</code> now performs <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+    <p>The section enumerates what delete removes down to the Windows WSL2 unregister, but <code>service.Delete</code> also rewrites six shell startup files and <code>HKCU\Environment\Path</code> (<code>service.go:544</code>), with <code>forceRemove=true</code> so a middle Windows entry goes too. That is the only thing the command touches outside the instance directories, and the only thing it touches that the user owns.</p>
+    <p>Fix: add a paragraph covering the unwind, the files, the force-remove, and that it is best-effort.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/app/controllers/app_controller.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> The comments still show <code>rdd set addPath=</code>, and this round&#39;s rewrite reintroduced it <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/app/controllers/app_controller.go#L698-L708">rdd/pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="698" data-line="703"><code class="language-go">	// result: the engine/kubernetes/VM reasons above are more specific, so a
+	// still-pending PATH edit should not mask them.
+	//
+	// Freshness always gates: even manual does work (removing a block a previous
+	// front/back left behind), so we can&#39;t report Settled until the reconciler
+	// has caught up to the current generation, or `rdd set addPath=manual --wait`
+	// would return while the block is still in the startup files.
+	//
+	// A failure gates when the user opted in (front/back), and also under manual
+	// when it&#39;s repairable. Under manual the user asked us to leave PATH alone, so
+	// once the reconciler has observed the current generation, a *permanent*</code></pre>
+    <p><code>resolvePropertyPath</code> walks the spec schema from the root (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/cmd/rdd/set.go#L672-L685"><code>set.go:672-685</code></a>), so the working form is <code>application.addPath</code>. The round-6 rewrite of this comment block kept the wrong form here and wrote it again at line 714.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/cmd/rdd/set.go#L667-L690">rdd/cmd/rdd/set.go</a></div>
+      <pre data-start="667" data-line="672-685"><code class="language-go">}
+
+// resolvePropertyPath walks the schema tree along dot-separated path segments
+// and returns the leaf schema node. Returns an error with valid property names
+// if the path is invalid.
+func resolvePropertyPath(schema *apiextensionsv1.JSONSchemaProps, segments []string) (*apiextensionsv1.JSONSchemaProps, error) {
+	current := schema
+	for i, segment := range segments {
+		prop, ok := current.Properties[segment]
+		if !ok {
+			path := strings.Join(segments[:i], &quot;.&quot;)
+			validNames := listProperties(current, &quot;&quot;)
+			if path != &quot;&quot; {
+				return nil, fmt.Errorf(&quot;unknown property %q under %q; valid properties: %s&quot;,
+					segment, path, strings.Join(validNames, &quot;, &quot;))
+			}
+			return nil, fmt.Errorf(&quot;unknown property %q; valid properties: %s&quot;,
+				segment, strings.Join(listProperties(schema, &quot;&quot;), &quot;, &quot;))
+		}
+		if i &lt; len(segments)-1 {
+			if prop.Type != &quot;object&quot; {
+				fullPath := strings.Join(segments[:i+1], &quot;.&quot;)
+				return nil, fmt.Errorf(&quot;%q is not an object and has no sub-properties&quot;, fullPath)
+			}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/app/controllers/app_controller.go#L709-L719">rdd/pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="709" data-line="714"><code class="language-go">	// failure — a startup file the user hand-edited into an unparseable state,
+	// reported as PathManagementReasonMalformed — must not block Settled for
+	// unrelated settings: the reconciler can&#39;t repair it and gating would wedge
+	// Settled forever. A *repairable* failure (I/O, read-only home, full disk)
+	// over an intact block still gates: the reconciler requeues and clears it, so
+	// `rdd set addPath=manual --wait` shouldn&#39;t report success over a residue that
+	// is about to go away. Both are recorded on PathManagementReady regardless.
+	pathManaged := effectiveAddPath(app) != v1alpha1.AddPathManual
+	if settled.Status == metav1.ConditionTrue &amp;&amp; in.pathManagementEnabled {
+		switch {
+		case pathCond == nil:</code></pre>
+    <p>Fix: <code>rdd set application.addPath=manual --wait</code> in both places.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/api_app.md">
+      <div class="finding-title" id="S9">
+        <span class="finding-num">S9.</span> <code>Valide values</code> and a duplicated &quot;user&#39;s&quot;, one of them the reviewer&#39;s own suggestion <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S9" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/api_app.md#L98-L108">rdd/docs/design/api_app.md</a></div>
+      <pre data-start="98" data-line="103"><code class="language-markdown">
+- **spec.application.addPath**: Controls whether and where the Rancher Desktop bin directory
+  (`~/.rd&lt;suffix&gt;/bin`) is added to the user&#39;s `PATH`. The path-management controller edits the
+  user&#39;s shell startup files on Unix (`.bash_profile`/`.bash_login`/`.profile`, `.bashrc`,
+  `.zshrc`, `.cshrc`/`.tcshrc`, and fish&#39;s `config.fish`) and the user `Environment` in the
+  registry on Windows. Valide values:
+  - `front`: prepend, so the bin directory takes precedence (`bin:$PATH`).
+  - `back`: append, so existing `PATH` entries win (`$PATH:bin`).
+  - `manual`: do not manage `PATH`; remove any lines a previous `front`/`back` added.
+
+  Defaults to `manual`, so instances created by the CLI never edit shell startup files without user&#39;s</code></pre>
+    <p>@mook-as supplied the one-token correction in [<code>discussion_r3815286334</code>](https://github.com/rancher-sandbox/rancher-desktop-2/pull/638#discussion_r3815286334); it is unapplied six rounds later. Lines 108-109 read &quot;without user&#39;s / user&#39;s knowledge&quot; across the wrap.</p>
+    <p>Fix: <code>Valid values:</code> and <code>without the user&#39;s knowledge;</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go">
+      <div class="finding-title" id="S10">
+        <span class="finding-num">S10.</span> The instance suffix reaches the markers and the shell lines unvalidated; a newline defeats idempotency <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S10" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go#L19-L29">rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go</a></div>
+      <pre data-start="19" data-line="24"><code class="language-go">
+// startMarker and endMarker fence the block we manage in a shell startup file.
+// The suffix keeps our markers distinct from other instances and from Rancher
+// Desktop 1 (which uses &quot;RANCHER DESKTOP&quot; with no number).
+func (r *PathManagementReconciler) startMarker() string {
+	return fmt.Sprintf(&quot;### MANAGED BY RANCHER DESKTOP %s START (DO NOT EDIT)&quot;, r.Suffix)
+}
+
+func (r *PathManagementReconciler) endMarker() string {
+	return fmt.Sprintf(&quot;### MANAGED BY RANCHER DESKTOP %s END (DO NOT EDIT)&quot;, r.Suffix)
+}</code></pre>
+    <p><code>instance.Suffix()</code> returns <code>RDD_INSTANCE</code> verbatim. A newline splits each marker across two physical lines, so <code>slices.Index(lines, startMarker)</code> can never match what was written and <code>Manage</code> appends the whole block on every reconcile. The user sets the variable themselves, so no privilege boundary is crossed, but the failure destroys a dotfile silently.</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-text">newline suffix pass 1/2/3: size = 237 -&gt; 467 -&gt; 697 bytes, err=&lt;nil&gt; each pass
+plain   suffix pass 1/2/3: size = 227 -&gt; 227 -&gt; 227 bytes   (converges)</code></pre>
+      </details>
+    <p>Fix: validate the suffix once in <code>instance.Suffix()</code> against a single-line, filesystem-safe grammar, which protects the markers and the <code>export PATH</code> lines together.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go">
+      <div class="finding-title" id="S11">
+        <span class="finding-num">S11.</span> <code>applyPosix</code> creates <code>.zshrc</code>, <code>.cshrc</code>, and <code>config.fish</code> for users who have none <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S11" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>.tcshrc</code> is guarded so it cannot shadow <code>.cshrc</code>, and the login files are guarded for bash precedence, but these three are written unconditionally under <code>front</code>/<code>back</code>. A zsh-only macOS user gets three files they never had, and switching back to <code>manual</code> leaves them as empty files by design (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L39-L44"><code>managedlines.go:39-44</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/util/managedlines/managedlines.go#L34-L49">rdd/pkg/util/managedlines/managedlines.go</a></div>
+      <pre data-start="34" data-line="39-44"><code class="language-go">
+// Manage adds (present=true) or removes (present=false) managedLines between
+// startMarker and endMarker in the file at path. The write is atomic, and text
+// outside the block isn&#39;t touched.
+//
+// If removing the block leaves the file empty, we write an empty file rather
+// than deleting it. We can&#39;t tell a file we created from one the user already
+// had — an empty ~/.zshrc or ~/.bashrc is ordinary, and zsh even writes one when
+// the user declines its setup wizard — so deleting it could destroy the user&#39;s
+// file or resurface that wizard. A file that doesn&#39;t exist yet is left alone,
+// since there&#39;s nothing to remove.
+func Manage(path, startMarker, endMarker string, managedLines []string, present bool) error {
+	desired := desiredLines(startMarker, endMarker, managedLines, present)
+
+	current, err := os.ReadFile(path)
+	if err != nil &amp;&amp; !os.IsNotExist(err) {</code></pre>
+    <p>Fix: give the always-managed set the same existence test <code>.tcshrc</code> already has, keeping the <code>!loginExisted</code> fallback that <code>front</code>/<code>back</code> needs to work at all.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler_test.go">
+      <div class="finding-title" id="S12">
+        <span class="finding-num">S12.</span> The concurrency test would still pass if the lock became process-local <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S12" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>TestApplyConcurrentInstancesKeepBothBlocks</code> runs two goroutines in one process, so it cannot distinguish <code>flock</code> from a <code>sync.Mutex</code>, and the guarantee the fix exists to provide is coordination between separate daemons. I ran the missing case (two <code>go test</code> processes on one HOME, released by a barrier file immediately before <code>apply</code>), and it does pin the guarantee. With the lock, 0/12 trials lost a block; with <code>applyPath</code> called directly, 12/12.</p>
+    <p>Fix: add that subprocess variant and keep the goroutine test as the faster read-compute-write stress case.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/set.bats">
+      <div class="finding-title" id="S13">
+        <span class="finding-num">S13.</span> Path management has no BATS coverage, and the suite that would host it boots without the controller <span class="pill pill-claude">Claude Opus 5</span><a href="#S13" class="pilcrow">&#182;</a>
+      </div>
+    <p>Every sibling App sub-controller has a suite (<code>engine-docker.bats</code>, <code>k3s-versions.bats</code>, <code>kube-context.bats</code>); <code>grep -rn addPath rdd/bats/</code> returns nothing. Nothing exercises registration, <code>rdd set application.addPath=front</code> admission, <code>PathManagementReady</code> reaching the App, or the delete-time unwind. S5 is exactly the class of wiring defect such a suite catches.</p>
+    <p>Fix: add <code>path-management.bats</code> covering the round trip from <code>rdd set</code> through the marker appearing in <code>${HOME}/.bashrc</code> and back out under <code>manual</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The permanent/repairable split has no Windows half</strong> <code>(in-scope)</code> [Claude Opus 5, Consolidator]. <code>ErrMalformedBlock</code> originates only in <code>managedlines</code>, which is <code>!windows</code>. I confirmed by grep that no Windows path can produce it, so every Windows failure classifies as repairable. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/docs/design/api_app.md#L157"><code>api_app.md:157</code></a> presents <code>Malformed</code> as the general permanent case with no platform caveat, and I2 shows the consequence. On Windows the deletion finalizer has no escape. Either document the asymmetry or classify an access-denied registry error as permanent.</li>
+      <li><strong>Cleanup obligations still come from the desired value alone</strong> <code>(future)</code> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span>. Raised in round 5, and I1 sharpens it. The App records what the user wants and never what was last applied, so <code>Manage</code> has to infer from file content what it previously wrote. A <code>status.appliedAddPath</code> would let removal target what we know we wrote, so it would not have to pattern-match markers a user may have edited.</li>
+      <li><strong>Every App status write drives a full pass over eight files plus a lock acquisition</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5</span>. <code>SetupWithManager</code> watches the App with no generation or status predicate, so each <code>Settled</code>, <code>ContainerEngineReady</code>, or <code>KubernetesReady</code> update wakes this reconciler, takes the cross-process lock, and reads eight dotfiles. It converges and writes nothing, so there is no reconcile loop, only cost. But it is host I/O on every App event for a setting that changes once a year.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The cross-process lock is real and correctly placed</strong> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. It encloses the whole read-compute-write rather than the rename, and <code>sharedDataDir()</code> matches <code>instance.Dir()</code>&#39;s parent exactly on all three platforms (I diffed them), so every daemon a user runs serializes on one file. My two-process probe puts the guarantee beyond argument.</li>
+      <li><em></em>The <code>firstOtherIdx</code>/<code>lastOtherIdx</code> anchoring is the right primitive<em></em> for the &quot;middle&quot; rule. I probed seven Windows shapes including duplicates at both edges and a duplicated middle entry; every one is a fixed point after a single pass.</li>
+      <li><em></em>Marking the first login file <code>handled</code> before the write<em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go#L98"><code>pathmanagement_unix.go:98</code></a>) so a failure cannot push the block onto a file bash never sources is a subtle ordering choice, and the comment explains why.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran <code>go test ./pkg/controllers/app/pathmanagement/... ./pkg/util/managedlines/... ./pkg/controllers/app/app/...</code> at the review SHA: all green. Codex additionally ran the wider <code>./pkg/controllers/app/... ./pkg/service/cmd ./pkg/util/...</code> and <code>-race</code>, also green, and cross-compiled the Windows files.</p>
+    <p>The new tests are strong where they aim. <code>TestComputeWindowsPath</code>&#39;s second-pass assertion on every case is the right pattern and should be adopted in <code>managedlines_test.go</code> too, where it is applied only to <code>TestManageCollapsesDuplicateBlock</code>. Untested, highest risk first:</p>
+    <ol>
+      <li>Removal over a file holding an unbalanced marker (I1). The suite covers removal from clean files and from balanced duplicates, never from the unbalanced case, and never asserts a fixed point on the removal path.</li>
+      <li>A deletion unwind that fails repairably and never recovers (I2). <code>TestReconcileRetriesFinalizerWhenUnwindRepairable</code> pins one retry; nothing pins that the App can still be deleted.</li>
+      <li>Two real processes on the lock (S12), and the <code>acquirePathLock</code> 30 s timeout, whose classification as repairable feeds I2.</li>
+      <li>Enabling the controller through <code>--controllers=app</code> (S5), and any integration path at all (S13).</li>
+      <li><code>applyPath</code> on Windows: the tests drive <code>writeUserPath</code> only, so the <code>changed → broadcastEnvironmentChange()</code> edge is never taken.</li>
+      <li>Existing duplicate <code>Path</code> entries in the <code>front</code>/<code>back</code> directions (round 6 covers <code>manual</code>).</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>api_app.md</code> is the one document this round got right. The new <code>Malformed</code> row and the rewritten <code>Settled</code> paragraph both match <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/controllers/app/app/controllers/app_controller.go#L714-L726"><code>app_controller.go:714-726</code></a>. The <code>rdd shell-profile</code> correction in <code>cmd_app.md</code> and <code>bootstrap.md</code> discharges round 5&#39;s I4; no Go source defines the subcommand, and both files now say so.</p>
+    <p>Remaining: the &quot;literal&quot; claim in both rewritten files (S4), the two <code>Settled</code> enumerations that were not updated (S6), <code>cmd_service.md</code>&#39;s silence on the unwind (S7), the <code>api_app.md</code> typos (S9), and the API doc comment that predates the new reason (S3). The CRD descriptions in <code>app/crd.yaml</code> and <code>mock/crd.yaml</code> match the Go types.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>One commit, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bbc90d6c2"><code>bbc90d6c2</code></a>. The body still describes only the original feature, so a round-1 message now covers six rounds of design: the cross-process lock, the fixed-point work, and a new user-visible condition reason (<code>Malformed</code>) that a consumer reading the commit would not know exists. Raised in rounds 3, 4, and 5 and listed as acknowledged; noted here only because round 6 added the new reason.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Declined by the author, with reasons.</strong></p>
+    <ul>
+      <li><strong>Backup copies of edited dotfiles</strong> — @Anutrix proposed <code>.backup-pre-rd2</code>; @Nino-K declined because the edits are fenced, atomic, and reversible, and backup bookkeeping would need first-change-only and never-overwrite rules. The round-6 code stays consistent with that: removal restores surrounding content byte-for-byte.</li>
+      <li><em></em>Windows <code>manual</code> keeps a middle entry, <code>rdd svc delete</code> does not<em></em> — Jan&#39;s decision, implemented as <code>forceRemove</code> and pinned by <code>TestWriteUserPathForceRemovesMiddleEntry</code>.</li>
+      <li><strong>Configurable registry root</strong> — @mook-as hedged it as &quot;probably overkill&quot;; the <code>envSubKey</code> var gets the test isolation without it.</li>
+      <li><em></em>Testing the <code>WM_SETTINGCHANGE</code> broadcast<em></em> — needs an invisible window and a message pump; @mook-as called it &quot;kind of annoying&quot;.</li>
+    </ul>
+    <p><strong>Suggestions that have now run two rounds unaddressed.</strong> These stay here rather than inflating the list a third time.</p>
+    <ul>
+      <li><code>manual</code> promotes an empty segment to the front of the Windows <code>Path</code> (rounds 4, 5). Re-measured at this SHA: <code>C:\bin;;C:\Windows</code> → <code>;C:\Windows</code>, and a trailing variant <code>C:\Windows;;C:\bin</code> → <code>C:\Windows;</code>. Both are fixed points, so the leading empty segment (which Windows resolves as the current directory) persists ahead of every real directory. The round-6 <code>middle</code> rewrite changed the code around this line without changing the outcome.</li>
+      <li>The commit message describes only the original feature (rounds 3, 4, 5). See Commit Structure.</li>
+      <li><code>pathManagementEnabled</code> is a third verbatim copy of the same helper, and <code>GetEnabledControllers</code> uses an uncached clientset <code>Get</code> (rounds 3, 4).</li>
+      <li>The generated TypeScript model types <code>addPath</code> as <code>string</code> where the sibling emits an enum (rounds 3, 4).</li>
+      <li><code>Unwind</code> re-derives <code>HOME</code> and <code>XDG_CONFIG_HOME</code> in the CLI process (rounds 3, 4).</li>
+      <li>The Windows registry test leaves its parent key behind (rounds 3, 4).</li>
+      <li>No GUI writes <code>application.addPath</code> (rounds 2, 3, 4). <code>FirstRun.vue</code> is unreachable RD1 code.</li>
+      <li><code>applyPosix</code> creates <code>~/.config</code> at 0700 and never removes it (rounds 2, 3).</li>
+      <li>A CRLF-converted managed block is never cleaned up (rounds 2, 3).</li>
+      <li>The <code>WM_SETTINGCHANGE</code> timeout is per-window and the broadcast ignores its <code>context</code> (rounds 2, 3).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/binlinks/binlinks.go#L40"><code>binlinks.go:40</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/cmd/rdd/run.go#L125"><code>cmd/rdd/run.go:125</code></a> build the bin path by hand rather than using <code>instance.BinDir()</code> (rounds 2, 3).</li>
+    </ul>
+    <p><strong>Refuted this round.</strong></p>
+    <ul>
+      <li>Codex&#39;s claim that I1&#39;s topology was &quot;introduced by the generalized duplicate stripper&quot;. I ran both inputs against <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3f2f011d3"><code>3f2f011d3</code></a>&#39;s <code>managedlines.go</code> in an isolated package: byte-identical results, including the second-pass <code>ErrMalformedBlock</code>. Round 6 only gave the error a type. Recorded as a gap.</li>
+      <li>Gemini 3.5 Flash&#39;s claim that <code>cmd/app-controller/main.go</code> omitting the blank import is part of a defect. The omission is correct. <code>RunControllers</code> panics on a group mismatch (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/bbc90d6c2672a8d1503d2b8340ea68e74c724d68/rdd/pkg/external/main.go#L63-L66"><code>external/main.go:63-66</code></a>), so adding the import with <code>GetAPIGroup()</code> returning <code>&quot;&quot;</code> would abort startup. Refuted in round 4 and still refuted; S5 covers the other half.</li>
+      <li>Flash&#39;s <code>repro</code>/<code>repro-output</code> pair for its I1 does not correspond to a test that could compile as written, and its output was not produced by a run. The underlying fact is true and established by reading <code>controller.go:48</code>.</li>
+    </ul>
+    <p><strong>Not executed.</strong> Native Windows tests and the <code>WM_SETTINGCHANGE</code> broadcast (no host). BATS suites (<code>rdd/bats/lib</code> submodules are empty in the review worktrees). Jest and <code>tsc</code> over the generated TypeScript model (no <code>node_modules</code>).</p>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em>Test that existing duplicate <code>Path</code> entries survive<em></em> ([<code>discussion_r3882897068</code>](https://github.com/rancher-sandbox/rancher-desktop-2/pull/638#discussion_r3882897068)). <strong>Discharged this round.</strong> <code>manual keeps unrelated duplicates and removes our back entry</code> (<code>C:\foo;c:\foo;C:\bin</code> → <code>C:\foo;c:\foo</code>) is the requested shape, and the new second-pass assertion proves the duplicates are still there after re-application. The <code>front</code>/<code>back</code> direction remains uncovered, which is a smaller ask than the original.</li>
+      <li><em></em><code>Valide values</code> → <code>Valid values</code><em></em> ([<code>discussion_r3815286334</code>](https://github.com/rancher-sandbox/rancher-desktop-2/pull/638#discussion_r3815286334)). Open through six rounds. See S9.</li>
+      <li><em></em><code>filepath.Clean</code> on Windows entries<em></em> ([<code>discussion_r3815320681</code>](https://github.com/rancher-sandbox/rancher-desktop-2/pull/638#discussion_r3815320681)). Still actionable, and I measured the cost: with <code>binDir</code> <code>C:\u\.rd2\bin</code>, an existing <code>C:\u\.rd2\.\bin</code> is not recognised as ours. <code>manual</code> leaves it and <code>front</code> produces <code>C:\u\.rd2\bin;C:\u\.rd2\.\bin;C:\Windows</code>, two entries for one directory. A doubled separator behaves the same way. The reviewer&#39;s own caveat about <code>filepath.Clean</code> being a no-op off Windows is answered by extending <code>normalizeWindowsPathEntry</code> rather than calling it.</li>
+      <li><strong>Make the registry root configurable</strong> ([<code>discussion_r3883002163</code>](https://github.com/rancher-sandbox/rancher-desktop-2/pull/638#discussion_r3883002163)). Low priority; the reviewer hedged.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude Opus 5]</strong> The strongest run. It reached I1&#39;s stray-end-marker face through a 20 000-case randomized sweep, then proposed and tested a patch, which is also how it produced the review&#39;s one wrong remedy, since the patch clears its own face and worsens Codex&#39;s. It ran a differential experiment I would otherwise have had to run myself, stripping the lock via <code>go test -overlay</code> to prove <code>TestApplyConcurrentInstancesKeepBothBlocks</code> can fail. Its Windows design concern is the only place any agent reached the deletion-hang mechanism, though it filed that as a future observation rather than a finding. It over-weighted documentation, filing three of five Importants against prose.</p>
+    <p><strong>[Codex GPT 5.6 Sol]</strong> Found the sharper face of I1 (a stray start marker leaving a live <code>export PATH</code> line) and was right that its remedy, a real parser, is the one to take. It was wrong about the label, calling the topology new to round 6; the round-5 comparison took one probe and refuted it. Its prior-round re-verification table is the most useful artifact any agent produced, mapping all eight round-5 suggestions to their current state, and it correctly spotted that the concurrency test cannot fail if the lock became process-local. Its <code>make verify-generate</code> note reproduces the known stale-<code>containers</code> drift, not a PR defect.</p>
+    <p><strong>[Gemini 3.1 Pro]</strong> One useful finding: the requeue that contradicts the sentinel&#39;s own &quot;stop retrying&quot; promise, which it reached independently and which I had reached from the same code. Otherwise it restated known suggestions. It labelled the <code>GetAPIGroup()</code> issue a regression, which it is not; the sibling <code>kubernetes</code> controller has always done the same. Its closing note that empty-segment behaviour was &quot;verified locally using a synthetic Python script mimicking the loop structure&quot; is a re-implementation, not a measurement of this code; I re-ran it against the real function.</p>
+    <p><strong>[Gemini 3.5 Flash]</strong> The weakest run. It produced no finding the others missed, and its coverage summary marks <code>reconciler.go</code> &quot;Reviewed, no issues — Flock and finalizers are flawless&quot;, the file that contains I2. It attached a <code>repro</code>/<code>repro-output</code> pair that could not have run as written, which is the one behaviour in this round that would have misled a reader who trusted it. Its acknowledged-limitations list was accurate and complete, which matters on a sixth round, though that section was supplied to it in the prompt.</p>
+    <p>Both Gemini models share a family, so where they converged (the <code>--controllers=app</code> promotion), treat that as one opinion, not two.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>19m 48s</td><td>26m 48s</td><td>6m 18s</td><td>4m 58s</td></tr>
+        <tr><td>Findings</td><td>1I 10S</td><td>1I 11S</td><td>6S</td><td>6S</td></tr>
+        <tr><td>Tool calls</td><td>52 (Bash 51, Read 1)</td><td>—</td><td>33 (run<em>shell</em>command 30, read_file 3)</td><td>61 (read<em>file 36, grep</em>search 14, run<em>shell</em>command 5)</td></tr>
+        <tr><td>Design observations</td><td>7</td><td>3</td><td>2</td><td>0</td></tr>
+        <tr><td>False positives</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>5</td><td>4</td><td>1</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>23</td><td>23</td><td>23</td><td>23</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>1</td><td>2</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 10S</strong></td><td><strong>1I 11S</strong></td><td><strong>6S</strong></td><td><strong>6S</strong></td></tr>
+        <tr><td>Downgraded</td><td>4 (I→S)</td><td>0</td><td>2 (I→S)</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Claude I1 and Codex I1 merged into one finding at Important, with both faces proven. Claude I2, I3, I4 and Codex S3, S9 → suggestions S6, S4, S7 (documentation, below the bar this round set for prose). Claude I5 → S13. Gemini 3.1 Pro I1 and Codex S10 (retry half) → S2; Gemini 3.1 Pro I2, Flash I1, Codex S2 → S5 (the round-5 severity, not the promotion two agents applied). Codex S10 (comment half) → S3. Flash&#39;s fabricated repro pair counted as one false positive against its I1&#39;s evidence, not against the underlying fact. I2 was raised by no agent as a finding.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>When a round&#39;s fix converts a best-effort failure path into a retrying one, enumerate what the retry now blocks and for how long. Removing an abandonment is only half a fix. A requeue with no bound turns a silent residue into a stalled resource, and the round that asked for the retry rarely names the ceiling. Check whether any caller can still make progress when the underlying condition never clears.</li>
+      <li>When a finding rests on an error classifier, check the classifier at every call site rather than in its own unit test. A table test over a helper proves the mapping and not the routing, and a classifier that is right in isolation can be reached with a differently shaped error from one of its callers, or from a platform where its input can never occur.</li>
+      <li>When two agents report defects in the same helper, reproduce both before merging them into one finding. Two faces of one asymmetry usually accept the same remedy. But a remedy proposed against one face can worsen the other, and the report recommends whichever patch it quotes.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li><code>[repo]</code> Controllers under <code>pkg/controllers/app/</code> that register no CRD of their own return <code>&quot;&quot;</code> from <code>GetAPIGroup()</code>. This excludes them from <code>--controllers=&lt;group&gt;</code> selection, since <code>shouldEnableController</code> matches a selector token against the API group or the controller name. <code>pkg/external/main.go</code> panics on a group mismatch, so blank-importing such a controller into a standalone <code>cmd/*-controller/main.go</code> aborts startup rather than being ignored. Check both when reviewing a new controller&#39;s registration.</li>
+      <li><code>[repo]</code> <code>instance.Dir()</code> resolves to <code>~/AppData/Local/&lt;name&gt;</code> on Windows, <code>~/.local/share/&lt;name&gt;</code> on Linux, and <code>~/Library/Application Support/&lt;name&gt;</code> on macOS, with <code>&lt;name&gt;</code> = <code>rancher-desktop-$RDD_INSTANCE</code>. Helpers that recompute this layout instead of calling <code>instance.Dir()</code> do so to avoid its <code>sync.OnceValue</code> memoization, which makes them track <code>HOME</code> changes in tests; verify such a helper against <code>instance.Dir()</code> before treating the duplication as drift.</li>
+      <li><code>[repo]</code> <code>instance.Suffix()</code> returns <code>RDD_INSTANCE</code> verbatim with no validation, and it reaches generated shell text, file fence markers, and directory names. When reviewing code that interpolates it, check what a value containing a newline, quote, or shell metacharacter would do to the consumer.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
