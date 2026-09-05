@@ -230,7 +230,7 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
       <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4b16ff9f359dcf2143ea6cb4ecd2a19533ad589e"><code>4b16ff9f359dcf2143ea6cb4ecd2a19533ad589e</code></a></td></tr>
       <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
       <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; one requeue value swaps a bounded retry policy for an unthrottled one</td></tr>
-      <tr><td>Wall-clock time</td><td><code>28 min 7 s</code></td></tr>
+      <tr><td>Wall-clock time</td><td><code>1 h 19 min 2 s</code></td></tr>
     </table>
 
     <hr>
@@ -271,8 +271,8 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
 	}
 
 	if limaVM.Spec.Running &amp;&amp; !app.Spec.Running {</code></pre>
-    <p><code>RequeueAfter</code> is a <code>time.Duration</code>, so the untyped <code>1</code> is one nanosecond. controller-runtime dispatches the arms differently: <code>Requeue: true</code> rate-limited the requeue, while <code>RequeueAfter &gt; 0</code> calls <code>Queue.Forget(req)</code> and re-adds with no throttle.</p>
-    <p>Both sites re-enter a branch whose exit waits on a cached read converging. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4b16ff9f359dcf2143ea6cb4ecd2a19533ad589e/rdd/pkg/service/controllers/manager.go#L143"><code>manager.go:143</code></a> sets no <code>Client</code> or <code>Cache</code> override, so <code>r.Get</code> reads the informer cache while the <code>Delete</code> at line 429 and the <code>Patch</code> at line 481 write straight through. Each pass repeats the write until the watch event arrives.</p>
+    <p><code>RequeueAfter</code> is a <code>time.Duration</code>, so the untyped <code>1</code> is one nanosecond. <code>Requeue: true</code> rate-limited the requeue; <code>RequeueAfter &gt; 0</code> calls <code>Queue.Forget(req)</code> and re-adds with no throttle.</p>
+    <p>Both sites re-enter a branch whose exit waits on a cached read converging. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4b16ff9f359dcf2143ea6cb4ecd2a19533ad589e/rdd/pkg/service/controllers/manager.go#L143"><code>manager.go:143</code></a> sets no <code>Cache</code> override, so <code>r.Get</code> reads the informer cache while the <code>Delete</code> at line 429 and the <code>Patch</code> at line 481 write straight through. Each pass repeats the write until the watch event arrives.</p>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/4b16ff9f359dcf2143ea6cb4ecd2a19533ad589e/rdd/pkg/service/controllers/manager.go#L138-L148">rdd/pkg/service/controllers/manager.go</a></div>
       <pre data-start="138" data-line="143"><code class="language-go">	if err != nil {
 		return fmt.Errorf(&quot;failed to resolve passthrough port: %w&quot;, err)
@@ -385,9 +385,16 @@ RequeueAfter:time.Second   delivery 2 after 1.002021s
 RequeueAfter:time.Second   TOTAL delay over 3 requeues: 2.002s
 ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/app/controllers	3.310s</code></pre>
       </details>
-    <p>The queue&#39;s contribution to the loop period drops from 645 ms to 1 ms over eight passes, and API latency becomes the only brake. The third case is the control. A real duration behaves correctly, so the defect is the value, not <code>RequeueAfter</code>.</p>
-    <p>Fix: name a constant beside <code>requeueAfterDeletion</code> and apply it at both sites. Verified: builds clean, <code>go vet</code> clean, tests pass.</p>
-      <pre><code class="language-diff">-		return ctrl.Result{RequeueAfter: 1}, nil
+    <p>The queue&#39;s delay drops from 645 ms to 1 ms over eight passes, and API latency becomes the only brake. The third case is the control, and a real duration behaves correctly.</p>
+    <p>Fix: declare the constant below and apply it at both sites; verified to build, vet, and pass tests. Line 436 could instead watch ConfigMaps, since the input ConfigMap already has an App controller reference, but that widens event scope and is untested.</p>
+      <pre><code class="language-diff"> 	requeueAfterDeletion = 2 * time.Second
++
++	// requeueAfterUnwatchedWrite gives the informer cache time to observe a
++	// write to a resource this controller does not watch.
++	requeueAfterUnwatchedWrite = 100 * time.Millisecond
+ )
+@@
+-		return ctrl.Result{RequeueAfter: 1}, nil
 +		return ctrl.Result{RequeueAfter: requeueAfterUnwatchedWrite}, nil</code></pre>
     </div>
     <hr>
