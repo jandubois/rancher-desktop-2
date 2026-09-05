@@ -5,13 +5,22 @@
 package controllers
 
 import (
+	"cmp"
 	"context"
 	"crypto/sha256"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
+	"slices"
+	"strconv"
+	"strings"
+	"time"
 
 	containerdclient "github.com/containerd/containerd/v2/client"
+	"github.com/containerd/containerd/v2/core/containers"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
+	"github.com/containerd/containerd/v2/pkg/oci"
 	"github.com/containerd/errdefs"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -126,12 +135,60 @@ func (w *containerdWatcher) applyContainer(nsCtx context.Context, ns string, ctr
 		name = info.ID
 	}
 
+	// Docker reports the image ID here, not the reference, and the UI joins
+	// this against Image.status.id to find the mirror. containerd records only
+	// the reference, so resolve it to the same digest the image mirror
+	// reports. An image deleted out from under a running container (containerd
+	// keeps none of Docker's in-use protection) no longer resolves, and the
+	// reference is left in place as the more useful of the two.
+	image := info.Image
+	if img, err := w.cli.GetImage(nsCtx, info.Image); err != nil {
+		logf.FromContext(nsCtx).WithName("containerd-watcher").
+			V(1).Info("Reporting the image reference, which did not resolve",
+			"id", info.ID, "image", info.Image, "error", err)
+	} else {
+		image = img.Target().Digest.String()
+	}
+
 	statusApply := containersv1alpha1apply.ContainerStatus().
 		WithName(name).
 		WithNamespace(ns).
-		WithImage(info.Image).
+		WithImage(image).
 		WithLabels(info.Labels).
 		WithCreatedAt(metav1.NewTime(info.CreatedAt))
+
+	// The OCI spec holds the command line. Docker reports it split as Path plus
+	// Args, so match that split here. Path is a required status field, so a
+	// spec that yields no argv reports an empty command line rather than
+	// leaving the field out: an apply without it is rejected whole, which
+	// would strand the mirror with no status at all.
+	var path string
+	var args []string
+	if argv, err := containerdProcessArgs(info); err != nil {
+		logf.FromContext(nsCtx).WithName("containerd-watcher").
+			V(1).Info("Reporting an empty command line", "id", info.ID, "error", err)
+	} else if len(argv) > 0 {
+		path, args = argv[0], argv[1:]
+	}
+	statusApply.WithPath(path).WithArgs(args...)
+
+	// nerdctl records a container-level failure here; containerd itself has no
+	// equivalent of Docker's State.Error.
+	if e := info.Labels["nerdctl/error"]; e != "" {
+		statusApply.WithError(e)
+	}
+
+	// containerd knows nothing about published ports; nerdctl records the
+	// mapping it asked CNI for. Containers created through CRI carry no such
+	// label, so pod ports stay empty. An unparsable label clears the mirror's
+	// ports rather than keeping the last good list: the mapping cannot be read
+	// any more, and a stale one would still be served as current.
+	ports, err := containerdPorts(info)
+	if err != nil {
+		logf.FromContext(nsCtx).WithName("containerd-watcher").
+			V(1).Info("Clearing ports", "id", info.ID, "error", err)
+	}
+	statusApply.WithPorts(ports...)
 
 	// Derive the run state from the task, if any.
 	status := containersv1alpha1.ContainerStatusCreated
@@ -151,11 +208,15 @@ func (w *containerdWatcher) applyContainer(nsCtx context.Context, ns string, ctr
 			return fmt.Errorf("failed to get task status for %s: %w", info.ID, err)
 		default:
 			status = mapContainerdProcessStatus(st.Status)
+			pid := int32(task.Pid())
 			statusApply.
-				WithPid(int32(task.Pid())).
+				WithPid(pid).
 				WithExitCode(int32(st.ExitStatus))
 			if !st.ExitTime.IsZero() {
 				statusApply.WithFinishedAt(metav1.NewTime(st.ExitTime))
+			}
+			if startedAt := w.startedAt(nsCtx, mirrorName, pid); startedAt != nil {
+				statusApply.WithStartedAt(*startedAt)
 			}
 		}
 	}
@@ -210,4 +271,117 @@ func mapContainerdProcessStatus(s containerdclient.ProcessStatus) containersv1al
 		return containersv1alpha1.ContainerStatusPausing
 	}
 	return containersv1alpha1.ContainerStatusUnknown
+}
+
+// containerdProcessArgs returns the container's full command line from its OCI
+// runtime spec. The spec is unmarshalled from the record already fetched, so
+// this costs no extra containerd round trip.
+func containerdProcessArgs(info containers.Container) ([]string, error) {
+	if info.Spec == nil {
+		return nil, errors.New("container record has no runtime spec")
+	}
+	var spec oci.Spec
+	if err := json.Unmarshal(info.Spec.GetValue(), &spec); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal runtime spec: %w", err)
+	}
+	if spec.Process == nil {
+		return nil, errors.New("runtime spec has no process")
+	}
+	return spec.Process.Args, nil
+}
+
+// recordTaskStart remembers when a task was seen starting. containerd reports
+// no start time of its own, so an observed TaskStart event is the only place
+// one can come from.
+func (w *containerdWatcher) recordTaskStart(mirrorName string, at time.Time) {
+	w.startsMu.Lock()
+	defer w.startsMu.Unlock()
+	w.starts[mirrorName] = metav1.NewTime(at)
+}
+
+// forgetTaskStart drops a remembered start time, so the map does not grow with
+// every container that has ever run.
+func (w *containerdWatcher) forgetTaskStart(mirrorName string) {
+	w.startsMu.Lock()
+	defer w.startsMu.Unlock()
+	delete(w.starts, mirrorName)
+}
+
+// startedAt returns the start time to report for a running task. A start this
+// watcher saw wins. Otherwise the value already on the mirror is reused, but
+// only while the PID matches: a different PID is a task recreated out of
+// sight, whose old start time no longer describes it. Both miss for a task
+// already running when the watcher connected, and the field stays unset
+// rather than reporting a time containerd cannot support.
+func (w *containerdWatcher) startedAt(ctx context.Context, mirrorName string, pid int32) *metav1.Time {
+	w.startsMu.Lock()
+	at, ok := w.starts[mirrorName]
+	w.startsMu.Unlock()
+	if ok {
+		return &at
+	}
+
+	// Reads come from the informer cache, so this costs no API round trip.
+	var existing containersv1alpha1.Container
+	key := client.ObjectKey{Name: mirrorName, Namespace: w.apiNamespace}
+	if err := w.k8s.Get(ctx, key, &existing); err != nil {
+		return nil
+	}
+	if existing.Status.StartedAt.IsZero() || existing.Status.Pid != pid {
+		return nil
+	}
+	return &existing.Status.StartedAt
+}
+
+// cniPortMapping is the shape nerdctl marshals into the nerdctl/ports label,
+// matching github.com/containerd/go-cni's PortMapping. It is declared here
+// rather than imported so the mirror does not take a dependency on go-cni for
+// four fields; the names are part of nerdctl's on-disk format.
+type cniPortMapping struct {
+	HostPort      int32
+	ContainerPort int32
+	Protocol      string
+	HostIP        string
+}
+
+// containerdPorts builds the port mirrors from nerdctl's label. Entries are
+// grouped by the "port/protocol" name Docker uses, and both the names and the
+// bindings within each name are sorted: the fields are atomic under SSA, so an
+// unstable order would mint a new resourceVersion on every sync.
+func containerdPorts(info containers.Container) ([]*containersv1alpha1apply.ContainerPortApplyConfiguration, error) {
+	raw := info.Labels["nerdctl/ports"]
+	if raw == "" {
+		return nil, nil
+	}
+	var mappings []cniPortMapping
+	if err := json.Unmarshal([]byte(raw), &mappings); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal nerdctl/ports: %w", err)
+	}
+
+	byName := make(map[string][]cniPortMapping, len(mappings))
+	for _, m := range mappings {
+		name := fmt.Sprintf("%d/%s", m.ContainerPort, m.Protocol)
+		byName[name] = append(byName[name], m)
+	}
+
+	ports := make([]*containersv1alpha1apply.ContainerPortApplyConfiguration, 0, len(byName))
+	for _, name := range slices.Sorted(maps.Keys(byName)) {
+		bound := byName[name]
+		slices.SortFunc(bound, func(a, b cniPortMapping) int {
+			if a.HostIP != b.HostIP {
+				return strings.Compare(a.HostIP, b.HostIP)
+			}
+			return cmp.Compare(a.HostPort, b.HostPort)
+		})
+		bindings := make([]*containersv1alpha1apply.ContainerPortBindingApplyConfiguration, 0, len(bound))
+		for _, m := range bound {
+			bindings = append(bindings, containersv1alpha1apply.ContainerPortBinding().
+				WithHostIP(m.HostIP).
+				WithHostPort(strconv.Itoa(int(m.HostPort))))
+		}
+		ports = append(ports, containersv1alpha1apply.ContainerPort().
+			WithName(name).
+			WithBindings(bindings...))
+	}
+	return ports, nil
 }
