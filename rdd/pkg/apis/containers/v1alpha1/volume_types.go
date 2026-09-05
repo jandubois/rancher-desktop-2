@@ -14,8 +14,9 @@ type VolumeStatus struct {
 	//
 	// +required
 	Name string `json:"name"`
-	// Namespace of the volume; refers to a `ContainerNamespace` object in the
-	// same Kubernetes namespace.
+	// Namespace of the volume. A `ContainerNamespace` object of the same name
+	// exists in the same Kubernetes namespace whenever the engine's name for
+	// it is a valid object name.
 	//
 	// +required
 	Namespace string `json:"namespace"`
@@ -84,8 +85,9 @@ type VolumeCreateSpec struct {
 	//
 	// +optional
 	Name string `json:"name"`
-	// Namespace of the volume; refers to a `ContainerNamespace` object in the
-	// same Kubernetes namespace.  If not specified, the volume will be created
+	// Namespace of the volume. A `ContainerNamespace` object of the same name
+	// exists in the same Kubernetes namespace whenever the engine's name for
+	// it is a valid object name.  If not specified, the volume will be created
 	// in the default namespace.
 	//
 	// +optional

@@ -134,8 +134,10 @@ type ContainerStatus struct {
 	//
 	// +required
 	Name string `json:"name"`
-	// Namespace is the container namespace; refers to a `ContainerNamespace`
-	// object in the same Kubernetes namespace.
+	// Namespace is the container namespace. A `ContainerNamespace` object of
+	// the same name exists in the same Kubernetes namespace whenever the
+	// engine's name for it is a valid object name; containerd namespace
+	// names are freer than that, and one that is not gets no mirror.
 	//
 	// +required
 	Namespace string `json:"namespace"`
@@ -260,8 +262,10 @@ type ContainerCreateRequestSpec struct {
 	//
 	// +optional
 	Name string `json:"name"`
-	// Namespace is the container namespace; refers to a `ContainerNamespace`
-	// object in the same Kubernetes namespace.  If not specified, the container
+	// Namespace is the container namespace. A `ContainerNamespace` object of
+	// the same name exists in the same Kubernetes namespace whenever the
+	// engine's name for it is a valid object name; containerd namespace
+	// names are freer than that, and one that is not gets no mirror.  If not specified, the container
 	// will be created in the default namespace.
 	//
 	// +optional

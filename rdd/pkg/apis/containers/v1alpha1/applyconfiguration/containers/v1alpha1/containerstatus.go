@@ -15,8 +15,10 @@ import (
 type ContainerStatusApplyConfiguration struct {
 	// Name of the container; this is distinct from the container ID.
 	Name *string `json:"name,omitempty"`
-	// Namespace is the container namespace; refers to a `ContainerNamespace`
-	// object in the same Kubernetes namespace.
+	// Namespace is the container namespace. A `ContainerNamespace` object of
+	// the same name exists in the same Kubernetes namespace whenever the
+	// engine's name for it is a valid object name; containerd namespace
+	// names are freer than that, and one that is not gets no mirror.
 	Namespace *string `json:"namespace,omitempty"`
 	// Path to the executable (within the image) for the process.
 	Path *string `json:"path,omitempty"`
