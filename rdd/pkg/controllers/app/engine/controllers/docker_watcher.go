@@ -405,7 +405,7 @@ func (w *dockerWatcher) processContainerAction(ctx context.Context, c *container
 }
 
 // dispatchContainerAction executes the Docker call for a single action. The
-// caller pre-validates the action name; the default branch triggers only
+// caller pre-validates the action name; the trailing error fires only
 // when a new ContainerAction value is added to the type but not to the switch.
 //
 // Pause and unpause pre-check the current Docker state and return nil when
