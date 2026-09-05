@@ -1007,7 +1007,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29</code></pre>
     <p>Beyond what containerd requires, the diff raises the <code>go</code> directive from 1.26.0, moves <code>go-winio</code> from a tagged release to an untagged pseudo-version, and bumps <code>linuxkit/virtsock</code>, <code>k8s.io/utils</code>, <code>k8s.io/kube-openapi</code> and four OpenTelemetry modules. CI reads <code>go-version-file: rdd/go.mod</code>, so the toolchain floor follows automatically, but a reader cannot tell the forced bumps from the collateral.</p>
     <p>Fix: say in the commit body which bumps <code>containerd/v2 v2.3.2</code> forces.</p>
-    <p><strong>Outcome:</strong> Note added to the watcher commit body.</p>
+    <p><strong>Outcome:</strong> Note added to the watcher commit body, recording that containerd v2.3.2 forces the go directive and the go-winio commit alike.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -1153,7 +1153,7 @@ require (
         <tr><td>16</td><td>S11: mirror-naming contract in the docs stays moby-only</td><td>Documentation updated</td><td></td></tr>
         <tr><td>17</td><td>S12: stale comments still call containerd forthcoming</td><td>Documentation updated</td><td></td></tr>
         <tr><td>18</td><td>S13: containerd socket drop-in grants everyone read-write access</td><td>Fixed</td><td>Both ExecStartPost lines made non-fatal; the a+rw mode is left for the pending move of the drop-in into the distro image</td></tr>
-        <tr><td>19</td><td>S14: dependency and toolchain bumps ride along</td><td>Fixed</td><td>Note added to the watcher commit body. Verified hcsshim and the containerd sub-modules are forced; nothing in the module graph requires the go-winio pseudo-version</td></tr>
+        <tr><td>19</td><td>S14: dependency and toolchain bumps ride along</td><td>Fixed</td><td>Note added to the watcher commit body. containerd v2.3.2 forces all of it: its own go.mod declares <code>go 1.26.3</code> (the highest in the graph) and requires the go-winio commit directly, as does hcsshim. go-winio has cut no release since v0.6.2, so the pseudo-version is inherited</td></tr>
         <tr><td>20</td><td>Doc gap: tagless image sets status.namespace</td><td>Documentation updated</td><td></td></tr>
         <tr><td>21</td><td>Testing gap 1: TTY containers through the action path</td><td>Test written</td><td></td></tr>
         <tr><td>22</td><td>Testing gap 2: restart policies across a stop</td><td>Skipped</td><td>Covers I2, which is deferred; committing the test now would commit a red test</td></tr>
