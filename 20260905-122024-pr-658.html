@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260905-122024-pr-658</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers — collapsed, so a long proof keeps the next finding on screen */
+details.repro { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.repro > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.repro > summary:hover { background: #eef1f4; }
+details.repro[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.repro pre { border-radius: 0 !important; }
+details.repro .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260905-122024-pr-658</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-05 12:20</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2 (of PR 658)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/658" class="gh-ref" data-title="Add containerd as a first-class engine backend" data-state="open" data-type="pr">#658</a> — Add containerd as a first-class engine backend</td></tr>
+      <tr><td>Branch</td><td><code>engine-containerd</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e8305c19d"><code>e8305c19d</code></a> Correct the dispatchContainerAction comment<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1367f9827"><code>1367f9827</code></a> Forward the containerd socket to the host<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/50274ef3a"><code>50274ef3a</code></a> Extract the shared mirror client from the Docker watcher<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/75e29ddc0"><code>75e29ddc0</code></a> Add the containerd watcher and mirror namespaces<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a6aee5550"><code>a6aee5550</code></a> Mirror containerd containers<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1a27265b3"><code>1a27265b3</code></a> Mirror containerd images into Image resources<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/385b91fbe"><code>385b91fbe</code></a> Add containerd container actions and finalizer deletes<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5ca1263d1"><code>5ca1263d1</code></a> Expose engine namespace support in App status<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de0b85b24"><code>de0b85b24</code></a> Honor the container&#39;s stop timeout on containerd<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a3ff1adc1"><code>a3ff1adc1</code></a> Report the full container status on containerd mirrors<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/faa3b93f4"><code>faa3b93f4</code></a> Add containerd bats coverage for mirror detail and namespaces</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/faa3b93f411eced76dcac315d9af8fddbd02843b"><code>faa3b93f411eced76dcac315d9af8fddbd02843b</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; every round-1 fix does what it claims, but four defects survive outside them: a required status field that can be omitted, a stop signal the parser silently downgrades, a backend switch the dead-watcher path swallows, and a digest reference mirrored as a tag</td></tr>
+      <tr><td>Wall-clock time</td><td><code>43 min 39 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 2 amended eleven fixes into the original commits; I checked each against what its round-1 finding asked for, and all of them hold. The four Important findings are elsewhere. Two are reachable today, with Kubernetes enabled or a systemd-based image; two need an unusual container, or a switch that races the VM teardown. Nothing here threatens data.</p>
+    <p>Findings carry the agents that raised them. The two Gemini models share a family, so their agreement counts once. I proved I1, I2 and I4 with probes run against this tree; I3&#39;s runtime ordering needs a live VM, so it names its evidence instead.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> A container whose OCI spec yields no args gets its whole status apply rejected <span class="pill pill-claude">Claude Opus 5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L167-L182">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go</a></div>
+      <pre data-start="167" data-line="172-177"><code class="language-go">		WithCreatedAt(metav1.NewTime(info.CreatedAt))
+
+	// The OCI spec holds the command line. Docker reports it split as Path plus
+	// Args, so match that split here. A container record always carries a spec,
+	// but an unreadable one only costs these two fields, so log and continue.
+	if argv, err := containerdProcessArgs(info); err != nil {
+		logf.FromContext(nsCtx).WithName(&quot;containerd-watcher&quot;).
+			V(1).Info(&quot;Skipping path and args&quot;, &quot;id&quot;, info.ID, &quot;error&quot;, err)
+	} else if len(argv) &gt; 0 {
+		statusApply.WithPath(argv[0]).WithArgs(argv[1:]...)
+	}
+
+	// nerdctl records a container-level failure here; containerd itself has no
+	// equivalent of Docker&#39;s State.Error.
+	if e := info.Labels[&quot;nerdctl/error&quot;]; e != &quot;&quot; {
+		statusApply.WithError(e)</code></pre>
+    <p>Line 176 is the only <code>WithPath</code> call, and <code>path</code> is in the Container status <code>required</code> block (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/containers/container/crd.yaml#L493-L498"><code>pkg/controllers/containers/container/crd.yaml:493-498</code></a>). On the error branch, and on the silent <code>len(argv) == 0</code> branch, the <code>Status().Apply</code> at line 247 is rejected. The finalizer-only apply at line 237 has already created the object, so the mirror is left with an empty status, every retry rebuilds the same rejected apply, and <code>activeNames</code> keeps the prune from removing it. The comment&#39;s &quot;only costs these two fields&quot; is wrong. It costs the whole status. moby sets <code>Path</code> unconditionally (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers.go#L134"><code>sync_containers.go:134</code></a>). <code>ctr container create</code> on an image with neither <code>Entrypoint</code> nor <code>Cmd</code> reaches it; nerdctl and CRI never do, which is why bats misses it.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/containers/container/crd.yaml#L488-L503">rdd/pkg/controllers/containers/container/crd.yaml</a></div>
+      <pre data-start="488" data-line="493-498"><code class="language-yaml">                - removing
+                - exited
+                - dead
+                - unknown
+                type: string
+            required:
+            - image
+            - name
+            - namespace
+            - path
+            - status
+            type: object
+        type: object
+    selectableFields:
+    - jsonPath: .status.namespace
+    served: true</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers.go#L129-L139">rdd/pkg/controllers/app/engine/controllers/sync_containers.go</a></div>
+      <pre data-start="129" data-line="134"><code class="language-go">
+	// Build status.
+	statusApply := containersv1alpha1apply.ContainerStatus().
+		WithName(name).
+		WithNamespace(namespace).
+		WithPath(inspect.Path).
+		WithArgs(inspect.Args...).
+		WithImage(inspect.Image).
+		WithLabels(labels).
+		WithStatus(mapDockerContainerState(string(inspect.State.Status))).
+		WithPid(int32(inspect.State.Pid)).</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L232-L252">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go</a></div>
+      <pre data-start="232" data-line="237-247"><code class="language-go">	// anyway. The finalizer-only apply also creates the object: applying
+	// to the status subresource cannot create a missing one.
+	var existing containersv1alpha1.Container
+	err = w.k8s.Get(nsCtx, client.ObjectKey{Name: mirrorName, Namespace: w.apiNamespace}, &amp;existing)
+	if apierrors.IsNotFound(err) || (err == nil &amp;&amp; existing.DeletionTimestamp == nil) {
+		finalizerOnly := containersv1alpha1apply.Container(mirrorName, w.apiNamespace).
+			WithFinalizers(mirrorFinalizer)
+		if err := w.k8s.Apply(nsCtx, finalizerOnly,
+			client.ForceOwnership, client.FieldOwner(controllerName)); err != nil {
+			return fmt.Errorf(&quot;failed to apply container finalizer %s: %w&quot;, mirrorName, err)
+		}
+	} else if err != nil {
+		return fmt.Errorf(&quot;failed to get container %s: %w&quot;, mirrorName, err)
+	}
+
+	err = w.k8s.Status().Apply(nsCtx,
+		containersv1alpha1apply.Container(mirrorName, w.apiNamespace).
+			WithStatus(statusApply),
+		client.ForceOwnership, client.FieldOwner(controllerName))
+	if err != nil {
+		return fmt.Errorf(&quot;failed to apply container status %s: %w&quot;, mirrorName, err)</code></pre>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/probe_container_path_test.go; run: cd rdd &amp;&amp; go test ./ -run TestProbeContainerStatusPath -v
+package main
+
+import (
+	&quot;os&quot;
+	&quot;strings&quot;
+	&quot;testing&quot;
+
+	&quot;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions&quot;
+	apiextv1 &quot;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1&quot;
+	&quot;k8s.io/apiextensions-apiserver/pkg/apiserver/validation&quot;
+	&quot;sigs.k8s.io/yaml&quot;
+)
+
+func TestProbeContainerStatusPath(t *testing.T) {
+	raw, err := os.ReadFile(&quot;pkg/controllers/containers/container/crd.yaml&quot;)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var status apiextensions.JSONSchemaProps
+	for _, doc := range strings.Split(string(raw), &quot;\n---\n&quot;) {
+		var crd apiextv1.CustomResourceDefinition
+		if yaml.Unmarshal([]byte(doc), &amp;crd) != nil || crd.Spec.Names.Kind != &quot;Container&quot; {
+			continue
+		}
+		out := &amp;apiextensions.CustomResourceValidation{}
+		if err := apiextv1.Convert_v1_CustomResourceValidation_To_apiextensions_CustomResourceValidation(
+			crd.Spec.Versions[0].Schema, out, nil); err != nil {
+			t.Fatal(err)
+		}
+		status = out.OpenAPIV3Schema.Properties[&quot;status&quot;]
+	}
+	v, _, err := validation.NewSchemaValidator(&amp;status)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// What applyContainer sends when containerdProcessArgs yields no argv.
+	noPath := map[string]any{&quot;name&quot;: &quot;c&quot;, &quot;namespace&quot;: &quot;default&quot;, &quot;image&quot;: &quot;sha256:abc&quot;, &quot;status&quot;: &quot;created&quot;}
+	// The same status with the proposed fix&#39;s unconditional WithPath(&quot;&quot;).
+	withPath := map[string]any{&quot;name&quot;: &quot;c&quot;, &quot;namespace&quot;: &quot;default&quot;, &quot;image&quot;: &quot;sha256:abc&quot;, &quot;status&quot;: &quot;created&quot;, &quot;path&quot;: &quot;&quot;}
+	t.Logf(&quot;status without .path   -&gt; %v&quot;, v.Validate(noPath).Errors)
+	t.Logf(`status with .path: &quot;&quot;  -&gt; %v`, v.Validate(withPath).Errors)
+}</code></pre>
+      <pre><code class="language-text">$ cd rdd &amp;&amp; go test ./ -run TestProbeContainerStatusPath -v
+=== RUN   TestProbeContainerStatusPath
+    probe_container_path_test.go:41: status without .path   -&gt; [.path in body is required]
+    probe_container_path_test.go:42: status with .path: &quot;&quot;  -&gt; []
+--- PASS: TestProbeContainerStatusPath (0.01s)</code></pre>
+      </details>
+    <p>Fix: build <code>path</code> and <code>args</code> into locals and call <code>statusApply.WithPath(path).WithArgs(args...)</code> unconditionally; the probe&#39;s second case shows an empty string satisfies the schema.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>parseLinuxSignal</code> rejects every real-time signal, so a systemd image&#39;s <code>STOPSIGNAL</code> silently becomes SIGTERM <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go#L350-L365">rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go</a></div>
+      <pre data-start="350" data-line="355-360"><code class="language-go">)
+
+// parseLinuxSignal resolves an image STOPSIGNAL value, which is a name with or
+// without the SIG prefix, or a number the image author wrote directly.
+func parseLinuxSignal(raw string) (syscall.Signal, bool) {
+	if n, err := strconv.Atoi(raw); err == nil {
+		if n &gt; 0 &amp;&amp; n &lt;= 31 {
+			return syscall.Signal(n), true
+		}
+		return 0, false
+	}
+	name := strings.ToUpper(raw)
+	if !strings.HasPrefix(name, &quot;SIG&quot;) {
+		name = &quot;SIG&quot; + name
+	}
+	sig, ok := linuxSignals[name]</code></pre>
+    <p>The numeric branch caps at 31 and <code>linuxSignals</code> holds no <code>RTMIN</code>/<code>RTMAX</code> names, so <code>stopSignal</code> falls back to SIGTERM for both. The guest&#39;s own <code>nerdctl stop</code> resolves them: <code>getSignal</code> calls <code>moby/sys/signal.ParseSignal</code> (<code>nerdctl/v2@v2.3.4/pkg/containerutil/containerutil.go:471-481</code>), whose Linux map runs to 64. <code>STOPSIGNAL SIGRTMIN+3</code> is the documented way to stop a systemd container, and nerdctl stores the value unvalidated (<code>pkg/cmd/container/create.go:705-718</code>). Such a container ignores SIGTERM and is SIGKILLed once the grace period expires. The comment above promises &quot;a number the image author wrote directly&quot;, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd_test.go#L200"><code>sync_containers_containerd_test.go:200</code></a> pins <code>&quot;64&quot;</code> as invalid, so a test holds the gap in place.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd_test.go#L195-L205">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd_test.go</a></div>
+      <pre data-start="195" data-line="200"><code class="language-go">			assert.Assert(t, ok)
+			assert.Equal(t, got, tc.want)
+		})
+	}
+
+	for _, raw := range []string{&quot;&quot;, &quot;SIGNOPE&quot;, &quot;0&quot;, &quot;64&quot;, &quot;-1&quot;} {
+		t.Run(&quot;rejects &quot;+raw, func(t *testing.T) {
+			_, ok := parseLinuxSignal(raw)
+			assert.Assert(t, !ok)
+		})
+	}</code></pre>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/app/engine/controllers/zz_probe_signal_test.go
+// Run: cd rdd &amp;&amp; go test ./pkg/controllers/app/engine/controllers/ -run TestProbeStopSignal -v
+package controllers
+
+import &quot;testing&quot;
+
+func TestProbeStopSignal(t *testing.T) {
+	for _, raw := range []string{&quot;SIGUSR1&quot;, &quot;SIGRTMIN+3&quot;, &quot;37&quot;, &quot;64&quot;} {
+		sig, ok := parseLinuxSignal(raw)
+		if !ok {
+			t.Logf(&quot;%-10s -&gt; UNRESOLVED; stopSignal sends SIGTERM (%d) instead&quot;, raw, linuxSIGTERM)
+			continue
+		}
+		t.Logf(&quot;%-10s -&gt; %d&quot;, raw, sig)
+	}
+}</code></pre>
+      <pre><code class="language-text">$ cd rdd &amp;&amp; go test ./pkg/controllers/app/engine/controllers/ -run TestProbeStopSignal -v
+=== RUN   TestProbeStopSignal
+    zz_probe_signal_test.go:14: SIGUSR1    -&gt; 10
+    zz_probe_signal_test.go:11: SIGRTMIN+3 -&gt; UNRESOLVED; stopSignal sends SIGTERM (15) instead
+    zz_probe_signal_test.go:11: 37         -&gt; UNRESOLVED; stopSignal sends SIGTERM (15) instead
+    zz_probe_signal_test.go:11: 64         -&gt; UNRESOLVED; stopSignal sends SIGTERM (15) instead
+--- PASS: TestProbeStopSignal (0.00s)</code></pre>
+      </details>
+    <p><code>SIGUSR1</code> resolving to the guest&#39;s 10 is the case that works.</p>
+    <p>Fix: raise the numeric bound to 64 and add the <code>RTMIN</code>/<code>RTMIN+n</code>/<code>RTMAX-n</code> names, or say in the comment that real-time signals are deliberately unsupported and log the downgrade where an operator sees it. Move <code>&quot;64&quot;</code> out of the test&#39;s rejection table either way.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The dead-watcher arm swallows a backend switch, stranding the Docker context <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go#L199-L214">rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go</a></div>
+      <pre data-start="199" data-line="204-209"><code class="language-go">	// mirrors.
+	var watcherDied bool
+	var previousEngine string
+	r.watcherMu.Lock()
+	watcherRunning := r.watcher != nil
+	switch {
+	case watcherRunning &amp;&amp; !r.watcher.alive():
+		r.watcher = nil
+		watcherRunning = false
+		watcherDied = true
+	case watcherRunning &amp;&amp; r.watcherEngine != engineName:
+		// The spec selected a different backend. Stop the watcher here
+		// rather than relying on the VM restart a template change
+		// triggers, so the mirrors and the condition never describe an
+		// engine other than the one running.
+		previousEngine = r.watcherEngine</code></pre>
+    <p>Changing <code>containerEngine.name</code> rewrites the Lima template (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/app/controllers/app_controller.go#L161"><code>app_controller.go:161</code></a> sets <code>CONTAINER_ENGINE</code>), so the VM restarts and the engine socket closes. A reconcile that observes that first takes the first arm, and Go&#39;s <code>switch</code> never evaluates the second. <code>previousEngine</code> stays empty, so neither <code>stopWatcher</code> nor the sweep runs, and because <code>wantWatcher</code> is still true for containerd the <code>!wantWatcher</code> branch (the only other caller of <code>removeDockerContext</code>) is skipped too. At the merge base this could not happen. There, <code>wantWatcher := running &amp;&amp; engineIsDocker</code>, so a switch to containerd always reached cleanup. The user keeps a selected Docker context pointing at a dead socket.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/app/controllers/app_controller.go#L156-L166">rdd/pkg/controllers/app/app/controllers/app_controller.go</a></div>
+      <pre data-start="156" data-line="161"><code class="language-go">	}
+
+	lines = append(lines,
+		&quot;&quot;,
+		&quot;param:&quot;,
+		fmt.Sprintf(&quot;  CONTAINER_ENGINE: %s&quot;, spec.ContainerEngine.Name),
+		fmt.Sprintf(&quot;  HOST_DOCKER_SOCKET: %q&quot;, instance.DockerSocket()),
+		fmt.Sprintf(&quot;  HOST_CONTAINERD_SOCKET: %q&quot;, instance.ContainerdSocket()),
+		fmt.Sprintf(&quot;  HOST_HOME_GUEST: %q&quot;, toLinuxPath(hostHome)),
+		fmt.Sprintf(&quot;  HOST_INSTANCE_CONFIG: %q&quot;, toLinuxPath(instance.K3sConfig())),
+		fmt.Sprintf(&quot;  VM_SWITCH_LOG: %q&quot;, toLinuxPath(filepath.Join(instance.LogDir(), &quot;vm-switch.log&quot;))),</code></pre>
+    <p>Unproven: the losing order needs a live VM to observe, and no in-process test reaches the socket-close/App-update race. The merge-base comparison and the two skipped <code>removeDockerContext</code> call sites were read directly.</p>
+    <p>Fix: test the engine mismatch before liveness. <code>stopWatcher</code> already handles a finished watcher and does the context cleanup.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/sync_images_containerd.go">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> A canonical digest reference is mirrored as <code>status.repoTag</code> <span class="pill pill-claude">Claude Opus 5</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_images_containerd.go#L129-L141">rdd/pkg/controllers/app/engine/controllers/sync_images_containerd.go</a></div>
+      <pre data-start="129" data-line="134-136"><code class="language-go">	}
+
+	// A record named by a bare digest is a dangling image; leave RepoTag unset.
+	// RepoDigests are not set: containerd does not track registry digests per
+	// record the way Docker does.
+	if _, err := digest.Parse(name); err != nil {
+		statusApply.WithRepoTag(name)
+	}
+
+	return w.mirrorClient.applyImage(nsCtx,
+		containersv1alpha1apply.Image(mirrorName, w.apiNamespace).
+			WithFinalizers(mirrorFinalizer),
+		statusApply)</code></pre>
+    <p><code>digest.Parse</code> accepts only <code>algorithm:hex</code> — its anchored regexp admits no <code>/</code> and no <code>@</code>, so it rejects <code>docker.io/rancher/mirrored-pause@sha256:…</code> and the record goes to <code>WithRepoTag</code>. containerd&#39;s CRI registers three names per pull, config digest, repo tag and repo digest (<code>containerd/v2@v2.3.2/internal/cri/server/images/image_pull.go:202-217</code>), and <code>syncAllImages</code> walks every namespace including <code>k8s.io</code>. With Kubernetes enabled every image therefore produces a mirror whose <code>repoTag</code> holds a digest reference, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L312-L315"><code>api_containers.md:312-315</code></a> says that field is for a tag.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L307-L320">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="307" data-line="312-315"><code class="language-markdown">Delete the `Container` object; a finalizer will be used to delete the container,
+at which point the `Container` object will actually be deleted.
+
+## Images
+
+`Image` objects reflect images in the container engine.  Each tag is represented
+as a new `Image` object; therefore, there may be multiple `Image` objects for
+the same image ID (one per tag).  If an image without any tags exists, that will
+be represented by an `Image` object without `.status.repoTag`.
+
+```yaml
+apiVersion: containers.rancherdesktop.io/v1alpha1
+kind: Image
+metadata:</code></pre>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/app/engine/controllers/zz_probe_repotag_test.go
+// Run: cd rdd &amp;&amp; go test ./pkg/controllers/app/engine/controllers/ -run TestProbeRepoTag -v
+package controllers
+
+import (
+	&quot;testing&quot;
+
+	&quot;github.com/opencontainers/go-digest&quot;
+)
+
+func TestProbeRepoTag(t *testing.T) {
+	sha := &quot;sha256:1b7c1c6bd9a34ff7bfa4e6b62c1bd83bd9c8f0f7e8b0e2ab6a26e7f6e4b7c1a2&quot;
+	for _, name := range []string{
+		&quot;docker.io/library/busybox:latest&quot;,
+		&quot;docker.io/rancher/mirrored-pause@&quot; + sha,
+		sha,
+	} {
+		_, err := digest.Parse(name)
+		t.Logf(&quot;record %-52s -&gt; repoTag set: %v&quot;, name, err != nil)
+	}
+}</code></pre>
+      <pre><code class="language-text">$ cd rdd &amp;&amp; go test ./pkg/controllers/app/engine/controllers/ -run TestProbeRepoTag -v
+=== RUN   TestProbeRepoTag
+    zz_probe_repotag_test.go:19: record docker.io/library/busybox:latest                     -&gt; repoTag set: true
+    zz_probe_repotag_test.go:19: record docker.io/rancher/mirrored-pause@sha256:1b7c1c6bd9a34ff7bfa4e6b62c1bd83bd9c8f0f7e8b0e2ab6a26e7f6e4b7c1a2 -&gt; repoTag set: true
+    zz_probe_repotag_test.go:19: record sha256:1b7c1c6bd9a34ff7bfa4e6b62c1bd83bd9c8f0f7e8b0e2ab6a26e7f6e4b7c1a2 -&gt; repoTag set: false
+--- PASS: TestProbeRepoTag (0.00s)</code></pre>
+      </details>
+    <p>The bare digest correctly stays untagged; only the canonical form is misfiled.</p>
+    <p>Fix: classify with <code>github.com/distribution/reference</code>, which is already in the module graph. Route a <code>reference.Canonical</code> to <code>WithRepoDigests</code> and a <code>reference.NamedTagged</code> to <code>WithRepoTag</code>, and leave anything else dangling.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The stop test proves the signal, not the timeout, and its exit-code assertion can pass vacuously <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L360-L372">rdd/bats/tests/32-app-controllers/engine-containerd.bats</a></div>
+      <pre data-start="360" data-line="365-367"><code class="language-bash">
+    nerdctl rm --force tty-actions
+}
+
+@test &quot;stop action honors the container stop signal and timeout&quot; {
+    # The container ignores SIGTERM and exits 0 on SIGUSR1, so it can only
+    # stop promptly with the recorded signal. A ten-second stop means the
+    # signal was ignored and the SIGKILL escalation ended it.
+    run_e -0 nerdctl run --detach --name signal-actions --stop-signal SIGUSR1 \
+        --stop-timeout 30 busybox \
+        sh -c &#39;trap &quot;exit 0&quot; USR1; trap &quot;&quot; TERM; while :; do sleep 1; done&#39;
+    cid=${output}
+    rdd ctl wait --for=jsonpath=&#39;{.status.status}&#39;=running \</code></pre>
+    <p>The container exits the moment SIGUSR1 arrives, so neither the 30 s label nor the 10 s default is ever reached. Reverting <code>stopTimeout</code> to the bare constant, the whole subject of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de0b85b24"><code>de0b85b24</code></a>, leaves this test green. The comment also says &quot;ten-second&quot; while line 369 passes <code>--stop-timeout 30</code>, and describes an elapsed-time check the body never makes. Separately, <code>status.exitCode</code> is written only by the event sync (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L213-L216"><code>sync_containers_containerd.go:213-216</code></a>), and a <em>running</em> task already reports <code>ExitStatus: 0</code>, so the read at line 380 can beat the TaskExit sync and pass even after a SIGKILL. Fix: wait for <code>status.status=exited</code> first, and pin the timeout in its own test whose container ignores its configured signal.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L208-L221">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go</a></div>
+      <pre data-start="208" data-line="213-216"><code class="language-go">			// The task raced its own deletion between load and status.
+		case err != nil:
+			return fmt.Errorf(&quot;failed to get task status for %s: %w&quot;, info.ID, err)
+		default:
+			status = mapContainerdProcessStatus(st.Status)
+			pid := int32(task.Pid())
+			statusApply.
+				WithPid(pid).
+				WithExitCode(int32(st.ExitStatus))
+			if !st.ExitTime.IsZero() {
+				statusApply.WithFinishedAt(metav1.NewTime(st.ExitTime))
+			}
+			if startedAt := w.startedAt(nsCtx, mirrorName, pid); startedAt != nil {
+				statusApply.WithStartedAt(*startedAt)</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> A malformed <code>nerdctl/log-uri</code> still downgrades to <code>NullIO</code> where nerdctl fails the start <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+    <p>Round 1&#39;s S3 asked for the silent downgrade to stop; the fix added a <code>V(1)</code> line and kept the downgrade, so at the default log level the container still starts with its output discarded and the action records <code>Succeeded</code>. nerdctl returns the parse error instead (<code>pkg/taskutil/taskutil.go:195-200</code>), which is the behaviour the mirror path claims to match. Codex&#39;s probe confirmed <code>containerdIOCreator</code> accepts <code>&quot;%&quot;</code>. Fix: return the error so the action records <code>Failed</code> without creating a task.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The switch sweep clears its own trigger before it can fail, and moby has no <code>ContainerNamespace</code> prune <span class="pill pill-claude">Claude Opus 5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>stopWatcher()</code> resets <code>r.watcherEngine</code> to <code>&quot;&quot;</code> (line 372) before <code>cleanupMirrorResources</code>; if the sweep errors, Reconcile returns, and on the requeue <code>r.watcher == nil</code> so neither switch arm can fire again. Whatever the new backend&#39;s <code>fullSync</code> does not prune then survives. containerd&#39;s prunes all four kinds; moby&#39;s <code>syncContainerNamespace</code> only applies the <code>moby</code> mirror and prunes nothing (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_namespace.go#L20-L25"><code>sync_namespace.go:20-25</code></a>), so containerd&#39;s <code>default</code> and <code>k8s.io</code> namespace mirrors outlive a switch to moby. Fix: clear <code>watcherEngine</code> only after the sweep succeeds, and give moby&#39;s <code>fullSync</code> a prune symmetric with round 2&#39;s own <code>pruneVolumes</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_namespace.go#L15-L25">rdd/pkg/controllers/app/engine/controllers/sync_namespace.go</a></div>
+      <pre data-start="15" data-line="20-25"><code class="language-go">// syncContainerNamespace creates the &quot;moby&quot; ContainerNamespace mirror.
+// This resource has no mirror finalizer: Docker has no corresponding
+// engine object for the reverse delete, and cleanupMirrorResources
+// sweeps it unconditionally on VM stop, so a finalizer with no
+// handler would only trap user deletes in Terminating.
+func (w *dockerWatcher) syncContainerNamespace(ctx context.Context) error {
+	applyConfig := containersv1alpha1apply.ContainerNamespace(containerNamespace, w.apiNamespace)
+
+	return w.k8s.Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName))
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go#L367-L377">rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go</a></div>
+      <pre data-start="367" data-line="372"><code class="language-go">// stopWatcher stops the Docker watcher goroutine and waits for it to finish.
+func (r *EngineReconciler) stopWatcher() {
+	r.watcherMu.Lock()
+	e := r.watcher
+	r.watcher = nil
+	r.watcherEngine = &quot;&quot;
+	r.watcherMu.Unlock()
+
+	if e != nil {
+		e.stop()
+	}</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The round-2 <code>starts</code> prune is dead code <span class="pill pill-claude">Claude Opus 5</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L85-L99">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go</a></div>
+      <pre data-start="85" data-line="90-94"><code class="language-go">	}
+
+	// Drop remembered start times for containers that are gone. A delete seen
+	// while the watcher was down never reached forgetTaskStart, so without
+	// this the map keeps an entry for every container that ever ran.
+	w.startsMu.Lock()
+	maps.DeleteFunc(w.starts, func(mirrorName string, _ metav1.Time) bool {
+		return !activeNames[mirrorName]
+	})
+	w.startsMu.Unlock()
+
+	// Remove stale Container mirrors.
+	var containerMirrors containersv1alpha1.ContainerList
+	if err := w.k8s.List(ctx, &amp;containerMirrors, client.InNamespace(w.apiNamespace)); err != nil {
+		return fmt.Errorf(&quot;failed to list Containers: %w&quot;, err)</code></pre>
+    <p><code>syncAllContainers</code> has one caller, <code>fullSync</code>, whose own single caller is <code>newContainerdWatcher</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go#L94"><code>containerd_watcher.go:94</code></a>), thirteen lines after <code>starts: make(map[string]metav1.Time)</code> and before the event goroutine starts. The map is always empty here, and a restart builds a fresh watcher, so no earlier map ever reaches this code. Fix: drop it, or make it live by adding the periodic resync the moby side already has a TODO for (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/docker_watcher.go#L200"><code>docker_watcher.go:200</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go#L89-L99">rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go</a></div>
+      <pre data-start="89" data-line="94"><code class="language-go">	// snapshot are re-applied afterwards, and handleEvent is idempotent.
+	eventCh, errCh := cli.Subscribe(watchCtx,
+		`topic~=&quot;^/containers/&quot;`, `topic~=&quot;^/tasks/&quot;`, `topic~=&quot;^/images/&quot;`,
+		`topic~=&quot;^/namespaces/&quot;`)
+
+	if err := w.fullSync(watchCtx); err != nil {
+		watchCancel()
+		cli.Close()
+		return nil, fmt.Errorf(&quot;failed to perform initial sync: %w&quot;, err)
+	}
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/docker_watcher.go#L195-L205">rdd/pkg/controllers/app/engine/controllers/docker_watcher.go</a></div>
+      <pre data-start="195" data-line="200"><code class="language-go">			// its internal retry) are logged and dropped. Container
+			// events self-heal on the next state change; image pull and
+			// volume create events fire once, so a dropped apply leaves
+			// the mirror missing until the next full resync.
+			//
+			// TODO: add a periodic fullSync tick so dropped image/volume
+			// events self-heal without waiting for a watcher restart.
+			if err := w.handleEvent(ctx, msg); err != nil {
+				log.Error(err, &quot;Failed to handle Docker event&quot;,
+					&quot;type&quot;, msg.Type, &quot;action&quot;, msg.Action, &quot;actor&quot;, msg.Actor.ID)
+			}</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> The <code>supportsNamespaces</code> comment states a rule the code does not implement <span class="pill pill-claude">Claude Opus 5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go#L531-L543">rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go</a></div>
+      <pre data-start="531" data-line="536-538"><code class="language-go">		// its container-namespace selector for engines without the concept.
+		// A pointer keeps the field absent until this first write; a plain
+		// bool would let another status writer materialize a zero-valued
+		// false next to a stale ContainerEngineReady after a restart.
+		//
+		// A backend that mirrors nothing reports false whatever engine is
+		// selected: there are no ContainerNamespace mirrors to select from,
+		// so a consumer reading this field alone would offer an empty list.
+		supportsNamespaces := latest.Spec.ContainerEngine.Name == engineContainerd &amp;&amp;
+			reason != appv1alpha1.EngineReasonNotApplicable
+		if latest.Status.SupportsNamespaces == nil || *latest.Status.SupportsNamespaces != supportsNamespaces {
+			latest.Status.SupportsNamespaces = &amp;supportsNamespaces
+			changed = true</code></pre>
+    <p>After <code>rdd set running=false</code> with containerd selected, <code>setEngineCondition</code> runs with <code>EngineReasonStopped</code>, the sweep has just deleted every <code>ContainerNamespace</code>, and the field is written <code>true</code>, the state the comment says cannot arise. The code is right, because <code>NotApplicable</code> is the only reason that forces the condition <code>True</code> while mirroring nothing; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/apis/app/v1alpha1/app_types.go#L322-L326"><code>app_types.go:322-326</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_app.md#L132"><code>api_app.md:132</code></a> both scope it that way. Fix: name that reason in the comment instead of a general rule.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/apis/app/v1alpha1/app_types.go#L317-L331">rdd/pkg/apis/app/v1alpha1/app_types.go</a></div>
+      <pre data-start="317" data-line="322-326"><code class="language-go">	// intent.
+	// +optional
+	KubernetesPort int `json:&quot;kubernetesPort,omitempty&quot;`
+	// supportsNamespaces reports whether the selected container engine
+	// scopes containers and images into namespaces: true for containerd,
+	// false for moby. The engine controller writes it together with the
+	// ContainerEngineReady condition; the field is absent until that
+	// first write, so absence means unknown. It is also false whenever
+	// that condition&#39;s reason is NotApplicable, because a backend that
+	// mirrors nothing offers no namespaces to choose from.
+	// +optional
+	SupportsNamespaces *bool `json:&quot;supportsNamespaces,omitempty&quot;`
+	// conditions represent the current state of the App resource.
+	// +listType=map
+	// +listMapKey=type</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_app.md#L127-L137">rdd/docs/design/api_app.md</a></div>
+      <pre data-start="127" data-line="132"><code class="language-markdown">
+- **spec.kubernetes.version**: The Kubernetes version to use (e.g. `&quot;1.30.2&quot;`). Defaults to `&quot;1.30.2&quot;`. Propagated to the `KUBERNETES_VERSION` Lima template param.
+
+- **status.kubernetesPort**: The host TCP port allocated for the k3s API server (`7441 + instance.Index()` by default). Set by the App reconciler on the first reconcile after `spec.kubernetes.enabled` becomes `true`, and cleared when `spec.kubernetes.enabled` is set back to `false` so that a fresh port is resolved on the next enable. The `KUBERNETES_PORT` Lima template param is set to this value; Lima&#39;s identity port-forward rule binds the same port on the host and forwards it to the guest.
+
+- **status.supportsNamespaces**: `true` when the selected container engine scopes containers and images into namespaces (`containerd`), `false` when it does not (`moby`). The engine controller writes it together with the `ContainerEngineReady` condition, so the UI can hide its container-namespace selector. It is also `false` whenever that condition&#39;s reason is `NotApplicable`, since a backend that mirrors nothing offers no namespaces to choose from. The field is absent until the engine controller first writes it; treat absence as unknown.
+
+- **status.conditions**: Multiple controllers write here. The App controller mirrors `Created` and `Running` from the owned `LimaVM` and computes `Settled`, the engine controller writes `ContainerEngineReady`, the Kubernetes controller writes `KubernetesReady`, and the PATH management controller writes `PathManagementReady`. All writers use `retry.RetryOnConflict` with a re-Get so concurrent status updates do not 409.
+
+  | Type                   | Status    | Reason           | Description                                                       |
+  |------------------------|-----------|------------------|-------------------------------------------------------------------|</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The namespace prose promises a relationship the new skip breaks, and the hashing rule it states is not the one in the code <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L57-L69">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="57" data-line="62-64"><code class="language-markdown">   corresponding `Container`, `Image`, and `Volume` mirrors.
+4. Watches the Docker event stream for create, update, and delete events.
+
+With `containerEngine.name=containerd` the controller runs a containerd watcher
+instead, mirroring each containerd namespace along with its containers and
+images.  A namespace whose name is not a valid Kubernetes object name gets no
+`ContainerNamespace` mirror, though its containers are still mirrored under
+hashed names.  containerd has no volume concept, so it creates no `Volume`
+mirrors.
+Windows is the exception, since nothing serves the containerd named pipe there
+yet; the controller sets `ContainerEngineReady` to `True` with reason
+`NotApplicable` and takes no mirroring action.
+</code></pre>
+    <p><code>containerdMirrorName</code> tests the <em>container ID</em>, never the namespace, which enters only the hash input, so a 64-hex ID in namespace <code>Not_Valid</code> keeps its plain ID, as the round-2 test at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L395-L401"><code>engine-containerd.bats:395-401</code></a> demonstrates by waiting on <code>container/${cid}</code>. The same claim sits in the code comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L73-L74"><code>sync_namespace_containerd.go:73-74</code></a>. Lines 147, 216, 444 and 465 separately say every <code>status.namespace</code> &quot;Refers to a <code>ContainerNamespace</code> object&quot;, and the finalizer contract at 83-90 covers namespaces, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L66-L70"><code>sync_namespace_containerd.go:66-70</code></a> deliberately does not give one. Fix: state the real rule, and define <code>status.namespace</code> as the raw engine namespace, a mirror only when representable.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L390-L406">rdd/bats/tests/32-app-controllers/engine-containerd.bats</a></div>
+      <pre data-start="390" data-line="395-401"><code class="language-bash">    # which is what makes the skip safe.
+    nerdctl namespace create Not_Valid
+    run_e -0 nerdctl --namespace Not_Valid run --detach --name hidden-ns \
+        busybox sleep inf
+    cid=${output}
+
+    rdd ctl wait --for=jsonpath=&#39;{.status.status}&#39;=running \
+        --namespace=&quot;${RDD_NAMESPACE}&quot; container/&quot;${cid}&quot; --timeout=60s
+
+    run -0 rdd ctl get container &quot;${cid}&quot; --namespace=&quot;${RDD_NAMESPACE}&quot; \
+        -o jsonpath=&#39;{.status.namespace}&#39;
+    assert_output &quot;Not_Valid&quot;
+
+    run -0 rdd ctl get containernamespaces --namespace=&quot;${RDD_NAMESPACE}&quot; \
+        -o jsonpath=&#39;{.items[*].metadata.name}&#39;
+    refute_output --partial &quot;Not_Valid&quot;
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L61-L79">rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go</a></div>
+      <pre data-start="61" data-line="66-74"><code class="language-go">	}
+
+	return errors.Join(errs...)
+}
+
+// applyNamespace creates the ContainerNamespace mirror for a containerd
+// namespace. This resource has no mirror finalizer: deleting the mirror is
+// not offered as a way to delete the containerd namespace, and
+// cleanupMirrorResources sweeps it unconditionally on VM stop, so a
+// finalizer with no handler would only trap user deletes in Terminating.
+func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error {
+	// containerd namespace names may contain uppercase or underscores, which
+	// are invalid in K8s object names. Skip the mirror; containers in such a
+	// namespace still get mirrored (their mirror name hashes).
+	if len(validation.IsDNS1123Subdomain(ns)) &gt; 0 {
+		logf.FromContext(ctx).WithName(&quot;containerd-watcher&quot;).
+			V(1).Info(&quot;Skipping ContainerNamespace mirror for non-DNS1123 namespace&quot;, &quot;namespace&quot;, ns)
+		return nil
+	}</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> The <code>Image</code> and action sections still document Docker&#39;s contract <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L410-L422">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="410" data-line="415-417"><code class="language-markdown">    &#39;{ ... }&#39;
+```
+
+#### Untag image
+Delete the `Image` object through the K8s API; the finalizer runs
+`ImageRemove` on the matching Docker reference. Docker keeps the underlying
+image while another tag or a running container references it, so removing
+one tag may leave the image in place.
+
+The engine controller mirrors untag events in the reverse direction: on
+a Docker `untag` event it re-inspects the image and removes any K8s
+`Image` resources whose `.status.repoTag` is no longer in Docker&#39;s tag
+list. If the image becomes dangling, a new `Image` object without</code></pre>
+    <p>containerd has no in-use protection — the PR&#39;s own comment says so at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go#L498-L500"><code>container_actions_containerd.go:498-500</code></a>, so a delete a client expects the engine to refuse just succeeds. The reverse-direction paragraph below it (re-inspect on untag, dangling replacement) is moby-only too. Round 2 generalised <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L250-L253"><code>api_containers.md:250-253</code></a> but left the neighbours: line 262 &quot;The engine calls Docker&quot;, line 267 hardcoding SIGTERM where containerd now sends a configured signal, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_app.md#L39"><code>api_app.md:39</code></a> claiming the App creates the Docker context unconditionally, and line 290&#39;s &quot;must be the full container ID&quot;, which this PR widened to the mirror name. Fix: sweep the passages, scoping each to its backend.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go#L493-L505">rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go</a></div>
+      <pre data-start="493" data-line="498-500"><code class="language-go">
+// deleteImage removes an image record from containerd when its mirror is
+// deleted. The delete is synchronous so the record is gone (GC complete) when
+// the finalizer is stripped. NotFound is treated as success.
+//
+// containerd has no in-use protection: deleting a record referenced by a
+// running container succeeds and the container keeps its snapshot. There is
+// no Docker-style conflict-until-container-removed behavior.
+func (w *containerdWatcher) deleteImage(ctx context.Context, img *containersv1alpha1.Image) error {
+	ns := img.Status.Namespace
+	if ns == &quot;&quot; {
+		return nil
+	}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L245-L258">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="245" data-line="250-253"><code class="language-markdown">`ContainerRequest` objects at the same time for the same containerd
+`name`/`namespace` pair.
+
+#### Change container state
+
+Set the `containers.rancherdesktop.io/action` annotation on the
+`Container` to request a one-shot action. The engine reconciler reads
+the annotation, dispatches the matching call to the container engine,
+records the outcome in `status.lastAction`, and removes the annotation.
+
+Valid values: `start`, `stop`, `pause`, `unpause`, `restart`.
+
+A single annotation holds at most one pending action. Writing a new
+value replaces the old, so a user who requests `pause` and then</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_app.md#L34-L44">rdd/docs/design/api_app.md</a></div>
+      <pre data-start="34" data-line="39"><code class="language-markdown">
+Lightweight app snapshots only copy this data disk, and not the full VM image.
+
+### Docker and Kube Contexts
+
+When the `App` is starting it creates the Docker context and sets up the kubeconfig in `~/.kube/config`.
+
+It will only change the current context if it does not exist, or is not working at the time the app is starting.
+
+A standalone kube config holding only the `rancher-desktop-2` context is also written to `~/.rd2/kube.config`, which the [`rdd run`](cmd_app.md#rdd-run) command points `KUBECONFIG` at.
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L257-L272">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="257" data-line="262-267"><code class="language-markdown">A single annotation holds at most one pending action. Writing a new
+value replaces the old, so a user who requests `pause` and then
+`unpause` before the reconciler has run will see only the unpause. No
+queue, no accumulating history.
+
+The engine calls Docker before patching `status.lastAction` and
+removing the annotation, so a crash mid-flight leaves the annotation
+in place and the next reconcile replays the action. Start, stop,
+pause, and unpause are idempotent against a container already in the
+target state, so replay is safe. Restart has no target state to match:
+a replay sends SIGTERM and waits the grace period a second time, which
+the controller cannot distinguish from a deliberate re-request.
+
+If the Docker call fails (for example, `pause` on a container that is
+not running), the reconciler still removes the annotation and records
+the failure in `status.lastAction`:</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L285-L295">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="285" data-line="290"><code class="language-markdown">reach for `docker start`, `docker stop`, etc. instead: the engine
+mirrors Docker state back into `status.status` either way.
+
+#### Fetch container logs
+An endpoint at `/passthrough/.../logs/${container}` will speak WebSocket;
+messages are one way, as stream of bytes; messages should not be buffered.
+Message text must be UTF-8 encoded.  The last portion of the path must be the
+full container ID.
+
+The following query parameters are accepted:
+</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> Two round-2 fixes were amended into commits whose subjects no longer describe them <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+    <p>The PR asks for commit-by-commit review on the strength of one idea per commit. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1f304d8fc"><code>1f304d8fc</code></a> was +33 −6 in round 1; as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de0b85b24"><code>de0b85b24</code></a> it is +213 −20 and now introduces <code>containerdIOCreator</code>, <code>containerdWantsTerminal</code>, <code>linuxSignals</code>, <code>parseLinuxSignal</code>, <code>stopSignal</code> and <code>resolveImageRecord</code>. Those are the TTY, log-URI, signal and digest-delete fixes, and none of them is a stop timeout. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/19ccfb5e7"><code>19ccfb5e7</code></a> → <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5ca1263d1"><code>5ca1263d1</code></a> likewise grew <code>engine_reconciler.go</code> from +10 to +64 by absorbing the watcher-switch fix, which belongs with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/75e29ddc0"><code>75e29ddc0</code></a>. Fix: move each fix to the commit that introduced the code it repairs, so a commit-by-commit reader is not misled.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
+      <div class="finding-title" id="S9">
+        <span class="finding-num">S9.</span> Both <code>task.Kill</code> calls treat a task that already exited as a failure <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#S9" class="pilcrow">&#182;</a>
+      </div>
+    <p>A task that exits between the status read and the signal (or between the grace-period expiry and the escalation) makes <code>Kill</code> return <code>NotFound</code>. The shim&#39;s stopped state forwards to runc, and <code>checkKillError</code> maps &quot;process already finished&quot; to <code>errdefs.ErrNotFound</code> (<code>containerd/v2@v2.3.2/cmd/containerd-shim-runc-v2/process/utils.go:115-128</code>). <code>stopTask</code> then records <code>Failed</code> for a container that did stop. The round-2 change widened the window slightly, since <code>stopSignal</code> now makes a <code>Labels</code> round trip between <code>task.Wait</code> and <code>Kill</code>. nerdctl returns the same error unfiltered (<code>pkg/containerutil/containerutil.go:441-467</code>), so this is a shared gap rather than a divergence. Fix: ignore <code>NotFound</code> from both calls.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go">
+      <div class="finding-title" id="S10">
+        <span class="finding-num">S10.</span> A port-label parse failure logs &quot;Skipping ports&quot; and then erases them <span class="pill pill-claude">Claude Opus 5</span><a href="#S10" class="pilcrow">&#182;</a>
+      </div>
+    <p>On error <code>ports</code> is nil and <code>statusApply.WithPorts(ports...)</code> still runs, so SSA drops the ports this field manager owned. The log sits at <code>V(1)</code>, invisible at the default level, so an operator watching the Containers list sees ports vanish with no message. Erasing is defensible, since unparsable ports cannot be reported, but the comment should say that is the intent, and the log belongs at a level the operator sees.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
+      <div class="finding-title" id="S11">
+        <span class="finding-num">S11.</span> The new &quot;state the controller does not maintain&quot; section misplaces the restart labels <span class="pill pill-claude">Claude Opus 5</span><a href="#S11" class="pilcrow">&#182;</a>
+      </div>
+    <p>The section groups <code>containerd.io/restart.*</code> with the name reservation and state directory as state nerdctl keeps &quot;outside containerd&quot;. They are containerd container labels, written through <code>container.Update</code> (<code>nerdctl/v2@v2.3.4/pkg/containerutil/containerutil.go:117-122</code>), so a reader will hunt in nerdctl&#39;s data store rather than <code>ctr containers info</code>. &quot;which only <code>nerdctl stop</code> sets&quot; is incomplete too. <code>nerdctl kill</code> sets it (<code>pkg/cmd/container/kill.go:88</code>) and <code>nerdctl start</code> clears it (<code>containerutil.go:302</code>). The rest of the section checks out.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go">
+      <div class="finding-title" id="S12">
+        <span class="finding-num">S12.</span> <code>fullSync</code> lists containerd namespaces three times <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S12" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>syncNamespaces</code>, <code>syncAllContainers</code> and <code>syncAllImages</code> each open with <code>w.cli.NamespaceService().List(ctx)</code>. Fetching the list once in <code>fullSync</code> and passing it down removes two round trips per sync, and makes the three passes agree on one snapshot of the namespace set.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
+      <div class="finding-title" id="S13">
+        <span class="finding-num">S13.</span> Two bats captures can pass with nothing behind them, and the docker suite kept the pattern round 2 fixed <span class="pill pill-claude">Claude Opus 5</span><a href="#S13" class="pilcrow">&#182;</a>
+      </div>
+    <p><code>kubectl get --field-selector</code> matching nothing exits 0 with empty stdout, so <code>image_ref</code> can be empty and the failure surfaces two lines later as a <code>rdd ctl delete</code> usage error; the sibling at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-docker.bats#L467-L470"><code>engine-docker.bats:467-470</code></a> inserts <code>assert_output</code> before capturing, and the author guards exactly this at line 229. The <code>wait --for=delete … --field-selector</code> at line 150 likewise passes instantly for a mirror that never existed. Separately, round 2 replaced the <code>RDD_NAMESPACE=$(…)</code> capture with <code>run -0</code> in the containerd suite; the docker suite still carries the command-substitution form.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-docker.bats#L462-L475">rdd/bats/tests/32-app-controllers/engine-docker.bats</a></div>
+      <pre data-start="462" data-line="467-470"><code class="language-bash">    cid=${output}
+    rdd ctl wait --for=jsonpath=&#39;{.status.status}&#39;=running \
+        --namespace=&quot;${RDD_NAMESPACE}&quot; container/&quot;${cid}&quot; --timeout=30s
+
+    # Resolve the Image mirror name from its repoTag.
+    run -0 rdd ctl get image --namespace=&quot;${RDD_NAMESPACE}&quot; \
+        --field-selector &quot;status.repoTag=busybox:latest&quot; -o name
+    assert_output
+    image_ref=${output}
+
+    # Docker refuses to remove an image referenced by a running
+    # container, so the mirror stays in Terminating with the finalizer
+    # intact until the container is gone.
+    rdd ctl delete &quot;${image_ref}&quot; --namespace=&quot;${RDD_NAMESPACE}&quot; --wait=false</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L224-L234">rdd/bats/tests/32-app-controllers/engine-containerd.bats</a></div>
+      <pre data-start="224" data-line="229"><code class="language-bash">}
+
+@test &quot;removing a containerd namespace removes its mirror&quot; {
+    # wait --for=delete passes immediately for an object that never existed,
+    # so prove the mirror is there before removing the namespace.
+    rdd ctl get --namespace=&quot;${RDD_NAMESPACE}&quot; ContainerNamespace/mirror-ns
+
+    nerdctl namespace remove mirror-ns
+
+    rdd ctl wait --for=delete --namespace=&quot;${RDD_NAMESPACE}&quot; \
+        ContainerNamespace/mirror-ns --timeout=30s</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rdd-client/gen/models/IoRancherdesktopAppV1alpha1AppStatus.ts">
+      <div class="finding-title" id="S14">
+        <span class="finding-num">S14.</span> The checked-in TypeScript client drops <code>supportsNamespaces</code> on deserialize <span class="pill pill-claude">Claude Opus 5</span><a href="#S14" class="pilcrow">&#182;</a>
+      </div>
+    <p>The model declares only <code>conditions</code> and <code>kubernetesPort</code>, and <code>ObjectSerializer</code> builds instances from <code>getAttributeTypeMap()</code> alone, so an unlisted field is discarded. The field&#39;s stated purpose is to let the UI hide its namespace selector, and regeneration is a manual step with no CI guard (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/pkg/rdd-client/README.md#L16-L23"><code>pkg/rdd-client/README.md:16-23</code></a>). The GUI wiring is out of scope here, so this is not a defect in the PR. But whoever picks up <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/187" class="gh-ref" data-title="Expose whether the container engine supports namespaces" data-state="open" data-type="issue">#187</a> will read <code>undefined</code> in the renderer and have to rediscover why. Worth regenerating now or naming the follow-up.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/pkg/rdd-client/README.md#L11-L28">pkg/rdd-client/README.md</a></div>
+      <pre data-start="11" data-line="16-23"><code class="language-markdown">[Rancher Desktop Daemon]: https://github.com/rancher-sandbox/rancher-desktop-daemon
+[`@kubernetes/client-node`]: https://www.npmjs.com/package/@kubernetes/client-node
+
+## Building
+
+We do not actually install this as a separate package, so the only build step is
+for regenerating the API definitions.  To do so:
+
+- Have a running dockerd; at this point, this means running a separate instance
+  of Rancher Desktop, but in the future `rdd` is expected to be sufficient.
+- Ensure that `rdd` is in your `PATH`.
+- Run `yarn generate:rdd-client` from the [`rancher-desktop-app`] repository.
+
+## Usage
+
+We export a `KubeConfig` class; it is distinct from the one from
+[`@kubernetes/client-node`], but should be API-compatible enough for our use.
+The other files are copies from upstream (at 1.4.0) with small compilation fixes.</code></pre>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em><code>ContainerNamespace</code> mirrors have no steady-state re-apply<em></em> <em>(future)</em> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span>. <code>Reconcile</code>&#39;s steady-state path processes actions and finalizers only, so a Kubernetes-side delete of a namespace mirror is never repaired until an engine event or a watcher restart. Codex re-raised this at Important after confirming it on a live instance in round 1; it stays a design observation because moby reaches <code>syncContainerNamespace</code> from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/docker_watcher.go#L513"><code>docker_watcher.go:513</code></a> alone and behaves identically, making it a gap rather than a regression. More generally, containerd events repair engine-side change while nothing repairs Kubernetes-side change; a bounded periodic resync closes the class.</li>
+      <li><strong>Containers in a non-DNS1123 namespace are mirrored into a namespace nothing lists</strong> <em>(future)</em> <span class="pill pill-claude">Claude Opus 5</span>. <code>applyContainer</code> writes <code>status.namespace: Not_Valid</code> while <code>applyNamespace</code> skips the mirror, so a renderer populating its selector from <code>ContainerNamespace</code> shows those containers nowhere. Giving <code>ContainerNamespace</code> a hashed object name plus a <code>status.name</code> carrying the raw namespace would make every containerd namespace representable and remove the three separate <code>IsDNS1123Subdomain</code> gates.</li>
+      <li><em></em><code>start</code> on a paused container diverges between backends<em></em> <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 5</span>. containerd returns nil and records <code>Succeeded</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go#L169-L171"><code>container_actions_containerd.go:169-171</code></a>) while moby forwards to Docker, which refuses. The inline comment documents the choice, but a UI reading <code>lastAction</code> sees success where nothing changed.</li>
+      <li><strong>A persistently failing event stream restarts the watcher with no backoff</strong> <em>(future)</em> <span class="pill pill-claude">Claude Opus 5</span>. <code>defer w.enqueueReconcile()</code> feeds a channel source with no rate limiter, and Reconcile restarts the watcher and returns nil, so each iteration pays a full sync. The moby watcher has the identical shape, so a fix belongs in the reconciler where both backends get it.</li>
+      <li><strong>The Windows containerd pipe name is unscoped</strong> <em>(future)</em> <span class="pill pill-claude">Claude Opus 5</span>. <code>instance.ContainerdSocket()</code> returns the well-known <code>\\.\pipe\containerd-containerd</code>. Nothing connects on Windows today, but this is the same hazard as the documented <code>\\.\pipe\docker_engine</code> collision with Docker Desktop, so the socket-bridge work should make it instance-scoped rather than inherit the hazard.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>Subscribing before <code>fullSync</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go#L85-L98"><code>containerd_watcher.go:85-98</code></a>) is the right order for an event service with no replay, and the comment says why. <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>The explicit <code>linuxSignals</code> table is the correct cross-platform direction: <code>moby/sys/signal</code> resolves against the host, and its map is per-GOOS, so the obvious implementation would have shipped a macOS-only bug above SIGTERM. I2 only asks for its range to be completed. <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li><code>containerdIOCreator</code> reproduces nerdctl&#39;s own reconstruction: <code>cio.TerminalLogURI</code> sets the same <code>Terminal: true</code> config as nerdctl&#39;s <code>cio.TerminalBinaryIO</code> for the URIs nerdctl writes, and both refuse a terminal container with no log driver. <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 5</span></li>
+      <li><code>deleteAllOfType</code> strips the finalizer before deleting, so the engine-switch sweep can never forward a delete into the user&#39;s containers. <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 5</span></li>
+      <li>Every full-sync loop seeds <code>activeNames</code> before the fallible apply, so a transient failure cannot mark a live object stale, done consistently across containers, images and namespaces. <em>(in-scope)</em> <span class="pill pill-claude">Claude Opus 5</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran <code>go test ./pkg/controllers/app/engine/...</code> at the review SHA from a clean worktree: it passes. <code>go build ./...</code> fails only on the <code>lima-guestagent.gz</code> embed absent from a fresh worktree, which is a build-artifact prerequisite rather than a PR defect. An agent that reports &quot;make build passes&quot; from such a worktree has not built the tree. Codex additionally cross-compiled the package&#39;s tests for <code>windows/amd64</code> and <code>linux/amd64</code>, and both link.</p>
+    <p>Gaps, highest risk first:</p>
+    <ol>
+      <li><strong>A live engine switch on a platform where both backends run</strong> (I3, S3). The only test that changes <code>containerEngine.name</code> against a live daemon is Windows-only, where containerd starts no watcher, and it stops the App first so it takes the <code>!wantWatcher</code> path anyway. Neither the new switch arm nor its sweep is exercised anywhere.</li>
+      <li><strong>The stop timeout</strong> (S1). Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de0b85b24"><code>de0b85b24</code></a>&#39;s subject has no test that can fail.</li>
+      <li><em></em><code>applyContainer</code>&#39;s status builder<em></em> (I1). Nothing pins the required-field contract; extracting the builder into a pure function over <code>containers.Container</code> would cover <code>path</code>, <code>name</code>, <code>namespace</code>, <code>image</code> and <code>status</code> at once.</li>
+      <li><em></em><code>containerdIOCreator</code>&#39;s branches<em></em> (S2). The <code>&quot;none&quot;</code> case and the terminal-without-log-driver error are reachable from no test, though <code>specRecord</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd_test.go#L99"><code>sync_containers_containerd_test.go:99</code></a> already builds exactly the fixture they need.</li>
+      <li><strong>Restart of a *running* container.</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L313-L325"><code>engine-containerd.bats:313-325</code></a> restarts a stopped container, so <code>stopTask</code> short-circuits and the signal-and-wait path never runs. moby pins it with a <code>StartedAt</code> comparison.</li>
+      <li><strong>Canonical digest records</strong> (I4). Declined in round 1 as needing Kubernetes; the canonical record is far more common than the bare-digest one and shows up wherever k3s is enabled.</li>
+    </ol>
+    <p>Well covered: mirror-name hashing, port grouping and sorting, process-status mapping and signal parsing all have table tests whose expectations are literals rather than re-computations of the production transform.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The <code>api_app.md</code> changes are accurate: the <code>supportsNamespaces</code> paragraph and the <code>NotApplicable</code> scoping both match <code>setEngineCondition</code>, and the CRD descriptions in <code>app/crd.yaml</code> and <code>mock/crd.yaml</code> are identical to the Go doc comment. The new &quot;containerd state the controller does not maintain&quot; section documents both round-1 declines, as their resolutions promised.</p>
+    <p>Four gaps, all in <code>api_containers.md</code>: the namespace hashing rule (S6), the <code>status.namespace</code> relationship (S6), the moby-only <code>Image</code> and action prose (S7), and the misplaced restart labels (S11). One omission worth a sentence: <code>img.Size()</code> is <code>CalculateImageUsage(…, WithManifestUsage())</code>, the compressed content-store total, while moby&#39;s <code>inspect.Size</code> is the uncompressed rootfs size, so the same image reports different numbers on the two backends; <code>repoDigests</code> is likewise always empty on containerd.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The eleven commits still each hold one idea <em>as subjects</em>, but two no longer match their contents after the round-2 amendments (S8). That matters more than usual here, because the PR description asks reviewers to go commit by commit on exactly that promise. The rest is clean: no fixup subjects, no &quot;address review&quot; commits, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/385b91fbe"><code>385b91fbe</code></a>&#39;s deletions in <code>containerd_watcher.go</code> are a move into the new actions file rather than a rewrite.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Declared out of scope by the PR and honoured here: containerd on Windows reporting <code>NotApplicable</code>, absent <code>Volume</code> mirrors, logs returning 501, and the unwired GUI namespace selector.</p>
+    <p>In-code limitations checked and accepted: the mirror-name collision for a hand-picked ID duplicated across namespaces; the drop-in belonging in the distro image; a reaped task resetting the mirror to <code>created</code> (which also drops <code>pid</code>, <code>exitCode</code> and <code>finishedAt</code> under SSA, a field loss the comment does not mention); <code>watcherMu</code> held across watcher construction; and the twenty lines at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go#L501-L522"><code>engine_reconciler.go:501-522</code></a> explaining why <code>observedGeneration</code> can outrun the reconciled spec.</p>
+    <p><strong>Declined in prior rounds.</strong> Each decline&#39;s cited artifact was opened and confirmed:</p>
+    <ul>
+      <li><strong>The restart-monitor label is never maintained across a stop</strong> — declined round 1: deferred to its own PR after two verification passes each found a fresh failure mode in the host-side emulation. Documented at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L96-L102"><code>api_containers.md:96-102</code></a>; see S11 for a wording fix inside that text.</li>
+      <li><strong>Deleting a never-started container leaks its nerdctl name</strong> — declined round 1: the name store is guest-local, so the fix needs a guest-exec path the engine controller does not have. Documented at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/docs/design/api_containers.md#L104-L110"><code>api_containers.md:104-110</code></a>.</li>
+      <li><strong>Tests for restart policies across a stop, and for delete of a never-started container</strong> — declined round 1: both cover the deferred findings above and would commit a red test.</li>
+      <li><em></em>A test for <code>deleteImage</code> on a digest-named record<em></em> — declined round 1 as needing Kubernetes enabled in the suite. I4 does not disturb that: it is the <em>canonical</em> record, which the same CRI pull creates and which no test covers either.</li>
+      <li><em></em>A test for hashed <code>ctr-</code> mirror names end to end<em></em> — declined round 1: needs an ID only <code>ctr</code> can create, and <code>ctr</code> is not in the guest.</li>
+      <li><em></em>The socket drop-in&#39;s <code>a+rw</code> mode<em></em> — declined round 1, pending the move into the distro image; round 2 made both <code>ExecStartPost</code> lines non-fatal, which is confirmed at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/faa3b93f411eced76dcac315d9af8fddbd02843b/rdd/pkg/controllers/app/app/lima-template.yaml#L59-L64"><code>lima-template.yaml:59-64</code></a>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>None; PR 658 still has no review comments.</p>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5"><span class="pill pill-claude">Claude Opus 5</span> <a href="#claude-opus-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude carried the round: three of its five Important findings kept that severity, and its coverage table is the only one that says something specific about every file. It also spent four of its tool calls on sub-agents of its own, folding one back as a verified addendum, two items of which reached the report. That puts those file reads one level further from anything I can check. It withdrew one design observation of its own accord after reading <code>containerd/pkg/sys/socket_unix.go</code> and finding the chmod load-bearing. Its overreach was severity: the doc contradiction it filed as Important is a doc self-contradiction, since the correct rule sits fifty lines away in the same file.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Codex was the only agent to answer the delta prompt in the shape it asked for, and its <code>Unproven:</code> lines name exactly what a live VM would have shown. It found the signal gap independently and, more usefully, checked its own probe against <code>moby/sys/signal</code> and then declined to use the result. That was right: the map is per-GOOS, and it was running on macOS, so the named <code>SIGRTMIN</code> rejection it saw came from the Darwin map, not the guest&#39;s. It was also the only agent to check the round-2 commits against the PR&#39;s own &quot;one idea per commit&quot; promise, which turned out to be the cleanest verified finding of the round. Its two severity calls I moved: the log-URI residual is a round-1 Suggestion re-raised, and the namespace re-apply gap was already settled as pre-existing in round 1.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro&#39;s headline Important quotes code that is not in the file: it reports <code>time.ParseDuration(raw)</code> in <code>stopTimeout</code>, where the tree has <code>strconv.Atoi</code>, and builds its whole argument on nerdctl writing a unitless integer, which is true, and which is exactly why the code already uses <code>Atoi</code>. Worse, it attached a <code>repro</code> block that passes: the test asserts that <code>time.ParseDuration(&quot;30&quot;)</code> fails, which is a fact about the standard library and says nothing about the repository. A green reproducer proving a premise rather than a defect is a new failure mode worth naming. Its second finding was real: <code>Kill</code> on an already-exited task does return <code>NotFound</code>, and it reached that from the code alone.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash returned in six minutes with no Critical or Important findings and one usable suggestion, the triplicated namespace listing. Its other suggestion asks the suite to stop using <code>assert [ … ]</code>, which is an established idiom here with eight call sites across three files, including the pre-existing lima tests, and it is the exact form round 1 asked for. It nested its section headings one level deeper than the format asks, as it did in round 1, and its narration leaked three &quot;I am going to…&quot; lines into the top of the review. Those three lines match its three shell calls exactly, so the build and test runs it reports probably happened; none of their output reaches the review, and it reports 30 bats scenarios in a suite it could not run.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>20m 18s</td><td>31m 06s</td><td>6m 59s</td><td>3m 46s</td></tr>
+        <tr><td>Findings</td><td>3I 10S</td><td>2I 5S</td><td>1S</td><td>1S</td></tr>
+        <tr><td>Tool calls</td><td>95 (Bash 90, Agent 4, Read 1)</td><td>—</td><td>47 (run<em>shell</em>command 47)</td><td>48 (grep<em>search 21, read</em>file 20, run<em>shell</em>command 3)</td></tr>
+        <tr><td>Design observations</td><td>9</td><td>5</td><td>0</td><td>4</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>9</td><td>3</td><td>1</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>26</td><td>26</td><td>13</td><td>26</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>2</td><td>15</td><td>4</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>3I 10S</strong></td><td><strong>2I 5S</strong></td><td><strong>1S</strong></td><td><strong>1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>3 (I→S)</td><td>2 (I→S)</td><td>1 (I→S)</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p>Reconciliation: Gemini Pro&#39;s I1 (<code>ParseDuration</code>) was dropped as a false positive; the quoted code does not exist in the file. Its I2 became S9 on severity: the mechanism is real but nerdctl&#39;s own stop path returns the same error unfiltered. Flash&#39;s S1 (<code>assert [ … ]</code>) was dropped against repo convention. Codex&#39;s I1 became S2 (round-1 S3&#39;s residual, re-raised at its original severity) and its I4 became a design observation, already settled as pre-existing in round 1. Claude&#39;s I2 became S3, its I4 became S6, its I5 became S1, and its addendum I6 merged into S7.</p>
+    <p>Claude and Codex again split the work between static depth and process discipline, and the split held: Claude found the defects that need a required-field contract or a call graph in your head, Codex found the one that needed reading the commits as commits. The two Gemini models produced one usable finding between them and one fabricated citation, so their agreement, where it existed, counts once and carried no weight this round.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a reviewer attaches a reproducer that passes, read what it actually asserts before crediting the finding. A probe that demonstrates something the finding merely assumes (a standard-library behaviour, a third-party function&#39;s contract) proves nothing about the code under review, and a green <code>repro</code> block beside a confident finding reads as evidence at a glance. Require the reproducer to fail against the reviewed tree, or to name explicitly which of the finding&#39;s steps it does not cover.</li>
+      <li>Treat a probe&#39;s result as platform-scoped whenever it calls into a library that selects its data by build tag. A host-run probe against a guest-facing dependency measures the host&#39;s variant, so a rejection or acceptance it reports may be an artifact of where it ran rather than what the code does in production.</li>
+      <li>When a reviewer reports that it delegated part of the review to a sub-agent, verify that portion&#39;s citations directly rather than accepting the relay. The delegating agent&#39;s own verification is one level removed from the tree, and the report attributes the finding to the agent that filed it.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] Deep-review agents run in a fresh worktree where <code>go build ./...</code> fails on <code>pkg/guestagent/guestagent.go</code>&#39;s <code>lima-guestagent.gz</code> embed, because that artifact is produced by the build rather than checked in. Treat a claim that &quot;make build passes&quot; from such a worktree as unverified, and scope build verification to <code>go vet</code>/<code>go test</code> on the changed packages or a cross-compiled <code>go test -c</code>.</li>
+      <li>[repo] <code>assert [ … ]</code> is an accepted idiom in this bats suite, used across <code>32-app-controllers</code>, <code>33-lima-controllers</code> and <code>20-service</code>. Do not flag it as a style violation; the project&#39;s bats conventions cover <code>run -0</code>, <code>refute_output</code>, piping and variable scoping, and say nothing against it.</li>
+      <li>[repo] <code>moby/sys/signal</code>&#39;s <code>SignalMap</code> is per-GOOS, so a signal name resolved on the host is not the number the Linux guest uses, and the darwin map omits the real-time names entirely. Any finding about signal names or numbers must say which side of the host/guest boundary it was measured on; the daemon keeps its own Linux table for exactly this reason.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
