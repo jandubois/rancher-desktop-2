@@ -243,6 +243,12 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Findings carry the agents that raised them. The two Gemini models share a family and converged on one issue, counted as a single opinion. I ran a reproducer for I1 and I5 against this tree; I2, I3 and I4 turn on upstream behavior no in-process test reaches, so each names its evidence.</p>
     </div>
     <hr>
+    <h2 id="status-since-this-review">Status since this review <a href="#status-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>These findings were addressed on 2026-09-05 and the fixes were amended into the eleven original commits, so the line numbers and snippets below describe the code as reviewed, not as it stands now. Each finding ends with what happened to it. The full record is in the Resolution section at the end.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -333,6 +339,7 @@ cio.TerminalLogURI (unused by startTask)             Terminal=true
     <p>The <code>TerminalLogURI</code> row is the contrast case: it would read <code>false</code> too if containerd took the flag from the OCI spec rather than from the creator.</p>
     <p>Unproven: the runc rejection itself needs a live task, so that half rests on the two pinned sources cited above.</p>
     <p>Fix: read <code>process.terminal</code> from the record with the <code>oci.Spec</code> unmarshal <code>containerdProcessArgs</code> already does, then pick <code>cio.TerminalLogURI</code> (or <code>cio.TerminalBinaryIO</code>) when it is set.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="I2">
@@ -353,6 +360,7 @@ cio.TerminalLogURI (unused by startTask)             Terminal=true
     <p>containerd&#39;s restart monitor restarts an <code>unless-stopped</code> container unless <code>containerd.io/restart.explicitly-stopped</code> is true (containerd v2.3.2 <code>core/runtime/restart/restart.go:136-140</code>). nerdctl sets it true on stop and false on start (<code>pkg/containerutil/containerutil.go:358</code> and <code>:302</code>). Neither path here touches it. A stop through the action annotation therefore records <code>lastAction.state=Succeeded</code> while the monitor brings the container back, and a start after a <code>nerdctl stop</code> leaves the container marked explicitly stopped, disabling its restart policy.</p>
     <p>Unproven: observing the monitor act needs a live containerd. Codex reproduced it on a throwaway instance, reporting <code>running Succeeded</code> twenty seconds after the stop; I verified the label contract in the pinned sources above rather than re-running that probe.</p>
     <p>Fix: set the label before signaling in <code>stopTask</code> and clear it after a successful <code>startTask</code>. The host can write it over the containerd API, so this needs no guest-side help.</p>
+    <p><strong>Outcome:</strong> Deferred to its own PR with I3. A host-side fix was implemented and reverted after two verification passes each found a fresh failure mode; the ownership boundary is now documented in <code>api_containers.md</code>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="I3">
@@ -373,6 +381,7 @@ cio.TerminalLogURI (unused by startTask)             Terminal=true
     <p>nerdctl reserves container names in a name store under its own state directory and releases them two ways: <code>nerdctl rm</code> calls the store directly (<code>pkg/cmd/container/remove.go:153-154</code>), and a running container&#39;s OCI <code>postStop</code> hook releases the name when the task is deleted (<code>pkg/ocihook/ocihook.go:663</code>). A container created but never started has no task, so <code>deleteContainer</code> removes the containerd record without either path running. The name stays reserved and <code>nerdctl create --name &lt;same&gt;</code> fails until someone repairs the store by hand, while the Kubernetes delete reports success.</p>
     <p>Unproven: the name store lives inside the VM. Codex reproduced the collision on a live instance; I verified both release paths in the nerdctl source above.</p>
     <p>Fix: this is the one finding the host cannot fix alone, since the name store is guest-local state. Either run nerdctl&#39;s removal inside the guest, or decide that engine-side names are nerdctl&#39;s to own and say so in <code>api_containers.md</code>.</p>
+    <p><strong>Outcome:</strong> Deferred to its own PR with I2: the nerdctl name store is guest-local, so the fix needs a guest-exec path the engine controller does not have. Documented in <code>api_containers.md</code>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="I4">
@@ -421,6 +430,7 @@ func (w *containerdWatcher) applyImageMirror(nsCtx context.Context, ns string, i
 		containersv1alpha1apply.Image(mirrorName, w.apiNamespace).</code></pre>
     <p>Unproven: reaching a CRI-populated <code>k8s.io</code> namespace needs a live cluster, so the divergence rests on the containerd source cited above.</p>
     <p>Fix: when <code>repoTag</code> is empty, scan the namespace and match on <code>img.Target().Digest</code>, the way <code>resolveContainer</code> scans at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/41dc30d0646506f0a879179d32d968f50243d309/rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go#L138-L147"><code>container_actions_containerd.go:138-147</code></a>, or record the containerd record name on the mirror.</p>
+    <p><strong>Outcome:</strong> Fixed, by matching the mirror name exactly rather than the target digest.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="I5">
@@ -549,6 +559,7 @@ failed Wait RPC     -&gt; stopTask returned &lt;nil&gt; (want the wait error)
 -		return nil
 +	case st := &lt;-exitCh:
 +		return st.Error()</code></pre>
+    <p><strong>Outcome:</strong> Fixed in both selects.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -583,6 +594,7 @@ failed Wait RPC     -&gt; stopTask returned &lt;nil&gt; (want the wait error)
 	}
 </code></pre>
     <p>Fix: resolve the signal from that label, and resume a paused task before signaling.</p>
+    <p><strong>Outcome:</strong> Fixed, and the fix exposed a further defect: the signal name resolved against the host OS table, so a Linux guest received a different signal. It now resolves against an explicit Linux table.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_passthrough.go">
       <div class="finding-title" id="S2">
@@ -617,6 +629,7 @@ func containerdMirrorName(ns, id string) string {
 
 // syncAllContainers lists all containerd containers across every namespace,</code></pre>
     <p>Fix: validate with <code>validation.IsDNS1123Subdomain</code>, which is exactly the set of names the mirror layer emits.</p>
+    <p><strong>Outcome:</strong> Fixed, by validating with <code>IsDNS1123Subdomain</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="S3">
@@ -648,6 +661,7 @@ func containerdMirrorName(ns, id string) string {
 	return nil
 }</code></pre>
     <p>Fix: log the rejected URI at <code>V(1)</code> in an else branch.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go">
       <div class="finding-title" id="S4">
@@ -691,6 +705,7 @@ func containerdMirrorName(ns, id string) string {
 		}
 	}</code></pre>
     <p>Fix: drop <code>starts</code> keys missing from <code>activeNames</code> at the end of <code>syncAllContainers</code>, under <code>startsMu</code>.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="S5">
@@ -734,6 +749,7 @@ func (r *LimaVMReconciler) handleRestartNeeded(ctx context.Context, limaVM *v1al
 		logger.Info(&quot;Restart needed but instance is starting, waiting for boot to complete&quot;)
 		return ctrl.Result{}, nil</code></pre>
     <p>Fix: store the engine name beside the watcher and treat a mismatch like a dead watcher, or name the LimaVM restart in the comment at line 189.</p>
+    <p><strong>Outcome:</strong> Fixed, by recording the engine name beside the watcher.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="S6">
@@ -765,6 +781,7 @@ func (r *LimaVMReconciler) handleRestartNeeded(ctx context.Context, limaVM *v1al
   | Type                   | Status    | Reason           | Description                                                       |
   |------------------------|-----------|------------------|-------------------------------------------------------------------|</code></pre>
     <p>Fix: write <code>false</code> when the reason is <code>NotApplicable</code>, and say so in the <code>api_app.md</code> entry.</p>
+    <p><strong>Outcome:</strong> Fixed, in the code and in <code>api_app.md</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
       <div class="finding-title" id="S7">
@@ -784,6 +801,7 @@ func (r *LimaVMReconciler) handleRestartNeeded(ctx context.Context, limaVM *v1al
 </code></pre>
     <p>A zero size fails with a bare non-zero status and no indication of what was read. The repo&#39;s bats conventions prefer bats-assert so a failure names expected versus actual, and shellcheck flags the unbraced <code>output</code> in arithmetic.</p>
     <p>Fix: <code>assert [ &quot;${output}&quot; -gt 0 ]</code>, which prints the expression and the observed value. <code>bats-assert</code> ships the bare <code>assert</code> at <code>bats/lib/bats-assert/src/assert.bash</code>.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
       <div class="finding-title" id="S8">
@@ -803,6 +821,7 @@ func (r *LimaVMReconciler) handleRestartNeeded(ctx context.Context, limaVM *v1al
 # is out of scope in v1. sudo is required because non-root nerdctl</code></pre>
     <p>A failure here leaves <code>RDD_NAMESPACE</code> empty and discards the command, status and output, so every later query fails far from the cause. The repo&#39;s bats conventions call for <code>run -0</code> over bare command substitution for exactly this reason.</p>
     <p>Fix: <code>run -0 rdd ctl get app app -o jsonpath=&#39;{.spec.namespace}&#39;</code>, then <code>RDD_NAMESPACE=${output}</code>.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go">
       <div class="finding-title" id="S9">
@@ -849,6 +868,7 @@ func (r *LimaVMReconciler) handleRestartNeeded(ctx context.Context, limaVM *v1al
 
 // syncVolume inspects a single Docker volume and applies the</code></pre>
     <p>Fix: delete every <code>Volume</code> mirror in the containerd <code>fullSync</code>, stripping finalizers as <code>removeMirrorResource</code> does.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-docker.bats">
       <div class="finding-title" id="S10">
@@ -856,6 +876,7 @@ func (r *LimaVMReconciler) handleRestartNeeded(ctx context.Context, limaVM *v1al
       </div>
     <p>Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e742329ba"><code>e742329ba</code></a> deleted the one test covering that reason, correctly, since containerd now mirrors. But the reason is now reachable only on Windows, and <code>engine-containerd.bats</code> calls <code>skip</code> for Windows in <code>local_setup_file</code>, so no platform exercises it. <code>grep NotApplicable rdd/bats/</code> finds only the unrelated <code>KubernetesReady</code> case.</p>
     <p>Fix: invert the guard for a small Windows-only block asserting the reason and that no mirrors exist.</p>
+    <p><strong>Outcome:</strong> Test restored, guarded to the platform where the reason is reachable.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
       <div class="finding-title" id="S11">
@@ -903,6 +924,7 @@ yet; the controller sets `ContainerEngineReady` to `True` with reason
 `NotApplicable` and takes no mirroring action.
 </code></pre>
     <p>Fix: give both comments their containerd variant and qualify the &quot;every namespace&quot; claim.</p>
+    <p><strong>Outcome:</strong> Fixed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="S12">
@@ -947,6 +969,7 @@ type containerdWatcher struct {
 	// running and mirror resources are in sync.
 	EngineReasonConnected = &quot;Connected&quot;</code></pre>
     <p>Fix: name both backends in all three, and reword the error to &quot;from the container engine&quot;.</p>
+    <p><strong>Outcome:</strong> Fixed across the code sites and the action prose.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/app/lima-template.yaml">
       <div class="finding-title" id="S13">
@@ -967,6 +990,7 @@ type containerdWatcher struct {
 # elsewhere this file is unused. Quote the whole assignment per systemd.exec so a</code></pre>
     <p><code>a+rw</code> on the containerd socket is root-equivalent access for every guest account; the Lima SSH user&#39;s group would grant the same forward with less. Neither line has a <code>-</code> prefix, so a chmod that fails puts the unit in <code>failed</code> and <code>ContainerEngineReady</code> at <code>ConnectFailed</code>. Whether that can race depends on <code>containerd.service</code>&#39;s <code>Type</code>, which lives in the distro image and I did not check.</p>
     <p>Fix: scope to the Lima user&#39;s group, and prefix the socket chmod with <code>-</code>.</p>
+    <p><strong>Outcome:</strong> Both <code>ExecStartPost</code> lines made non-fatal; the <code>a+rw</code> mode left for the pending move into the distro image.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/go.mod">
       <div class="finding-title" id="S14">
@@ -983,6 +1007,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29</code></pre>
     <p>Beyond what containerd requires, the diff raises the <code>go</code> directive from 1.26.0, moves <code>go-winio</code> from a tagged release to an untagged pseudo-version, and bumps <code>linuxkit/virtsock</code>, <code>k8s.io/utils</code>, <code>k8s.io/kube-openapi</code> and four OpenTelemetry modules. CI reads <code>go-version-file: rdd/go.mod</code>, so the toolchain floor follows automatically, but a reader cannot tell the forced bumps from the collateral.</p>
     <p>Fix: say in the commit body which bumps <code>containerd/v2 v2.3.2</code> forces.</p>
+    <p><strong>Outcome:</strong> Note added to the watcher commit body.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -1095,6 +1120,55 @@ require (
       <li>Reject a claim that a helper&#39;s inner assertion is lost to a nested test-harness capture only after running it. Whether the inner check still fires turns on which shell each half executes in, and a harness that captures in a subshell usually keeps an assertion and its own captured output together; what gets clobbered is the caller&#39;s copy. The probe is a two-case throwaway test file and settles the question in a minute.</li>
       <li>When an agent reports a finding it reproduced against live infrastructure the consolidator cannot rebuild, verify the mechanism in pinned source and record both: what the source establishes, and that the agent&#39;s run was not repeated. Dropping the finding for want of a rerun discards the class of defect that only a live system shows, and passing the run through unexamined reports someone else&#39;s output as verified.</li>
     </ul>
+    </div>
+    <hr>
+    <h2 id="resolution">Resolution <a href="#resolution" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th></th><th></th></tr></thead>
+      <tbody>
+        <tr><td><strong>Addressed</strong></td><td>2026-09-05</td></tr>
+        <tr><td><strong>Commit</strong></td><td>Amended into the original 11 commits (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e8305c19d"><code>e8305c19d</code></a>..<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b98897a1a"><code>b98897a1a</code></a>); no new commits</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>#</th><th>Finding</th><th>Action</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>I1: startTask drops the container&#39;s TTY setting</td><td>Fixed</td><td></td></tr>
+        <tr><td>2</td><td>I2: restart-monitor label never maintained</td><td>Skipped</td><td>Deferred to its own PR with I3. Host-side emulation of nerdctl&#39;s bookkeeping was implemented and reverted after two independent verification passes each found a fresh failure mode (stale mark unclearable on the already-running path; a documented no-op turned into a hard failure; new enrolment into the restart monitor opening a stop/restart race). The attempt is preserved at <code>/tmp/deep-review-mo6Qkp/i2-label-attempt.diff</code>. Documented in api_containers.md</td></tr>
+        <tr><td>3</td><td>I3: deleting a never-started container leaks its nerdctl name</td><td>Skipped</td><td>Deferred to its own PR with I2: the nerdctl name store is guest-local, so the fix needs a guest-exec path the engine controller does not have. Same ownership boundary as I2. Documented in api_containers.md</td></tr>
+        <tr><td>4</td><td>I4: deleteImage addresses a digest-named record by the wrong digest</td><td>Fixed</td><td></td></tr>
+        <tr><td>5</td><td>I5: stopTask discards the error containerd reports</td><td>Fixed</td><td></td></tr>
+        <tr><td>6</td><td>S1: stopTask hardcodes SIGTERM and never resumes a paused task</td><td>Fixed</td><td></td></tr>
+        <tr><td>7</td><td>S2: containerIDValidator rejects valid containerd mirror names</td><td>Fixed</td><td></td></tr>
+        <tr><td>8</td><td>S3: malformed nerdctl/log-uri silently downgrades to NullIO</td><td>Fixed</td><td></td></tr>
+        <tr><td>9</td><td>S4: w.starts pruned only on ContainerDelete</td><td>Fixed</td><td></td></tr>
+        <tr><td>10</td><td>S5: a live engine switch never swaps the watcher</td><td>Fixed</td><td></td></tr>
+        <tr><td>11</td><td>S6: supportsNamespaces reports the requested engine where nothing is mirrored</td><td>Fixed</td><td></td></tr>
+        <tr><td>12</td><td>S7: <code>((output &gt; 0))</code> fails with only an exit code</td><td>Fixed</td><td></td></tr>
+        <tr><td>13</td><td>S8: setup captures the API namespace without checking the command</td><td>Fixed</td><td></td></tr>
+        <tr><td>14</td><td>S9: containerd full sync never prunes Volume mirrors</td><td>Fixed</td><td></td></tr>
+        <tr><td>15</td><td>S10: ContainerEngineReady=NotApplicable lost its only test</td><td>Test written</td><td></td></tr>
+        <tr><td>16</td><td>S11: mirror-naming contract in the docs stays moby-only</td><td>Documentation updated</td><td></td></tr>
+        <tr><td>17</td><td>S12: stale comments still call containerd forthcoming</td><td>Documentation updated</td><td></td></tr>
+        <tr><td>18</td><td>S13: containerd socket drop-in grants everyone read-write access</td><td>Fixed</td><td>Both ExecStartPost lines made non-fatal; the a+rw mode is left for the pending move of the drop-in into the distro image</td></tr>
+        <tr><td>19</td><td>S14: dependency and toolchain bumps ride along</td><td>Fixed</td><td>Note added to the watcher commit body. Verified hcsshim and the containerd sub-modules are forced; nothing in the module graph requires the go-winio pseudo-version</td></tr>
+        <tr><td>20</td><td>Doc gap: tagless image sets status.namespace</td><td>Documentation updated</td><td></td></tr>
+        <tr><td>21</td><td>Testing gap 1: TTY containers through the action path</td><td>Test written</td><td></td></tr>
+        <tr><td>22</td><td>Testing gap 2: restart policies across a stop</td><td>Skipped</td><td>Covers I2, which is deferred; committing the test now would commit a red test</td></tr>
+        <tr><td>23</td><td>Testing gap 3: delete of a never-started container, then name reuse</td><td>Skipped</td><td>Covers I3, which is deferred; committing the test now would commit a red test</td></tr>
+        <tr><td>24</td><td>Testing gap 4: deleteImage for a digest-named record</td><td>Skipped</td><td>Only containerd&#39;s CRI plugin creates a bare-digest record name, and nerdctl rejects one as an invalid reference, so the case needs Kubernetes enabled in this suite</td></tr>
+        <tr><td>25</td><td>Testing gap 5: stop-timeout and non-default stop signals</td><td>Test written</td><td></td></tr>
+        <tr><td>26</td><td>Testing gap 6: hashed <code>ctr-</code> mirror names end to end</td><td>Skipped</td><td>Needs a container ID that is not a valid object name, which only <code>ctr</code> can create, and <code>ctr</code> is not installed in the guest</td></tr>
+        <tr><td>27</td><td>Testing gap 7: ContainerEngineReady=NotApplicable</td><td>Test written</td><td>Same test as S10</td></tr>
+        <tr><td>28</td><td>Testing gap 8: non-DNS1123 containerd namespaces</td><td>Test written</td><td></td></tr>
+      </tbody>
+    </table>
+    <h3 id="defect-found-while-verifying-the-fixes">Defect found while verifying the fixes <a href="#defect-found-while-verifying-the-fixes" class="pilcrow">&#182;</a></h3>
+    <p>Writing testing gap 5 first, as the fail-first gate requires, exposed a bug in the S1 fix itself. <code>containerdclient.GetStopSignal</code> resolves a signal name through <code>moby/sys/signal</code>, which maps against the <strong>host</strong> OS. The daemon runs on macOS and Windows but signals a Linux guest, and the two disagree above SIGTERM: macOS numbers SIGUSR1 30, Linux numbers it 10. A container built with <code>STOPSIGNAL SIGUSR1</code> therefore received a different signal than it asked for. SIGTERM, SIGQUIT, SIGHUP and SIGKILL share their numbers, which is why every existing test passed and both verification passes missed it. The fix now resolves signal names against an explicit Linux table, and <code>TestParseLinuxSignal</code> pins the guest&#39;s numbers so the host constants cannot creep back.</p>
+    <h3 id="verification">Verification <a href="#verification" class="pilcrow">&#182;</a></h3>
+    <p>Every one of the 11 commits builds and passes <code>go test ./pkg/controllers/app/engine/...</code> standalone. <code>engine-containerd.bats</code> is 30/30 against a live VM (27 original plus 3 new); <code>make lint-rdd</code> reports 0 issues and <code>make lint-bats</code> is clean.</p>
     </div>
   </main>
   <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
