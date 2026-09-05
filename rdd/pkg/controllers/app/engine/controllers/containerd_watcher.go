@@ -178,6 +178,44 @@ func (w *containerdWatcher) handleEvent(ctx context.Context, e *events.Envelope)
 	}
 
 	switch ev := decoded.(type) {
+	case *apievents.ContainerCreate:
+		log.V(1).Info("Container created", "namespace", e.Namespace, "id", ev.ID)
+		// Namespaces appear implicitly on first use; fullSync only catches
+		// pre-existing ones, so apply the namespace mirror before the
+		// container.
+		if err := w.applyNamespace(ctx, e.Namespace); err != nil {
+			return err
+		}
+		return w.syncContainer(ctx, e.Namespace, ev.ID)
+	case *apievents.ContainerUpdate:
+		// Labels such as nerdctl/name can change on update.
+		log.V(1).Info("Container updated", "namespace", e.Namespace, "id", ev.ID)
+		return w.syncContainer(ctx, e.Namespace, ev.ID)
+	case *apievents.ContainerDelete:
+		log.V(1).Info("Container deleted", "namespace", e.Namespace, "id", ev.ID)
+		return w.removeMirrorResource(ctx, &containersv1alpha1.Container{},
+			containerdMirrorName(e.Namespace, ev.ID))
+	case *apievents.TaskCreate:
+		log.V(1).Info("Task created", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
+	case *apievents.TaskStart:
+		log.V(1).Info("Task started", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
+	case *apievents.TaskExit:
+		log.V(1).Info("Task exited", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
+	case *apievents.TaskDelete:
+		log.V(1).Info("Task deleted", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
+	case *apievents.TaskPaused:
+		log.V(1).Info("Task paused", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
+	case *apievents.TaskResumed:
+		log.V(1).Info("Task resumed", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
+	case *apievents.TaskOOM:
+		log.V(1).Info("Task OOM", "namespace", e.Namespace, "id", ev.ContainerID)
+		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
 	case *apievents.NamespaceCreate:
 		// ev.Name is where the event type carries the subject. containerd
 		// stamps the envelope namespace with the same name before publishing,
@@ -275,9 +313,9 @@ func (w *containerdWatcher) deleteVolume(_ context.Context, _ *containersv1alpha
 	return nil
 }
 
-// fullSync lists containerd namespaces and creates their mirror resources,
-// pruning stale ones. Container and image mirrors are not implemented yet;
-// containerd has no volumes.
+// fullSync lists namespaces and containers from containerd and creates
+// corresponding mirror resources, pruning stale ones. Image mirrors are not
+// implemented yet; containerd has no volumes.
 func (w *containerdWatcher) fullSync(ctx context.Context) error {
 	log := logf.FromContext(ctx).WithName("containerd-watcher")
 	log.Info("Starting full sync")
@@ -286,6 +324,9 @@ func (w *containerdWatcher) fullSync(ctx context.Context) error {
 
 	if err := w.syncNamespaces(ctx); err != nil {
 		errs = append(errs, fmt.Errorf("failed to sync namespaces: %w", err))
+	}
+	if err := w.syncAllContainers(ctx); err != nil {
+		errs = append(errs, fmt.Errorf("failed to sync containers: %w", err))
 	}
 	if err := w.pruneVolumes(ctx); err != nil {
 		errs = append(errs, fmt.Errorf("failed to prune volumes: %w", err))

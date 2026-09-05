@@ -5,8 +5,8 @@
 load '../../helpers/load'
 
 # Containerd engine tests: verify that the engine controller mirrors
-# containerd namespaces into ContainerNamespace resources. Tests build on
-# each other in file order.
+# containerd namespaces and containers into ContainerNamespace and
+# Container resources. Tests build on each other in file order.
 
 VM_NAME="rd"
 
@@ -63,6 +63,45 @@ assert_containerd_socket_open() {
         --output /dev/null http://localhost/
 }
 
+@test "running a container creates a Container mirror" {
+    run_e -0 nerdctl run --detach --name mirror-smoke busybox sleep inf
+    cid=${output}
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.name} {.status.namespace}'
+    assert_output "mirror-smoke default"
+}
+
+@test "ContainerNamespace mirror exists for the default namespace" {
+    # The default namespace exists only once something was created in it;
+    # the mirror-smoke container above guarantees that.
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" \
+        ContainerNamespace/default --timeout=30s
+}
+
+@test "stopping the container updates the mirror status" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' mirror-smoke
+    cid=${output}
+
+    nerdctl stop mirror-smoke
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=exited \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+}
+
+@test "removing the container removes the mirror" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' mirror-smoke
+    cid=${output}
+
+    nerdctl rm mirror-smoke
+
+    rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
+        container/"${cid}" --timeout=30s
+}
+
 # --- Namespace lifecycle ---
 
 @test "creating a containerd namespace creates its mirror" {
@@ -83,4 +122,33 @@ assert_containerd_socket_open() {
 
     rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
         ContainerNamespace/mirror-ns --timeout=30s
+}
+
+# --- Names that are not valid object names ---
+
+@test "a containerd namespace that is not a valid object name gets no mirror" {
+    # containerd namespace names are freer than Kubernetes object names, so
+    # the mirror is skipped; the containers inside it are still mirrored,
+    # which is what makes the skip safe.
+    nerdctl namespace create Not_Valid
+    run_e -0 nerdctl --namespace Not_Valid run --detach --name hidden-ns \
+        busybox sleep inf
+    cid=${output}
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.namespace}'
+    assert_output "Not_Valid"
+
+    run -0 rdd ctl get containernamespaces --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.items[*].metadata.name}'
+    refute_output --partial "Not_Valid"
+
+    # A namespace only removes once it holds nothing, and the run above
+    # pulled busybox into it.
+    nerdctl --namespace Not_Valid rm --force hidden-ns
+    nerdctl --namespace Not_Valid rmi --force busybox
+    nerdctl namespace remove Not_Valid
 }
