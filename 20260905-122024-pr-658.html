@@ -243,6 +243,12 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Findings carry the agents that raised them. The two Gemini models share a family, so their agreement counts once. I proved I1, I2 and I4 with probes run against this tree; I3&#39;s runtime ordering needs a live VM, so it names its evidence instead.</p>
     </div>
     <hr>
+    <h2 id="status-since-this-review">Status since this review <a href="#status-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>These findings were addressed on 2026-09-05 and the fixes were amended into the series, so the line numbers and snippets below describe the code as reviewed, not as it stands now. Each finding ends with what happened to it, and the full record is in the Resolution section at the end.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -376,6 +382,7 @@ func TestProbeContainerStatusPath(t *testing.T) {
 --- PASS: TestProbeContainerStatusPath (0.01s)</code></pre>
       </details>
     <p>Fix: build <code>path</code> and <code>args</code> into locals and call <code>statusApply.WithPath(path).WithArgs(args...)</code> unconditionally; the probe&#39;s second case shows an empty string satisfies the schema.</p>
+    <p><strong>Fixed.</strong> <code>path</code> and <code>args</code> are now built into locals and applied unconditionally.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="I2">
@@ -439,6 +446,7 @@ func TestProbeStopSignal(t *testing.T) {
       </details>
     <p><code>SIGUSR1</code> resolving to the guest&#39;s 10 is the case that works.</p>
     <p>Fix: raise the numeric bound to 64 and add the <code>RTMIN</code>/<code>RTMIN+n</code>/<code>RTMAX-n</code> names, or say in the comment that real-time signals are deliberately unsupported and log the downgrade where an operator sees it. Move <code>&quot;64&quot;</code> out of the test&#39;s rejection table either way.</p>
+    <p><strong>Fixed.</strong> The numeric bound is 64, the RTMIN/RTMAX forms resolve, and SIGCLD was added.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="I3">
@@ -476,6 +484,7 @@ func TestProbeStopSignal(t *testing.T) {
 		fmt.Sprintf(&quot;  VM_SWITCH_LOG: %q&quot;, toLinuxPath(filepath.Join(instance.LogDir(), &quot;vm-switch.log&quot;))),</code></pre>
     <p>Unproven: the losing order needs a live VM to observe, and no in-process test reaches the socket-close/App-update race. The merge-base comparison and the two skipped <code>removeDockerContext</code> call sites were read directly.</p>
     <p>Fix: test the engine mismatch before liveness. <code>stopWatcher</code> already handles a finished watcher and does the context cleanup.</p>
+    <p><strong>Fixed.</strong> The engine-mismatch arm comes first and keys on <code>watcherEngine</code>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/sync_images_containerd.go">
       <div class="finding-title" id="I4">
@@ -581,12 +590,14 @@ func TestProbeRepoTag(t *testing.T) {
 			}
 			if startedAt := w.startedAt(nsCtx, mirrorName, pid); startedAt != nil {
 				statusApply.WithStartedAt(*startedAt)</code></pre>
+    <p><strong>Fixed.</strong> The test waits for <code>exited</code> before reading <code>exitCode</code>, and its comment no longer claims a timeout check.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="S2">
         <span class="finding-num">S2.</span> A malformed <code>nerdctl/log-uri</code> still downgrades to <code>NullIO</code> where nerdctl fails the start <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S2" class="pilcrow">&#182;</a>
       </div>
     <p>Round 1&#39;s S3 asked for the silent downgrade to stop; the fix added a <code>V(1)</code> line and kept the downgrade, so at the default log level the container still starts with its output discarded and the action records <code>Succeeded</code>. nerdctl returns the parse error instead (<code>pkg/taskutil/taskutil.go:195-200</code>), which is the behaviour the mirror path claims to match. Codex&#39;s probe confirmed <code>containerdIOCreator</code> accepts <code>&quot;%&quot;</code>. Fix: return the error so the action records <code>Failed</code> without creating a task.</p>
+    <p><strong>Declined.</strong> nerdctl writes the label itself, so a malformed value means it was hand-edited; the V(1) line records it and the container still starts.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="S3">
@@ -617,6 +628,7 @@ func (r *EngineReconciler) stopWatcher() {
 	if e != nil {
 		e.stop()
 	}</code></pre>
+    <p><strong>Fixed</strong>, both halves. The prune joins its errors like its five siblings, after two verification passes disagreed about swallow-vs-join.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go">
       <div class="finding-title" id="S4">
@@ -663,6 +675,7 @@ func (r *EngineReconciler) stopWatcher() {
 				log.Error(err, &quot;Failed to handle Docker event&quot;,
 					&quot;type&quot;, msg.Type, &quot;action&quot;, msg.Action, &quot;actor&quot;, msg.Actor.ID)
 			}</code></pre>
+    <p><strong>Fixed</strong> by deleting the block.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go">
       <div class="finding-title" id="S5">
@@ -711,6 +724,7 @@ func (r *EngineReconciler) stopWatcher() {
 
   | Type                   | Status    | Reason           | Description                                                       |
   |------------------------|-----------|------------------|-------------------------------------------------------------------|</code></pre>
+    <p><strong>Fixed.</strong> The comment now names the <code>NotApplicable</code> reason.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
       <div class="finding-title" id="S6">
@@ -769,6 +783,7 @@ func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error
 			V(1).Info(&quot;Skipping ContainerNamespace mirror for non-DNS1123 namespace&quot;, &quot;namespace&quot;, ns)
 		return nil
 	}</code></pre>
+    <p><strong>Fixed</strong>, both halves, plus the CRD field descriptions that carried the same claim.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
       <div class="finding-title" id="S7">
@@ -859,36 +874,42 @@ full container ID.
 
 The following query parameters are accepted:
 </code></pre>
+    <p><strong>Fixed</strong>, every listed passage plus <code>cmd_app.md</code> and the Container state section.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="S8">
         <span class="finding-num">S8.</span> Two round-2 fixes were amended into commits whose subjects no longer describe them <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S8" class="pilcrow">&#182;</a>
       </div>
     <p>The PR asks for commit-by-commit review on the strength of one idea per commit. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1f304d8fc"><code>1f304d8fc</code></a> was +33 −6 in round 1; as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/de0b85b24"><code>de0b85b24</code></a> it is +213 −20 and now introduces <code>containerdIOCreator</code>, <code>containerdWantsTerminal</code>, <code>linuxSignals</code>, <code>parseLinuxSignal</code>, <code>stopSignal</code> and <code>resolveImageRecord</code>. Those are the TTY, log-URI, signal and digest-delete fixes, and none of them is a stop timeout. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/19ccfb5e7"><code>19ccfb5e7</code></a> → <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5ca1263d1"><code>5ca1263d1</code></a> likewise grew <code>engine_reconciler.go</code> from +10 to +64 by absorbing the watcher-switch fix, which belongs with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/75e29ddc0"><code>75e29ddc0</code></a>. Fix: move each fix to the commit that introduced the code it repairs, so a commit-by-commit reader is not misled.</p>
+    <p><strong>Fixed.</strong> The misplaced work moved into the commits that own it; all 13 commits build, vet and test standalone.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="S9">
         <span class="finding-num">S9.</span> Both <code>task.Kill</code> calls treat a task that already exited as a failure <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#S9" class="pilcrow">&#182;</a>
       </div>
     <p>A task that exits between the status read and the signal (or between the grace-period expiry and the escalation) makes <code>Kill</code> return <code>NotFound</code>. The shim&#39;s stopped state forwards to runc, and <code>checkKillError</code> maps &quot;process already finished&quot; to <code>errdefs.ErrNotFound</code> (<code>containerd/v2@v2.3.2/cmd/containerd-shim-runc-v2/process/utils.go:115-128</code>). <code>stopTask</code> then records <code>Failed</code> for a container that did stop. The round-2 change widened the window slightly, since <code>stopSignal</code> now makes a <code>Labels</code> round trip between <code>task.Wait</code> and <code>Kill</code>. nerdctl returns the same error unfiltered (<code>pkg/containerutil/containerutil.go:441-467</code>), so this is a shared gap rather than a divergence. Fix: ignore <code>NotFound</code> from both calls.</p>
+    <p><strong>Fixed</strong>, on moby/containerd parity rather than parity with nerdctl.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go">
       <div class="finding-title" id="S10">
         <span class="finding-num">S10.</span> A port-label parse failure logs &quot;Skipping ports&quot; and then erases them <span class="pill pill-claude">Claude Opus 5</span><a href="#S10" class="pilcrow">&#182;</a>
       </div>
     <p>On error <code>ports</code> is nil and <code>statusApply.WithPorts(ports...)</code> still runs, so SSA drops the ports this field manager owned. The log sits at <code>V(1)</code>, invisible at the default level, so an operator watching the Containers list sees ports vanish with no message. Erasing is defensible, since unparsable ports cannot be reported, but the comment should say that is the intent, and the log belongs at a level the operator sees.</p>
+    <p><strong>Commented.</strong> The comment and the log message now say that clearing is deliberate.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
       <div class="finding-title" id="S11">
         <span class="finding-num">S11.</span> The new &quot;state the controller does not maintain&quot; section misplaces the restart labels <span class="pill pill-claude">Claude Opus 5</span><a href="#S11" class="pilcrow">&#182;</a>
       </div>
     <p>The section groups <code>containerd.io/restart.*</code> with the name reservation and state directory as state nerdctl keeps &quot;outside containerd&quot;. They are containerd container labels, written through <code>container.Update</code> (<code>nerdctl/v2@v2.3.4/pkg/containerutil/containerutil.go:117-122</code>), so a reader will hunt in nerdctl&#39;s data store rather than <code>ctr containers info</code>. &quot;which only <code>nerdctl stop</code> sets&quot; is incomplete too. <code>nerdctl kill</code> sets it (<code>pkg/cmd/container/kill.go:88</code>) and <code>nerdctl start</code> clears it (<code>containerutil.go:302</code>). The rest of the section checks out.</p>
+    <p><strong>Fixed.</strong></p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go">
       <div class="finding-title" id="S12">
         <span class="finding-num">S12.</span> <code>fullSync</code> lists containerd namespaces three times <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S12" class="pilcrow">&#182;</a>
       </div>
     <p><code>syncNamespaces</code>, <code>syncAllContainers</code> and <code>syncAllImages</code> each open with <code>w.cli.NamespaceService().List(ctx)</code>. Fetching the list once in <code>fullSync</code> and passing it down removes two round trips per sync, and makes the three passes agree on one snapshot of the namespace set.</p>
+    <p><strong>Declined.</strong> A local gRPC list is cheap and runs once per watcher start; threading the slice through three signatures is churn this PR does not need.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
       <div class="finding-title" id="S13">
@@ -922,6 +943,7 @@ The following query parameters are accepted:
 
     rdd ctl wait --for=delete --namespace=&quot;${RDD_NAMESPACE}&quot; \
         ContainerNamespace/mirror-ns --timeout=30s</code></pre>
+    <p><strong>Fixed.</strong></p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rdd-client/gen/models/IoRancherdesktopAppV1alpha1AppStatus.ts">
       <div class="finding-title" id="S14">
@@ -947,6 +969,7 @@ for regenerating the API definitions.  To do so:
 We export a `KubeConfig` class; it is distinct from the one from
 [`@kubernetes/client-node`], but should be API-compatible enough for our use.
 The other files are copies from upstream (at 1.4.0) with small compilation fixes.</code></pre>
+    <p><strong>Declined.</strong> It belongs with the issue-187 GUI work, which needs the client regenerated anyway.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
