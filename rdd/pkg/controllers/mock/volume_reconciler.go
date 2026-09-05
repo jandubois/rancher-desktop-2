@@ -86,11 +86,17 @@ func (r *volumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			WithOptions(inspect.Options).
 			WithMountPoint(inspect.Mountpoint).
 			WithScope(inspect.Scope)
+		// CreatedAt is a required status field, so an unparsable value
+		// reports the epoch rather than dropping it: an apply missing it is
+		// rejected whole, leaving a mirror with no status at all.
+		createdAt := metav1.Unix(0, 0)
 		if t, err := time.Parse(time.RFC3339Nano, inspect.CreatedAt); err == nil {
-			statusApplyConfig = statusApplyConfig.WithCreatedAt(metav1.NewTime(t))
-		} else if inspect.CreatedAt != "" {
-			log.Error(err, "Failed to parse volume created time", "volume", inspect.Name, "created", inspect.CreatedAt)
+			createdAt = metav1.NewTime(t)
+		} else {
+			log.Error(err, "Reporting the epoch as the volume creation time",
+				"volume", inspect.Name, "created", inspect.CreatedAt)
 		}
+		statusApplyConfig = statusApplyConfig.WithCreatedAt(createdAt)
 		err = r.Client.Status().Apply(
 			ctx,
 			containersv1alpha1apply.
