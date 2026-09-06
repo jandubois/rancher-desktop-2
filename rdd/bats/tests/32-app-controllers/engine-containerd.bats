@@ -6,8 +6,8 @@ load '../../helpers/load'
 
 # Containerd engine tests: verify that the engine controller mirrors
 # containerd namespaces, containers and images into ContainerNamespace,
-# Container and Image resources, and drives container actions. Tests
-# build on each other in file order.
+# Container and Image resources, drives container actions, and forwards
+# mirror deletes to containerd. Tests build on each other in file order.
 
 VM_NAME="rd"
 
@@ -390,4 +390,40 @@ assert_container_pid_changed() { # <container> <previous-pid>
     nerdctl --namespace Not_Valid rm --force hidden-ns
     nerdctl --namespace Not_Valid rmi --force busybox
     nerdctl namespace remove Not_Valid
+}
+
+# --- Finalizer-forwarded deletes ---
+
+@test "deleting Container resource removes the containerd container" {
+    # Delete while running so the finalizer path has to kill the task
+    # before removing the container.
+    nerdctl start test-actions
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    rdd ctl delete container "${cid}" --namespace="${RDD_NAMESPACE}"
+    rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
+        container/"${cid}" --timeout=60s
+
+    run_e -1 nerdctl inspect test-actions
+}
+
+@test "deleting Image mirror removes the containerd image" {
+    nerdctl tag busybox:latest busybox:delete-me
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" image \
+        --field-selector "status.repoTag=docker.io/library/busybox:delete-me" \
+        --timeout=30s
+
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:delete-me" -o name
+    assert_output
+    image_ref=${output}
+
+    rdd ctl delete "${image_ref}" --namespace="${RDD_NAMESPACE}"
+    rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
+        "${image_ref}" --timeout=60s
+
+    run_e -1 nerdctl image inspect busybox:delete-me
 }

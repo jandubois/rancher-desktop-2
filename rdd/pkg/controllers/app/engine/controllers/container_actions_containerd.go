@@ -17,6 +17,7 @@ import (
 
 	containerdclient "github.com/containerd/containerd/v2/client"
 	"github.com/containerd/containerd/v2/core/containers"
+	"github.com/containerd/containerd/v2/core/images"
 	"github.com/containerd/containerd/v2/pkg/cio"
 	"github.com/containerd/containerd/v2/pkg/namespaces"
 	"github.com/containerd/containerd/v2/pkg/oci"
@@ -509,4 +510,101 @@ func (w *containerdWatcher) restartContainer(nsCtx context.Context, log logr.Log
 		return fmt.Errorf("failed to load task: %w", err)
 	}
 	return w.startTask(nsCtx, log, ctr)
+}
+
+// deleteContainer removes a container from containerd when its mirror is
+// deleted. NotFound is treated as success; other errors propagate so the
+// caller keeps the finalizer and retries.
+//
+// A K8s delete of the mirror means "remove this container", so a running task
+// is killed first (Force semantics matching the moby path).
+func (w *containerdWatcher) deleteContainer(ctx context.Context, c *containersv1alpha1.Container) error {
+	ns := c.Status.Namespace
+	if ns == "" {
+		// A bare user-created mirror carries no engine reference, parallel
+		// to processImageFinalizers' empty-status guard.
+		return nil
+	}
+
+	ctr, err := w.resolveContainer(ctx, ns, c.Name)
+	if errdefs.IsNotFound(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	nsCtx := namespaces.WithNamespace(ctx, ns)
+
+	if task, err := ctr.Task(nsCtx, nil); err == nil {
+		if _, err := task.Delete(nsCtx, containerdclient.WithProcessKill); err != nil && !errdefs.IsNotFound(err) {
+			return fmt.Errorf("failed to delete task for %s: %w", c.Name, err)
+		}
+	} else if !errdefs.IsNotFound(err) {
+		return fmt.Errorf("failed to load task for %s: %w", c.Name, err)
+	}
+
+	if err := ctr.Delete(nsCtx, containerdclient.WithSnapshotCleanup); err != nil && !errdefs.IsNotFound(err) {
+		return fmt.Errorf("failed to delete container %s: %w", c.Name, err)
+	}
+	return nil
+}
+
+// deleteImage removes an image record from containerd when its mirror is
+// deleted. The delete is synchronous so the record is gone (GC complete) when
+// the finalizer is stripped. NotFound is treated as success.
+//
+// containerd has no in-use protection: deleting a record referenced by a
+// running container succeeds and the container keeps its snapshot. There is
+// no Docker-style conflict-until-container-removed behavior.
+func (w *containerdWatcher) deleteImage(ctx context.Context, img *containersv1alpha1.Image) error {
+	ns := img.Status.Namespace
+	if ns == "" {
+		return nil
+	}
+	nsCtx := namespaces.WithNamespace(ctx, ns)
+	// A tagged mirror stores the record name verbatim in repoTag. Any other
+	// mirror stands for a record named by a digest or by a name@digest
+	// reference, and neither is status.id: status.id is the manifest digest,
+	// while the CRI plugin names its records by the image config digest and
+	// the repo digest. Recover the name the mirror was built from instead of
+	// guessing a digest.
+	ref := img.Status.RepoTag
+	if ref == "" {
+		found, err := w.resolveImageRecord(nsCtx, ns, img.Name)
+		if err != nil {
+			return err
+		}
+		if found == "" {
+			// No record maps to this mirror, so there is nothing to delete.
+			return nil
+		}
+		ref = found
+	}
+	err := w.cli.ImageService().Delete(nsCtx, ref, images.SynchronousDelete())
+	if errdefs.IsNotFound(err) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("failed to delete image %s: %w", ref, err)
+	}
+	return nil
+}
+
+// resolveImageRecord returns the containerd record this mirror was built
+// from, or an empty string when the record is gone. Matching on the mirror
+// name is exact, the way resolveContainer matches a hashed container name:
+// one pull registers the same image under several names, so anything keyed on
+// the target digest alone could pick a sibling record that belongs to another
+// mirror still in use.
+func (w *containerdWatcher) resolveImageRecord(nsCtx context.Context, ns, mirrorName string) (string, error) {
+	imgs, err := w.cli.ListImages(nsCtx)
+	if err != nil {
+		return "", fmt.Errorf("failed to list images: %w", err)
+	}
+	for _, candidate := range imgs {
+		if containerdImageMirrorName(ns, candidate.Name()) == mirrorName {
+			return candidate.Name(), nil
+		}
+	}
+	return "", nil
 }

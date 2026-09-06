@@ -83,10 +83,13 @@ controller removes all mirror resources and sets `ContainerEngineReady` to
 
 ### Finalizer lifecycle
 
-Each mirror carries the `engine.rancherdesktop.io/mirror`
-finalizer. A K8s-side delete triggers the finalizer handler, which
-deletes the corresponding engine object and then strips the finalizer
-so the mirror can be garbage-collected.
+`Container`, `Image` and `Volume` mirrors carry the
+`engine.rancherdesktop.io/mirror` finalizer. A K8s-side delete triggers
+the finalizer handler, which deletes the corresponding engine object and
+then strips the finalizer so the mirror can be garbage-collected.
+`ContainerNamespace` mirrors carry no finalizer: deleting one is not
+offered as a way to delete the engine namespace, so a finalizer with no
+handler would only trap the delete in Terminating.
 
 An engine-side delete (for example, `docker rm`) goes the other way:
 the engine controller strips the finalizer and deletes the mirror
@@ -100,8 +103,8 @@ name reservation and its state directory, both of which live outside
 containerd, and the `containerd.io/restart.*` container labels, which
 live on the containerd record but are written only by `nerdctl` and by
 containerd's own restart monitor.
-Actions taken through the mirror leave all of it untouched, with one
-consequence today.
+Actions taken through the mirror leave all of it untouched, with two
+consequences today.
 
 Restart policies do not survive a mirror-driven stop. containerd's
 restart monitor decides from `containerd.io/restart.explicitly-stopped`,
@@ -109,6 +112,12 @@ which `nerdctl stop` and `nerdctl kill` set and `nerdctl start` clears,
 so stopping an `unless-stopped` container through the action annotation
 lets the monitor start it again even though `status.lastAction` reports
 success.
+
+Deleting the mirror of a container that was created but never started
+leaves its name reserved. `nerdctl` releases a name either from
+`nerdctl rm` or from the container's post-stop hook, and a container
+with no task has run neither, so `nerdctl create --name` rejects that
+name afterwards.
 
 ## Namespaces
 
@@ -467,16 +476,21 @@ status:
 ```
 
 #### Untag image
-Delete the `Image` object through the K8s API; the finalizer runs
-`ImageRemove` on the matching Docker reference. Docker keeps the underlying
-image while another tag or a running container references it, so removing
-one tag may leave the image in place.
+Delete the `Image` object through the K8s API; the finalizer removes the
+matching reference from the engine.
 
-The engine controller mirrors untag events in the reverse direction: on
-a Docker `untag` event it re-inspects the image and removes any K8s
-`Image` resources whose `.status.repoTag` is no longer in Docker's tag
-list. If the image becomes dangling, a new `Image` object without
-`.status.repoTag` takes its place.
+The two engines differ in what that leaves behind. Docker keeps the underlying
+image while another tag or a running container references it, so removing one
+tag may leave the image in place. containerd has no such protection: deleting
+the record a mirror was built from succeeds even while a container is running
+on it, and the container keeps its snapshot until it is deleted itself.
+
+On Docker the engine controller also mirrors untag events in the reverse
+direction: on an `untag` event it re-inspects the image and removes any K8s
+`Image` resources whose `.status.repoTag` is no longer in Docker's tag list. If
+the image becomes dangling, a new `Image` object without `.status.repoTag`
+takes its place. containerd needs none of this, because its `ImageDelete` event
+names the record directly and each record already has its own mirror.
 
 #### Delete untagged image
 Delete the `Image` object (which does not have any `.status.repoTag` set).  An

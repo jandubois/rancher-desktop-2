@@ -267,18 +267,6 @@ func (w *containerdWatcher) pullImage(_ context.Context, _ string, _ func(start,
 	return errors.New("image pulls are not supported with the containerd engine")
 }
 
-// deleteContainer is unreachable yet. containerd mirrors have no mirror
-// finalizer, so no K8s-side delete is forwarded here.
-func (w *containerdWatcher) deleteContainer(_ context.Context, _ *containersv1alpha1.Container) error {
-	return errors.New("container deletion is not supported with the containerd engine yet")
-}
-
-// deleteImage is unreachable yet. containerd Image mirrors have no mirror
-// finalizer, so no K8s-side delete is forwarded here.
-func (w *containerdWatcher) deleteImage(_ context.Context, _ *containersv1alpha1.Image) error {
-	return errors.New("image deletion is not supported with the containerd engine yet")
-}
-
 // deleteVolume returns nil, because containerd has no native volume concept.
 func (w *containerdWatcher) deleteVolume(_ context.Context, _ *containersv1alpha1.Volume) error {
 	return nil

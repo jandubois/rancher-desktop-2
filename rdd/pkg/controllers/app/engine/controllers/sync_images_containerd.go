@@ -37,10 +37,10 @@ func containerdImageMirrorName(ns, name string) string {
 // containerdImageRefs splits a containerd image record name into the mirror
 // fields that report it. containerd names a record by the reference it was
 // registered under, and the CRI plugin registers three for a single pull: the
-// image config digest, the repo tag, and the repo digest. A name@digest
-// reference is a repo digest, which is where Docker reports it, and a bare
-// digest names the image by its config digest, which is neither, so that
-// record has no reference at all.
+// image config digest, the repo tag, and the repo digest. Only the tag is a
+// tag. A name@digest reference is a repo digest, which is where Docker reports
+// it, and a bare digest names the image by its config digest, which is neither,
+// so that record carries no reference at all.
 //
 // The digest check has to come first. A bare digest also parses as a
 // reference, as the name "sha256" tagged with the hex, so asking the reference
@@ -158,8 +158,8 @@ func (w *containerdWatcher) applyImageMirror(nsCtx context.Context, ns string, i
 		statusApply.WithRepoDigests(repoDigest)
 	}
 
-	// No mirror finalizer yet, for the same reason as the container mirrors.
 	return w.mirrorClient.applyImage(nsCtx,
-		containersv1alpha1apply.Image(mirrorName, w.apiNamespace),
+		containersv1alpha1apply.Image(mirrorName, w.apiNamespace).
+			WithFinalizers(mirrorFinalizer),
 		statusApply)
 }
