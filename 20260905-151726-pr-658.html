@@ -243,6 +243,12 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
     <p>I proved both with probes run against this tree, each including the neighbouring case that behaves correctly. The two Gemini models share a family, so where they agree it counts once; this round they produced one usable suggestion each and no overlap.</p>
     </div>
     <hr>
+    <h2 id="status-since-this-review">Status since this review <a href="#status-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>These findings were addressed on 2026-09-05 and the fixes were amended into the series, so the line numbers and snippets below describe the code as reviewed, not as it stands now. Each finding ends with what happened to it, and the full record is in the Resolution section at the end.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -357,6 +363,7 @@ FAIL
 +		r.removeDockerContext()
 +	}</code></pre>
     <p>I ran that patch against the probe and the package suite: both pass.</p>
+    <p><strong>Fixed.</strong> The call was placed before the watcher start rather than after it, so an unreachable containerd cannot keep the stale context alive.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/sync_images_containerd.go">
       <div class="finding-title" id="I2">
@@ -486,6 +493,7 @@ func TestProbeImageSize(t *testing.T) {
 FAIL</code></pre>
       </details>
     <p>Fix: mirror the record anyway. Treat a failed <code>Size</code> or <code>Spec</code> as partial: report <code>size: 0</code>, take architecture and OS from the index&#39;s own descriptor, and log once at <code>V(1)</code>. The same-arch case works only by luck, since <code>platforms.Default()</code> on darwin/arm64 matches linux/arm64.</p>
+    <p><strong>Deferred to its own PR.</strong> Three approaches each failed verification; the last wrote a sibling platform&#39;s architecture and size when the client&#39;s manifest is present but its config blob is not. See the Resolution table.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -513,6 +521,7 @@ FAIL</code></pre>
 // than the host&#39;s syscall constants: the daemon runs on macOS and Windows but</code></pre>
     <p><code>nsCtx</code> derives from Reconcile&#39;s context, which nothing cancels short of manager shutdown. A task that survives SIGKILL, a process wedged in uninterruptible sleep on a guest mount, parks the engine reconciler here for good, and the App is a cluster-scoped singleton, so no finalizer pass and no <code>ContainerEngineReady</code> update runs again. A broken gRPC connection does unblock it through <code>exitCh</code>, which is why this is a suggestion.</p>
     <p>Fix: add <code>case &lt;-time.After(defaultStopTimeout):</code> returning an error naming the container, so the action records <code>Failed</code> and the reconciler moves on.</p>
+    <p><strong>Commented.</strong> A deadline aborted restart and left the same unbounded wait at <code>task.Delete</code>; the comment now records both sites.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/container_actions_containerd.go">
       <div class="finding-title" id="S2">
@@ -528,6 +537,7 @@ FAIL</code></pre>
 }</code></pre>
     <p>The guard above rejects a non-numeric or non-positive label but not one past <code>time.Duration</code>&#39;s ~292-year ceiling, and the multiply wraps. I measured <code>10000000000</code> producing <code>-2346317h47m53.709551616s</code> and <code>9223372036854775807</code> producing <code>-1s</code>, against <code>30</code> producing <code>30s</code>. A negative argument makes <code>time.After</code> fire at once, so the container is SIGKILLed with no grace period. I did not check whether nerdctl caps its own <code>--stop-timeout</code>, which is the only path that writes the label in normal use.</p>
     <p>Fix: reject anything above a sane bound in the same guard, say <code>seconds &gt; 86400</code>.</p>
+    <p><strong>Fixed</strong>, bounded at the real overflow point so no previously honored value changes behaviour.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go">
       <div class="finding-title" id="S3">
@@ -545,6 +555,7 @@ FAIL</code></pre>
 }</code></pre>
     <p>The moby side has the same shape and is worse, since <code>syncContainerNamespace</code> has no event path at all, and both the watch and the fullSync-only call predate this PR, so this is a gap rather than a regression. Codex rated it Important; I downgraded it because the delete is unsupported by design and containerd self-heals on the next namespace event.</p>
     <p>Fix: re-apply namespaces from the watch that already wakes the reconciler.</p>
+    <p><strong>Commented.</strong> Pre-existing on the moby path; the comment records every caller of <code>applyNamespace</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/mock/volume_reconciler.go">
       <div class="finding-title" id="S4">
@@ -579,6 +590,7 @@ FAIL</code></pre>
 	err = w.k8s.Status().Apply(ctx,
 		containersv1alpha1apply.Volume(mirrorName, w.apiNamespace).</code></pre>
     <p>Fix: match the docker watcher and use <code>log.V(1).Info</code>.</p>
+    <p><strong>Fixed</strong>; it now matches its production twin at <code>V(1)</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go">
       <div class="finding-title" id="S5">
@@ -623,6 +635,7 @@ func (w *containerdWatcher) run(ctx context.Context, eventCh &lt;-chan *events.E
 		w.forgetTaskStart(mirrorName)
 		return w.removeMirrorResource(ctx, &amp;containersv1alpha1.Container{}, mirrorName)</code></pre>
     <p>Fix: say <code>ev.Name</code> is used because it is the field the event type defines.</p>
+    <p><strong>Fixed.</strong></p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go">
       <div class="finding-title" id="S6">
@@ -645,6 +658,7 @@ func (w *containerdWatcher) run(ctx context.Context, eventCh &lt;-chan *events.E
 </code></pre>
     <p>Round 3 deleted the <code>maps.DeleteFunc</code> sweep from <code>syncAllContainers</code>, correctly: <code>fullSync</code> runs once per watcher, when the map is still empty. But <code>forgetTaskStart</code> on a <code>ContainerDelete</code> event is now the only cleanup, so a dropped or unhandled delete leaks an entry for the watcher&#39;s lifetime. The comment that recorded the concern went with the code.</p>
     <p>Fix: say on the field that only <code>ContainerDelete</code> prunes it, so a missed event leaks until the watcher restarts.</p>
+    <p><strong>Fixed.</strong></p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/image_types.go">
       <div class="finding-title" id="S7">
@@ -666,6 +680,7 @@ func (w *containerdWatcher) run(ctx context.Context, eventCh &lt;-chan *events.E
 	//</code></pre>
     <p>That held for Docker dangling images. Under containerd a single CRI pull registers a bare config digest and a repo digest, and <code>containerdImageRefs</code> leaves <code>repoTag</code> unset on both, so one image ID yields two mirrors with no tag. Round 3&#39;s move of canonical digests into <code>repoDigests</code> is what makes the contradiction visible.</p>
     <p>Fix: say an unset <code>repoTag</code> means the engine record was not tag-named, and that containerd can expose several such records for one image ID. Regenerate the apply configurations and CRDs.</p>
+    <p><strong>Fixed.</strong></p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/mirror_client.go">
       <div class="finding-title" id="S8">
@@ -701,6 +716,7 @@ import (
 	&quot;maps&quot;
 	&quot;net/http&quot;</code></pre>
     <p>Fix: say &quot;the container engine&quot; in both, and list both backends and the namespace mirror in the package comment.</p>
+    <p><strong>Fixed</strong>, and extended to three further finalizer comments in the same class.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/container_types.go">
       <div class="finding-title" id="S9">
@@ -721,6 +737,7 @@ import (
     <p>The two lines run to 99 and 95 columns where the prose comments around them wrap at 74; the only longer lines in these files are kubebuilder markers, which cannot wrap. Both run-ons ride into four <code>crd.yaml</code> files.</p>
     <p>The sentence also reads oddly in these two spots. <code>ContainerCreateRequestSpec.Namespace</code> and <code>ImagePullRequestSpec.Namespace</code> are inputs the caller sets, so a clause about which mirrors get created describes a consequence they are not choosing.</p>
     <p>Fix: re-wrap, and for the two request specs keep a shorter form before the &quot;If not specified&quot; sentence.</p>
+    <p><strong>Fixed.</strong></p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/api_containers.md">
       <div class="finding-title" id="S10">
@@ -752,6 +769,7 @@ status:
 		WithMountPoint(vol.Mountpoint).
 		WithScope(vol.Scope)</code></pre>
     <p>Fix: use <code>moby</code> in both examples and say volume mirrors are Docker-only.</p>
+    <p><strong>Fixed</strong>, plus a paragraph stating volumes are moby-only.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
       <div class="finding-title" id="S11">
@@ -771,6 +789,7 @@ status:
     # --stop-timeout keeps the label-reading path in play; nothing here
     # measures the timeout, since the container exits as soon as it is</code></pre>
     <p>Fix: re-run the suite at this SHA and quote the count it prints.</p>
+    <p><strong>Left to the author</strong>: the description is yours to update.</p>
     </div>
     <div class="card card-suggestion" data-file=".github/workflows/rdd-bats.yaml">
       <div class="finding-title" id="S12">
@@ -804,6 +823,7 @@ bats-app: check-bats build-rdd
 bats-lima: check-bats build-rdd
 	RDD_INSTANCE=bats-lima-controller $(BATS) tests/33-lima-controllers/</code></pre>
     <p>Fix: measure the new <code>bats-app</code> wall time on macos-15-intel, then either correct the comment or raise <code>timeout-minutes</code>.</p>
+    <p><strong>Skipped</strong>: measuring needs a macos-15-intel CI run, and the bats-app timeout is tracked separately.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
