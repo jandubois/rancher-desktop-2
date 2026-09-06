@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/url"
 	"strconv"
 	"strings"
@@ -318,7 +319,7 @@ func (w *containerdWatcher) stopTask(nsCtx context.Context, log logr.Logger, ctr
 		// A failed Wait RPC arrives as an exit status carrying the error, so
 		// dropping it would report a container that never exited as stopped.
 		return status.Error()
-	case <-time.After(10 * time.Second):
+	case <-time.After(stopTimeout(nsCtx, log, ctr)):
 	}
 	if err := task.Kill(nsCtx, linuxSIGKILL); err != nil {
 		if !errdefs.IsNotFound(err) {
@@ -607,4 +608,39 @@ func (w *containerdWatcher) resolveImageRecord(nsCtx context.Context, ns, mirror
 		}
 	}
 	return "", nil
+}
+
+// defaultStopTimeout matches Docker's grace period between the stop signal
+// and SIGKILL, used when the container records none.
+const defaultStopTimeout = 10 * time.Second
+
+// maxStopTimeoutSeconds is the largest label value time.Duration can hold.
+// Past it the multiply in stopTimeout wraps, which either kills the container
+// at once or never escalates at all, and nerdctl writes the label with no
+// bound of its own. On a 32-bit build Atoi cannot return a value this large,
+// so the comparison is never true there.
+const maxStopTimeoutSeconds = int64(math.MaxInt64) / int64(time.Second)
+
+// stopTimeout returns how long to wait for a container to exit on the stop
+// signal before escalating to SIGKILL.
+// nerdctl records `--stop-timeout` in a label, the way Docker keeps
+// StopTimeout on the container, so honor it rather than always waiting the
+// default. An unreadable or nonsensical value falls back to the default.
+func stopTimeout(nsCtx context.Context, log logr.Logger, ctr containerdclient.Container) time.Duration {
+	info, err := ctr.Info(nsCtx)
+	if err != nil {
+		log.V(1).Info("Using default stop timeout", "id", ctr.ID(), "error", err)
+		return defaultStopTimeout
+	}
+	raw, ok := info.Labels["nerdctl/stop-timeout"]
+	if !ok {
+		return defaultStopTimeout
+	}
+	seconds, err := strconv.Atoi(raw)
+	if err != nil || seconds <= 0 || int64(seconds) > maxStopTimeoutSeconds {
+		log.V(1).Info("Ignoring unusable stop timeout label",
+			"id", ctr.ID(), "value", raw)
+		return defaultStopTimeout
+	}
+	return time.Duration(seconds) * time.Second
 }
