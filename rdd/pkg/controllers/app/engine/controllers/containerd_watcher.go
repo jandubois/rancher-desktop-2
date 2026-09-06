@@ -287,7 +287,32 @@ func (w *containerdWatcher) fullSync(ctx context.Context) error {
 	if err := w.syncNamespaces(ctx); err != nil {
 		errs = append(errs, fmt.Errorf("failed to sync namespaces: %w", err))
 	}
+	if err := w.pruneVolumes(ctx); err != nil {
+		errs = append(errs, fmt.Errorf("failed to prune volumes: %w", err))
+	}
 
 	log.Info("Full sync complete", "errors", len(errs))
+	return errors.Join(errs...)
+}
+
+// pruneVolumes deletes every Volume mirror. containerd has no volumes, so the
+// engine's own state says none should exist; moby's syncVolumes reaches the
+// same conclusion from a listing. Without this, a mirror left by the moby
+// backend outlives a switch that skipped the stop-path sweep.
+func (w *containerdWatcher) pruneVolumes(ctx context.Context) error {
+	log := logf.FromContext(ctx).WithName("containerd-watcher")
+
+	var volumeMirrors containersv1alpha1.VolumeList
+	if err := w.k8s.List(ctx, &volumeMirrors, client.InNamespace(w.apiNamespace)); err != nil {
+		return fmt.Errorf("failed to list Volumes: %w", err)
+	}
+	var errs []error
+	for i := range volumeMirrors.Items {
+		vol := &volumeMirrors.Items[i]
+		log.V(1).Info("Removing stale Volume", "name", vol.Name)
+		if err := w.removeMirrorResource(ctx, vol, vol.Name); err != nil {
+			errs = append(errs, err)
+		}
+	}
 	return errors.Join(errs...)
 }

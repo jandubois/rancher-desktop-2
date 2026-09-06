@@ -142,10 +142,14 @@ type EngineReconciler struct {
 	// engineMu.
 	apiNamespace string
 
-	// engineMu guards r.engine and r.apiNamespace; note that this may be held for
-	// a long time during initialization.
+	// engineMu guards r.engine, r.watcherEngine and r.apiNamespace; note that
+	// this may be held for a long time during initialization.
 	engineMu sync.Mutex
 	engine   engine
+	// watcherEngine is the App.spec.containerEngine.name the current
+	// watcher was created for, so a spec change to another backend is
+	// distinguishable from a reconcile that changed nothing.
+	watcherEngine string
 
 	// watcherCtx is the parent context for every engine watcher the
 	// reconciler starts. A manager.RunnableFunc cancels it on

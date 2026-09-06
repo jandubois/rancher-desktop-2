@@ -48,13 +48,25 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	// reference. If wantWatcher is still true below, a fresh watcher's
 	// fullSync reconciles drift in place — existing mirror resources
 	// keep their identity, so downstream clients see no churn. The
-	// !wantWatcher branch below handles an actual stop or backend
-	// change by sweeping the mirrors.
+	// !wantWatcher branch below handles an actual stop by sweeping the
+	// mirrors.
 	var watcherDied bool
+	var previousEngine string
 	r.engineMu.Lock()
 	r.apiNamespace = app.GetResourceNamespace()
 	watcherRunning := r.engine != nil
-	if watcherRunning && !r.engine.alive() {
+	switch {
+	case r.watcherEngine != "" && r.watcherEngine != engineName:
+		// The spec selected a different backend. Stop the watcher here
+		// rather than relying on the VM restart a template change
+		// triggers, so the mirrors and the condition never describe an
+		// engine other than the one running. This arm comes first and
+		// asks about the engine, not the watcher, because the template
+		// change that selects a new backend also restarts the VM.
+		// Testing liveness first would let the watcher's death hide the
+		// switch, and the sweep below would never run.
+		previousEngine = r.watcherEngine
+	case watcherRunning && !r.engine.alive():
 		r.engine = nil
 		watcherRunning = false
 		watcherDied = true
@@ -63,7 +75,6 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	if watcherDied {
 		log.Info("Engine watcher died, will attempt to reconnect")
 	}
-
 	// The watcher runs only when the App is Running on a supported
 	// backend. Any other state stops the watcher and sweeps mirror
 	// resources. Skip the sweep once ContainerEngineReady already
@@ -71,6 +82,27 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	// unrelated reconcile; a failed sweep leaves the condition pending
 	// and the next requeue retries.
 	wantWatcher := running && engineSupported
+
+	if previousEngine != "" {
+		log.Info("Container engine changed, stopping the previous watcher",
+			"from", previousEngine, "to", engineName)
+		r.stopWatcher()
+		// Sweep here only when a watcher is about to replace this one;
+		// otherwise the terminal branch below sweeps, and running both
+		// repeats the whole thing for nothing. A failed sweep returns
+		// before watcherEngine is cleared, so the arm above fires again
+		// on the requeue; the terminal branch retries its own sweep the
+		// same way.
+		if wantWatcher {
+			if err := r.cleanupMirrorResources(ctx, app.GetResourceNamespace()); err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+		r.engineMu.Lock()
+		r.watcherEngine = ""
+		r.engineMu.Unlock()
+		watcherRunning = false
+	}
 	if !wantWatcher {
 		if watcherRunning {
 			log.Info("Stopping engine watcher",
@@ -117,6 +149,13 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 
 	if !watcherRunning {
 		log.Info("App is running, starting engine watcher", "engine", engineName)
+		if !engineIsDocker {
+			// containerd has no Docker endpoint to point a context at, so drop
+			// one an earlier moby session created. Here rather than on the
+			// switch arm above, which sees the change only while one process
+			// ran both backends: watcherEngine does not survive a restart.
+			r.removeDockerContext()
+		}
 		if err := r.startWatcherAndSync(ctx, engineName); err != nil {
 			log.Error(err, "Failed to start engine watcher")
 			if condErr := r.setEngineCondition(ctx, app, metav1.ConditionFalse, appv1alpha1.EngineReasonConnectFailed, err.Error()); condErr != nil {
@@ -195,6 +234,7 @@ func (r *EngineReconciler) startWatcherAndSync(_ context.Context, engineName str
 			return err
 		}
 		r.engine = e
+		r.watcherEngine = engineName
 		r.manageDockerContext(instance.DockerEndpoint())
 	case engineContainerd:
 		e, err := newContainerdWatcher(r.watcherCtx, r.Client, r.apiNamespace, enqueueReconcile(r.reconcileAppChan))
@@ -202,6 +242,7 @@ func (r *EngineReconciler) startWatcherAndSync(_ context.Context, engineName str
 			return err
 		}
 		r.engine = e
+		r.watcherEngine = engineName
 	default:
 		// Defensive: reconcileWatcher's wantWatcher gate already excludes
 		// unsupported engines before calling this.
@@ -218,6 +259,9 @@ func (r *EngineReconciler) stopWatcher() {
 	r.engineMu.Lock()
 	e := r.engine
 	r.engine = nil
+	// Leave watcherEngine set. It is the only record of which backend the
+	// mirrors on the API server came from, and a backend switch that
+	// arrives while the watcher is already stopped still has to sweep them.
 	r.engineMu.Unlock()
 
 	if e != nil {

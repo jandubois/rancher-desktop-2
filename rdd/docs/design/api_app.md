@@ -36,7 +36,7 @@ Lightweight app snapshots only copy this data disk, and not the full VM image.
 
 ### Docker and Kube Contexts
 
-When the `App` is starting it sets up the kubeconfig in `~/.kube/config`, and on the moby backend it also creates the Docker context.
+When the `App` is starting it sets up the kubeconfig in `~/.kube/config`, and on the moby backend it also creates the Docker context. containerd has no Docker endpoint to point a context at, so it creates none, and removes one an earlier moby session left behind.
 
 It will only change the current context if it does not exist, or is not working at the time the app is starting.
 
