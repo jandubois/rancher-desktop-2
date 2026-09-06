@@ -117,6 +117,9 @@ func (r *EngineReconciler) HandleLogs(w http.ResponseWriter, req *http.Request) 
 	hasTTY, err := engine.hasTTY(ctx, &c)
 	if err != nil {
 		switch {
+		case errors.Is(err, errLogsNotSupported):
+			log.V(5).Info("Engine does not support container logs")
+			http.Error(w, errLogsNotSupported.Error(), http.StatusNotImplemented)
 		case errdefs.IsNotFound(err):
 			log.V(5).Info("Container not found", "container", containerID)
 			http.Error(w, "Container not found", http.StatusNotFound)
@@ -133,6 +136,9 @@ func (r *EngineReconciler) HandleLogs(w http.ResponseWriter, req *http.Request) 
 	reader, err := engine.getLogs(ctx, &c, opts...)
 	if err != nil {
 		switch {
+		case errors.Is(err, errLogsNotSupported):
+			log.V(5).Info("Engine does not support container logs")
+			http.Error(w, errLogsNotSupported.Error(), http.StatusNotImplemented)
 		case errdefs.IsNotFound(err):
 			log.V(5).Info("Container not found", "container", containerID)
 			http.Error(w, "Container not found", http.StatusNotFound)

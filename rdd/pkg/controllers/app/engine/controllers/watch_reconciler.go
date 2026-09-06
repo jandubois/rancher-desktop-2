@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -26,16 +27,23 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 )
 
-// reconcileWatcher handles App condition changes, Docker watcher lifecycle,
+// reconcileWatcher handles App condition changes, engine watcher lifecycle,
 // Container action annotations, and finalizer processing for mirror resources.
 func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha1.App) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
 
 	running := meta.IsStatusConditionTrue(app.Status.Conditions, appv1alpha1.AppConditionRunning)
-	engineIsDocker := app.Spec.ContainerEngine.Name == engineMoby
+	engineName := app.Spec.ContainerEngine.Name
+	engineIsDocker := engineName == engineMoby
+	// On Windows nothing serves the containerd named pipe yet (no socket
+	// bridge like the Docker one), so containerd keeps the NotApplicable
+	// path there. Otherwise ContainerEngineReady would sit at ConnectFailed
+	// and `rdd set` would never settle.
+	engineSupported := engineIsDocker ||
+		(engineName == engineContainerd && runtime.GOOS != "windows")
 
 	// Treat a dead watcher as a transient disconnect and fall through.
-	// The watcher's run goroutine closes the Docker client in its own
+	// The watcher's run goroutine closes the engine client in its own
 	// deferred cleanup, so Reconcile only needs to forget the
 	// reference. If wantWatcher is still true below, a fresh watcher's
 	// fullSync reconciles drift in place — existing mirror resources
@@ -53,20 +61,20 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	}
 	r.engineMu.Unlock()
 	if watcherDied {
-		log.Info("Docker watcher died, will attempt to reconnect")
+		log.Info("Engine watcher died, will attempt to reconnect")
 	}
 
-	// The watcher runs only when the App is Running on the moby
+	// The watcher runs only when the App is Running on a supported
 	// backend. Any other state stops the watcher and sweeps mirror
 	// resources. Skip the sweep once ContainerEngineReady already
 	// reflects the terminal state, to avoid four empty List calls per
 	// unrelated reconcile; a failed sweep leaves the condition pending
 	// and the next requeue retries.
-	wantWatcher := running && engineIsDocker
+	wantWatcher := running && engineSupported
 	if !wantWatcher {
 		if watcherRunning {
-			log.Info("Stopping Docker watcher",
-				"running", running, "engine", app.Spec.ContainerEngine.Name)
+			log.Info("Stopping engine watcher",
+				"running", running, "engine", engineName)
 			r.stopWatcher()
 		} else {
 			// The watcher was never started or died on its own (e.g. the VM
@@ -77,16 +85,16 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 		terminalReason := appv1alpha1.EngineReasonStopped
 		terminalStatus := metav1.ConditionFalse
 		terminalMessage := "Container engine stopped"
-		if running && !engineIsDocker {
+		if running && !engineSupported {
 			// Report NotApplicable as Status=True so `rdd set
-			// running=true containerEngine.name=containerd` stops
+			// running=true containerEngine.name=<engine>` stops
 			// waiting on ContainerEngineReady. UI consumers that
 			// expect Container/Image/Volume mirrors must gate on
-			// Reason, not Status alone. The condition will be renamed
-			// when containerd mirroring lands.
+			// Reason, not Status alone.
 			terminalReason = appv1alpha1.EngineReasonNotApplicable
 			terminalStatus = metav1.ConditionTrue
-			terminalMessage = "Engine mirroring is only supported with the moby backend"
+			terminalMessage = fmt.Sprintf(
+				"Engine mirroring is not supported for container engine %q on this platform", engineName)
 		}
 		current := meta.FindStatusCondition(app.Status.Conditions, appv1alpha1.AppConditionContainerEngineReady)
 		// alreadyClean skips the four List calls when ContainerEngineReady
@@ -108,9 +116,9 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	}
 
 	if !watcherRunning {
-		log.Info("App is running, starting Docker watcher")
-		if err := r.startWatcherAndSync(ctx); err != nil {
-			log.Error(err, "Failed to start Docker watcher")
+		log.Info("App is running, starting engine watcher", "engine", engineName)
+		if err := r.startWatcherAndSync(ctx, engineName); err != nil {
+			log.Error(err, "Failed to start engine watcher")
 			if condErr := r.setEngineCondition(ctx, app, metav1.ConditionFalse, appv1alpha1.EngineReasonConnectFailed, err.Error()); condErr != nil {
 				log.Error(condErr, "Failed to update ContainerEngineReady to ConnectFailed")
 			}
@@ -154,14 +162,14 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	return ctrl.Result{}, errors.Join(actionsErr, finErr)
 }
 
-// startWatcherAndSync creates a Docker watcher and blocks until its
-// initial fullSync has completed; only then does it publish the
+// startWatcherAndSync creates the engine watcher for engineName and blocks
+// until its initial fullSync has completed; only then does it publish the
 // watcher on r.engine. The watcher inherits watcherCtx, which
 // cancels only on manager shutdown, so startWatcherAndSync
 // deliberately drops Reconcile's ctx: a future ReconciliationTimeout
 // or per-request deadline must not kill the watcher the moment
 // Reconcile returns.
-func (r *EngineReconciler) startWatcherAndSync(_ context.Context) error {
+func (r *EngineReconciler) startWatcherAndSync(_ context.Context, engineName string) error {
 	r.engineMu.Lock()
 	defer r.engineMu.Unlock()
 
@@ -180,12 +188,25 @@ func (r *EngineReconciler) startWatcherAndSync(_ context.Context) error {
 			}
 		}
 	}
-	e, err := newDockerWatcher(r.watcherCtx, r.Client, r.apiNamespace, enqueueReconcile(r.reconcileAppChan))
-	if err != nil {
-		return err
+	switch engineName {
+	case engineMoby:
+		e, err := newDockerWatcher(r.watcherCtx, r.Client, r.apiNamespace, enqueueReconcile(r.reconcileAppChan))
+		if err != nil {
+			return err
+		}
+		r.engine = e
+		r.manageDockerContext(instance.DockerEndpoint())
+	case engineContainerd:
+		e, err := newContainerdWatcher(r.watcherCtx, r.Client, r.apiNamespace, enqueueReconcile(r.reconcileAppChan))
+		if err != nil {
+			return err
+		}
+		r.engine = e
+	default:
+		// Defensive: reconcileWatcher's wantWatcher gate already excludes
+		// unsupported engines before calling this.
+		return fmt.Errorf("no engine watcher for container engine %q", engineName)
 	}
-	r.engine = e
-	r.manageDockerContext(instance.DockerEndpoint())
 	// Trigger image pull requests immediately, in case it was stuck waiting for
 	// the engine to be connected.
 	enqueueReconcile(r.reconcileImagePullRequestChan)()
@@ -575,7 +596,7 @@ func (r *EngineReconciler) processContainerFinalizers(ctx context.Context, e eng
 			continue
 		}
 		if err := e.deleteContainer(ctx, c); err != nil {
-			errs = append(errs, fmt.Errorf("failed to delete container %s from Docker: %w", c.Name, err))
+			errs = append(errs, fmt.Errorf("failed to delete container %s from the container engine: %w", c.Name, err))
 			continue
 		}
 		// Retry on conflict so a stale cache does not force a
@@ -621,7 +642,7 @@ func (r *EngineReconciler) processImageFinalizers(ctx context.Context, e engine,
 		// with processVolumeFinalizers' empty-status.name guard.
 		if img.Status.ID != "" || img.Status.RepoTag != "" {
 			if err := e.deleteImage(ctx, img); err != nil {
-				errs = append(errs, fmt.Errorf("failed to delete image %s from Docker: %w", img.Name, err))
+				errs = append(errs, fmt.Errorf("failed to delete image %s from the container engine: %w", img.Name, err))
 				continue
 			}
 		}
@@ -663,7 +684,7 @@ func (r *EngineReconciler) processVolumeFinalizers(ctx context.Context, e engine
 		// finalizer and let the Delete proceed.
 		if v.Status.Name != "" {
 			if err := e.deleteVolume(ctx, v); err != nil {
-				errs = append(errs, fmt.Errorf("failed to delete volume %s from Docker: %w", v.Name, err))
+				errs = append(errs, fmt.Errorf("failed to delete volume %s from the container engine: %w", v.Name, err))
 				continue
 			}
 		}

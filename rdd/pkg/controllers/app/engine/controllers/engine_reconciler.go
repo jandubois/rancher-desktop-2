@@ -2,8 +2,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-FileCopyrightText: The Rancher Desktop Authors
 
-// Package controllers implements the engine reconciler, which mirrors Docker
-// engine state into Kubernetes resources.
+// Package controllers implements the engine reconciler, which mirrors
+// container-engine state into Kubernetes resources.
 package controllers
 
 import (
@@ -42,10 +42,19 @@ const (
 	mirrorFinalizer = "engine.rancherdesktop.io/mirror"
 
 	// engineMoby is the App.spec.containerEngine.name value that selects
-	// the Docker backend. Containerd has no watcher yet and reports
-	// NotApplicable.
+	// the Docker backend.
 	engineMoby = "moby"
+
+	// engineContainerd is the App.spec.containerEngine.name value that
+	// selects the containerd backend.
+	engineContainerd = "containerd"
 )
+
+// errLogsNotSupported is returned by an engine backend that cannot serve
+// container logs at all, as opposed to failing to read them for a particular
+// container. HandleLogs reports it as 501 so the caller can tell a backend
+// that serves no logs from a read that merely failed.
+var errLogsNotSupported = errors.New("container logs are not supported with the current container engine")
 
 // engineRequest is the typed reconcile request for EngineReconciler.
 // It carries both the originating kind and the target namespaced name.
@@ -81,9 +90,8 @@ func engineLogWithFollow(follow bool) engineLogOptions {
 }
 
 // engine is the reconciler-facing contract every container-engine
-// implementation must satisfy. dockerWatcher is the only current
-// implementation; a forthcoming containerd implementation will provide a
-// second. Methods that the reconciler does not call (event handlers,
+// implementation must satisfy; dockerWatcher and containerdWatcher
+// implement it. Methods that the reconciler does not call (event handlers,
 // full-sync internals) stay off the interface.
 type engine interface {
 	// alive reports whether the engine is still running.
