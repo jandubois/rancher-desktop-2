@@ -162,6 +162,62 @@ assert_containerd_socket_open() {
     assert_output
 }
 
+# --- Container mirror detail ---
+
+@test "container mirror reports the command line" {
+    run_e -0 nerdctl run --detach --name mirror-detail --publish 18080:80 \
+        busybox sleep inf
+    cid=${output}
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    # Path and args come from the OCI runtime spec, split the way Docker
+    # reports them.
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.path} {.status.args[0]}'
+    assert_output "sleep inf"
+}
+
+@test "container mirror reports published ports" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' mirror-detail
+    cid=${output}
+
+    # containerd knows of no published ports; the mapping is nerdctl's.
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.ports[0].name} {.status.ports[0].bindings[0].hostPort}'
+    assert_output "80/tcp 18080"
+}
+
+@test "container mirror reports a start time" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' mirror-detail
+    cid=${output}
+
+    # containerd exposes no start time; this one was recorded from the
+    # TaskStart event the watcher observed.
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.startedAt}'
+    assert_output
+}
+
+@test "container status.image joins against the Image mirror" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' mirror-detail
+    cid=${output}
+
+    # The UI looks the image mirror up by this value, so it has to be the
+    # image ID rather than the reference containerd records.
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.image}'
+    image_id=${output}
+
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:latest" \
+        -o jsonpath='{.items[0].status.id}'
+    assert_output "${image_id}"
+
+    nerdctl rm --force mirror-detail
+}
+
 # --- Namespace lifecycle ---
 
 @test "creating a containerd namespace creates its mirror" {
@@ -431,4 +487,31 @@ assert_container_pid_changed() { # <container> <previous-pid>
         "${image_ref}" --timeout=60s
 
     run_e -1 nerdctl image inspect busybox:delete-me
+}
+
+# --- Cleanup on VM stop ---
+# These run last: they stop and restart the VM, which sweeps every mirror.
+
+@test "stopping VM removes all mirror resources" {
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" \
+        ContainerNamespace/default --timeout=10s
+
+    rdd set running=false
+
+    run -0 rdd ctl get containers --namespace="${RDD_NAMESPACE}" --output=name
+    refute_output
+    run -0 rdd ctl get images --namespace="${RDD_NAMESPACE}" --output=name
+    refute_output
+    run -0 rdd ctl get ContainerNamespaces --namespace="${RDD_NAMESPACE}" --output=name
+    refute_output
+}
+
+@test "VM start recreates the ContainerNamespace mirror after cleanup" {
+    # The sweep above removed ContainerNamespace/default, so the full sync
+    # on restart has to bring it back; the busybox image left in containerd
+    # keeps the namespace alive across the restart.
+    rdd set running=true
+
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" \
+        ContainerNamespace/default --timeout=60s
 }
