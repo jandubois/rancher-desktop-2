@@ -5,8 +5,8 @@
 load '../../helpers/load'
 
 # Containerd engine tests: verify that the engine controller mirrors
-# containerd namespaces and containers into ContainerNamespace and
-# Container resources. Tests build on each other in file order.
+# containerd namespaces, containers and images into ContainerNamespace,
+# Container and Image resources. Tests build on each other in file order.
 
 VM_NAME="rd"
 
@@ -100,6 +100,60 @@ assert_containerd_socket_open() {
 
     rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
         container/"${cid}" --timeout=30s
+}
+
+# --- Image mirroring ---
+
+@test "pulled image has an Image mirror" {
+    # busybox was pulled by the container tests above. containerd records
+    # store full references, unlike Docker's short form.
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" image \
+        --field-selector "status.repoTag=docker.io/library/busybox:latest" \
+        --timeout=30s
+
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:latest" \
+        -o jsonpath='{.items[0].status.namespace}'
+    assert_output "default"
+
+    # A zero size would mean the content-store walk silently failed.
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:latest" \
+        -o jsonpath='{.items[0].status.size}'
+    assert [ "${output}" -gt 0 ]
+}
+
+@test "tagging an image creates a second Image mirror" {
+    nerdctl tag busybox:latest busybox:mirror-alias
+
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" image \
+        --field-selector "status.repoTag=docker.io/library/busybox:mirror-alias" \
+        --timeout=30s
+
+    # The original tag keeps its own mirror.
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:latest" -o name
+    assert_output
+}
+
+@test "removing a tag removes only its Image mirror" {
+    # containerd's ImageDelete event carries the record name, so the mirror
+    # is removed directly, with no untag re-inspection like Docker needs.
+    # wait --for=delete passes immediately for a mirror that never existed,
+    # so prove this one is there before removing the tag.
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:mirror-alias" -o name
+    assert_output
+
+    nerdctl rmi busybox:mirror-alias
+
+    rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" image \
+        --field-selector "status.repoTag=docker.io/library/busybox:mirror-alias" \
+        --timeout=30s
+
+    run -0 rdd ctl get image --namespace="${RDD_NAMESPACE}" \
+        --field-selector "status.repoTag=docker.io/library/busybox:latest" -o name
+    assert_output
 }
 
 # --- Namespace lifecycle ---
