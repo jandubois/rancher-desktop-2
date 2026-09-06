@@ -5,6 +5,7 @@
 package controllers
 
 import (
+	"syscall"
 	"testing"
 
 	"github.com/containerd/containerd/v2/core/containers"
@@ -92,4 +93,42 @@ func TestContainerdIOCreator(t *testing.T) {
 		_, terminal := config(t, rec)
 		assert.Equal(t, terminal, false)
 	})
+}
+
+func TestParseLinuxSignal(t *testing.T) {
+	// The numbers are the guest's, not the host's. On macOS syscall.SIGUSR1
+	// is 30, so a test that compared against the host constants would pass
+	// on Linux and hide the bug everywhere else.
+	tests := []struct {
+		raw  string
+		want syscall.Signal
+	}{
+		{"SIGTERM", 15},
+		{"SIGUSR1", 10},
+		{"SIGUSR2", 12},
+		{"SIGQUIT", 3},
+		{"sigusr1", 10},
+		{"USR1", 10},
+		{"9", 9},
+		// systemd images stop on SIGRTMIN+3, so the real-time range has to
+		// resolve as well as the classic names.
+		{"SIGRTMIN+3", 37},
+		{"RTMIN", 34},
+		{"RTMAX-14", 50},
+		{"64", 64},
+	}
+	for _, tc := range tests {
+		t.Run(tc.raw, func(t *testing.T) {
+			got, ok := parseLinuxSignal(tc.raw)
+			assert.Assert(t, ok)
+			assert.Equal(t, got, tc.want)
+		})
+	}
+
+	for _, raw := range []string{"", "SIGNOPE", "0", "65", "-1", "RTMIN+31", "RTMIN3"} {
+		t.Run("rejects "+raw, func(t *testing.T) {
+			_, ok := parseLinuxSignal(raw)
+			assert.Assert(t, !ok)
+		})
+	}
 }

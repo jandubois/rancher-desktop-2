@@ -266,8 +266,9 @@ and removing the annotation, so a crash mid-flight leaves the
 annotation in place and the next reconcile replays the action. Start,
 stop, pause, and unpause are idempotent against a container already in
 the target state, so replay is safe. Restart has no target state to
-match: a replay sends SIGTERM and waits the grace period a second time,
-which the controller cannot distinguish from a deliberate re-request.
+match: a replay sends the container's stop signal and waits the grace
+period a second time, which the controller cannot distinguish from a
+deliberate re-request.
 
 If the engine call fails (for example, `pause` on a container that is
 not running), the reconciler still removes the annotation and records

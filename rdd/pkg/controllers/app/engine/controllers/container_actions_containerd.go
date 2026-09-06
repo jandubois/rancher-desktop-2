@@ -10,6 +10,8 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strconv"
+	"strings"
 	"syscall"
 	"time"
 
@@ -259,9 +261,10 @@ func containerdWantsTerminal(log logr.Logger, info containers.Container) bool {
 	return spec.Process != nil && spec.Process.Terminal
 }
 
-// stopTask asks the container's task to exit with SIGTERM, waiting a grace
-// period before escalating to SIGKILL. Shared by stop and restart. The stopped
-// task is left in place: nerdctl derives the Exited state from it.
+// stopTask asks the container's task to exit, waiting the container's grace
+// period before escalating to SIGKILL. The first signal is the image's stop
+// signal, defaulting to SIGTERM. Shared by stop and restart. The stopped task
+// is left in place: nerdctl derives the Exited state from it.
 func (w *containerdWatcher) stopTask(nsCtx context.Context, log logr.Logger, ctr containerdclient.Container) error {
 	task, err := ctr.Task(nsCtx, nil)
 	if errdefs.IsNotFound(err) {
@@ -303,7 +306,7 @@ func (w *containerdWatcher) stopTask(nsCtx context.Context, log logr.Logger, ctr
 	// for, and the moby path reports that as success, so the mirror must not
 	// say Failed either. Return without waiting on exitCh, because a Kill
 	// that could not find the task is no guarantee an exit status is coming.
-	if err := task.Kill(nsCtx, linuxSIGTERM); err != nil {
+	if err := task.Kill(nsCtx, stopSignal(nsCtx, log, ctr)); err != nil {
 		if !errdefs.IsNotFound(err) {
 			return fmt.Errorf("failed to signal task: %w", err)
 		}
@@ -336,12 +339,109 @@ func (w *containerdWatcher) stopTask(nsCtx context.Context, log logr.Logger, ctr
 	}
 }
 
-// linuxSIGTERM and linuxSIGKILL are the guest's numbers for the two signals
-// the stop sequence sends.
+// linuxSignals maps the signal names an image's STOPSIGNAL can carry to the
+// numbers the guest kernel uses. The numbers must come from a table rather
+// than the host's syscall constants: the daemon runs on macOS and Windows but
+// signals a Linux container, and the two disagree above SIGTERM. macOS numbers
+// SIGUSR1 30, where Linux numbers it 10 and reserves 30 for SIGPWR, so passing
+// the host's value through delivers a different signal than the image asked
+// for. Signals through SIGTERM share their numbers, which is why the default
+// path works and hides this.
+var linuxSignals = map[string]syscall.Signal{
+	"SIGHUP": 1, "SIGINT": 2, "SIGQUIT": 3, "SIGILL": 4, "SIGTRAP": 5,
+	"SIGABRT": 6, "SIGIOT": 6, "SIGBUS": 7, "SIGFPE": 8, "SIGKILL": 9,
+	"SIGUSR1": 10, "SIGSEGV": 11, "SIGUSR2": 12, "SIGPIPE": 13,
+	"SIGALRM": 14, "SIGTERM": 15, "SIGSTKFLT": 16, "SIGCHLD": 17,
+	"SIGCLD": 17, "SIGCONT": 18, "SIGSTOP": 19, "SIGTSTP": 20,
+	"SIGTTIN": 21, "SIGTTOU": 22, "SIGURG": 23, "SIGXCPU": 24, "SIGXFSZ": 25,
+	"SIGVTALRM": 26, "SIGPROF": 27, "SIGWINCH": 28, "SIGIO": 29,
+	"SIGPOLL": 29, "SIGPWR": 30, "SIGSYS": 31,
+}
+
+// linuxSIGTERM and linuxSIGKILL are the guest's numbers for the default stop
+// signal and the kill it escalates to. linuxSIGRTMIN and linuxSIGRTMAX bound
+// the real-time range, which starts at 34 because glibc keeps the kernel's
+// first two real-time signals for itself.
 const (
-	linuxSIGTERM = syscall.Signal(15)
-	linuxSIGKILL = syscall.Signal(9)
+	linuxSIGTERM  = syscall.Signal(15)
+	linuxSIGKILL  = syscall.Signal(9)
+	linuxSIGRTMIN = syscall.Signal(34)
+	linuxSIGRTMAX = syscall.Signal(64)
 )
+
+// parseLinuxSignal resolves an image STOPSIGNAL value: a name with or without
+// the SIG prefix, one of the real-time forms, or a number the image author
+// wrote directly. The real-time range has to resolve because a systemd image
+// asks for SIGRTMIN+3, and answering that with SIGTERM only burns the grace
+// period before the kill.
+func parseLinuxSignal(raw string) (syscall.Signal, bool) {
+	if n, err := strconv.Atoi(raw); err == nil {
+		if n > 0 && n <= int(linuxSIGRTMAX) {
+			return syscall.Signal(n), true
+		}
+		return 0, false
+	}
+	name := strings.TrimPrefix(strings.ToUpper(raw), "SIG")
+	if sig, ok := linuxRealtimeSignal(name); ok {
+		return sig, true
+	}
+	sig, ok := linuxSignals["SIG"+name]
+	return sig, ok
+}
+
+// linuxRealtimeSignal resolves RTMIN, RTMAX and their offset forms, the only
+// signal names whose number is an offset from a base rather than a constant.
+// The offset keeps its sign, so RTMIN+3 and RTMAX-14 both add it.
+func linuxRealtimeSignal(name string) (syscall.Signal, bool) {
+	var base syscall.Signal
+	switch {
+	case strings.HasPrefix(name, "RTMIN"):
+		base, name = linuxSIGRTMIN, strings.TrimPrefix(name, "RTMIN")
+	case strings.HasPrefix(name, "RTMAX"):
+		base, name = linuxSIGRTMAX, strings.TrimPrefix(name, "RTMAX")
+	default:
+		return 0, false
+	}
+	offset := 0
+	if name != "" {
+		if name[0] != '+' && name[0] != '-' {
+			return 0, false
+		}
+		n, err := strconv.Atoi(name)
+		if err != nil {
+			return 0, false
+		}
+		offset = n
+	}
+	sig := base + syscall.Signal(offset)
+	if sig < linuxSIGRTMIN || sig > linuxSIGRTMAX {
+		return 0, false
+	}
+	return sig, true
+}
+
+// stopSignal returns the signal to send first when stopping a container.
+// containerd stores an image's STOPSIGNAL in a well-known label, which both
+// nerdctl and Docker honor, so a container built with one gets it rather than
+// SIGTERM. An unreadable or unrecognised value falls back to SIGTERM.
+func stopSignal(nsCtx context.Context, log logr.Logger, ctr containerdclient.Container) syscall.Signal {
+	labels, err := ctr.Labels(nsCtx)
+	if err != nil {
+		log.V(1).Info("Using default stop signal", "id", ctr.ID(), "error", err)
+		return linuxSIGTERM
+	}
+	raw, ok := labels[containerdclient.StopSignalLabel]
+	if !ok {
+		return linuxSIGTERM
+	}
+	sig, ok := parseLinuxSignal(raw)
+	if !ok {
+		log.V(1).Info("Ignoring unusable stop signal label",
+			"id", ctr.ID(), "value", raw)
+		return linuxSIGTERM
+	}
+	return sig
+}
 
 // pauseContainer pauses the container's task. Pausing an already-paused
 // container returns nil: two reconcile ticks can read the same action

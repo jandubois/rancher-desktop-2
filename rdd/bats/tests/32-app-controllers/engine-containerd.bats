@@ -333,6 +333,36 @@ assert_container_pid_changed() { # <container> <previous-pid>
     nerdctl rm --force tty-actions
 }
 
+@test "stop action honors the container stop signal" {
+    # The container ignores SIGTERM and exits 0 on SIGUSR1, so the exit code
+    # says which signal it got: an ignored one leaves the grace period to
+    # expire and the SIGKILL escalation reports 137.
+    # --stop-timeout keeps the label-reading path in play; nothing here
+    # measures the timeout, since the container exits as soon as it is
+    # signalled.
+    run_e -0 nerdctl run --detach --name signal-actions --stop-signal SIGUSR1 \
+        --stop-timeout 30 busybox \
+        sh -c 'trap "exit 0" USR1; trap "" TERM; while :; do sleep 1; done'
+    cid=${output}
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    request_action "${cid}" stop
+    assert_last_action "${cid}" stop Succeeded
+
+    # The action path writes lastAction alone; exitCode arrives with the
+    # TaskExit sync. A running task reports exit code 0 too, so the mirror
+    # has to reach exited before that field means anything.
+    rdd ctl wait --for=jsonpath='{.status.status}'=exited \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.exitCode}'
+    assert_output 0
+
+    nerdctl rm --force signal-actions
+}
+
 # --- Names that are not valid object names ---
 
 @test "a containerd namespace that is not a valid object name gets no mirror" {
