@@ -12,16 +12,19 @@ import (
 //
 // ImageStatus defines the observed state of the image.
 type ImageStatusApplyConfiguration struct {
-	// Namespace is the container namespace; refers to a `ContainerNamespace`
-	// object in the same Kubernetes namespace.
+	// Namespace is the container namespace. A `ContainerNamespace` object of
+	// the same name exists in the same Kubernetes namespace whenever the
+	// engine's name for it is a valid object name; containerd namespace
+	// names are freer than that, and one that is not gets no mirror.
 	//
 	Namespace *string `json:"namespace,omitempty"`
 	// ID is the image ID, as reported by the container runtime.
 	//
 	ID *string `json:"id,omitempty"`
 	// RepoTag is the tag of the image.  Images with multiple tags will have
-	// multiple Image objects.  Images without tags will have this unset, but
-	// only one Image object should exist in that case.
+	// multiple Image objects.  An unset RepoTag means the engine record was
+	// not named by a tag; containerd registers a digest reference as its own
+	// record, so one image ID can have several Image objects without a tag.
 	//
 	RepoTag *string `json:"repoTag,omitempty"`
 	// RepoDigests are the signed digests of the image.

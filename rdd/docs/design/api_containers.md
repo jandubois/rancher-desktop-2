@@ -50,8 +50,8 @@ for the `Running` condition.  When the VM is running with the `moby` backend,
 the controller:
 
 1. Connects to the Docker engine via the host socket.
-2. Creates the `rancher-desktop` Kubernetes namespace and the `moby`
-   `ContainerNamespace` resource.
+2. Creates the `moby` `ContainerNamespace` resource. The `rancher-desktop`
+   Kubernetes namespace itself is the App controller's.
 3. Lists all Docker containers, images, and volumes and creates the
    corresponding `Container`, `Image`, and `Volume` mirrors.
 4. Watches the Docker event stream for create, update, and delete events.
@@ -499,6 +499,11 @@ running container that uses that image.
 
 ## Volumes
 
+Volumes are a moby concept, so these resources exist only on that backend.
+Docker has one namespace, so every `Volume` shares it and the controller writes
+`moby`. containerd has no volume API, and switching to it prunes every `Volume`
+mirror on the next full sync.
+
 ```yaml
 apiVersion: containers.rancherdesktop.io/v1alpha1
 kind: Volume
@@ -511,7 +516,7 @@ metadata:
   namespace: rancher-desktop
 status:
   name: volume-name
-  namespace: k8s.io # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
+  namespace: moby # engine namespace; the only one Docker has
   createdAt: "2025-11-17T03:14:16Z"
   driver: local
   mountpoint: /var/lib/docker/volumes/volume-name/_data
@@ -532,7 +537,7 @@ metadata:
   namespace: default
 spec:
   name: volume-name
-  namespace: k8s.io # engine namespace; a `ContainerNamespace` mirror exists when the name is a valid object name
+  namespace: moby # engine namespace; the only one Docker has
   driver: local
 status:
   conditions:

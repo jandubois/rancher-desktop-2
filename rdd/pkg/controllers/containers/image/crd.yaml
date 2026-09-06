@@ -49,9 +49,10 @@ spec:
             properties:
               namespace:
                 description: |-
-                  Namespace is the container namespace; refers to a `ContainerNamespace`
-                  object in the same Kubernetes namespace.  If not specified, the image
-                  will be pulled into the default namespace.
+                  Namespace is the container namespace; a `ContainerNamespace` object of
+                  the same name exists when the engine's name for it is a valid object
+                  name.  If not specified, the image will be pulled into the default
+                  namespace.
                 type: string
               repoTag:
                 description: RepoTag is the image to pull.
@@ -418,8 +419,10 @@ spec:
                 type: object
               namespace:
                 description: |-
-                  Namespace is the container namespace; refers to a `ContainerNamespace`
-                  object in the same Kubernetes namespace.
+                  Namespace is the container namespace. A `ContainerNamespace` object of
+                  the same name exists in the same Kubernetes namespace whenever the
+                  engine's name for it is a valid object name; containerd namespace
+                  names are freer than that, and one that is not gets no mirror.
                 type: string
               os:
                 description: OS associated with the image.
@@ -432,8 +435,9 @@ spec:
               repoTag:
                 description: |-
                   RepoTag is the tag of the image.  Images with multiple tags will have
-                  multiple Image objects.  Images without tags will have this unset, but
-                  only one Image object should exist in that case.
+                  multiple Image objects.  An unset RepoTag means the engine record was
+                  not named by a tag; containerd registers a digest reference as its own
+                  record, so one image ID can have several Image objects without a tag.
                 type: string
               size:
                 description: Size of the image.

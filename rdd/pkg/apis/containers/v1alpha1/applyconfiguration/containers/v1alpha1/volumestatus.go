@@ -14,8 +14,9 @@ type VolumeStatusApplyConfiguration struct {
 	// Name of the volume.
 	//
 	Name *string `json:"name,omitempty"`
-	// Namespace of the volume; refers to a `ContainerNamespace` object in the
-	// same Kubernetes namespace.
+	// Namespace of the volume. A `ContainerNamespace` object of the same name
+	// exists in the same Kubernetes namespace whenever the engine's name for
+	// it is a valid object name.
 	//
 	Namespace *string `json:"namespace,omitempty"`
 	// CreatedAt is the time the volume was created; unset if the engine
