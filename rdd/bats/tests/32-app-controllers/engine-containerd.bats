@@ -6,7 +6,8 @@ load '../../helpers/load'
 
 # Containerd engine tests: verify that the engine controller mirrors
 # containerd namespaces, containers and images into ContainerNamespace,
-# Container and Image resources. Tests build on each other in file order.
+# Container and Image resources, and drives container actions. Tests
+# build on each other in file order.
 
 VM_NAME="rd"
 
@@ -176,6 +177,160 @@ assert_containerd_socket_open() {
 
     rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
         ContainerNamespace/mirror-ns --timeout=30s
+}
+
+# --- Container actions via annotation ---
+# The tests below share the test-actions container and build on each
+# other in file order.
+
+@test "stop action stops a running container" {
+    run_e -0 nerdctl run --detach --name test-actions busybox sleep inf
+    cid=${output}
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    request_action "${cid}" stop
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=exited \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_last_action "${cid}" stop Succeeded
+
+    run_e -0 nerdctl inspect --format '{{.State.Status}}' test-actions
+    assert_output "exited"
+}
+
+@test "start action restarts a stopped container" {
+    # Restarting an exited container recreates the task, including the
+    # nerdctl log driver recorded in the container's log-uri label.
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+
+    request_action "${cid}" start
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_last_action "${cid}" start Succeeded
+
+    run_e -0 nerdctl inspect --format '{{.State.Status}}' test-actions
+    assert_output "running"
+}
+
+@test "pause and unpause actions toggle a running container" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+
+    request_action "${cid}" pause
+    rdd ctl wait --for=jsonpath='{.status.status}'=paused \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_last_action "${cid}" pause Succeeded
+
+    request_action "${cid}" unpause
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_last_action "${cid}" unpause Succeeded
+}
+
+@test "pause action on a stopped container records failure" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+
+    nerdctl stop test-actions
+    rdd ctl wait --for=jsonpath='{.status.status}'=exited \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    request_action "${cid}" pause
+    assert_last_action "${cid}" pause Failed
+
+    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
+        -o jsonpath='{.status.lastAction.error}'
+    assert_output --partial "not running"
+}
+
+@test "unpause action on a stopped container records failure" {
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+
+    request_action "${cid}" unpause
+    assert_last_action "${cid}" unpause Failed
+}
+
+@test "restart action starts a stopped container" {
+    # containerd tasks cannot be restarted in place; the dispatch deletes
+    # the exited task and creates a fresh one, matching Docker's behavior
+    # of restart also starting stopped containers.
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+
+    request_action "${cid}" restart
+
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_last_action "${cid}" restart Succeeded
+}
+
+assert_container_pid_changed() { # <container> <previous-pid>
+    run -0 get_resource_status container "$1" pid
+    assert_output
+    refute_output "$2"
+}
+
+@test "restart action restarts a running container" {
+    # The stopped-container case above never reaches the signal-and-wait path,
+    # because stopTask returns early for a task that is already Stopped.
+    # Restarting a running one replaces the task, so the mirror reports a
+    # different pid afterwards.
+    run_e -0 nerdctl run --detach --name restart-actions busybox sleep inf
+    cid=${output}
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    run -0 get_resource_status container "${cid}" pid
+    assert_output
+    before=${output}
+
+    request_action "${cid}" restart
+    assert_last_action "${cid}" restart Succeeded
+
+    try --max 30 --delay 2 -- assert_container_pid_changed "${cid}" "${before}"
+
+    nerdctl rm --force restart-actions
+}
+
+@test "lastAction survives a direct nerdctl stop" {
+    # lastAction records the most recent reconciler action and must
+    # survive status re-applies triggered by engine-side state changes
+    # the reconciler did not initiate.
+    run_e -0 nerdctl inspect --format '{{.Id}}' test-actions
+    cid=${output}
+
+    request_action "${cid}" start
+    assert_last_action "${cid}" start Succeeded
+
+    nerdctl stop test-actions
+    rdd ctl wait --for=jsonpath='{.status.status}'=exited \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_last_action "${cid}" start Succeeded
+}
+
+@test "start action restarts a container that allocates a TTY" {
+    # The task is recreated from the container record, so the recreated IO
+    # must still request a terminal, or the runtime refuses the task.
+    run_e -0 nerdctl run --detach --tty --name tty-actions busybox sleep inf
+    cid=${output}
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    nerdctl stop tty-actions
+    rdd ctl wait --for=jsonpath='{.status.status}'=exited \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    request_action "${cid}" start
+    assert_last_action "${cid}" start Succeeded
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    nerdctl rm --force tty-actions
 }
 
 # --- Names that are not valid object names ---

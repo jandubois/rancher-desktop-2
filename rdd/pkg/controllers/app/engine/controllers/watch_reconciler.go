@@ -177,8 +177,8 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	}
 
 	// Two passes run per Reconcile: reconcileContainerActions drives
-	// Docker actions from the action annotation, and
-	// processFinalizers forwards K8s-side deletes to Docker for any
+	// engine actions from the action annotation, and
+	// processFinalizers forwards K8s-side deletes to the engine for any
 	// mirror still carrying the mirror finalizer.
 	//
 	// Both passes issue List calls per reconcile, and every
@@ -606,7 +606,7 @@ func (r *EngineReconciler) reconcileContainerActions(ctx context.Context, namesp
 }
 
 // processFinalizers handles resources with a deletion timestamp by deleting
-// the corresponding Docker object and removing the finalizer.
+// the corresponding engine object and removing the finalizer.
 func (r *EngineReconciler) processFinalizers(ctx context.Context, namespace string) error {
 	r.engineMu.Lock()
 	e := r.engine
@@ -624,9 +624,9 @@ func (r *EngineReconciler) processFinalizers(ctx context.Context, namespace stri
 	)
 }
 
-// processContainerFinalizers deletes the Docker-side container for
+// processContainerFinalizers deletes the engine-side container for
 // every Container pending deletion. The mirror finalizer is only
-// stripped when the Docker delete succeeds, so a stuck container keeps
+// stripped when the engine delete succeeds, so a stuck container keeps
 // retrying on later reconciles.
 func (r *EngineReconciler) processContainerFinalizers(ctx context.Context, e engine, namespace string) error {
 	var containers containersv1alpha1.ContainerList
@@ -680,7 +680,7 @@ func (r *EngineReconciler) processImageFinalizers(ctx context.Context, e engine,
 			continue
 		}
 		// An Image mirror with empty status.id and status.repoTag has
-		// no Docker reference to forward the delete to (bare-skeleton
+		// no engine reference to forward the delete to (bare-skeleton
 		// user create, or the startup race before applyImage ran).
 		// Strip the finalizer and let the Delete proceed — symmetric
 		// with processVolumeFinalizers' empty-status.name guard.
