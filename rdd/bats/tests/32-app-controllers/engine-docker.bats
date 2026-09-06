@@ -45,7 +45,8 @@ local_setup_file() {
     # Mirror resources live in App.spec.namespace. Override RDD_NAMESPACE
     # to whatever the App was created with so the test queries the same
     # namespace the engine controller uses, regardless of CRD defaults.
-    RDD_NAMESPACE=$(rdd ctl get app app -o jsonpath='{.spec.namespace}')
+    run -0 rdd ctl get app app -o jsonpath='{.spec.namespace}'
+    RDD_NAMESPACE=${output}
     export RDD_NAMESPACE
 }
 
