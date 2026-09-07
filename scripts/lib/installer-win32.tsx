@@ -104,7 +104,7 @@ export default async function buildInstaller(workDir: string, appDir: string, ou
   await Promise.all(inputs.map(input => simpleSpawn(
     path.join(wixDir, 'candle.exe'),
     [
-      '-arch', 'x64',
+      '-arch', buildUtils.arch,
       `-d${ '' }appDir=${ appDir }`,
       `-d${ '' }appName=${ productName }`,
       `-d${ '' }appId=${ electronBuilderConfig.appId }`,
