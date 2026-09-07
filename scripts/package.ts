@@ -209,7 +209,7 @@ class Builder {
   }
 
   async buildInstaller(config: CliOptions) {
-    const appDir = path.join(buildUtils.distDir, 'win-unpacked');
+    const appDir = path.join(buildUtils.distDir, `win${ buildUtils.archSuffix }-unpacked`);
 
     if (config.win && !process.argv.includes('--zip')) {
       // Only build installer if we're not asked not to.
