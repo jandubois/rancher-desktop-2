@@ -3,7 +3,7 @@ module github.com/rancher-sandbox/rancher-desktop/src/go/wix-helper
 go 1.25.0
 
 require (
-	github.com/sirupsen/logrus v1.9.4
+	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sys v0.45.0
 )
