@@ -3,7 +3,7 @@ module github.com/rancher-sandbox/rancher-desktop-daemon
 go 1.26.0
 
 require (
-	al.essio.dev/pkg/shellescape v1.6.0
+	al.essio.dev/pkg/shellescape v1.6.1
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/Microsoft/go-winio v0.6.2
 	github.com/containerd/errdefs v1.0.0
