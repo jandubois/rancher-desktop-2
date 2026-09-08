@@ -252,7 +252,7 @@ export async function readDependencyVersions(path: string): Promise<DependencyVe
   const versions: Partial<DependencyVersions> = {};
 
   for (const name of Object.keys(manifest) as (keyof DependencyVersions)[]) {
-    (versions as any)[name] = manifest[name].version;
+    versions[name] = manifest[name].version;
   }
 
   return versions as DependencyVersions;
@@ -512,7 +512,7 @@ export abstract class VersionedDependency implements Dependency {
    * Resolves every {@link DependencyAsset} for the given version, verifying
    * each against any upstream checksum file the source publishes.  rddepman
    * calls this at bump time and records the result in the manifest.  Classes
-   * that download nothing (e.g. `check-spelling`) return an empty list.
+   * that download nothing (e.g. `golangci-lint`) return an empty list.
    */
   abstract getAssets(version: Version): Promise<DependencyAsset[]>;
 
