@@ -19,10 +19,11 @@ type VolumeStatus struct {
 	//
 	// +required
 	Namespace string `json:"namespace"`
-	// CreatedAt is the time the volume was created.
+	// CreatedAt is the time the volume was created; unset if the engine
+	// reported no readable timestamp.
 	//
-	// +required
-	CreatedAt metav1.Time `json:"createdAt"`
+	// +optional
+	CreatedAt metav1.Time `json:"createdAt,omitempty,omitzero"`
 	// Driver the volume uses.
 	//
 	// +required

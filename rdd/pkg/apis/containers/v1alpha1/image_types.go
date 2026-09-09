@@ -32,7 +32,7 @@ type ImageStatus struct {
 	// CreatedAt is the time the image was created.
 	//
 	// +optional
-	CreatedAt metav1.Time `json:"createdAt"`
+	CreatedAt metav1.Time `json:"createdAt,omitempty,omitzero"`
 	// Architecture associated with the image.
 	//
 	// +required

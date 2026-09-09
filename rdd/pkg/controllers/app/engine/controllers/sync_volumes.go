@@ -94,6 +94,7 @@ func (w *dockerWatcher) syncVolume(ctx context.Context, name string) error {
 
 // applyVolume creates or updates a `Volume` mirror from a Docker volume.
 func (w *dockerWatcher) applyVolume(ctx context.Context, vol mobyvolume.Volume) error {
+	log := logf.FromContext(ctx).WithName("docker-watcher")
 	mirrorName := volumeMirrorName(vol.Name)
 
 	applyConfig := containersv1alpha1apply.Volume(mirrorName, w.apiNamespace).
@@ -114,20 +115,15 @@ func (w *dockerWatcher) applyVolume(ctx context.Context, vol mobyvolume.Volume) 
 		WithMountPoint(vol.Mountpoint).
 		WithScope(vol.Scope)
 
-	// CreatedAt is required, so an unreadable timestamp reports the epoch
-	// rather than dropping the field: an apply missing it is rejected whole,
-	// and the zero Time cannot stand in because it marshals as null. The
-	// epoch is indistinguishable from a real date once it reaches the UI, so
-	// say here that it was substituted.
-	createdAt := metav1.Unix(0, 0)
+	// Leave createdAt unset when the timestamp will not parse. A stand-in
+	// such as the epoch reaches the UI as a real date, with nothing to mark
+	// it as invented.
 	if t, err := time.Parse(time.RFC3339Nano, vol.CreatedAt); err == nil {
-		createdAt = metav1.NewTime(t)
+		statusApply.WithCreatedAt(metav1.NewTime(t))
 	} else {
-		logf.FromContext(ctx).WithName("docker-watcher").
-			V(1).Info("Reporting the epoch as the volume creation time",
+		log.V(1).Info("Volume has no readable creation time",
 			"volume", vol.Name, "created", vol.CreatedAt)
 	}
-	statusApply.WithCreatedAt(createdAt)
 
 	err = w.k8s.Status().Apply(ctx,
 		containersv1alpha1apply.Volume(mirrorName, w.apiNamespace).
