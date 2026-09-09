@@ -86,10 +86,13 @@ func (r *volumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			WithOptions(inspect.Options).
 			WithMountPoint(inspect.Mountpoint).
 			WithScope(inspect.Scope)
+		// Leave createdAt unset when the timestamp will not parse. A
+		// substituted date reaches the UI as a real one.
 		if t, err := time.Parse(time.RFC3339Nano, inspect.CreatedAt); err == nil {
 			statusApplyConfig = statusApplyConfig.WithCreatedAt(metav1.NewTime(t))
-		} else if inspect.CreatedAt != "" {
-			log.Error(err, "Failed to parse volume created time", "volume", inspect.Name, "created", inspect.CreatedAt)
+		} else {
+			log.V(1).Info("Volume has no readable creation time",
+				"volume", inspect.Name, "created", inspect.CreatedAt)
 		}
 		err = r.Client.Status().Apply(
 			ctx,

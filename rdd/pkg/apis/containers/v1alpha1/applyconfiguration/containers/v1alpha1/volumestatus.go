@@ -18,7 +18,8 @@ type VolumeStatusApplyConfiguration struct {
 	// same Kubernetes namespace.
 	//
 	Namespace *string `json:"namespace,omitempty"`
-	// CreatedAt is the time the volume was created.
+	// CreatedAt is the time the volume was created; unset if the engine
+	// reported no readable timestamp.
 	//
 	CreatedAt *v1.Time `json:"createdAt,omitempty"`
 	// Driver the volume uses.

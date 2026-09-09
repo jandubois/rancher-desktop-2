@@ -181,15 +181,15 @@ type ContainerStatus struct {
 	// CreatedAt is the time this container was initially created.
 	//
 	// +optional
-	CreatedAt metav1.Time `json:"createdAt"`
+	CreatedAt metav1.Time `json:"createdAt,omitempty,omitzero"`
 	// StartedAt is the time this container was started; unset if the container is stopped.
 	//
 	// +optional
-	StartedAt metav1.Time `json:"startedAt"`
+	StartedAt metav1.Time `json:"startedAt,omitempty,omitzero"`
 	// FinishedAt is the time this container was last stopped; unset if the container never ran.
 	//
 	// +optional
-	FinishedAt metav1.Time `json:"finishedAt"`
+	FinishedAt metav1.Time `json:"finishedAt,omitempty,omitzero"`
 	// Conditions represent the calculated state of the container.
 	// Each condition has a unique type and reflects the status of a specific aspect of the resource.
 	//
