@@ -169,7 +169,7 @@ func (r *EngineReconciler) reconcileSingleImagePullRequest(
 
 	// Handle queued terminal status condition changes.
 	r.imagePullRequestMu.Lock()
-	state := r.imagePullRequestState[imagePullRequest.UID]
+	state, hasState := r.imagePullRequestState[imagePullRequest.UID]
 	r.imagePullRequestMu.Unlock()
 	if state.desiredReason != imagePullRequestFailedReasonZeroValue {
 		if err := r.reconcileImagePullRequestTerminalReason(ctx, imagePullRequest); err != nil {
@@ -192,6 +192,30 @@ func (r *EngineReconciler) reconcileSingleImagePullRequest(
 			cancel()
 			// Requeue immediately; need to be >0 to trigger a requeue.
 			return ctrl.Result{RequeueAfter: requeueImmediately}, nil
+		}
+		// The pull is not timed out; check if we are actually aware of it.
+		if !hasState {
+			// We are not aware of this pull request; restart it by clearing the status.
+			err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+				var request containersv1alpha1.ImagePullRequest
+				err := r.Client.Get(ctx, client.ObjectKeyFromObject(imagePullRequest), &request)
+				if err != nil {
+					return err
+				}
+				request.Status.LastUpdateTime = metav1.Now()
+				changed := apimeta.RemoveStatusCondition(
+					&request.Status.Conditions,
+					containersv1alpha1.ImagePullRequestConditionSettled)
+				if changed {
+					return r.Client.Status().Update(ctx, &request)
+				}
+				return nil
+			})
+			if err != nil {
+				return ctrl.Result{}, fmt.Errorf("failed to clear status for image pull request: %w", err)
+			}
+			// We will requeue because status changed.
+			return ctrl.Result{}, nil
 		}
 		return ctrl.Result{RequeueAfter: pullTimeout / 2}, nil
 	}

@@ -320,13 +320,15 @@ func TestEngineImagePullRequestReconcileSinglePullingTimeoutQueuesTerminalReason
 }
 
 // TestEngineImagePullRequestReconcileSinglePullingRequeuesHalfTimeout verifies
-// that an in-progress, non-timed-out pull requeues halfway to timeout.
+// that an in-progress, non-timed-out, and locally-tracked pull requeues
+// halfway to timeout.
 func TestEngineImagePullRequestReconcileSinglePullingRequeuesHalfTimeout(t *testing.T) {
+	reqUID := types.UID("pull-request-uid")
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
 			Namespace: "rancher-desktop",
-			UID:       types.UID("pull-request-uid"),
+			UID:       reqUID,
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
 			RepoTag: "alpine:latest",
@@ -342,11 +344,53 @@ func TestEngineImagePullRequestReconcileSinglePullingRequeuesHalfTimeout(t *test
 	})
 
 	r := &EngineReconciler{
-		imagePullRequestState: map[types.UID]imagePullRequestState{},
+		imagePullRequestState: map[types.UID]imagePullRequestState{
+			// A tracked (non-nil cancel) entry means the pull is known to still be
+			// in progress locally, so reconcile should not attempt to restart it.
+			reqUID: {cancel: func(error) {}},
+		},
 	}
 	result, err := r.reconcileSingleImagePullRequest(t.Context(), &testEngine{}, req)
 	assert.NilError(t, err)
 	assert.Equal(t, result.RequeueAfter, pullTimeout/2)
+}
+
+// TestEngineImagePullRequestReconcileSinglePullingUntrackedClearsStatus
+// verifies that a "Pulling" request with no locally tracked state (e.g. after
+// a controller restart) has its Settled condition cleared, so that a
+// subsequent reconcile restarts the pull instead of waiting out the timeout.
+func TestEngineImagePullRequestReconcileSinglePullingUntrackedClearsStatus(t *testing.T) {
+	reqUID := types.UID("pull-request-uid")
+	req := &containersv1alpha1.ImagePullRequest{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "pull-request",
+			Namespace: "rancher-desktop",
+			UID:       reqUID,
+		},
+		Spec: containersv1alpha1.ImagePullRequestSpec{
+			RepoTag: "alpine:latest",
+		},
+		Status: containersv1alpha1.ImagePullRequestStatus{
+			LastUpdateTime: metav1.Now(),
+		},
+	}
+	apimeta.SetStatusCondition(&req.Status.Conditions, metav1.Condition{
+		Type:   containersv1alpha1.ImagePullRequestConditionSettled,
+		Status: metav1.ConditionFalse,
+		Reason: "Pulling",
+	})
+
+	r := &EngineReconciler{
+		Client:                newEngineImagePullReconcilerTestClient(t, req),
+		imagePullRequestState: map[types.UID]imagePullRequestState{},
+	}
+	result, err := r.reconcileSingleImagePullRequest(t.Context(), &testEngine{}, req)
+	assert.NilError(t, err)
+	assert.Equal(t, result, ctrl.Result{})
+
+	var updated containersv1alpha1.ImagePullRequest
+	assert.NilError(t, r.Get(t.Context(), client.ObjectKeyFromObject(req), &updated))
+	assert.Assert(t, apimeta.FindStatusCondition(updated.Status.Conditions, containersv1alpha1.ImagePullRequestConditionSettled) == nil)
 }
 
 // TestEngineImagePullRequestReconcileSingleQueuedTerminalReason verifies that
