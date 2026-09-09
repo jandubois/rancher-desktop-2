@@ -39,13 +39,14 @@ local_setup_file() {
     if is_windows; then
         export DOCKER_HOST="npipe:////./pipe/docker_engine"
     else
-        run -0 rdd svc paths docker_socket
+        run_e -0 rdd svc paths docker_socket
         export DOCKER_HOST="unix://${output}"
     fi
     # Mirror resources live in App.spec.namespace. Override RDD_NAMESPACE
     # to whatever the App was created with so the test queries the same
     # namespace the engine controller uses, regardless of CRD defaults.
-    RDD_NAMESPACE=$(rdd ctl get app app -o jsonpath='{.spec.namespace}')
+    run_e -0 rdd ctl get app app -o jsonpath='{.spec.namespace}'
+    RDD_NAMESPACE=${output}
     export RDD_NAMESPACE
 }
 
@@ -485,32 +486,8 @@ assert_single_mirror() { # <image-id> <expected-tag>
 }
 
 # --- Container actions via annotation ---
-
-# assert_action_consumed reports success once the reconciler has
-# removed the action annotation, which is how we know the dispatch
-# has completed.
-assert_action_consumed() {
-    local cid=$1
-    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
-        -o "jsonpath={.metadata.annotations['containers\.rancherdesktop\.io/action']}"
-    refute_output
-}
-
-# request_action sets the action annotation and blocks until the
-# reconciler removes it. The annotation is a one-shot trigger.
-request_action() {
-    local cid=$1 action=$2
-    rdd ctl annotate container "${cid}" --namespace="${RDD_NAMESPACE}" --overwrite \
-        "containers.rancherdesktop.io/action=${action}"
-    try --max 30 --delay 1 -- assert_action_consumed "${cid}"
-}
-
-assert_last_action() {
-    local cid=$1 action=$2 state=$3
-    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
-        -o jsonpath='{.status.lastAction.action}={.status.lastAction.state}'
-    assert_output "${action}=${state}"
-}
+# request_action, assert_action_consumed and assert_last_action are in
+# helpers/controller.bash, shared by every engine suite.
 
 @test "stop action stops a running container" {
     run_e -0 docker run -d --name test-state busybox sleep inf
@@ -845,7 +822,7 @@ assert_docker_context() { # <expected-context>
         run -0 jq_raw '.Endpoints.docker.Host' "${meta}"
         assert_output "npipe:////./pipe/docker_engine"
     else
-        run -0 rdd service paths docker_socket
+        run_e -0 rdd service paths docker_socket
         socket_path=${output}
         run -0 jq_raw '.Endpoints.docker.Host' "${meta}"
         assert_output "unix://${socket_path}"
