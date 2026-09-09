@@ -1,3 +1,4 @@
+import * as os from 'os';
 import * as path from 'path';
 
 import { defineConfig } from '@playwright/test';
@@ -11,10 +12,11 @@ const timeScale = ci ? 4 : 1;
 const config = defineConfig({
   testDir,
   outputDir,
+  forbidOnly:    ci,
   timeout:       10 * 60 * 1000 * timeScale,
   globalTimeout: 30 * 60 * 1000 * timeScale,
-  workers:       1,
-  reporter:      'list',
+  workers:       ci ? 1 : os.availableParallelism(),
+  reporter:      ci ? [['github'], ['list']] : 'list',
   retries:       ci ? 2 : 0,
   use:           {
     trace: {
