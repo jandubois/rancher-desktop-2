@@ -447,8 +447,13 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestdeps	30.371s</co
       <details class="repro">
         <summary>Reproducer</summary>
       <pre><code class="language-sh"># Save as probe-i2.sh; run: bash probe-i2.sh   (from the repo root)
-set -e
-cat &gt; rdd/pkg/guestdeps/probe_mut_test.go &lt;&lt;&#39;GO&#39;
+set -eu
+STAGE=rdd/pkg/guestdeps/stage.go
+PROBE=rdd/pkg/guestdeps/probe_mut_test.go
+git diff --quiet -- &quot;$STAGE&quot; || { echo &quot;$STAGE has uncommitted changes; refusing&quot;; exit 1; }
+# Restore on every exit path, so an abort mid-script cannot leave the mutation.
+trap &#39;git checkout -- &quot;$STAGE&quot;; rm -f &quot;$PROBE&quot;&#39; EXIT
+cat &gt; &quot;$PROBE&quot; &lt;&lt;&#39;GO&#39;
 package guestdeps
 
 import (
@@ -485,10 +490,10 @@ func TestProbeCorruptCacheIsStagedSilently(t *testing.T) {
 	}
 }
 GO
-cp rdd/pkg/guestdeps/stage.go /tmp/stage.go.orig
 # The mutation: trust the cache entry&#39;s existence instead of its bytes.
-python3 - &lt;&lt;&#39;PY&#39;
-p = &#39;rdd/pkg/guestdeps/stage.go&#39;
+python3 - &quot;$STAGE&quot; &lt;&lt;&#39;PY&#39;
+import sys
+p = sys.argv[1]
 s = open(p).read()
 old = &#39;&#39;&#39;	cached, err := fileHasChecksum(cachePath, dep.Asset.Checksum)
 	if err != nil {
@@ -504,15 +509,14 @@ PY
 echo &quot;--- shipped suite, against the MUTATED tree ---&quot;
 (cd rdd &amp;&amp; go test -count=1 ./pkg/guestdeps/... ./cmd/download-guest-deps/... 2&gt;&amp;1 | tail -2)
 echo &quot;--- consequence, against the MUTATED tree ---&quot;
-(cd rdd &amp;&amp; go test ./pkg/guestdeps/ -run TestProbeCorruptCache -v -count=1 2&gt;&amp;1 | grep -E &#39;Stage returned|SILENT&#39;)
-cp /tmp/stage.go.orig rdd/pkg/guestdeps/stage.go
+(cd rdd &amp;&amp; go test ./pkg/guestdeps/ -run TestProbeCorruptCache -v -count=1 2&gt;&amp;1 | grep -E &#39;Stage returned|SILENT&#39;) || true
+git checkout -- &quot;$STAGE&quot;
 echo &quot;--- consequence, against the SHIPPED tree ---&quot;
-(cd rdd &amp;&amp; go test ./pkg/guestdeps/ -run TestProbeCorruptCache -v -count=1 2&gt;&amp;1 | grep -E &#39;Stage returned|SILENT&#39;)
-rm -f rdd/pkg/guestdeps/probe_mut_test.go</code></pre>
+(cd rdd &amp;&amp; go test ./pkg/guestdeps/ -run TestProbeCorruptCache -v -count=1 2&gt;&amp;1 | grep -E &#39;Stage returned|SILENT&#39;) || true</code></pre>
       <pre><code class="language-text">$ bash probe-i2.sh
 --- shipped suite, against the MUTATED tree ---
-ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestdeps	0.636s
-ok  	github.com/rancher-sandbox/rancher-desktop-daemon/cmd/download-guest-deps	0.303s
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestdeps	0.449s
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/cmd/download-guest-deps	0.544s
 --- consequence, against the MUTATED tree ---
     probe_mut_test.go:31: Stage returned &lt;nil&gt;; staged &quot;garbage&quot; (want &quot;distro image&quot;)
     probe_mut_test.go:33: SILENT CORRUPTION: Stage reported success after staging the corrupt cache entry
