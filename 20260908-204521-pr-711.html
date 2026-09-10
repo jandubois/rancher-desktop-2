@@ -240,7 +240,13 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
 
     <div class="card card-neutral">
     <p>The stager is well built: content-addressed verification at both hops, atomic publication, and an error taxonomy that puts the retry decision where the knowledge is. Two gaps matter. The download carries no deadline, so a stalled server hangs <code>make build-rdd</code> forever and never reaches the retry loop. And nothing tests that a cache entry is verified rather than trusted: replacing that check with a bare <code>os.Stat</code> leaves the whole suite green.</p>
-    <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="open" data-type="pr">#711</a> is stacked on unmerged <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="open" data-type="pr">#511</a>, so this round scopes findings to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/febd11736"><code>febd11736</code></a>&#39;s seven files; S8 belongs to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="open" data-type="pr">#511</a> and is attributed there. Three reviewers reached I1 independently. <code>go test</code>, <code>go vet</code> and <code>golangci-lint</code> were run from the review SHA and are all clean.</p>
+    <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="open" data-type="pr">#711</a> is stacked on unmerged <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a>, so this round scopes findings to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/febd11736"><code>febd11736</code></a>&#39;s seven files; S8 belongs to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a> and is attributed there. Three reviewers reached I1 independently. <code>go test</code>, <code>go vet</code> and <code>golangci-lint</code> were run from the review SHA and are all clean.</p>
+    </div>
+    <hr>
+    <h2 id="status-addressed">Status: addressed <a href="#status-addressed" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every finding below has been acted on, and each ends with a line saying what happened to it. The code they quote has changed since, so the line numbers and snippets describe the reviewed commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/febd11736"><code>febd11736</code></a>, not the branch as it stands.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -422,6 +428,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestdeps	30.371s</co
 +			return downloadOnce(attemptCtx, dep.Asset, destPath)
 +		}()
 +		if err == nil {</code></pre>
+    <p><strong>Resolved.</strong> A package-level client bounds the response-header wait, and a counting reader that also serves S7&#39;s progress reporting restarts a stall timer on every read, so an attempt that goes 30 s without bytes fails and retries. <code>TestStageFailsAStalledTransfer</code> blocks for the full 30 s against the code as reviewed.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="I2">
@@ -524,6 +531,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/cmd/download-guest-deps	0
     probe_mut_test.go:31: Stage returned downloading https://example.test/distro.v0.2.7.arm64.raw.xz: Get &quot;https://example.test/distro.v0.2.7.arm64.raw.xz&quot;: dial tcp: lookup example.test: no such host; staged &quot;&quot; (want &quot;distro image&quot;)</code></pre>
       </details>
     <p>Fix: add the probe above to <code>stage_test.go</code> as a real test, asserting <code>server.requests.Load() == 2</code> so it pins the re-download as well as the staged content. The shipped-tree run also took 6.02 s, four attempts at the flat 2 s delay, which is the measurement behind S2.</p>
+    <p><strong>Resolved.</strong> <code>TestStageReplacesACorruptCacheEntry</code> plants wrong bytes at <code>cachePath</code> and pins both the re-download and the staged content. The <code>os.Stat</code> mutant this finding describes fails it.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -559,6 +567,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/cmd/download-guest-deps	0
           console.log(`${ destPath } exists but the checksum of ${ hashTarget } differs ([${ actualChecksum }] vs expected [${ expectedChecksum }]); re-downloading.`);
         } catch (ex: any) {</code></pre>
     <p>Fix: check <code>destPath</code> first and return before touching the cache. The double hash on the warm path is cheap: two sha256 passes over the real 207 MiB asset measure 116 ms each here.</p>
+    <p><strong>Resolved.</strong> <code>Stage</code> checks <code>destPath</code> first and returns before it looks at the cache.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S2">
@@ -594,6 +603,7 @@ var retryDelay = 2 * time.Second
 type Stager struct {
 	CacheDir string</code></pre>
     <p>Fix: back off exponentially and honour <code>Retry-After</code> when present, capped at a ceiling. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/scripts/lib/download.ts#L100"><code>scripts/lib/download.ts:100</code></a> already does the exponential half (<code>baseDelayMs * 2 ** attempt</code>, capped at 30 s over 8 retries), so this is existing house style, not a new mechanism.</p>
+    <p><strong>Resolved.</strong> The delay doubles per attempt to a 30 s ceiling and honours <code>Retry-After</code>. The fix needed a fix of its own: converting the header&#39;s seconds to a <code>time.Duration</code> wraps negative above 9223372036, so <code>Retry-After: 31536000000</code> produced <code>-1488191h9m7s</code> and retried at once.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S3">
@@ -626,6 +636,7 @@ func (s *Stager) logf(format string, args ...any) {
 // file 0o600; the staged asset is a build input others may read, so widen it.
 func finishTemp(tmp *os.File, destPath string) error {</code></pre>
     <p>Fix: glob and remove <code>*.tmp-*</code> in the version directory at the top of <code>download</code>, and either prune sibling version directories after a successful stage or record the unbounded growth as a TODO on <code>cachePath</code>&#39;s comment.</p>
+    <p><strong>Resolved</strong>, after two designs were rejected in verification. A recursive mtime prune over <code>DefaultCacheDir</code> would have deleted the app&#39;s own cache and, on Windows, the daemon&#39;s TLS certificates. The shipped prune descends only <code>&lt;name&gt;/v&lt;version&gt;/</code>, removes an empty directory only once it has aged out, and skips what it cannot read rather than abandoning the sweep.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S4">
@@ -659,6 +670,7 @@ func fileHasChecksum(path, checksum string) (bool, error) {
     <p>The window is narrow and the failure is loud, so this stays a suggestion. RD2 runs BATS under MSYS2 on Windows, so parallel worktree runs are the likely trigger.</p>
     <p>Unproven: no Windows host was available. The mechanism rests on Go&#39;s source at the version <code>rdd/go.mod</code> pins: <code>syscall_windows.go:395</code> sets the share mode, and <code>internal/syscall/windows/syscall_windows.go:366</code> calls <code>MoveFileEx</code>.</p>
     <p>Fix: document the limitation, or take a lock file in the version directory around the rename.</p>
+    <p><strong>Documented</strong> on <code>finishTemp</code> rather than fixed: a lock file would add its own stale-lock failure mode to a path that has none, and the collision is loud and clears on a re-run.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/manifest.go">
       <div class="finding-title" id="S5">
@@ -692,6 +704,7 @@ func (a Asset) validate() error {
 	}
 	if base := path.Base(u.Path); base == &quot;.&quot; || base == &quot;/&quot; || strings.Contains(base, &quot;..&quot;) {</code></pre>
     <p>Fix: include the URL in those three messages, e.g. <code>fmt.Errorf(&quot;asset %s: url %q must use https&quot;, a, a.URL)</code>. Leave <code>String()</code> as the axis renderer it is; the axes and the URL answer different questions.</p>
+    <p><strong>Resolved</strong>, including a site this finding did not list: <code>cachePath</code> in <code>stage.go</code> reported an unparseable URL by selection axes alone.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/manifest.go">
       <div class="finding-title" id="S6">
@@ -714,6 +727,7 @@ func (a Asset) validate() error {
     <p><code>path.Base</code> returns a single path element, so the only traversal shape it can produce is the exact string <code>&quot;..&quot;</code>; <code>strings.Contains</code> additionally rejects an innocent <code>a..b.tar.gz</code>, and does so with a message claiming the URL has no file name. Meanwhile <code>Entry.validate</code> checks only that <code>Version</code> is non-empty, and <code>cachePath</code> interpolates it straight into a path: a <code>Version</code> of <code>../../../escape</code> yields <code>&lt;cache&gt;/escape/distro.raw.xz</code>, relocating the entry. Both were confirmed by calling the functions directly.</p>
     <p>The manifest is generated, so neither is reachable today. The asymmetry is the thing to fix, since <code>validate</code>&#39;s stated job is catching a hand-edited file.</p>
     <p>Fix: tighten the base check to <code>base == &quot;..&quot;</code> and add a matching guard on <code>Version</code>.</p>
+    <p><strong>Resolved</strong>, and wider than specified. Tightening the check to <code>base == &quot;..&quot;</code> is not enough: <code>url.Parse</code> decodes <code>%5C</code> into a backslash, so <code>path.Base</code> returns <code>..\..\..\escape.xz</code>, which contains <code>..</code> without equalling it and escapes on Windows. Both the version and the file name now go through one <code>isPathElement</code> helper.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S7">
@@ -733,6 +747,7 @@ func (a Asset) validate() error {
 			return nil</code></pre>
     <p>Once <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> makes this the first step of <code>make build-rdd</code>, the default target prints one line and then appears frozen for however long 207 MiB takes on the developer&#39;s link. Combined with I1, a wedged transfer looks exactly like a slow one.</p>
     <p>Fix: wrap the <code>io.MultiWriter</code> in a counting writer and emit a percentage line every few seconds when <code>resp.ContentLength &gt;= 0</code>. <code>Log</code> is already an injectable <code>io.Writer</code>, so the plumbing exists.</p>
+    <p><strong>Resolved.</strong> The counting reader added here is what bounds the body read for I1.</p>
     </div>
     <div class="card card-suggestion" data-file="scripts/dependencies/nerdctl.ts">
       <div class="finding-title" id="S8">
@@ -750,7 +765,7 @@ const ARCHES: readonly GoArch[] = [&#39;amd64&#39;, &#39;arm64&#39;];
 export class Nerdctl extends GlobalDependency(GitHubDependency) {
   readonly name = &#39;nerdctl&#39;;
   readonly githubOwner = &#39;containerd&#39;;</code></pre>
-    <p><code>stagedDeps</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/rdd/cmd/download-guest-deps/main.go#L89"><code>rdd/cmd/download-guest-deps/main.go:89</code></a>) returns only the distro, and there is no other <code>guestdeps</code> caller, so the nerdctl entry in <code>rdd/dependencies.yaml</code> is fetched by nobody. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/scripts/dependencies/distro.ts#L19"><code>distro.ts:19</code></a> makes the same claim and becomes true with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a>; nerdctl&#39;s names no landing PR. The text belongs to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="open" data-type="pr">#511</a> and should be fixed there.</p>
+    <p><code>stagedDeps</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/rdd/cmd/download-guest-deps/main.go#L89"><code>rdd/cmd/download-guest-deps/main.go:89</code></a>) returns only the distro, and there is no other <code>guestdeps</code> caller, so the nerdctl entry in <code>rdd/dependencies.yaml</code> is fetched by nobody. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/scripts/dependencies/distro.ts#L19"><code>distro.ts:19</code></a> makes the same claim and becomes true with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a>; nerdctl&#39;s names no landing PR. The text belongs to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a> and should be fixed there.</p>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/rdd/cmd/download-guest-deps/main.go#L84-L94">rdd/cmd/download-guest-deps/main.go</a></div>
       <pre data-start="84" data-line="89"><code class="language-go">func stagedDeps(goos, goarch string) []stagedDep {
 	variant := &quot;raw&quot;
@@ -777,6 +792,7 @@ export class Distro extends GlobalDependency(GitHubDependency) {
   readonly githubOwner = &#39;rancher-sandbox&#39;;</code></pre>
     <p>Gemini 3.1 Pro raised this as an Important issue and proposed adding nerdctl to <code>stagedDeps</code>. That is the wrong direction: nothing consumes the archive yet, so the fix would download 40 MiB per build for no consumer.</p>
     <p>Fix: reword to say nerdctl is tracked for the forthcoming overlay work but is not staged yet, or name the tracking issue.</p>
+    <p><strong>Resolved here</strong>, not in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a>. That PR had already merged by the time the review was addressed, so the text was on <code>main</code> and could not be fixed there.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -826,7 +842,7 @@ export class Distro extends GlobalDependency(GitHubDependency) {
     <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>Clean. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/febd11736"><code>febd11736</code></a> is one self-contained concept across seven files, and its message states the constraint that forced the design: postinstall cannot stage the image, and the bats workflow never runs yarn. It does not narrate the implementation. No fixup commits, no bundled refactors. The two commits below it belong to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="open" data-type="pr">#511</a> and are reviewed there.</p>
+    <p>Clean. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/febd11736"><code>febd11736</code></a> is one self-contained concept across seven files, and its message states the constraint that forced the design: postinstall cannot stage the image, and the bats workflow never runs yarn. It does not narrate the implementation. No fixup commits, no bundled refactors. The two commits below it belong to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a> and are reviewed there.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
@@ -836,7 +852,7 @@ export class Distro extends GlobalDependency(GitHubDependency) {
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/rdd/pkg/guestdeps/manifest.go#L74-L76"><code>rdd/pkg/guestdeps/manifest.go:74-76</code></a> frames <code>validate</code> as a drift detector for a hand-edited manifest rather than a trust boundary. That is why S6 is a suggestion and not a security finding.</li>
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/rdd/pkg/guestdeps/stage.go#L79-L81"><code>rdd/pkg/guestdeps/stage.go:79-81</code></a> documents cache accumulation as deliberate. S3 asks only that the unbounded growth and the stranded temp files be handled or recorded, which that comment does not cover.</li>
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/febd117363458d6a01942a369e7b7c1fd5ff06c0/rdd/cmd/download-guest-deps/main.go#L8-L12"><code>rdd/cmd/download-guest-deps/main.go:8-12</code></a> explains why the target comes from flags rather than <code>GOOS</code>/<code>GOARCH</code>. The constraint is real; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> must remember to pass <code>--arch $(GOARCH)</code>.</li>
-      <li>TypeScript tests were not run, because <code>node_modules</code> is absent from the review worktrees. The six <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="open" data-type="pr">#511</a> files were reviewed statically.</li>
+      <li>TypeScript tests were not run, because <code>node_modules</code> is absent from the review worktrees. The six <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a> files were reviewed statically.</li>
     </ul>
     </div>
     <hr>
