@@ -243,6 +243,12 @@ details.repro .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Both Gemini models raised the same Important finding, a path traversal through the manifest&#39;s dependency key. I dropped the traversal claim after proving <code>Select</code> copies the caller&#39;s name rather than the map key, and kept the completeness residual as S4. PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a> merged during this round, so the branch is no longer stacked and both commits below are its own work.</p>
     </div>
     <hr>
+    <h2 id="status-addressed">Status: addressed <a href="#status-addressed" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every finding below has been acted on, and each ends with a line saying what happened to it. The code they quote has changed since, so the line numbers and snippets describe the reviewed commits <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d213106ac"><code>d213106ac</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a>, not the branch as it stands.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -378,6 +384,7 @@ func TestProbeTrickle(t *testing.T) {
 PASS</code></pre>
       </details>
     <p>Fix: give each <code>downloadOnce</code> attempt its own <code>context.WithTimeout</code>, keeping the per-gap timer for the fast failure. A <code>--timeout</code> flag would do as well.</p>
+    <p><strong>Resolved: fixed</strong>, though not as written here. A per-attempt deadline demanded ~145 KB/s of the 249.5 MiB asset and would have failed slow-but-working links, so <code>download</code> now bounds all four attempts together at <code>downloadTimeout</code> (2 hours, a 36 KiB/s floor), and labels that separately from a cancelled build.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="I2">
@@ -442,6 +449,7 @@ isVersionDir relaxed to any v-prefix       suite FAILS  -- mutation caught
 stage.go restored unchanged</code></pre>
       </details>
     <p>Fix: make <code>progressInterval</code> a variable and add a <code>shortenProgressInterval</code> helper beside <code>shortenStallTimeout</code>. Then three tests close the gap: one asserting both <code>logProgress</code> branches (with and without <code>Content-Length</code>), one serving a 429 with <code>Retry-After</code> and asserting the elapsed wait is the server&#39;s rather than the backoff, and one covering the header stall.</p>
+    <p><strong>Resolved: fixed.</strong> All three mutations are now caught. <code>progressInterval</code> stayed a constant: the progress tests drive <code>progressReader</code> and <code>logProgress</code> directly, because a clock-based test passes everywhere except <code>windows-latest</code>, where the monotonic clock advances only on the 15.6 ms tick.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -469,6 +477,7 @@ stage.go restored unchanged</code></pre>
     <p>The comment&#39;s reasoning holds for 404 and 410. It does not hold for <code>408 Request Timeout</code>, which RFC 9110 defines as a status the client may repeat, so a transient becomes an immediate build failure with three attempts unspent. The failure prints <code>unexpected status 408 Request Timeout</code> and a re-run recovers, which keeps this at Suggestion.</p>
     <p>Unproven: I cannot make GitHub emit a 408 on demand, so the classification is read from the code rather than reproduced against the real server.</p>
     <p>Fix: exclude <code>http.StatusRequestTimeout</code> from the fatal range beside <code>StatusTooManyRequests</code>.</p>
+    <p><strong>Resolved: fixed, and widened.</strong> Verification found that a 403 carrying <code>Retry-After</code> was fatal too, which GitHub uses for throttling, so the <code>Retry-After</code> parse now runs before the fatal-4xx test: any status naming a delay is retried.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S2">
@@ -546,6 +555,7 @@ var LogDir = sync.OnceValue(func() string {</code></pre>
 // This is a no-op unless RDD_KEEP_LOGS is set.</code></pre>
     <p>The project memory records this as accepted, at the cost of one re-download. I raise it only because a sibling directory no <code>instance.Name()</code> can produce escapes it, and also gives <code>Prune</code> a tree it owns outright rather than a subdirectory of the Electron app&#39;s own cache. Nothing invokes the tool yet, so there are no caches to orphan and no test pins the path.</p>
     <p>Fix: <code>filepath.Join(dir, &quot;rancher-desktop-guest-deps&quot;)</code>, or decline again in one line.</p>
+    <p><strong>Resolved: fixed</strong>, with a different name. <code>rancher-desktop-guest-deps</code> is reachable by <code>RDD_INSTANCE=guest-deps</code>, and a bare <code>rancher-desktop</code> is RD1&#39;s own Windows tree, so the directory is <code>rancher-desktop.guest-deps</code>: the dot is beyond anything <code>instance.Name()</code> can build.</p>
     </div>
     <div class="card card-suggestion" data-file="scripts/dependencies/nerdctl.ts">
       <div class="finding-title" id="S3">
@@ -567,6 +577,7 @@ var LogDir = sync.OnceValue(func() string {</code></pre>
 </code></pre>
     <p>Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a> rewrote the class comment above to say nothing fetches nerdctl yet, which <code>stagedDeps</code> confirms. This error string still says the build stages it. <code>Nerdctl</code> reaches no <code>postinstall</code> path today, so the diagnostic is dormant prose.</p>
     <p>Fix: <code>&#39;nerdctl is a guest-only dependency and is not installed by postinstall&#39;</code>.</p>
+    <p><strong>Resolved: fixed</strong> as written, amended into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S4">
@@ -637,6 +648,7 @@ func (m Manifest) Select(name string, sel Selector) (Dependency, error) {
 
 	// Create shared controller manager for this API group.</code></pre>
     <p>Fix: check the map key in <code>LoadManifest</code>&#39;s range loop, beside the existing <code>entry.validate()</code> call.</p>
+    <p><strong>Resolved: fixed</strong>, with a test that fails without the check.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S5">
@@ -660,6 +672,7 @@ func (m Manifest) Select(name string, sel Selector) (Dependency, error) {
 	}</code></pre>
     <p>With a valid staged file and a corrupt cache entry, <code>Stage</code> returns here having reset the corrupt entry&#39;s mtime. Every later build does the same, so the 7-day TTL never collects it and 217 MB of unusable bytes stays on disk until the staged file goes. <code>Prune</code>&#39;s comment (139-141) promises to remove &quot;the partial files a build killed mid-transfer leaves behind&quot;, and this is the one such file it cannot reach.</p>
     <p>Fix: touch only when the entry is known good, or say in <code>touch</code>&#39;s comment (129-131) that an unverified entry is refreshed too.</p>
+    <p><strong>Resolved: commented.</strong> Verifying on that path would cost the full hash the path exists to avoid, so <code>touch</code>&#39;s comment now records that it refreshes an unverified entry, and that a corrupt one outlives its TTL.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S6">
@@ -683,6 +696,7 @@ func (m Manifest) Select(name string, sel Selector) (Dependency, error) {
 /pkg/guestagent/lima-guestagent.gz
 /pkg/embedded/distro.*.xz*</code></pre>
     <p>Fix: this belongs with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a>&#39;s Makefile rule, on the same reasoning that deferred the <code>pkg/embedded/</code> documentation. Either sweep the destination directory for <code>.tmp-*</code> at the start of a run, or add it to <code>clean</code>.</p>
+    <p><strong>Resolved: declined</strong>, deferred to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> which adds the Makefile rule and creates <code>pkg/embedded</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/manifest.go">
       <div class="finding-title" id="S7">
@@ -704,6 +718,7 @@ func (m Manifest) Select(name string, sel Selector) (Dependency, error) {
 		return fmt.Errorf(&quot;asset %s has checksum %q, want sha256:&lt;64 lowercase hex digits&gt;&quot;, a, a.Checksum)</code></pre>
     <p><code>url.Parse(&quot;https:///distro.xz&quot;)</code> returns scheme <code>https</code>, host <code>&quot;&quot;</code> and base <code>distro.xz</code>, so both checks pass and staging fails later with <code>http: no Host in request URL</code> after the full retry schedule. A URL ending in <code>/</code> passes too: <code>path.Base(&quot;https://example.test/dir/&quot;)</code> is <code>dir</code>, which then names the downloaded file. <code>yarn rddepman</code> writes neither form, so this only sharpens a hand-edited manifest&#39;s error.</p>
     <p>Fix: require <code>u.Hostname() != &quot;&quot;</code>, and reject a path ending in <code>/</code>.</p>
+    <p><strong>Resolved: fixed</strong>, both checks, each with a test that fails without it.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
       <div class="finding-title" id="S8">
@@ -726,6 +741,7 @@ func (m Manifest) Select(name string, sel Selector) (Dependency, error) {
 	s.logf(&quot;Copying %s to %s&quot;, cachePath, destPath)</code></pre>
     <p><code>copyFile</code> can produce <code>fs.ErrNotExist</code> from <code>createTemp</code> (441, 444) and from <code>finishTemp</code>&#39;s rename (464) as well as from the source open this branch describes. Any of those logs a message naming the wrong file and re-downloads 217 MB before failing the same way. Nothing prunes <code>pkg/embedded/</code>, so in practice only the source open reaches it.</p>
     <p>Fix: open the cache entry in <code>Stage</code> and hand the open file to a <code>copyFrom(io.Reader, dst)</code>, leaving only the source&#39;s absence in this branch.</p>
+    <p><strong>Resolved: fixed</strong>, by the cheaper route: the branch now stats the cache entry and returns <code>copyFile</code>&#39;s own error unless that entry is the file that went.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
