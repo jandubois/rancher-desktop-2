@@ -63,18 +63,17 @@ jobs:
       && (!github.event.pull_request || github.event.pull_request.head.repo.full_name == github.repository)
     permissions:
       contents: read
-      id-token: write # Required for ./.github/actions/get-token
+      id-token: write # Required for $/.github/actions/get-token
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: rdd
     steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - # Get a GitHub token that can write to the repository, and will trigger CI
       # on commit.  The normal github.token will not trigger further CI.
       id: get-token
       if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-      uses: ./.github/actions/get-token
+      uses: $/.github/actions/get-token
       continue-on-error: true
       with:
         token-secret: ${{ secrets.RUN_WORKFLOW_FROM_WORKFLOW }}
