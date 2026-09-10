@@ -9,6 +9,7 @@ import {
 } from '@rdd-client';
 
 const componentStub = { template: '<div />' };
+const showMessageBox = jest.fn<(channel: string, options: any) => Promise<{ response: number }>>();
 
 mockModules({
   '@pkg/entry/store':  {
@@ -43,7 +44,7 @@ mockModules({
     ipcRenderer: {
       on:             jest.fn(),
       send:           jest.fn(),
-      invoke:         jest.fn(),
+      invoke:         showMessageBox,
       removeListener: jest.fn(),
     },
   },
@@ -118,5 +119,78 @@ describe('Containers methods', () => {
         enabled:  false,
       }),
     ]));
+  });
+
+  describe('deletion', () => {
+    const { methods } = Containers as any;
+
+    function container(name: string): Container {
+      return {
+        metadata: { name: `${ name }-id`, namespace: 'default' },
+        status:   {
+          image:     'scratch',
+          namespace: 'default',
+          name,
+          path:      '/bin/false',
+          status:    ContainerStatus.Exited,
+        },
+      };
+    }
+
+    /** Build the row SortableTable would render for a single container. */
+    function rowFor(item: Container, context: any) {
+      const self = {
+        containers:          [item],
+        supportsNamespaces:  true,
+        getContainerActions: () => [],
+        getPortList:         () => [],
+        ...context,
+      };
+
+      return (Containers as any).computed.rows.call(self)[0];
+    }
+
+    beforeEach(() => {
+      showMessageBox.mockReset();
+    });
+
+    it('names and counts the containers in the confirmation', async() => {
+      showMessageBox.mockResolvedValue({ response: 0 });
+
+      await expect(methods.confirmDelete.call({ t }, [container('one'), container('two')])).resolves.toBe(true);
+      expect(showMessageBox).toHaveBeenCalledWith('show-message-box', expect.objectContaining({
+        message: 'Delete 2 containers?',
+        detail:  'one\ntwo',
+      }));
+    });
+
+    it('reports a cancelled confirmation, and defaults to Cancel', async() => {
+      const cancelButton = 1;
+
+      showMessageBox.mockResolvedValue({ response: cancelButton });
+      await expect(methods.confirmDelete.call({ t }, [])).resolves.toBe(false);
+      expect(showMessageBox).toHaveBeenCalledWith('show-message-box', expect.objectContaining({
+        buttons:   ['Delete', 'Cancel'],
+        cancelId:  cancelButton,
+        defaultId: cancelButton,
+      }));
+    });
+
+    it('deletes the container once the user confirms', async() => {
+      const containerDelete = jest.fn();
+      const doomed = container('doomed');
+      const row = rowFor(doomed, { containerDelete, confirmDelete: () => Promise.resolve(true) });
+
+      await row.deleteContainer();
+      expect(containerDelete).toHaveBeenCalledWith({ container: doomed });
+    });
+
+    it('leaves the container alone when the user cancels', async() => {
+      const containerDelete = jest.fn();
+      const row = rowFor(container('spared'), { containerDelete, confirmDelete: () => Promise.resolve(false) });
+
+      await row.deleteContainer();
+      expect(containerDelete).not.toHaveBeenCalled();
+    });
   });
 });

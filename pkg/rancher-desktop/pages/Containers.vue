@@ -138,15 +138,17 @@ import Banner from '@pkg/components/Banner.vue';
 import ContainerStatusBadge from '@pkg/components/ContainerStatusBadge.vue';
 import SortableTable from '@pkg/components/SortableTable';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
+import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 import { hasField } from '@pkg/utils/iterator';
 import { defined } from '@pkg/utils/typeUtils';
 import { IoRancherdesktopContainersV1alpha1Container as Container } from '@rdd-client';
 
 interface Action {
-  label:    string;
-  action:   string;
-  enabled:  boolean;
-  bulkable: boolean;
+  label:       string;
+  action:      string;
+  enabled:     boolean;
+  bulkable:    boolean;
+  bulkAction?: string;
 }
 
 type RowItem = Container & {
@@ -160,7 +162,7 @@ type RowItem = Container & {
   pauseContainer:    (this: Container) => void;
   unpauseContainer:  (this: Container) => void;
   restartContainer:  (this: Container) => void;
-  deleteContainer:   (this: Container) => void;
+  deleteContainer:   (containers?: Container[]) => Promise<void>;
   viewInfo:          (this: Container) => void;
   portList:          (readonly [number, number])[];
 };
@@ -251,7 +253,13 @@ export default defineComponent({
             pauseContainer:   () => this.containerRequestAction({ container, state: 'pause' }),
             unpauseContainer: () => this.containerRequestAction({ container, state: 'unpause' }),
             restartContainer: () => this.containerRequestAction({ container, state: 'restart' }),
-            deleteContainer:  () => this.containerDelete({ container }),
+            deleteContainer:  async(args?: Container[]) => {
+              const targets = args?.length ? args : [container];
+
+              if (await this.confirmDelete(targets)) {
+                await Promise.all(targets.map(target => this.containerDelete({ container: target })));
+              }
+            },
             viewInfo:         () => this.viewInfo(container),
             portList,
             portsSortKey:     portList.map(([hostPort]) => hostPort).sort((a, b) => a - b),
@@ -286,6 +294,20 @@ export default defineComponent({
     onChangeNamespace(event: Event) {
       const { value } = event.target as HTMLSelectElement;
       this.setCurrentNamespace({ namespace: value });
+    },
+    async confirmDelete(containers: Container[]): Promise<boolean> {
+      const cancelId = 1;
+      const result = await ipcRenderer.invoke('show-message-box', {
+        type:      'question',
+        title:     this.t('containers.confirmDelete.title'),
+        message:   this.t('containers.confirmDelete.message', { count: containers.length }),
+        detail:    containers.map(container => container.status?.name || container.metadata?.name).join('\n'),
+        buttons:   [this.t('containers.confirmDelete.confirm'), this.t('generic.cancel')],
+        defaultId: cancelId,
+        cancelId,
+      });
+
+      return result.response !== cancelId;
     },
     getContainerActions(container: Container) {
       return [
@@ -330,6 +352,7 @@ export default defineComponent({
           action:     'deleteContainer',
           enabled:    this.isStopped(container),
           bulkable:   true,
+          bulkAction: 'deleteContainer',
         },
       ];
     },
