@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260909-212111-pr-711</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers — collapsed, so a long proof keeps the next finding on screen */
+details.repro { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.repro > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.repro > summary:hover { background: #eef1f4; }
+details.repro[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.repro pre { border-radius: 0 !important; }
+details.repro .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260909-212111-pr-711</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-09 21:21</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="open" data-type="pr">#711</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="open" data-type="pr">#711</a> — rdd: add the guest dependency downloader</td></tr>
+      <tr><td>Branch</td><td><code>guest-deps-downloader</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d213106ac"><code>d213106ac</code></a> rdd: add the guest dependency downloader<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a> rddepman: correct the nerdctl staging note</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81c97b6390a26b9f326ed27999a9c810f"><code>14b43bf81c97b6390a26b9f326ed27999a9c810f</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the round is sound, but the deadline still has a hole and three of its new mechanisms have no test</td></tr>
+      <tr><td>Wall-clock time</td><td><code>33 min 50 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 1&#39;s deadline fix bounds silence only. A peer sending one byte per stall window keeps <code>make build-rdd</code> running forever, which my probe confirms at 20 stall windows and counting. Three mechanisms round 2 added (progress reporting, the <code>Retry-After</code> wiring, the response-header timeout) can each be deleted with the suite still green. Everything else in the round is correct, and <code>go test</code>, <code>-race</code>, <code>go vet</code> and <code>golangci-lint</code> are all clean at this SHA.</p>
+    <p>Both Gemini models raised the same Important finding, a path traversal through the manifest&#39;s dependency key. I dropped the traversal claim after proving <code>Select</code> copies the caller&#39;s name rather than the map key, and kept the completeness residual as S4. PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/511" class="gh-ref" data-title="rddepman: add the guest manifest" data-state="merged" data-type="pr">#511</a> merged during this round, so the branch is no longer stacked and both commits below are its own work.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> A peer that trickles keeps the build alive forever <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L512-L525">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="512" data-line="517-520"><code class="language-go">		cancel()
+	})
+	return r
+}
+
+func (r *progressReader) Read(p []byte) (int, error) {
+	n, err := r.body.Read(p)
+	r.read += int64(n)
+	r.timer.Reset(stallTimeout)
+	if now := time.Now(); now.After(r.next) {
+		r.next = now.Add(progressInterval)
+		r.report(r.read, r.total)
+	}
+	return n, err</code></pre>
+    <p>Every read restarts the 30-second timer, so the limit falls on the gap between bytes. Nothing bounds the transfer itself: <code>httpClient</code> sets no <code>Timeout</code> (58-62), and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/external/main.go#L41"><code>main.go:41</code></a> derives its context from <code>context.Background()</code> with no deadline. A server delivering one byte every 29 seconds holds a temporary file and a build slot indefinitely, which is the failure round 1&#39;s I1 named.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/external/main.go#L36-L46">rdd/pkg/external/main.go</a></div>
+      <pre data-start="36" data-line="41"><code class="language-go">	var desiredHealthPort int
+
+	flag.IntVar(&amp;desiredMetricsPort, &quot;metrics-port&quot;, 8080+instanceOffset, &quot;The desired port the metric endpoint binds to.&quot;)
+	flag.IntVar(&amp;desiredHealthPort, &quot;health-port&quot;, 8081+instanceOffset, &quot;The desired port the health probe endpoint binds to.&quot;)
+
+	klog.InitFlags(nil)
+	setVerbosityFromEnv()
+	//revive:disable-next-line:deep-exit
+	flag.Parse()
+
+	log := klog.NewKlogr()</code></pre>
+    <p>I judged this fresh rather than as a narrowed fix, because a trickle is a different server behaviour from the silence round 1 named; the <code>progressReader</code> comment (486-489) does document the per-gap limit. GitHub&#39;s CDN already throttles this project&#39;s distro downloads, so a slow trickle is the likelier degradation; the new progress lines at least make it visible.</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/guestdeps/probe_trickle_test.go; run:
+//   cd rdd &amp;&amp; go test -count=1 -timeout 120s -run TestProbeTrickle -v ./pkg/guestdeps/
+package guestdeps
+
+import (
+	&quot;context&quot;
+	&quot;crypto/sha256&quot;
+	&quot;encoding/hex&quot;
+	&quot;net/http&quot;
+	&quot;net/http/httptest&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+)
+
+// serve starts a server that writes one byte every gap and never finishes, or,
+// when gap is zero, sends the headers and then goes silent.
+func serve(t *testing.T, gap time.Duration) string {
+	done := make(chan struct{})
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.(http.Flusher).Flush()
+		for {
+			if gap &gt; 0 {
+				_, _ = w.Write([]byte(&quot;x&quot;))
+				w.(http.Flusher).Flush()
+			}
+			select {
+			case &lt;-r.Context().Done():
+				return
+			case &lt;-done:
+				return
+			case &lt;-time.After(max(gap, 10*time.Millisecond)):
+			}
+		}
+	}))
+	t.Cleanup(srv.Close)
+	t.Cleanup(func() { close(done) })
+	return srv.URL + &quot;/distro.raw.xz&quot;
+}
+
+// stage runs Stage in the background and reports whether it returned within
+// patience, plus the error it gave.
+func stage(t *testing.T, ctx context.Context, url string) (time.Duration, error, bool) {
+	sum := sha256.Sum256([]byte(&quot;never served&quot;))
+	dep := Dependency{Name: &quot;distro&quot;, Version: &quot;0.2.7&quot;, Asset: Asset{
+		Platform: &quot;linux&quot;, Arch: &quot;arm64&quot;, Variant: &quot;raw&quot;,
+		URL: url, Checksum: &quot;sha256:&quot; + hex.EncodeToString(sum[:]),
+	}}
+	dir := t.TempDir()
+	s := &amp;Stager{CacheDir: filepath.Join(dir, &quot;cache&quot;)}
+	done := make(chan error, 1)
+	start := time.Now()
+	go func() { done &lt;- s.Stage(ctx, dep, filepath.Join(dir, &quot;embedded&quot;, &quot;distro.raw.xz&quot;)) }()
+	select {
+	case err := &lt;-done:
+		return time.Since(start), err, true
+	case &lt;-time.After(4 * time.Second):
+		return time.Since(start), nil, false
+	}
+}
+
+func TestProbeTrickle(t *testing.T) {
+	// Shorten the schedule so 4 seconds of patience is 20 stall windows.
+	oldStall, oldDelay, oldMax := stallTimeout, retryDelay, maxRetryDelay
+	stallTimeout, retryDelay, maxRetryDelay = 200*time.Millisecond, time.Millisecond, 10*time.Millisecond
+	t.Cleanup(func() { stallTimeout, retryDelay, maxRetryDelay = oldStall, oldDelay, oldMax })
+
+	// The case the round-1 fix closes: a peer that goes completely silent.
+	d, err, returned := stage(t, t.Context(), serve(t, 0))
+	t.Logf(&quot;silent peer:  returned=%v after %v: %v&quot;, returned, d.Round(time.Millisecond), err)
+
+	// The case it does not: the same peer sending one byte per half-window.
+	d, err, returned = stage(t, t.Context(), serve(t, stallTimeout/2))
+	t.Logf(&quot;trickling peer: returned=%v after %v (%d stall windows): %v&quot;,
+		returned, d.Round(time.Millisecond), int(d/stallTimeout), err)
+
+	// The proposed fix, applied at the caller: an overall deadline.
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
+	defer cancel()
+	d, err, returned = stage(t, ctx, serve(t, stallTimeout/2))
+	t.Logf(&quot;trickling peer, caller deadline 1s: returned=%v after %v: %v&quot;, returned, d.Round(time.Millisecond), err)
+}</code></pre>
+      <pre><code class="language-text">$ cd rdd &amp;&amp; go test -count=1 -timeout 120s -run TestProbeTrickle -v ./pkg/guestdeps/
+=== RUN   TestProbeTrickle
+    probe_trickle_test.go:71: silent peer:  returned=true after 822ms: downloading http://127.0.0.1:58004/distro.raw.xz: no data received for 200ms
+    probe_trickle_test.go:75: trickling peer: returned=false after 4.002s (20 stall windows): &lt;nil&gt;
+    probe_trickle_test.go:82: trickling peer, caller deadline 1s: returned=true after 1.003s: downloading http://127.0.0.1:58012/distro.raw.xz: context deadline exceeded
+--- PASS: TestProbeTrickle (5.84s)
+PASS</code></pre>
+      </details>
+    <p>Fix: give each <code>downloadOnce</code> attempt its own <code>context.WithTimeout</code>, keeping the per-gap timer for the fast failure. A <code>--timeout</code> flag would do as well.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> Three of round 2&#39;s mechanisms can be deleted with the suite still green <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L33-L45">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="33" data-line="38-40"><code class="language-go">// either for the response headers or for the next bytes of the body.
+// httpClient reads it at startup, so a test that shortens it moves the deadline
+// on the body alone.
+var stallTimeout = 30 * time.Second
+
+// progressInterval is how often a running download reports how far it has got.
+// A quiet minute on a 200 MiB asset looks the same as a wedged one.
+const progressInterval = 5 * time.Second
+
+// cacheTTL is how long a download nothing has used is kept. Every build touches
+// the entries it stages from, so what goes untouched this long is a superseded
+// version or the partial file a killed build left behind.
+const cacheTTL = 7 * 24 * time.Hour</code></pre>
+    <p><code>go tool cover -func</code> over <code>./pkg/guestdeps</code> puts <code>logProgress</code> at 0.0% of statements; the reporting branch in <code>Read</code> (521-524) never runs. The <code>Retry-After</code> to <code>retryAfterError</code> conversion (368-370) and <code>ResponseHeaderTimeout</code> (60) are untested too. <code>retryAfter</code> and <code>retryWait</code> are unit-tested in isolation, and the one 429 test serves no header, so nothing joins them.</p>
+    <p>Line 40 is what blocks the progress half: <code>stallTimeout</code> (36), <code>retryDelay</code> and <code>maxRetryDelay</code> (51-53) are variables whose comments say tests shorten them, while <code>progressInterval</code> is a constant. Testing the header timeout needs the same treatment for <code>httpClient</code>, which reads <code>stallTimeout</code> once at package init.</p>
+      <details class="repro">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/bin/bash
+# Save as probe-mutations.sh; run from the repo root: bash probe-mutations.sh
+set -u
+cd rdd || exit 1
+F=pkg/guestdeps/stage.go
+BAK=$(mktemp)
+cp &quot;$F&quot; &quot;$BAK&quot;
+
+run() {
+  printf &#39;%-42s &#39; &quot;$1&quot;
+  if go test -count=1 ./pkg/guestdeps/... &gt;/dev/null 2&gt;&amp;1; then
+    echo &#39;suite PASSES -- mutation unnoticed&#39;
+  else
+    echo &#39;suite FAILS  -- mutation caught&#39;
+  fi
+  cp &quot;$BAK&quot; &quot;$F&quot;
+}
+
+perl -0pi -e &#39;s/\t\tr\.report\(r\.read, r\.total\)\n//&#39; &quot;$F&quot;
+run &#39;progress report deleted&#39;
+
+perl -0pi -e &#39;s/\t\tif delay, ok := retryAfter\(resp[^\n]*\n[^\n]*\n\t\t\}\n//&#39; &quot;$F&quot;
+run &#39;Retry-After -&gt; retryAfterError deleted&#39;
+
+perl -0pi -e &#39;s/\ttransport\.ResponseHeaderTimeout = stallTimeout\n//&#39; &quot;$F&quot;
+run &#39;ResponseHeaderTimeout deleted&#39;
+
+# Control: a mutation the suite does catch.
+perl -0pi -e &quot;s/name\[1\] &gt;= &#39;0&#39; &amp;&amp; name\[1\] &lt;= &#39;9&#39;/true/&quot; &quot;$F&quot;
+run &#39;isVersionDir relaxed to any v-prefix&#39;
+
+rm -f &quot;$BAK&quot;
+git diff --quiet &quot;$F&quot; &amp;&amp; echo &#39;stage.go restored unchanged&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-mutations.sh
+progress report deleted                    suite PASSES -- mutation unnoticed
+Retry-After -&gt; retryAfterError deleted     suite PASSES -- mutation unnoticed
+ResponseHeaderTimeout deleted              suite PASSES -- mutation unnoticed
+isVersionDir relaxed to any v-prefix       suite FAILS  -- mutation caught
+stage.go restored unchanged</code></pre>
+      </details>
+    <p>Fix: make <code>progressInterval</code> a variable and add a <code>shortenProgressInterval</code> helper beside <code>shortenStallTimeout</code>. Then three tests close the gap: one asserting both <code>logProgress</code> branches (with and without <code>Content-Length</code>), one serving a 429 with <code>Retry-After</code> and asserting the elapsed wait is the server&#39;s rather than the backoff, and one covering the header stall.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> A 408 ends the download after one request <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L358-L372">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="358" data-line="363-367"><code class="language-go">		return 0, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		err := fmt.Errorf(&quot;unexpected status %s&quot;, resp.Status)
+		// A 4xx other than &quot;too many requests&quot; means the manifest names
+		// something the server does not have, which a retry cannot conjure up.
+		if resp.StatusCode &gt;= 400 &amp;&amp; resp.StatusCode &lt; 500 &amp;&amp; resp.StatusCode != http.StatusTooManyRequests {
+			return 0, &amp;fatalError{err}
+		}
+		if delay, ok := retryAfter(resp.Header.Get(&quot;Retry-After&quot;), time.Now()); ok {
+			return 0, &amp;retryAfterError{err: err, delay: delay}
+		}
+		return 0, err
+	}</code></pre>
+    <p>The comment&#39;s reasoning holds for 404 and 410. It does not hold for <code>408 Request Timeout</code>, which RFC 9110 defines as a status the client may repeat, so a transient becomes an immediate build failure with three attempts unspent. The failure prints <code>unexpected status 408 Request Timeout</code> and a re-run recovers, which keeps this at Suggestion.</p>
+    <p>Unproven: I cannot make GitHub emit a 408 on demand, so the classification is read from the code rather than reproduced against the real server.</p>
+    <p>Fix: exclude <code>http.StatusRequestTimeout</code> from the fatal range beside <code>StatusTooManyRequests</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> On Windows the cache sits inside the directory <code>rdd svc delete</code> removes <span class="pill pill-claude">Claude Opus 5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L77-L87">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="77" data-line="82"><code class="language-go">func DefaultCacheDir() (string, error) {
+	dir, err := os.UserCacheDir()
+	if err != nil {
+		return &quot;&quot;, fmt.Errorf(&quot;locating the download cache: %w&quot;, err)
+	}
+	return filepath.Join(dir, &quot;rancher-desktop-2&quot;, &quot;guest-deps&quot;), nil
+}
+
+// Stage makes destPath hold dep&#39;s verified bytes, downloading them first unless
+// the cache already has them. It checksums both destPath and the cache entry
+// rather than trusting a timestamp, so a half-written file from an interrupted</code></pre>
+    <p><code>os.UserCacheDir()</code> is <code>%LocalAppData%</code> on Windows, and <code>instance.Name()</code> defaults to <code>rancher-desktop-2</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/instance/instance.go#L17-L23"><code>rdd/pkg/instance/instance.go:17-23</code></a>), so this path is inside <code>instance.Dir()</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/instance/instance.go#L47-L62"><code>instance.go:47-62</code></a>), which <code>rdd svc delete</code> removes wholesale (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/service/cmd/service.go#L548"><code>rdd/pkg/service/cmd/service.go:548</code></a>). A reset therefore costs a 217 MB re-download over a CDN this project already gets throttled by. Bats instances set <code>RDD_INSTANCE</code>, so only the default instance collides.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/instance/instance.go#L12-L28">rdd/pkg/instance/instance.go</a></div>
+      <pre data-start="12" data-line="17-23"><code class="language-go">	&quot;strconv&quot;
+	&quot;sync&quot;
+)
+
+// Suffix returns the instance suffix from the RDD_INSTANCE environment variable, defaulting to &quot;2&quot;.
+var Suffix = sync.OnceValue(func() string {
+	instance := os.Getenv(&quot;RDD_INSTANCE&quot;)
+	if instance == &quot;&quot; {
+		return &quot;2&quot;
+	}
+	return instance
+})
+
+// Index returns unique number for the control plane instance as long as the
+// instance suffix is numeric and in the range from 1 to 99. Otherwise, it is
+// computed based on a checksum of the suffix, and may have collisions.
+// This index can be used to select unique port numbers per control plane</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/instance/instance.go#L42-L67">rdd/pkg/instance/instance.go</a></div>
+      <pre data-start="42" data-line="47-62"><code class="language-go">var Name = sync.OnceValue(func() string {
+	return &quot;rancher-desktop-&quot; + Suffix()
+})
+
+// Dir returns the OS-specific data directory for this instance.
+var Dir = sync.OnceValue(func() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		panic(fmt.Errorf(&quot;could not get home directory: %w&quot;, err))
+	}
+	switch runtime.GOOS {
+	case &quot;windows&quot;:
+		return filepath.Join(home, &quot;AppData&quot;, &quot;Local&quot;, Name())
+	case &quot;linux&quot;:
+		return filepath.Join(home, &quot;.local&quot;, &quot;share&quot;, Name())
+	case &quot;darwin&quot;:
+		return filepath.Join(home, &quot;Library&quot;, &quot;Application Support&quot;, Name())
+	default:
+		panic(fmt.Sprintf(&quot;platform %s not supported&quot;, runtime.GOOS))
+	}
+})
+
+// LogDir returns the OS-specific log directory for this instance.
+// Logs are stored separately from instance data so they can be preserved
+// independently (e.g., when deleting an instance but keeping logs for debugging).
+var LogDir = sync.OnceValue(func() string {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/service/cmd/service.go#L543-L553">rdd/pkg/service/cmd/service.go</a></div>
+      <pre data-start="543" data-line="548"><code class="language-go">	// a failure here shouldn&#39;t stop the instance from being deleted.
+	if err := pathmanagement.Unwind(ctx); err != nil {
+		logrus.WithError(err).Warn(&quot;Failed to remove PATH management entries&quot;)
+	}
+	_ = os.RemoveAll(instance.ShortDir())
+	return os.RemoveAll(instance.Dir())
+}
+
+// preserveAllInstanceLogs moves .log files from each Lima instance directory
+// to the service log directory before the instance directories are deleted.
+// This is a no-op unless RDD_KEEP_LOGS is set.</code></pre>
+    <p>The project memory records this as accepted, at the cost of one re-download. I raise it only because a sibling directory no <code>instance.Name()</code> can produce escapes it, and also gives <code>Prune</code> a tree it owns outright rather than a subdirectory of the Electron app&#39;s own cache. Nothing invokes the tool yet, so there are no caches to orphan and no test pins the path.</p>
+    <p>Fix: <code>filepath.Join(dir, &quot;rancher-desktop-guest-deps&quot;)</code>, or decline again in one line.</p>
+    </div>
+    <div class="card card-suggestion" data-file="scripts/dependencies/nerdctl.ts">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The corrected nerdctl note leaves the opposite claim nine lines below it <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/scripts/dependencies/nerdctl.ts#L21-L33">scripts/dependencies/nerdctl.ts</a></div>
+      <pre data-start="21" data-line="26-28"><code class="language-ts">  readonly name = &#39;nerdctl&#39;;
+  readonly githubOwner = &#39;containerd&#39;;
+  readonly githubRepo = &#39;nerdctl&#39;;
+  readonly manifestPath = GUEST_DEP_VERSIONS_PATH;
+
+  download(_context: DownloadContext): Promise&lt;void&gt; {
+    return Promise.reject(new Error(&#39;nerdctl is staged by the build, not by postinstall&#39;));
+  }
+
+  async getAssets(version: string): Promise&lt;DependencyAsset[]&gt; {
+    const baseURL = `https://github.com/${ this.githubOwner }/${ this.githubRepo }/releases/download/v${ version }`;
+    const upstream = await fetchUpstreamChecksums(`${ baseURL }/SHA256SUMS`, &#39;sha256&#39;);
+</code></pre>
+    <p>Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a> rewrote the class comment above to say nothing fetches nerdctl yet, which <code>stagedDeps</code> confirms. This error string still says the build stages it. <code>Nerdctl</code> reaches no <code>postinstall</code> path today, so the diagnostic is dormant prose.</p>
+    <p>Fix: <code>&#39;nerdctl is a guest-only dependency and is not installed by postinstall&#39;</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>dep.Name</code> is the one <code>cachePath</code> component <code>isPathElement</code> does not guard <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L245-L256">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="245" data-line="250-251"><code class="language-go">func (s *Stager) cachePath(dep Dependency) (string, error) {
+	u, err := url.Parse(dep.Asset.URL)
+	if err != nil {
+		return &quot;&quot;, fmt.Errorf(&quot;%s %s has an unparseable url %q: %w&quot;, dep.Name, dep.Asset, dep.Asset.URL, err)
+	}
+	version := &quot;v&quot; + strings.TrimPrefix(dep.Version, &quot;v&quot;)
+	return filepath.Join(s.CacheDir, dep.Name, version, path.Base(u.Path)), nil
+}
+
+func (s *Stager) logf(format string, args ...any) {
+	if s.Log == nil {
+		return</code></pre>
+    <p>Round 2 added <code>isPathElement</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/manifest.go#L96-L98"><code>manifest.go:96-98</code></a>) and applied it to <code>Entry.Version</code> and the URL&#39;s base name, the other two arguments of this Join. The guard&#39;s own comment explains itself in terms of &quot;cachePath builds that path with filepath.Join&quot;, and one argument escapes it.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/manifest.go#L91-L103">rdd/pkg/guestdeps/manifest.go</a></div>
+      <pre data-start="91" data-line="96-98"><code class="language-go">
+// isPathElement reports whether name is usable as one directory or file name of
+// a cached download. cachePath builds that path with filepath.Join, which
+// treats a backslash as a separator on Windows, and url.Parse decodes %5C into
+// one, so checking only for a slash would leave a traversal open there.
+func isPathElement(name string) bool {
+	return name != &quot;&quot; &amp;&amp; name != &quot;.&quot; &amp;&amp; name != &quot;..&quot; &amp;&amp; !strings.ContainsAny(name, `/\`)
+}
+
+func (a Asset) validate() error {
+	u, err := url.Parse(a.URL)
+	if err != nil {
+		return fmt.Errorf(&quot;asset %s has an unparseable url %q: %w&quot;, a, a.URL, err)</code></pre>
+    <p>No traversal is reachable. <code>Select</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/manifest.go#L171-L187"><code>manifest.go:171-187</code></a>) copies the caller&#39;s name, not the map key, and the only non-test caller passes the literal <code>&quot;distro&quot;</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/external/main.go#L96"><code>main.go:96</code></a>); a manifest keyed <code>../../../../escaped</code> makes <code>run()</code> fail with <code>no dependency &quot;distro&quot; in the manifest</code> and write nothing. Both Gemini models rated this Important on the traversal; what survives is completeness.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/manifest.go#L166-L187">rdd/pkg/guestdeps/manifest.go</a></div>
+      <pre data-start="166" data-line="171-187"><code class="language-go">}
+
+// Select returns the asset of the named dependency that matches sel. Exactly
+// one must match; a manifest that grows a second matching asset fails the
+// build instead of letting the list order decide.
+func (m Manifest) Select(name string, sel Selector) (Dependency, error) {
+	entry, ok := m[name]
+	if !ok {
+		return Dependency{}, fmt.Errorf(&quot;no dependency %q in the manifest&quot;, name)
+	}
+	var matches []Asset
+	for _, asset := range entry.Assets {
+		if sel.matches(asset) {
+			matches = append(matches, asset)
+		}
+	}
+	if len(matches) != 1 {
+		return Dependency{}, fmt.Errorf(&quot;want exactly one %s asset for %s, found %d: %v&quot;,
+			name, sel, len(matches), matches)
+	}
+	return Dependency{Name: name, Version: entry.Version, Asset: matches[0]}, nil
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/external/main.go#L91-L101">rdd/pkg/external/main.go</a></div>
+      <pre data-start="91" data-line="96"><code class="language-go">	var shutdownStartTime atomic.Int64
+	var wg sync.WaitGroup
+	wg.Go(func() {
+		monitorControlPlane(monitorCtx, apiGroupName, config, setupLog, func() {
+			// Track when shutdown is initiated for timing logs
+			shutdownStartTime.Store(time.Now().UnixNano())
+			cancelMonitor()
+		})
+	})
+
+	// Create shared controller manager for this API group.</code></pre>
+    <p>Fix: check the map key in <code>LoadManifest</code>&#39;s range loop, beside the existing <code>entry.validate()</code> call.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>touch</code> refreshes a cache entry it never verified <span class="pill pill-claude">Claude Opus 5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L96-L110">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="96" data-line="101-105"><code class="language-go">	// whole download is avoidable.
+	staged, err := fileHasChecksum(destPath, dep.Asset.Checksum)
+	if err != nil {
+		return err
+	}
+	if staged {
+		s.logf(&quot;%s is up to date&quot;, destPath)
+		s.touch(cachePath)
+		return nil
+	}
+
+	cached, err := fileHasChecksum(cachePath, dep.Asset.Checksum)
+	if err != nil {
+		return err
+	}</code></pre>
+    <p>With a valid staged file and a corrupt cache entry, <code>Stage</code> returns here having reset the corrupt entry&#39;s mtime. Every later build does the same, so the 7-day TTL never collects it and 217 MB of unusable bytes stays on disk until the staged file goes. <code>Prune</code>&#39;s comment (139-141) promises to remove &quot;the partial files a build killed mid-transfer leaves behind&quot;, and this is the one such file it cannot reach.</p>
+    <p>Fix: touch only when the entry is known good, or say in <code>touch</code>&#39;s comment (129-131) that an unverified entry is refreshed too.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> Nothing collects a temporary file stranded in the destination directory<a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L407-L417">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="407" data-line="412"><code class="language-go">	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	tmp, err := createTemp(dst)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {</code></pre>
+    <p><code>copyFile</code> writes its temporary file beside <code>destPath</code>, in the build tree. <code>Prune</code> sweeps <code>CacheDir</code> alone, and <code>rdd/Makefile</code>&#39;s <code>clean</code> target removes only <code>bin</code> and the guestagent binaries, so a build killed here strands up to 217 MB that nothing ever removes. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/.gitignore#L3"><code>rdd/.gitignore:3</code></a> keeps it out of <code>git status</code>, which also keeps it out of sight. Round 1&#39;s S3 named this failure and its fix covered the cache half.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/.gitignore#L1-L3">rdd/.gitignore</a></div>
+      <pre data-start="1" data-line="3"><code class="language-plaintext">/bin/*
+/pkg/guestagent/lima-guestagent.gz
+/pkg/embedded/distro.*.xz*</code></pre>
+    <p>Fix: this belongs with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a>&#39;s Makefile rule, on the same reasoning that deferred the <code>pkg/embedded/</code> documentation. Either sweep the destination directory for <code>.tmp-*</code> at the start of a run, or add it to <code>clean</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/manifest.go">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> Manifest validation accepts an https URL with no host <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/manifest.go#L100-L112">rdd/pkg/guestdeps/manifest.go</a></div>
+      <pre data-start="100" data-line="105-107"><code class="language-go">func (a Asset) validate() error {
+	u, err := url.Parse(a.URL)
+	if err != nil {
+		return fmt.Errorf(&quot;asset %s has an unparseable url %q: %w&quot;, a, a.URL, err)
+	}
+	if u.Scheme != &quot;https&quot; {
+		return fmt.Errorf(&quot;asset %s has url %q, want https&quot;, a, a.URL)
+	}
+	if !isPathElement(path.Base(u.Path)) {
+		return fmt.Errorf(&quot;asset %s has url %q with no file name to download to&quot;, a, a.URL)
+	}
+	if !checksumPattern.MatchString(a.Checksum) {
+		return fmt.Errorf(&quot;asset %s has checksum %q, want sha256:&lt;64 lowercase hex digits&gt;&quot;, a, a.Checksum)</code></pre>
+    <p><code>url.Parse(&quot;https:///distro.xz&quot;)</code> returns scheme <code>https</code>, host <code>&quot;&quot;</code> and base <code>distro.xz</code>, so both checks pass and staging fails later with <code>http: no Host in request URL</code> after the full retry schedule. A URL ending in <code>/</code> passes too: <code>path.Base(&quot;https://example.test/dir/&quot;)</code> is <code>dir</code>, which then names the downloaded file. <code>yarn rddepman</code> writes neither form, so this only sharpens a hand-edited manifest&#39;s error.</p>
+    <p>Fix: require <code>u.Hostname() != &quot;&quot;</code>, and reject a path ending in <code>/</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/guestdeps/stage.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> The vanished-entry fallback can fire on a destination-side ENOENT <span class="pill pill-claude">Claude Opus 5</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L112-L125">rdd/pkg/guestdeps/stage.go</a></div>
+      <pre data-start="112" data-line="117-120"><code class="language-go">		s.logf(&quot;%s %s is already downloaded to %s&quot;, dep.Name, dep.Version, cachePath)
+		s.touch(cachePath)
+		// touch narrows the window but cannot close it: a concurrent prune
+		// decides from a stat taken before it, and unlink succeeds whatever the
+		// timestamp says. An entry that goes missing here is a cache miss.
+		if err := copyFile(cachePath, destPath); !errors.Is(err, fs.ErrNotExist) {
+			return err
+		}
+		s.logf(&quot;%s went away before it could be copied; downloading it again&quot;, cachePath)
+	}
+	if err := s.download(ctx, dep, cachePath); err != nil {
+		return err
+	}
+	s.logf(&quot;Copying %s to %s&quot;, cachePath, destPath)</code></pre>
+    <p><code>copyFile</code> can produce <code>fs.ErrNotExist</code> from <code>createTemp</code> (441, 444) and from <code>finishTemp</code>&#39;s rename (464) as well as from the source open this branch describes. Any of those logs a message naming the wrong file and re-downloads 217 MB before failing the same way. Nothing prunes <code>pkg/embedded/</code>, so in practice only the source open reaches it.</p>
+    <p>Fix: open the cache entry in <code>Stage</code> and hand the open file to a <code>copyFrom(io.Reader, dst)</code>, leaving only the source&#39;s absence in this branch.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Concurrent builds do not share the cache</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5</span>. Eight stagers over one cache directory made eight separate downloads in my probe, all succeeding, with the right checksum at the destination and no leaked temporary files. The goal at lines 71-73, one copy per asset across bats worktrees, holds for sequential builds. Two parallel worktrees pull 434 MB. Round 1 declined a lock file on this path, so this is a property to know rather than a fix to make.</li>
+      <li><em></em><code>Prune</code>&#39;s foreign-file heuristic now guards a directory the tool owns<em></em> <code>(in-scope)</code>. <code>TestPruneLeavesForeignFilesAlone</code> models <code>GPUCache</code>, <code>Cache/data_0</code> and <code>updater-longhorn.json</code>, the Electron cache&#39;s neighbours, which could only appear inside <code>CacheDir</code> under the pre-move layout. After the move to <code>guest-deps/</code>, nothing else writes there. The heuristic is cheap insurance and the tests still pin <code>isVersionDir</code>, so I would keep both; the comments could say which layout they defend.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>The persistent-state enumeration is thorough <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>: temporary-file-then-rename on both write paths, checksums rather than timestamps on both files, an explicit fallback for a cache entry pruned mid-<code>Stage</code>, and <code>createTemp</code>&#39;s retry for a directory pruned mid-create.</li>
+      <li>Checksumming <code>destPath</code> before the cache entry is a real improvement on round 1&#39;s order, and the comment at 94-96 gives the two reasons: offline builds and purged caches <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li><code>TestStagedDepsResolveAgainstTheManifest</code> resolves all six target tuples against the checked-in <code>rdd/dependencies.yaml</code>, so a rddepman rename breaks a unit test instead of a build <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li><code>retryAfter</code> handles both header forms and the <code>time.Duration</code> overflow that round 1&#39;s fix introduced, with a table test naming the wrap <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+      <li>The prune tests use the real neighbours from the app&#39;s cache directory rather than invented names <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran the suite myself from the lead worktree at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a>: <code>go test</code>, <code>go test -race</code>, <code>go vet</code> and <code>golangci-lint run</code> over <code>./pkg/guestdeps/...</code> and <code>./cmd/download-guest-deps/...</code> are all clean, and the tool cross-compiles for <code>windows/amd64</code> and <code>linux/arm64</code>. Coverage is 83.3% of statements in <code>pkg/guestdeps</code>.</p>
+    <p>The suite has teeth where it reaches. Four mutations, three surviving and one caught, are in I2&#39;s reproducer; <code>TestStageTouchesTheCacheEntryItUses</code>, <code>TestPruneCollectsAVPrefixedVersion</code> and <code>TestPruneLeavesAVendorDirectoryAlone</code> each pin exactly one behaviour. <code>TestStageRecoversFromAVanishedCacheEntry</code>&#39;s <code>removeOnLog</code> writer is a neat way to hit a window a normal test cannot.</p>
+    <p>Gaps, worst first:</p>
+    <ol>
+      <li><strong>No test for a transfer that progresses too slowly</strong> (I1). <code>TestStageFailsAStalledTransfer</code> covers complete silence.</li>
+      <li><em></em>Progress reporting, the <code>Retry-After</code> join, and the header timeout<em></em> (I2).</li>
+      <li><em></em><code>createTemp</code>&#39;s ENOENT retry<em></em> (437-444) is uncovered. Claude&#39;s hostile probe, a tight <code>RemoveAll</code> loop, failed 2992 times in 3000 and models nothing a 7-day prune does, so it settles only that the path is untested.</li>
+      <li><em></em><code>DefaultCacheDir</code><em></em> stays at 0%, which round 1 accepted as <code>os.UserCacheDir</code>&#39;s own contract. Its extra directory level is now the prune safety boundary, so a test pinning the path would be cheap.</li>
+      <li><em></em><code>run</code>&#39;s new <code>log io.Writer</code><em></em> is never asserted on: both <code>main_test.go</code> tests pass a <code>bytes.Buffer</code> nothing reads, so <code>Prune</code>&#39;s warning path (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/external/main.go#L72-L74"><code>main.go:72-74</code></a>) is untested end to end.</li>
+      <li><em></em><code>Prune</code>&#39;s error return<em></em> (155-157) is uncovered; a <code>CacheDir</code> that is a file returns ENOTDIR and nothing walks that to the warning.</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every exported symbol has a godoc comment in the declarative form the tooling wants, and the package comment states the problem rather than restating the name. The <code>httpClient</code> comment (55-57) claims a bound <code>http.DefaultTransport</code> lacks; I checked it holds over HTTP/2 as well, since Go 1.27.1&#39;s bundled h2 transport reads <code>t1.ResponseHeaderTimeout</code> (<code>net/http/internal/http2/transport.go:1065</code>), so GitHub serving h2 does not silently drop it.</p>
+    <p>Two comments overreach. <code>progressReader</code>&#39;s first sentence says the reader gives the transfer &quot;a deadline&quot; before the second sentence narrows that to the gap between bytes (I1). <code>touch</code>&#39;s comment explains why a missing entry is fine but not that an unverified one is refreshed (S5).</p>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/scripts/dependencies/distro.ts#L18-L19"><code>scripts/dependencies/distro.ts:18-19</code></a> still says the Go downloader &quot;fetches it at build time&quot; in the present tense while nothing invokes the tool. That file is outside this PR&#39;s diff, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> makes the sentence true, so I raise it only as the sibling of S3.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Clean. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d213106ac"><code>d213106ac</code></a> is the Go feature with its tests, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/14b43bf81"><code>14b43bf81</code></a> is a one-line TypeScript comment fix whose subject matches its diff. Neither patches the other, and the split survives a rebase.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>No Windows host.</strong> S2&#39;s path identity comes from reading <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/instance/instance.go#L17-L23"><code>instance.go:17-23</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/instance/instance.go#L47-L62"><code>instance.go:47-62</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/service/cmd/service.go#L548"><code>service.go:548</code></a>, not from a Windows run.</li>
+      <li><strong>The 408 classification</strong> (S1) is read from the code; I cannot make GitHub emit that status.</li>
+      <li><strong>A version not starting with a digit is never pruned</strong> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L179-L181"><code>stage.go:179-181</code></a> states the trade-off, and both current guest dependencies start with digits.</li>
+      <li><em></em><code>touch</code> cannot close the prune window<em></em> — <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L114-L116"><code>stage.go:114-116</code></a> says so, and <code>TestStageRecoversFromAVanishedCacheEntry</code> covers the recovery.</li>
+    </ul>
+    <h3 id="declined-in-prior-rounds">Declined in prior rounds <a href="#declined-in-prior-rounds" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Concurrent stagers sharing one cache can collide on Windows</strong> — declined round 1: documented on <code>finishTemp</code>; a lock file would add its own stale-lock failure mode to a path that has none, and the collision is loud and clears on a re-run. I confirmed the comment is at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage.go#L449-L453"><code>stage.go:449-453</code></a> and that the reorder gives <code>finishTemp</code> no new contention on the shared cache: the cache-hit path now renames into the build tree, which is per-checkout.</li>
+      <li><em></em>Nothing records that <code>rdd/pkg/embedded/</code> is a build output<em></em> — declined round 1: the directory does not exist and nothing invokes the tool; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> adds the Makefile rule and the documentation belongs with it. Confirmed at this SHA: <code>rdd/pkg/embedded</code> is absent and neither Makefile mentions <code>download-guest-deps</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5"><span class="pill pill-claude">Claude Opus 5</span> <a href="#claude-opus-5" class="pilcrow">&#182;</a></h3>
+    <p>The strongest review of the four by a wide margin, and the only one that mutation-tested the suite instead of describing it. It found four of the eight suggestions alone, and its Windows path identity (S2) was the only finding that required reading outside the diff, through <code>instance.go</code> and <code>service.go</code>. It also killed its own best hypothesis, that <code>ResponseHeaderTimeout</code> is dead over HTTP/2, by reading the Go source rather than reporting it, and said so. Its one calibration miss runs the other way from the usual: it filed the trickle hang as a design observation tagged <code>(future)</code> while Codex filed the same mechanism as Important, and I agreed with Codex. Its <code>createTemp</code> probe was a fair model of nothing, which it stated plainly rather than drawing a conclusion.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Best value per finding again, as in round 1: four findings, no false positives, and the only reviewer to reach the trickle hang at the severity it deserves. Its reproducer was a real server rather than an argument, and its hostless-URL finding (S7) came from reading <code>url.Parse</code>&#39;s contract rather than from the diff. It ran the widest verification set of the four, including <code>-shuffle=on</code> and <code>-count=10</code>, and reported its own probe&#39;s first compile error unprompted. It missed the Windows path collision and did not check whether the destination directory is ever swept.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>One finding, and its mechanism was wrong. It traced <code>dep.Name</code> into <code>filepath.Join</code> and stopped there, without checking where <code>Dependency.Name</code> comes from; <code>Select</code> copies the caller&#39;s argument, so the manifest key never reaches the path. Its line citation (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/manifest.go#L42-L47"><code>manifest.go:42-47</code></a>) points at neither the loop it quoted nor anything else. Its Acknowledged Limitations restate the two declines from the injected round-2 context word for word, with no evidence attached, and its delta verdict names no measurement, so I recorded it as unverified. It marked <code>stage.go</code> &quot;Reviewed, no issues&quot; while five of this round&#39;s findings are in that file.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Reached the same finding as Gemini 3.1 Pro with the same wrong mechanism, which is one opinion rather than two given the shared family. It went further and attached a <code>repro-output</code> block reporting a test failure it had not run, in a format the real <code>go test</code> does not print. It also credited the production doc comments with an NTFS mtime discussion that exists only in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/14b43bf81c97b6390a26b9f326ed27999a9c810f/rdd/pkg/guestdeps/stage_test.go#L436"><code>stage_test.go:436</code></a>. Both are the same error as round 1&#39;s dropped godoc claim: a confident assertion about a file it said it had reviewed. Its coverage table was otherwise complete and its Acknowledged Limitations were accurate.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>16m 42s</td><td>22m 36s</td><td>5m 21s</td><td>3m 55s</td></tr>
+        <tr><td>Findings</td><td>2I 6S</td><td>1I 3S</td><td>1S</td><td>1S</td></tr>
+        <tr><td>Tool calls</td><td>52 (Bash 51, Read 1)</td><td>—</td><td>10 (run<em>shell</em>command 9, read_file 1)</td><td>31 (read<em>file 18, run</em>shell<em>command 6, grep</em>search 3)</td></tr>
+        <tr><td>Design observations</td><td>7</td><td>3</td><td>2</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>5</td><td>2</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>8</td><td>8</td><td>8</td><td>8</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 6S</strong></td><td><strong>1I 3S</strong></td><td><strong>1S</strong></td><td><strong>1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>1 (I→S)</td><td>0</td><td>1 (I→S)</td><td>1 (I→S)</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Codex&#39;s I1 (trickling transfer, important) was kept at I1; Claude raised the same mechanism as a <code>(future)</code> design observation and I promoted it to share the finding. Claude&#39;s I1 (Windows cache inside <code>instance.Dir()</code>, important) was downgraded to S2, because the project already records the consequence as accepted. Gemini 3.1 Pro&#39;s I1 and Gemini 3.5 Flash&#39;s I1 (dependency-key path traversal, important) were both downgraded to S4 after I proved the traversal unreachable; the completeness residual survives and is credited to all three reviewers that raised the code path. No findings were dropped outright.</p>
+    <p>Claude and Codex between them found everything in this report. Claude is worth its slot for depth, Codex for calibration: it was the only reviewer whose severities I did not have to move.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a round&#39;s fix narrows a prior finding&#39;s guarantee, decide whether the residual failure is the same server or system behaviour the finding named, or a neighbouring one. A fix that closes the named case documents its own reduced scope in a comment and is settled; a neighbouring behaviour producing the same user-visible failure is a new finding, judged fresh at whatever severity the evidence supports. Say in the finding which of the two you decided, so the author can see the call rather than the conclusion.</li>
+      <li>Before accepting a finding that traces a value into a dangerous sink, find where the value is assigned, not where the struct field is declared. A constructor that copies a caller&#39;s argument into a field of the same name looks identical, in the sink&#39;s neighbourhood, to one that copies attacker- controlled data, and the difference decides the severity.</li>
+      <li>Where a finding is that code is untested, prove it by deleting the mechanism and running the suite, and include one mutation the suite does catch. A coverage percentage names a line count; a surviving mutation names a behaviour nobody would notice losing, and the caught control shows the suite was capable of noticing.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] <code>os.UserCacheDir()</code> on Windows is <code>%LocalAppData%</code>, which is also the parent of <code>instance.Dir()</code> (<code>rdd/pkg/instance/instance.go</code>), and <code>rdd svc delete</code> ends in <code>os.RemoveAll(instance.Dir())</code>. Any Go code choosing a cache or state directory under <code>os.UserCacheDir()</code> on Windows therefore shares a tree with the daemon instance and is removed with it. Bats runs set <code>RDD_INSTANCE</code>, so only the default instance collides. On macOS and Linux the same parent is the Electron app&#39;s own cache, set from <code>pkg/rancher-desktop/utils/paths.ts</code>.</li>
+      <li>[repo] <code>rdd/dependencies.yaml</code> is the guest dependency manifest that <code>yarn rddepman guest</code> regenerates. <code>Manifest.Select</code> takes the dependency name from its caller and copies it into <code>Dependency.Name</code>; the manifest&#39;s own map keys never reach a filesystem path. Findings that trace a manifest key into <code>filepath.Join</code> need a caller that passes one.</li>
+      <li>[repo] The <code>progressInterval</code> constant, and <code>httpClient</code>&#39;s package-init read of <code>stallTimeout</code>, are the reason <code>logProgress</code> and <code>ResponseHeaderTimeout</code> have no tests in <code>rdd/pkg/guestdeps</code>. Sibling knobs in the same file are variables with comments saying tests shorten them.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
