@@ -13,9 +13,13 @@ jobs:
   check-update-versions:
     permissions:
       contents: read
-      id-token: write # Required for ./.github/actions/get-token
+      id-token: write # Required for $/.github/actions/get-token
     runs-on: ubuntu-latest
     steps:
+      - id: get-token
+        uses: $/.github/actions/get-token
+        with:
+          token-secret: ${{ secrets.RUN_WORKFLOW_FROM_WORKFLOW }}
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -24,12 +28,7 @@ jobs:
           # github.token would override that, so keep it out of git config.
           persist-credentials: false
 
-      - uses: ./.github/actions/yarn-install
-
-      - id: get-token
-        uses: ./.github/actions/get-token
-        with:
-          token-secret: ${{ secrets.RUN_WORKFLOW_FROM_WORKFLOW }}
+      - uses: $/.github/actions/yarn-install
 
       - run: yarn rddepman host
         env:

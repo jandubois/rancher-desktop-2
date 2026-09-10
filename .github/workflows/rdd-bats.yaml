@@ -192,7 +192,7 @@ jobs:
 
     - name: "Windows: disable Compatibility Telemetry"
       if: needs.check-paths.outputs.should-run && runner.os == 'Windows'
-      uses: ./.github/actions/disable-compat-telemetry
+      uses: $/.github/actions/disable-compat-telemetry
 
     - name: "Windows: WSL debugging"
       if: needs.check-paths.outputs.should-run && runner.os == 'Windows'
@@ -204,14 +204,14 @@ jobs:
 
     - name: "Windows: capture machine info"
       if: needs.check-paths.outputs.should-run && runner.os == 'Windows'
-      uses: ./.github/actions/windows-machine-info
+      uses: $/.github/actions/windows-machine-info
       with:
         output-path: rdd/rdd-logs/_diag/machine-info.txt
       continue-on-error: true
 
     - name: "Windows: start typeperf sampler"
       if: needs.check-paths.outputs.should-run && runner.os == 'Windows'
-      uses: ./.github/actions/windows-typeperf-sampler
+      uses: $/.github/actions/windows-typeperf-sampler
       with:
         command: start
         output-dir: rdd/rdd-logs/_diag
@@ -267,7 +267,7 @@ jobs:
 
     - name: "Windows: stop typeperf sampler"
       if: always() && needs.check-paths.outputs.should-run && runner.os == 'Windows'
-      uses: ./.github/actions/windows-typeperf-sampler
+      uses: $/.github/actions/windows-typeperf-sampler
       with:
         command: stop
         output-dir: rdd/rdd-logs/_diag
