@@ -101,7 +101,7 @@ assert_hardlink_to() { # <target> <link>
     cp "${PATH_REPO_ROOT}/bin/rdd${EXE}" "${throwaway}/rdd${EXE}"
     "${throwaway}/rdd${EXE}" svc start 3>&- 4>&-
     "${throwaway}/rdd${EXE}" svc stop 3>&- 4>&-
-    rm -rf "${throwaway}"
+    try --max 30 --delay 1 -- rm -rf "${throwaway}"
     # The standalone rdd repairs its own links to point at the running binary.
     rdd svc start
     standalone="${PATH_REPO_ROOT}/bin/rdd${EXE}"
@@ -125,7 +125,7 @@ assert_hardlink_to() { # <target> <link>
     "${bundle}/rdd${EXE}" svc start 3>&- 4>&-
     "${bundle}/rdd${EXE}" svc stop 3>&- 4>&-
     assert_symlink_to "${bundle}/docker${EXE}" "${DEST_DIR}/docker${EXE}"
-    rm -rf "${bundle}"
+    try --max 30 --delay 1 -- rm -rf "${bundle}"
     # A standalone rdd prunes the now-dangling docker link so it cannot shadow a
     # tool on PATH, and repairs its own rdd and kubectl links to itself.
     rdd svc start
