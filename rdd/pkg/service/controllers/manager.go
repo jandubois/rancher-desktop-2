@@ -195,13 +195,6 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
 		// Don't fail startup for discovery registration errors
 	}
 
-	// Mark the control plane ready after registerDiscovery so clients
-	// waiting on the ready annotation see both CRDs installed and
-	// controller registration written, not just CRDs.
-	if err := MarkControlPlaneReady(ctx, scm.discovery.client); err != nil {
-		return fmt.Errorf("failed to mark control plane as ready: %w", err)
-	}
-
 	// Ensure cleanup on shutdown with a timeout to avoid blocking if apiserver is gone
 	defer func() {
 		cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -278,12 +271,45 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
 		"metricsPort", scm.metricsPort,
 		"healthPort", scm.healthPort)
 
-	// Start the manager (this blocks until context is cancelled)
-	if err := mgr.Start(ctx); err != nil {
-		return fmt.Errorf("failed to start shared controller manager: %w", err)
+	mgrCtx, mgrCancel := context.WithCancel(ctx)
+	defer mgrCancel()
+	mgrResult := make(chan error, 1)
+	go func() { mgrResult <- mgr.Start(mgrCtx) }()
+
+	managerResult := func(err error) error {
+		if err != nil {
+			return fmt.Errorf("failed to start shared controller manager: %w", err)
+		}
+		return nil
 	}
 
-	return nil
+	if scm.hasWebhookControllers() {
+		ticker := time.NewTicker(100 * time.Millisecond)
+		defer ticker.Stop()
+		for mgr.GetWebhookServer().StartedChecker()(nil) != nil {
+			select {
+			case <-ctx.Done():
+				mgrCancel()
+				return managerResult(<-mgrResult)
+			case err := <-mgrResult:
+				if err != nil {
+					return fmt.Errorf("shared controller manager exited before its webhook server started: %w", err)
+				}
+				return nil
+			case <-ticker.C:
+			}
+		}
+	}
+
+	// Clients act on the ready annotation, so mark ready only after the
+	// webhook configurations exist and their server answers.
+	if err := MarkControlPlaneReady(ctx, scm.discovery.client); err != nil {
+		mgrCancel()
+		<-mgrResult
+		return fmt.Errorf("failed to mark control plane as ready: %w", err)
+	}
+
+	return managerResult(<-mgrResult)
 }
 
 // GetManager returns the underlying controller-runtime manager
