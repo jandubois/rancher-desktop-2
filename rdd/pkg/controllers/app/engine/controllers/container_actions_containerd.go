@@ -319,6 +319,8 @@ func (w *containerdWatcher) stopTask(nsCtx context.Context, log logr.Logger, ctr
 		// A failed Wait RPC arrives as an exit status carrying the error, so
 		// dropping it would report a container that never exited as stopped.
 		return status.Error()
+	case <-nsCtx.Done():
+		return nsCtx.Err()
 	case <-time.After(stopTimeout(nsCtx, log, ctr)):
 	}
 	if err := task.Kill(nsCtx, linuxSIGKILL); err != nil {
