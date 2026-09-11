@@ -11,7 +11,7 @@ require (
 	github.com/containers/gvisor-tap-vsock v0.8.9
 	github.com/coreos/go-semver v0.3.1
 	github.com/distribution/reference v0.6.0
-	github.com/docker/cli v29.7.2+incompatible
+	github.com/docker/cli v29.8.0+incompatible
 	github.com/go-logr/logr v1.4.4
 	github.com/gofrs/flock v0.13.1
 	github.com/google/uuid v1.6.0
