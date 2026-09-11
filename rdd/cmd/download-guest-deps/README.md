@@ -11,8 +11,8 @@ checksum recorded there. It keeps downloads in a cache outside the source tree,
 so every checkout and worktree shares one copy, and it skips a staged file that
 already matches its checksum.
 
-Run it from `rdd/` before `go build`; the default paths are relative to that
-directory.
+`make build-rdd` runs it before building `bin/rdd`. The default paths are
+relative to `rdd/`, so run it from there when you run it by hand.
 
 ## Usage
 
