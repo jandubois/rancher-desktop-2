@@ -69,6 +69,14 @@ do_websocket() { # endpoint
         ContainerNamespace/moby --timeout=10s
 }
 
+@test "moby engine reports no namespace support" {
+    # The single moby ContainerNamespace is an implementation detail of the
+    # mirror model; the engine itself has no namespace concept for the UI
+    # to select from.
+    run -0 rdd ctl get app app -o jsonpath='{.status.supportsNamespaces}'
+    assert_output "false"
+}
+
 # --- Image mirroring ---
 
 @test "docker pull creates Image resource" {
@@ -748,33 +756,34 @@ EOF
     refute_output
 }
 
-# --- containerd backend ---
+# --- containerd backend on platforms without a socket ---
 
-@test "containerd backend reports ContainerEngineReady=NotApplicable and skips mirroring" {
-    # Stop first so there is no stale True/Connected from moby to
-    # satisfy the Settled wait below before the engine reconciler has
-    # processed the containerd switch.
+@test "containerd backend reports NotApplicable where nothing serves its socket" {
+    # Everywhere else the containerd backend mirrors, and
+    # engine-containerd.bats covers it. Windows has no bridge for the
+    # named pipe, so the reconciler forces ContainerEngineReady True with
+    # reason NotApplicable and mirrors nothing, which is what lets
+    # `rdd set` finish waiting on Settled.
+    if ! is_windows; then
+        skip "containerd mirrors on this platform"
+    fi
+    # Stop first so no stale True/Connected from moby satisfies the Settled
+    # wait before the engine reconciler has processed the switch.
     rdd set running=false
-
-    # Start with containerd. rdd set waits for Settled=True, which
-    # requires ContainerEngineReady=True. The engine reconciler
-    # satisfies that immediately with reason NotApplicable because
-    # engine mirroring only supports the moby backend.
     rdd set containerEngine.name=containerd running=true
 
     run -0 rdd ctl get app app \
         -o jsonpath='{.status.conditions[?(@.type=="ContainerEngineReady")].reason}'
     assert_output "NotApplicable"
 
-    # No mirror resources should exist in containerd mode.
-    run -0 rdd ctl get containers --namespace="${RDD_NAMESPACE}" --output=name
-    refute_output
-    run -0 rdd ctl get images --namespace="${RDD_NAMESPACE}" --output=name
-    refute_output
-    run -0 rdd ctl get volumes --namespace="${RDD_NAMESPACE}" --output=name
-    refute_output
-    run -0 rdd ctl get ContainerNamespaces --namespace="${RDD_NAMESPACE}" --output=name
-    refute_output
+    # A backend that mirrors nothing offers no namespaces to select from.
+    run -0 rdd ctl get app app -o jsonpath='{.status.supportsNamespaces}'
+    assert_output "false"
+
+    for kind in containers images volumes ContainerNamespaces; do
+        run -0 rdd ctl get "${kind}" --namespace="${RDD_NAMESPACE}" --output=name
+        refute_output
+    done
 }
 
 # --- Docker context management ---
@@ -802,8 +811,8 @@ assert_docker_context() { # <expected-context>
 }
 
 @test "moby engine creates Docker context for the instance" {
-    # Restart with moby (the containerd test above may have left the engine in
-    # containerd mode).
+    # Ensure the engine is running on the moby backend; earlier tests may
+    # have stopped it, or switched it to containerd.
     rdd set running=true containerEngine.name=moby
     rdd ctl wait --for=condition=ContainerEngineReady \
         app/app --timeout=30s

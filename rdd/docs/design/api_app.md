@@ -36,7 +36,7 @@ Lightweight app snapshots only copy this data disk, and not the full VM image.
 
 ### Docker and Kube Contexts
 
-When the `App` is starting it creates the Docker context and sets up the kubeconfig in `~/.kube/config`.
+When the `App` is starting it sets up the kubeconfig in `~/.kube/config`, and on the moby backend it also creates the Docker context. containerd has no Docker endpoint to point a context at, so it creates none, and removes one an earlier moby session left behind.
 
 It will only change the current context if it does not exist, or is not working at the time the app is starting.
 
@@ -129,6 +129,8 @@ status:
 
 - **status.kubernetesPort**: The host TCP port allocated for the k3s API server (`7441 + instance.Index()` by default). Set by the App reconciler on the first reconcile after `spec.kubernetes.enabled` becomes `true`, and cleared when `spec.kubernetes.enabled` is set back to `false` so that a fresh port is resolved on the next enable. The `KUBERNETES_PORT` Lima template param is set to this value; Lima's identity port-forward rule binds the same port on the host and forwards it to the guest.
 
+- **status.supportsNamespaces**: `true` when the selected container engine scopes containers and images into namespaces (`containerd`), `false` when it does not (`moby`). The engine controller writes it together with the `ContainerEngineReady` condition, so the UI can hide its container-namespace selector. It is also `false` whenever that condition's reason is `NotApplicable`, since a backend that mirrors nothing offers no namespaces to choose from. The field is absent until the engine controller first writes it; treat absence as unknown.
+
 - **status.conditions**: Multiple controllers write here. The App controller mirrors `Created` and `Running` from the owned `LimaVM` and computes `Settled`, the engine controller writes `ContainerEngineReady`, the Kubernetes controller writes `KubernetesReady`, and the PATH management controller writes `PathManagementReady`. All writers use `retry.RetryOnConflict` with a re-Get so concurrent status updates do not 409.
 
   | Type                   | Status    | Reason           | Description                                                       |
@@ -142,9 +144,9 @@ status:
   | `Running`              | `False`   | `Starting`       | Lima instance is starting up                                      |
   | `Running`              | `False`   | `StartFailed`    | Lima instance failed to start                                     |
   | `Running`              | `False`   | `StopFailed`     | Lima instance failed to stop cleanly                              |
-  | `ContainerEngineReady` | `True`    | `Connected`      | Engine controller has connected to Docker and completed full sync |
-  | `ContainerEngineReady` | `True`    | `NotApplicable`  | Mirroring is not implemented for the current backend (e.g. `containerd`); forced `True` so `rdd set` can finish waiting |
-  | `ContainerEngineReady` | `False`   | `ConnectFailed`  | Engine controller failed to connect to Docker                     |
+  | `ContainerEngineReady` | `True`    | `Connected`      | Engine controller has connected to the container engine and completed full sync |
+  | `ContainerEngineReady` | `True`    | `NotApplicable`  | Mirroring is not supported for the selected engine on this platform (containerd on Windows); forced `True` so `rdd set` can finish waiting |
+  | `ContainerEngineReady` | `False`   | `ConnectFailed`  | Engine controller failed to connect to the container engine       |
   | `ContainerEngineReady` | `False`   | `Stopped`        | The VM is stopped; the engine watcher is not running              |
   | `KubernetesReady`      | `True`    | `Ready`          | API server answers, node Ready, context merged into `~/.kube/config`. Workload-level readiness (coredns, traefik) is not gated; wait for those Deployments directly when needed |
   | `KubernetesReady`      | `False`   | `NotApplicable`  | `spec.kubernetes.enabled` is false                                |

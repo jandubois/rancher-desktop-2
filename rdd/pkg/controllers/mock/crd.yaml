@@ -248,6 +248,16 @@ spec:
                   or read the bound host port from Lima state instead of storing an
                   intent.
                 type: integer
+              supportsNamespaces:
+                description: |-
+                  supportsNamespaces reports whether the selected container engine
+                  scopes containers and images into namespaces: true for containerd,
+                  false for moby. The engine controller writes it together with the
+                  ContainerEngineReady condition; the field is absent until that
+                  first write, so absence means unknown. It is also false whenever
+                  that condition's reason is NotApplicable, because a backend that
+                  mirrors nothing offers no namespaces to choose from.
+                type: boolean
             type: object
         type: object
         x-kubernetes-validations:
@@ -465,9 +475,10 @@ spec:
                 type: string
               namespace:
                 description: |-
-                  Namespace is the container namespace; refers to a `ContainerNamespace`
-                  object in the same Kubernetes namespace.  If not specified, the container
-                  will be created in the default namespace.
+                  Namespace is the container namespace; a `ContainerNamespace` object of
+                  the same name exists when the engine's name for it is a valid object
+                  name.  If not specified, the container will be created in the default
+                  namespace.
                 type: string
               path:
                 description: |-
@@ -865,8 +876,10 @@ spec:
                 type: string
               namespace:
                 description: |-
-                  Namespace is the container namespace; refers to a `ContainerNamespace`
-                  object in the same Kubernetes namespace.
+                  Namespace is the container namespace. A `ContainerNamespace` object of
+                  the same name exists in the same Kubernetes namespace whenever the
+                  engine's name for it is a valid object name; containerd namespace
+                  names are freer than that, and one that is not gets no mirror.
                 type: string
               path:
                 description: Path to the executable (within the image) for the process.
@@ -993,9 +1006,10 @@ spec:
             properties:
               namespace:
                 description: |-
-                  Namespace is the container namespace; refers to a `ContainerNamespace`
-                  object in the same Kubernetes namespace.  If not specified, the image
-                  will be pulled into the default namespace.
+                  Namespace is the container namespace; a `ContainerNamespace` object of
+                  the same name exists when the engine's name for it is a valid object
+                  name.  If not specified, the image will be pulled into the default
+                  namespace.
                 type: string
               repoTag:
                 description: RepoTag is the image to pull.
@@ -1362,8 +1376,10 @@ spec:
                 type: object
               namespace:
                 description: |-
-                  Namespace is the container namespace; refers to a `ContainerNamespace`
-                  object in the same Kubernetes namespace.
+                  Namespace is the container namespace. A `ContainerNamespace` object of
+                  the same name exists in the same Kubernetes namespace whenever the
+                  engine's name for it is a valid object name; containerd namespace
+                  names are freer than that, and one that is not gets no mirror.
                 type: string
               os:
                 description: OS associated with the image.
@@ -1376,8 +1392,9 @@ spec:
               repoTag:
                 description: |-
                   RepoTag is the tag of the image.  Images with multiple tags will have
-                  multiple Image objects.  Images without tags will have this unset, but
-                  only one Image object should exist in that case.
+                  multiple Image objects.  An unset RepoTag means the engine record was
+                  not named by a tag; containerd registers a digest reference as its own
+                  record, so one image ID can have several Image objects without a tag.
                 type: string
               size:
                 description: Size of the image.
@@ -1585,8 +1602,9 @@ spec:
                 type: string
               namespace:
                 description: |-
-                  Namespace of the volume; refers to a `ContainerNamespace` object in the
-                  same Kubernetes namespace.  If not specified, the volume will be created
+                  Namespace of the volume. A `ContainerNamespace` object of the same name
+                  exists in the same Kubernetes namespace whenever the engine's name for
+                  it is a valid object name.  If not specified, the volume will be created
                   in the default namespace.
                 type: string
             required:
@@ -1737,8 +1755,9 @@ spec:
                 type: string
               namespace:
                 description: |-
-                  Namespace of the volume; refers to a `ContainerNamespace` object in the
-                  same Kubernetes namespace.
+                  Namespace of the volume. A `ContainerNamespace` object of the same name
+                  exists in the same Kubernetes namespace whenever the engine's name for
+                  it is a valid object name.
                 type: string
               options:
                 additionalProperties:

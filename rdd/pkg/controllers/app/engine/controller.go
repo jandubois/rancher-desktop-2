@@ -3,10 +3,15 @@
 // SPDX-FileCopyrightText: The Rancher Desktop Authors
 
 // Package engine registers the engine controller. The engine controller
-// mirrors Docker container engine state (containers, images, volumes)
-// into `Container`, `Image`, and `Volume` resources in the
-// containers.rancherdesktop.io API group, and forwards user-initiated
-// deletions back to the Docker engine.
+// mirrors container engine state into `ContainerNamespace`, `Container`,
+// `Image`, and `Volume` resources in the containers.rancherdesktop.io API
+// group, and forwards a user-initiated delete of a `Container`, `Image` or
+// `Volume` back to the engine. A `ContainerNamespace` carries no finalizer
+// and forwards nothing.
+//
+// moby works on every platform. containerd mirrors nothing on Windows, where
+// nothing serves its named pipe yet, and it has no volume concept, so that
+// backend creates no `Volume` resources anywhere.
 package engine
 
 import (
