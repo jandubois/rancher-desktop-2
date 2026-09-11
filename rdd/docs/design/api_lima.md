@@ -61,6 +61,8 @@ status:
 
     The `status.templateConfigMap` can be modified, but must pass Lima validation for the update to succeed. If `spec.running` is `true` and the template has changed, then the instance will be restarted. The `status.templateConfigMap` cannot be deleted, except by deleting the `LimaVM` resource itself, which will clean up owned resources automatically.
 
+    When the first image for the instance's arch has a location starting with `embedded:`, the controller uses the distro image built into the binary that runs it, `rdd` or a standalone `lima-controller`. That image is the raw disk image, or on Windows the rootfs tarball that WSL2 imports. A binary built without the image fails to create such an instance and sets `Created` to `False` with reason `CreateFailed`. Lima downloads and decompresses any other image itself, and needs `xz` on the host for an `.xz` one.
+
 - **spec.params**: Override `spec.params` settings in the template. These values will be merged with the template before validation, and when creating/updating the `lima.yaml` file of the actual instance on disk.
 
     If the template provisioning scripts are properly parameterized, then the instance settings can be modified by just updating `spec.params`, which is simpler than modifying the `template` inside the ConfigMap. If `spec.running` is `true` then changing `spec.params` will restart the instance.
@@ -143,6 +145,7 @@ sequenceDiagram
     R->>R: Set owner ref on ConfigMap
     R->>R: Set status.templateConfigMap
     R->>Lima: Create instance
+    R->>R: Extract embedded image
     R->>Lima: Prepare (download, disks)
     R->>R: Set Created=True
 

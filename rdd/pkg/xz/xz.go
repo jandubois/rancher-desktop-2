@@ -19,7 +19,7 @@ import (
 
 // bufSize is the input read buffer size. ulikunitz/xz issues many small reads;
 // without a large buffer wrapping the source it spends most of its time in
-// syscalls (roughly 5x slower decoding a multi-hundred-megabyte image).
+// syscalls.
 const bufSize = 4 << 20
 
 // Decompress streams xz-compressed data from in to out, aborting with the
@@ -51,17 +51,23 @@ func (c *ctxReader) Read(p []byte) (int, error) {
 	return c.r.Read(p)
 }
 
-// DecompressFile decompresses the xz file at src to dst. It decodes into a
-// temporary file in dst's directory and renames it into place, so an
-// interrupted decode never leaves a partial dst that downstream code would
-// mistake for a complete image.
-func DecompressFile(ctx context.Context, src, dst string) (err error) {
+// DecompressFile decompresses the xz file at src to dst through
+// DecompressReader.
+func DecompressFile(ctx context.Context, src, dst string) error {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer in.Close()
 
+	return DecompressReader(ctx, in, dst)
+}
+
+// DecompressReader decompresses the xz stream from in to dst. It decodes into
+// a temporary file in dst's directory and renames it into place, so an
+// interrupted decode never leaves a partial dst that downstream code would
+// mistake for a complete image.
+func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error) {
 	tmp, err := os.CreateTemp(filepath.Dir(dst), filepath.Base(dst)+".tmp-*")
 	if err != nil {
 		return err
