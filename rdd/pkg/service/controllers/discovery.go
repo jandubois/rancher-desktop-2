@@ -29,10 +29,11 @@ const (
 	RDDSystemNamespace = "rdd-system"
 
 	// ReadyAnnotation is set on the discovery ConfigMap after every
-	// enabled controller has installed its CRDs and every controller
-	// manager has registered its data entry. Clients must wait for
-	// this annotation because the ConfigMap itself exists from the
-	// moment the control plane starts, before any controller is ready.
+	// enabled controller has installed its CRDs, every controller
+	// manager has registered its data entry, and the admission
+	// webhooks are configured and answer. Clients must wait for this
+	// annotation because the ConfigMap itself exists from the moment
+	// the control plane starts, before any controller is ready.
 	ReadyAnnotation = "rdd.rancherdesktop.io/ready"
 )
 
@@ -355,9 +356,7 @@ func (d *ControllerManagerDiscovery) ensureNamespace(ctx context.Context) error 
 // empty one. The creationTimestamp serves as the control plane start
 // time. Call it after the API server is ready and before any
 // controller managers register. The new ConfigMap does not carry
-// [ReadyAnnotation]; [MarkControlPlaneReady] must be called once every
-// enabled controller has installed its CRDs and registered its data
-// entry in the ConfigMap.
+// [ReadyAnnotation] until [MarkControlPlaneReady] sets it.
 func InitDiscovery(ctx context.Context, client kubernetes.Interface) error {
 	d := &ControllerManagerDiscovery{client: client, namespace: RDDSystemNamespace}
 	if err := d.ensureNamespace(ctx); err != nil {
@@ -389,10 +388,8 @@ func InitDiscovery(ctx context.Context, client kubernetes.Interface) error {
 }
 
 // MarkControlPlaneReady sets [ReadyAnnotation] on the discovery
-// ConfigMap to signal that every enabled controller has installed
-// its CRDs and registered its data entry. Call it after the last
-// [ControllerManagerDiscoveryGroup.RegisterControllerManager] call,
-// or immediately after [InitDiscovery] when no controllers are
+// ConfigMap. Call it once the conditions in the [ReadyAnnotation] doc
+// hold, or immediately after [InitDiscovery] when no controllers are
 // configured.
 func MarkControlPlaneReady(ctx context.Context, client kubernetes.Interface) error {
 	patchData, err := json.Marshal(map[string]any{

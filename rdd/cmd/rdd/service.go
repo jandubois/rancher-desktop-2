@@ -147,9 +147,9 @@ func startAndWaitForReady(ctx context.Context, serveArgs []string, timeout time.
 // for the current control plane instance exists and is marked ready.
 // The serve command recreates the ConfigMap on every startup, so a
 // creationTimestamp at or after beforeStart identifies the current
-// instance. The ready annotation is set after CRDs are installed and
-// every controller manager has registered, so waiting for it lets
-// clients use both CRDs and discovery data without racing startup.
+// instance. Waiting for [controllers.ReadyAnnotation] lets clients use
+// the control plane without racing startup; its doc lists what the
+// annotation covers.
 func waitForFreshDiscoveryConfigMap(ctx context.Context, beforeStart time.Time) error {
 	restConfig, err := service.GetKubeRestConfig()
 	if err != nil {
