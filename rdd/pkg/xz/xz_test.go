@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -22,6 +23,15 @@ func samplePlaintext() []byte {
 	const block = "rancher-desktop-daemon in-process xz decoder fixture.\n" +
 		"The quick brown fox jumps over the lazy dog.\n"
 	return bytes.Repeat([]byte(block), 100_000)
+}
+
+// sparsePlaintext returns data, 4 MiB of zeros, more data, and 1 MiB of zeros,
+// like a disk image with free space. Each data run ends partway into a 4 KiB
+// block, and the trailing zeros check that the output keeps its full length
+// and that finish punches their whole blocks.
+func sparsePlaintext() []byte {
+	data := samplePlaintext()[:10_000]
+	return slices.Concat(data, make([]byte, 4<<20), data, make([]byte, 1<<20))
 }
 
 // xzCompress compresses data with the system xz CLI, so the tests exercise the
@@ -59,14 +69,12 @@ func TestDecompressTruncated(t *testing.T) {
 	assert.Assert(t, err != nil, "truncated xz stream must fail")
 }
 
-func TestDecompressFile(t *testing.T) {
+func TestDecompressReader(t *testing.T) {
 	dir := t.TempDir()
-	src := filepath.Join(dir, "sample.xz")
 	want := samplePlaintext()
-	assert.NilError(t, os.WriteFile(src, xzCompress(t, want), 0o644))
 
 	dst := filepath.Join(dir, "image")
-	assert.NilError(t, DecompressFile(t.Context(), src, dst))
+	assert.NilError(t, DecompressReader(t.Context(), bytes.NewReader(xzCompress(t, want)), dst))
 
 	got, err := os.ReadFile(dst)
 	assert.NilError(t, err)
@@ -74,14 +82,20 @@ func TestDecompressFile(t *testing.T) {
 	assertNoTempFiles(t, dir)
 }
 
-func TestDecompressFileLeavesNoPartialOutput(t *testing.T) {
+func TestDecompressReaderLeavesHoles(t *testing.T) {
+	want := sparsePlaintext()
+
+	dst := filepath.Join(t.TempDir(), "image")
+	assert.NilError(t, DecompressReader(t.Context(), bytes.NewReader(xzCompress(t, want)), dst))
+	assertSparseCopy(t, dst, want)
+}
+
+func TestDecompressReaderLeavesNoPartialOutput(t *testing.T) {
 	dir := t.TempDir()
-	src := filepath.Join(dir, "truncated.xz")
 	compressed := xzCompress(t, samplePlaintext())
-	assert.NilError(t, os.WriteFile(src, compressed[:len(compressed)/2], 0o644))
 
 	dst := filepath.Join(dir, "image")
-	assert.Assert(t, DecompressFile(t.Context(), src, dst) != nil)
+	assert.Assert(t, DecompressReader(t.Context(), bytes.NewReader(compressed[:len(compressed)/2]), dst) != nil)
 
 	_, err := os.Stat(dst)
 	assert.Assert(t, os.IsNotExist(err), "dst must not exist after a failed decode")
@@ -90,16 +104,15 @@ func TestDecompressFileLeavesNoPartialOutput(t *testing.T) {
 
 // A canceled context must abort the decode and leave neither a partial output
 // nor a leftover temp file behind.
-func TestDecompressFileCanceledContext(t *testing.T) {
+func TestDecompressReaderCanceledContext(t *testing.T) {
 	dir := t.TempDir()
-	src := filepath.Join(dir, "sample.xz")
-	assert.NilError(t, os.WriteFile(src, xzCompress(t, samplePlaintext()), 0o644))
+	compressed := xzCompress(t, samplePlaintext())
 
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	dst := filepath.Join(dir, "image")
-	err := DecompressFile(ctx, src, dst)
+	err := DecompressReader(ctx, bytes.NewReader(compressed), dst)
 	assert.Assert(t, errors.Is(err, context.Canceled), "want context.Canceled, got %v", err)
 
 	_, statErr := os.Stat(dst)
@@ -107,9 +120,40 @@ func TestDecompressFileCanceledContext(t *testing.T) {
 	assertNoTempFiles(t, dir)
 }
 
+// Writes that begin and end partway into a block must still go to the right
+// offsets and leave holes.
+func TestSparseWriterUnalignedWrites(t *testing.T) {
+	want := sparsePlaintext()
+	path := filepath.Join(t.TempDir(), "image")
+	f, err := os.Create(path)
+	assert.NilError(t, err)
+
+	w := &sparseWriter{f: f}
+	for chunk := range slices.Chunk(want, 1000) {
+		_, err := w.Write(chunk)
+		assert.NilError(t, err)
+	}
+	assert.NilError(t, w.finish())
+	// APFS counts the zeros it allocates in a gap only once the file is closed.
+	assert.NilError(t, f.Close())
+	assertSparseCopy(t, path, want)
+}
+
 func assertNoTempFiles(t *testing.T, dir string) {
 	t.Helper()
 	matches, err := filepath.Glob(filepath.Join(dir, "*.tmp-*"))
 	assert.NilError(t, err)
 	assert.Assert(t, len(matches) == 0, "leftover temp files: %v", matches)
+}
+
+// assertSparseCopy asserts that the file at path holds want and, where
+// allocatedBytes can tell, that less than an eighth of it is allocated.
+func assertSparseCopy(t *testing.T, path string, want []byte) {
+	t.Helper()
+	got, err := os.ReadFile(path)
+	assert.NilError(t, err)
+	assert.Assert(t, bytes.Equal(got, want), "got %d bytes, want %d", len(got), len(want))
+	if allocated, ok := allocatedBytes(t, path); ok {
+		assert.Assert(t, allocated < int64(len(want))/8, "%d of %d bytes allocated", allocated, len(want))
+	}
 }

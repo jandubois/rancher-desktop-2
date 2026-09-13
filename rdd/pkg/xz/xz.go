@@ -8,6 +8,7 @@ package xz
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -51,22 +52,10 @@ func (c *ctxReader) Read(p []byte) (int, error) {
 	return c.r.Read(p)
 }
 
-// DecompressFile decompresses the xz file at src to dst through
-// DecompressReader.
-func DecompressFile(ctx context.Context, src, dst string) error {
-	in, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	return DecompressReader(ctx, in, dst)
-}
-
-// DecompressReader decompresses the xz stream from in to dst. It decodes into
-// a temporary file in dst's directory and renames it into place, so an
-// interrupted decode never leaves a partial dst that downstream code would
-// mistake for a complete image.
+// DecompressReader decompresses the xz stream from in to dst through a
+// sparseWriter. It decodes into a temporary file in dst's directory and
+// renames it into place, so an interrupted decode never leaves a partial dst
+// that downstream code would mistake for a complete image.
 func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error) {
 	tmp, err := os.CreateTemp(filepath.Dir(dst), filepath.Base(dst)+".tmp-*")
 	if err != nil {
@@ -80,7 +69,11 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
 		}
 	}()
 
-	if err = Decompress(ctx, in, tmp); err != nil {
+	w := &sparseWriter{f: tmp}
+	if err = Decompress(ctx, in, w); err != nil {
+		return err
+	}
+	if err = w.finish(); err != nil {
 		return err
 	}
 	// os.CreateTemp creates the file 0o600. Match Lima's 0o644 for decompressed
@@ -95,4 +88,81 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
 		return err
 	}
 	return os.Rename(tmpName, dst)
+}
+
+// sparseBlockSize matches the default 4 KiB allocation block of APFS, ext4,
+// XFS, and btrfs, the smallest hole any of them can make.
+const sparseBlockSize = 4 << 10
+
+var zeroBlock [sparseBlockSize]byte
+
+// sparseWriter writes to f, skipping each block of zeros and punching a hole
+// over each whole one where punchHole can. An xz stream records no holes, so
+// writing every byte would allocate a disk image's free space along with its
+// data.
+type sparseWriter struct {
+	f       *os.File
+	off     int64 // offset in f of the next byte to write
+	dataEnd int64 // offset in f just past the last data written
+}
+
+func (w *sparseWriter) Write(p []byte) (int, error) {
+	for i := 0; i < len(p); {
+		data := w.runEnd(p, i, false)
+		if data > i {
+			if err := w.writeData(p[i:data], w.off+int64(i)); err != nil {
+				return i, err
+			}
+		}
+		i = w.runEnd(p, data, true)
+	}
+	w.off += int64(len(p))
+	return len(p), nil
+}
+
+// writeData writes data at off in f, then punches a hole over the whole
+// blocks of zeros skipped since the previous data.
+func (w *sparseWriter) writeData(data []byte, off int64) error {
+	if _, err := w.f.WriteAt(data, off); err != nil {
+		return err
+	}
+	w.punchSkipped(off)
+	w.dataEnd = off + int64(len(data))
+	return nil
+}
+
+// punchSkipped punches a hole over the whole blocks of zeros between the
+// previous data and end.
+func (w *sparseWriter) punchSkipped(end int64) {
+	holeStart := (w.dataEnd + sparseBlockSize - 1) / sparseBlockSize * sparseBlockSize
+	holeEnd := end / sparseBlockSize * sparseBlockSize
+	if holeEnd > holeStart {
+		punchHole(w.f, holeStart, holeEnd-holeStart)
+	}
+}
+
+// runEnd returns the index in p where the run starting at i ends. The run
+// holds blocks of zeros if zero is true, and blocks of data otherwise. Blocks
+// end at multiples of sparseBlockSize in f, so a block of zeros split across
+// two Write calls is still skipped and punched.
+func (w *sparseWriter) runEnd(p []byte, i int, zero bool) int {
+	for i < len(p) {
+		end := min(len(p), i+int(sparseBlockSize-(w.off+int64(i))%sparseBlockSize))
+		if bytes.Equal(p[i:end], zeroBlock[:end-i]) != zero {
+			break
+		}
+		i = end
+	}
+	return i
+}
+
+// finish extends f over the zeros skipped at the end of the stream, if any,
+// and punches a hole over their whole blocks, because APFS allocates a short
+// extension.
+func (w *sparseWriter) finish() error {
+	if err := w.f.Truncate(w.off); err != nil {
+		return err
+	}
+	w.punchSkipped(w.off)
+	return nil
 }
