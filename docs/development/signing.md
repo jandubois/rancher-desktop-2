@@ -19,7 +19,14 @@ In general, the process involves:
     yarn sign path/to/archive.zip
     ```
 
-4. Look in `dist/` for the signed files (`Rancher.Desktop.Setup.msi`, etc.).
+   To sign an archive built for the other architecture, export `GOARCH`
+   (`amd64` or `arm64`) first. `yarn sign` accepts only an archive built for
+   `GOARCH`, or for the architecture of Node.js itself when `GOARCH` is unset.
+
+4. Look in `dist/` for the signed files, such as
+   `rancher-desktop-<version>.windows.x86_64.msi`.  They already have their
+   release names, so upload them as they are.  A signed macOS zip has the same
+   name as the unsigned one, so signing a zip from `dist/` replaces it.
 
 ## Windows
 
@@ -120,9 +127,6 @@ For notarization, the following environment variables are also needed:
     (This value can be extracted from the published application.)
 
 ### Performing signing
-
-To do cross-arch signing export the `GOARCH` environment variable to the proper
-value (`amd64` or `arm64`) when running `yarn sign`.
 
 If notarization is not required, append `--skip-notarize` to the command:
 

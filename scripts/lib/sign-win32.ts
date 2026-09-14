@@ -10,7 +10,9 @@ import defaults from 'lodash/defaultsDeep';
 import merge from 'lodash/merge';
 import yaml from 'yaml';
 
+import buildUtils from '@/scripts/lib/build-utils';
 import { simpleSpawn } from '@/scripts/simple_process';
+import { rddArtifactName } from '@pkg/utils/releaseArtifacts';
 
 /** signFileFn is a function that signs a single file. */
 type signFileFn = (...filePath: string[]) => Promise<void>;
@@ -42,7 +44,7 @@ const DEFAULT_WINDOWS_CONFIG = {
 interface ElectronBuilderConfiguration {
   productName:   string;
   files?:        string[];
-  win?:          Partial<typeof DEFAULT_WINDOWS_CONFIG & typeof REQUIRED_WINDOWS_CONFIG>;
+  win?:          Partial<typeof DEFAULT_WINDOWS_CONFIG & typeof REQUIRED_WINDOWS_CONFIG> & { artifactName?: string };
   extraMetadata: {
     version: string;
   }
@@ -63,6 +65,9 @@ export async function sign(workDir: string, outDir: string): Promise<string[]> {
   const configPath = path.join(unpackedDir, 'electron-builder.yml');
   const configText = await fs.promises.readFile(configPath, 'utf-8');
   const config = yaml.parse(configText) as ElectronBuilderConfiguration;
+
+  buildUtils.checkArchiveArch(config.win?.artifactName, config.extraMetadata.version, 'win32');
+
   const signingConfigPath = path.join(unpackedDir, 'build', 'signing-config-win.yaml');
   const signingConfigText = await fs.promises.readFile(signingConfigPath, 'utf-8');
   const signingConfig: Record<string, string[]> = yaml.parse(signingConfigText);
@@ -114,7 +119,7 @@ export async function sign(workDir: string, outDir: string): Promise<string[]> {
   const signedInstaller = await buildWiX(workDir, unpackedDir, outDir, signFn);
 
   const rddSource = path.join(unpackedDir, 'resources', 'win32', 'bin', 'rdd.exe');
-  const rddDest = path.join(outDir, 'rdd.exe');
+  const rddDest = path.join(outDir, rddArtifactName(config.extraMetadata.version, 'win32', buildUtils.arch));
   await fs.promises.copyFile(rddSource, rddDest, fs.constants.COPYFILE_FICLONE);
 
   return [signedInstaller, rddDest];

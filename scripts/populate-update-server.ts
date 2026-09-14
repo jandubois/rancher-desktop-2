@@ -1,7 +1,7 @@
 /**
- * This script is run as part of the "Build Upgrade Testing" GitHub workflow
- * (.github/workflows/upgrade-test.yaml) to generate upgrade data for testing
- * Rancher Desktop upgrades.
+ * This script is run as part of the "Generate Upgrade Test Data" GitHub
+ * workflow (.github/workflows/upgrade-generate.yaml) to generate upgrade data
+ * for testing Rancher Desktop upgrades.
  *
  * This will push changes to the "gh-pages" branch (for the upgrade manifest
  * JSON file), as well as publish releases (or update existing ones) for the
@@ -18,7 +18,7 @@
  *   RD_SETUP_MSI:      The installer (msi file) to upload.
  *   RD_MACX86_ZIP:     The macOS (x86_64) zip archive to upload.
  *   RD_MACARM_ZIP:     The macOS (aarch64) zip archive to upload.
- *   RD_BUILD_INFO:     Build information ("latest.yml" from electron-builder)
+ *   RD_BUILD_INFO:     Build information (dist/electron-builder.yaml from packaging)
  *   RD_OUTPUT_DIR:     Checkout of `gh-pages`, to be updated.
  */
 
@@ -83,9 +83,9 @@ interface assetInfo {
  * @param name Name of the environment variable that holds the file path.
  * @returns File name and checksum data.
  */
-async function getChecksum(name: string, filenameOverride?: string): Promise<assetInfo> {
+async function getChecksum(name: string): Promise<assetInfo> {
   const filepath = await getInputFile(name);
-  const outputName = filenameOverride || path.basename(filepath);
+  const outputName = path.basename(filepath);
   const stat = await fs.promises.stat(filepath);
   const input = fs.createReadStream(filepath);
   const hasher = crypto.createHash('sha512');
@@ -125,9 +125,9 @@ async function getOctokit(): Promise<Octokit> {
 
 async function updateRelease(octokit: Octokit, owner: string, repo: string, tag: string) {
   const files = {
-    msi:    await getChecksum('RD_SETUP_MSI', `Rancher.Desktop.Setup.${ tag }.msi`),
-    macx86: await getChecksum('RD_MACX86_ZIP', `Rancher.Desktop-${ tag }-mac.x86_64.zip`),
-    macarm: await getChecksum('RD_MACARM_ZIP', `Rancher.Desktop-${ tag }-mac.aarch64.zip`),
+    msi:    await getChecksum('RD_SETUP_MSI'),
+    macx86: await getChecksum('RD_MACX86_ZIP'),
+    macarm: await getChecksum('RD_MACARM_ZIP'),
   };
 
   console.log(`Updating release with files:\n${ yaml.stringify(files) }`);

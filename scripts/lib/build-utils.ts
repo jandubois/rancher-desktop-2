@@ -15,6 +15,7 @@ import webpack from 'webpack';
 
 import babelConfig from '@/babel.config.cjs';
 import packageJson from '@/package.json' with { type: 'json' };
+import { appArtifactName, EXT_MACRO } from '@pkg/utils/releaseArtifacts';
 import { isReleaseVersion } from '@pkg/utils/version';
 
 /**
@@ -87,6 +88,12 @@ type SpawnResult = Promise<void> & {
 };
 
 let cachedVersion: Promise<string> | undefined;
+
+/** The Node.js architecture for each `GOARCH` the build supports. */
+const archByGoarch = {
+  amd64: 'x64',
+  arm64: 'arm64',
+} as const;
 
 export default {
   /**
@@ -451,18 +458,29 @@ export default {
   },
 
   get arch(): 'x64' | 'arm64' {
-    const archMap = {
-      amd64: 'x64',
-      arm64: 'arm64',
-    } as const;
-
     if (process.env.GOARCH) {
-      if (process.env.GOARCH in archMap) {
-        return archMap[process.env.GOARCH as keyof typeof archMap];
+      if (process.env.GOARCH in archByGoarch) {
+        return archByGoarch[process.env.GOARCH as keyof typeof archByGoarch];
       }
       console.warn(`\x1b[0;1;33m[WARNING]\x1b[0m Unknown GOARCH ${ process.env.GOARCH }, defaulting to ${ process.arch }`);
     }
     return process.arch === 'arm64' ? 'arm64' : 'x64';
+  },
+
+  /**
+   * Throw unless a packaged application was built for `arch`, so that signing
+   * never names its files after another architecture.
+   * @param artifactName The `artifactName` in the application's electron-builder.yml.
+   */
+  checkArchiveArch(artifactName: string | null | undefined, version: string, platform: string): void {
+    const goarch = _.findKey(archByGoarch, arch => artifactName === appArtifactName(version, platform, arch, EXT_MACRO)) as keyof typeof archByGoarch | undefined;
+
+    if (!goarch) {
+      throw new Error(`Cannot tell the archive's architecture from its artifactName ${ artifactName }; sign it from the checkout that packaged it`);
+    }
+    if (archByGoarch[goarch] !== this.arch) {
+      throw new Error(`The archive was built for ${ archByGoarch[goarch] }, but GOARCH or the Node.js architecture selects ${ this.arch }; set GOARCH=${ goarch } to sign it`);
+    }
   },
 
   /**
