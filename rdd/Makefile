@@ -38,9 +38,6 @@ LDFLAGS := \
 
 TAGS := sqlite_omit_load_extension
 
-GUESTAGENT_BINARY := pkg/guestagent/lima-guestagent
-GUESTAGENT_GZ := $(GUESTAGENT_BINARY).gz
-
 # DISTRO_IMAGE is the guest distro image bin/rdd and bin/lima-controller embed
 # under the with_distro tag. WSL2 imports a rootfs tarball, and Lima's other
 # drivers boot a raw disk image.
@@ -48,13 +45,19 @@ GUESTAGENT_GZ := $(GUESTAGENT_BINARY).gz
 # The build target is a GOOS or GOARCH set on the make command line, which GNU
 # make 3.81 hides from $(shell), or else what `go env` reports. The recipes
 # that build binaries pass the target to go explicitly, through WSLENV too, so
-# bin/rdd and bin/lima-controller embed the image staged for the target they
-# are compiled for.
+# bin/rdd and bin/lima-controller embed the image and guest agent staged for
+# the target they are compiled for.
 TARGET_OS := $(if $(filter command line,$(origin GOOS)),$(GOOS),$(shell go$(EXE) env GOOS))
 TARGET_ARCH := $(if $(filter command line,$(origin GOARCH)),$(GOARCH),$(shell go$(EXE) env GOARCH))
 HOST_OS := $(shell go$(EXE) env GOHOSTOS)
 HOST_ARCH := $(shell go$(EXE) env GOHOSTARCH)
 DISTRO_IMAGE := pkg/embedded/distro.$(if $(filter windows,$(TARGET_OS)),tar,raw).xz
+
+# The guest agent's file name carries the target architecture, and
+# pkg/guestagent embeds the one matching GOARCH, so a build for another
+# architecture builds its own agent instead of reusing a stale one.
+GUESTAGENT_BINARY := pkg/guestagent/lima-guestagent.$(TARGET_ARCH)
+GUESTAGENT_GZ := $(GUESTAGENT_BINARY).gz
 
 default: build-rdd
 .PHONY: default
@@ -233,6 +236,6 @@ check: test lint check-ltag
 # downloader leaves beside the staged image.
 clean:
 	-rm -r bin
-	-rm $(GUESTAGENT_BINARY) $(GUESTAGENT_GZ)
+	-rm pkg/guestagent/lima-guestagent.*
 	-rm pkg/embedded/distro.*.xz*
 .PHONY: clean

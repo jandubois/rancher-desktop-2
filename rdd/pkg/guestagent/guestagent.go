@@ -5,13 +5,9 @@
 package guestagent
 
 import (
-	_ "embed"
 	"fmt"
 	"os"
 )
-
-//go:embed lima-guestagent.gz
-var guestAgentGZ []byte
 
 // WriteTempFile writes the embedded guest agent to a temporary file
 // and returns the path and a cleanup function. The caller must call
