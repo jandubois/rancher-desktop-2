@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Claude and Codex found I2 through I5 between them, from different directions: Claude through the Makefile and the CI logs, Codex through everything that calls <code>make build-rdd</code>. Neither Gemini model raised a finding that survived. No reviewer measured what the decoder allocates. I1 came from consolidation, and the author&#39;s <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bb955691e"><code>bb955691e</code></a> already fixes it on the local branch.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code Changed Since This Review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings were addressed on 2026-09-14 in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a> (reworded), <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7d23f2c03"><code>7d23f2c03</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7174d5d3e"><code>7174d5d3e</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bd632206f"><code>bd632206f</code></a>, so the cited lines no longer match the branch. In the same pass the lima controller stopped decoding any image but the embedded one, leaving the rest to Lima; the guest agent got per-architecture file names; and the bats Lima template moved to the embedded distro. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -551,6 +557,7 @@ index a25fb1993..5924212bf 100644
 +	return w.f.Truncate(w.off)
 +}</code></pre>
       </details>
+    <p><strong>Resolution:</strong> fixed by the branch&#39;s sparse-decoder commit, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7d23f2c03"><code>7d23f2c03</code></a>.</p>
     </div>
     <div class="card card-important" data-file="rdd/Makefile">
       <div class="finding-title" id="I2">
@@ -672,6 +679,7 @@ index d4c8eb778..127e820b3 100644
  	go$(EXE) build -tags=&quot;$(TAGS) with_distro&quot; -gcflags=&quot;all=${GCFLAGS}&quot; -ldflags=&quot;$(LDFLAGS)&quot; -o $@ ./cmd/rdd
  	$(call ATTACH_ENTITLEMENTS,$@)</code></pre>
       </details>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a>, which also passes the resolved target explicitly to every binary build.</p>
     </div>
     <div class="card card-important" data-file="rdd/Makefile">
       <div class="finding-title" id="I3">
@@ -798,6 +806,7 @@ index d4c8eb778..739225a88 100644
  	ls -lh $$@
  build-$(1)-controller: bin/$(1)-controller$$(EXE)</code></pre>
       </details>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a>. <code>bin/lima-controller</code> builds with <code>with_distro</code>, and the error names no particular binary.</p>
     </div>
     <div class="card card-important" data-file="rdd/Makefile">
       <div class="finding-title" id="I4">
@@ -855,6 +864,7 @@ const progressInterval = 5 * time.Second
 </code></pre>
     <p>Unproven: whether a contributor hits it depends on their link to GitHub&#39;s release CDN, which no in-process test controls.</p>
     <p>Fix: give the RDD step its own limit that covers the downloader&#39;s, which already ends a stalled transfer after 30 s (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b1cd204222245fece033cb21c1f1384fd864a486/rdd/pkg/guestdeps/stage.go#L36"><code>stage.go:36</code></a>), instead of raising the limit for every dependency.</p>
+    <p><strong>Resolution:</strong> commented at <code>InstallTimeout</code> in <code>scripts/postinstall.ts</code> (in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a>); no code change.</p>
     </div>
     <div class="card card-important" data-file="rdd/bats/tests/32-app-controllers/app.bats">
       <div class="finding-title" id="I5">
@@ -963,6 +973,7 @@ index 7e2c10fbb..a2f2aa719 100644
          limavm/&quot;${VM_NAME}&quot; --namespace &quot;${RDD_NAMESPACE}&quot; --timeout=5m
  }</code></pre>
       </details>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a>; the comment now cites the 20-40 s decode on the CI runners.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -991,6 +1002,7 @@ func decompressImage(ctx context.Context, inst *limatype.Instance, imagePath str
 			return nil</code></pre>
     <p>Lima gives an arch-less image the VM&#39;s arch (<code>limayaml/defaults.go:244-248</code> in the pinned fork), and this branch never reads past <code>embedded:</code>. A custom LimaVM template can therefore get the wrong bytes. A qemu VM with <code>arch: aarch64</code> on an amd64 host gets the amd64 image, and a Windows build handed <code>embedded:///distro.raw.xz</code> writes the rootfs tarball. vz and WSL2 reject non-native arches, and the shipped templates are unaffected.</p>
     <p>Fix: fail with both values when the image&#39;s arch is not the host&#39;s, or when the location&#39;s base name is not the variant this binary embeds.</p>
+    <p><strong>Resolution:</strong> declined; only a hand-written LimaVM template with an <code>embedded:</code> location reaches it.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/app/lima-images-wsl2.yaml">
       <div class="finding-title" id="S2">
@@ -1020,6 +1032,7 @@ mountType: wsl2</code></pre>
 			// Booting now would hit ERROR_FILE_NOT_FOUND again, so fail the start
 			// and requeue to retry the unregister.</code></pre>
     <p>Fix: run <code>ensureImageDecompressed</code> before starting an unregistered WSL2 instance, so it relinks or re-extracts <code>basedisk</code>.</p>
+    <p><strong>Resolution:</strong> commented on <code>linkWSL2BaseDisk</code> (in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a>).</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/lima/limavm/controllers/limavm_controller.go">
       <div class="finding-title" id="S3">
@@ -1039,6 +1052,7 @@ func decompressEmbeddedImage(ctx context.Context, imagePath string) error {
 // instances, so the WSL2 driver&#39;s EnsureFs reuses the decompressed image</code></pre>
     <p>The template URLs used to put the distro version into every instance&#39;s <code>lima.yaml</code>. <code>embedded:///distro.raw.xz</code> records nothing, and neither the binary nor this log says which version it carries. Extraction is also the slowest step in creating a VM, and nothing logs when it ends.</p>
     <p>Fix: stamp the manifest&#39;s distro version into the binary, through a file the downloader writes beside the image or an <code>-X</code> flag, and log the version and elapsed time when <code>DecompressReader</code> returns.</p>
+    <p><strong>Resolution:</strong> the decode&#39;s duration is logged (in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/94be0eebc"><code>94be0eebc</code></a>); the distro version is not stamped.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -1046,7 +1060,7 @@ func decompressEmbeddedImage(ctx context.Context, imagePath string) error {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><em></em>Every CI build of <code>bin/rdd</code> now fetches the image from GitHub releases<em></em> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5</span>. The Package legs, the e2e job and every rdd-bats leg start with an empty download cache. Caching the <code>rancher-desktop.guest-deps</code> directory with <code>actions/cache</code>, keyed on <code>hashFiles(&#39;rdd/dependencies.yaml&#39;)</code>, would take most of those jobs off the release CDN that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="open" data-type="pr">#711</a>&#39;s retry logic was written for.</li>
+      <li><em></em>Every CI build of <code>bin/rdd</code> now fetches the image from GitHub releases<em></em> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5</span>. The Package legs, the e2e job and every rdd-bats leg start with an empty download cache. Caching the <code>rancher-desktop.guest-deps</code> directory with <code>actions/cache</code>, keyed on <code>hashFiles(&#39;rdd/dependencies.yaml&#39;)</code>, would take most of those jobs off the release CDN that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="merged" data-type="pr">#711</a>&#39;s retry logic was written for.</li>
       <li><strong>The App controller publishes a location only some lima managers can serve</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>. I3 is one case of it. Nothing tells the App controller whether the manager running the lima group carries the image. Tagging <code>bin/lima-controller</code> fixes today&#39;s case; a capability published through controller discovery would make the dependency explicit.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
@@ -1086,7 +1100,7 @@ func decompressEmbeddedImage(ctx context.Context, imagePath string) error {
     <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>The first two commits are <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="open" data-type="pr">#711</a>&#39;s, identical to that PR&#39;s head by <code>git range-diff</code>, and drop out when it merges. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bb955691e"><code>bb955691e</code></a>, which fixes I1, is not on the PR. A forced <code>gh pr checkout</code> reset the local branch to the pushed head just before this review; the commit is back on the local branch and belongs in the next push.</p>
+    <p>The first two commits are <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/711" class="gh-ref" data-title="rdd: add the guest dependency downloader" data-state="merged" data-type="pr">#711</a>&#39;s, identical to that PR&#39;s head by <code>git range-diff</code>, and drop out when it merges. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bb955691e"><code>bb955691e</code></a>, which fixes I1, is not on the PR. A forced <code>gh pr checkout</code> reset the local branch to the pushed head just before this review; the commit is back on the local branch and belongs in the next push.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
