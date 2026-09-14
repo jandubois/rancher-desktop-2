@@ -11,7 +11,12 @@ import mockModules from '@pkg/utils/testUtils/mockModules';
 import type getWSLVersionType from '@pkg/utils/wslVersion';
 import type { WSLVersionInfo } from '@pkg/utils/wslVersion';
 
-import type { queryUpgradeResponder as queryUpgradeResponderType, UpgradeResponderRequestPayload } from '../LonghornProvider';
+import type {
+  findUpdateAsset as findUpdateAssetType,
+  GitHubReleaseAsset,
+  queryUpgradeResponder as queryUpgradeResponderType,
+  UpgradeResponderRequestPayload,
+} from '../LonghornProvider';
 
 const itWindows = process.platform === 'win32' ? it : it.skip;
 const itUnix = process.platform !== 'win32' ? it : it.skip;
@@ -439,7 +444,7 @@ describe('LonghornProvider.checkForUpdates', () => {
   });
 
   /** Answer the upgrade responder, the release lookup, and the checksum, in that order. */
-  function mockRelease() {
+  function mockRelease(assetNames = [assetName]) {
     modules.electron.net.fetch.mockResolvedValueOnce({
       json: () => Promise.resolve({
         requestIntervalInMinutes: 100,
@@ -453,10 +458,10 @@ describe('LonghornProvider.checkForUpdates', () => {
         name:         'Rancher Desktop 9.9.9',
         body:         'Simulated release.',
         published_at: '2038-01-01T00:00:00Z',
-        assets:       [
-          { name: assetName, browser_download_url: `${ serverURL }/msi`, size: 1 },
-          { name: `${ assetName }.sha512sum`, browser_download_url: `${ serverURL }/sha512sum`, size: 1 },
-        ],
+        assets:       assetNames.flatMap(name => [
+          { name, browser_download_url: `${ serverURL }/${ name }`, size: 1 },
+          { name: `${ name }.sha512sum`, browser_download_url: `${ serverURL }/${ name }.sha512sum`, size: 1 },
+        ]),
       }),
     });
     modules.electron.net.fetch.mockResolvedValueOnce({
@@ -584,6 +589,14 @@ describe('LonghornProvider.checkForUpdates', () => {
     expect(modules.electron.net.fetch.mock.calls).toHaveLength(afterFirst);
   });
 
+  it('installs the release asset built for this architecture', async() => {
+    const otherArch = process.arch === 'arm64' ? 'x64' : 'arm64';
+
+    mockRelease([appArtifactName('9.9.9', 'win32', otherArch, 'msi'), assetName]);
+    await makeProvider()['checkForUpdates']();
+    expect(JSON.parse(fs.readFileSync(cacheFile, 'utf-8')).file.url).toBe(`${ serverURL }/${ assetName }`);
+  });
+
   it('records the responder override when updates are forced', async() => {
     process.env.RD_FORCE_UPDATES_ENABLED = '1';
     process.env.RD_UPGRADE_RESPONDER_URL = `${ serverURL }/v1/checkupgrade`;
@@ -623,5 +636,29 @@ describe('LonghornProvider.checkForUpdates', () => {
     }));
 
     await expect(releaseLookupURL()).resolves.toBe(githubURL);
+  });
+});
+
+describe('findUpdateAsset', () => {
+  const assets = [
+    'rancher-desktop-9.9.9.darwin.aarch64.dmg',
+    'rancher-desktop-9.9.9.darwin.aarch64.zip',
+    'rancher-desktop-9.9.9.darwin.x86_64.zip',
+    'rancher-desktop-9.9.9.windows.aarch64.msi',
+    'rancher-desktop-9.9.9.windows.x86_64.msi',
+  ].map(name => ({ name }) as GitHubReleaseAsset);
+  let findUpdateAsset: typeof findUpdateAssetType;
+
+  beforeAll(async() => {
+    ({ findUpdateAsset } = await import('../LonghornProvider'));
+  });
+
+  it.each([
+    ['darwin', 'arm64', 'rancher-desktop-9.9.9.darwin.aarch64.zip'],
+    ['darwin', 'x64', 'rancher-desktop-9.9.9.darwin.x86_64.zip'],
+    ['win32', 'arm64', 'rancher-desktop-9.9.9.windows.aarch64.msi'],
+    ['win32', 'x64', 'rancher-desktop-9.9.9.windows.x86_64.msi'],
+  ] as const)('picks the %s %s asset', (platform, arch, expected) => {
+    expect(findUpdateAsset(assets, platform, arch)?.name).toBe(expected);
   });
 });
