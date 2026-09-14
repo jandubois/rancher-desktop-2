@@ -12,6 +12,7 @@ import semver from 'semver';
 import Logging from '@pkg/utils/logging';
 import { getMacOsVersion } from '@pkg/utils/osVersion';
 import paths from '@pkg/utils/paths';
+import { appArtifactSuffix } from '@pkg/utils/releaseArtifacts';
 import getWSLVersion from '@pkg/utils/wslVersion';
 
 import type { AppUpdater, ResolvedUpdateFileInfo, UpdateInfo } from 'electron-updater';
@@ -463,8 +464,7 @@ export default class LonghornProvider extends Provider<LonghornUpdateInfo> {
     const assetFilter: (asset: GitHubReleaseAsset) => boolean = (() => {
       switch (this.platform) {
       case 'darwin': {
-        const isArm64 = process.arch === 'arm64';
-        const suffix = isArm64 ? '-mac.aarch64.zip' : '-mac.x86_64.zip';
+        const suffix = appArtifactSuffix('darwin', process.arch, 'zip');
 
         return (asset: GitHubReleaseAsset) => asset.name.endsWith(suffix);
       }

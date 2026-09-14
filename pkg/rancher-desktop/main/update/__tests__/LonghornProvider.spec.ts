@@ -6,6 +6,7 @@ import { jest } from '@jest/globals';
 import semver from 'semver';
 
 import type { spawnFile as spawnFileType } from '@pkg/utils/childProcess';
+import { appArtifactName } from '@pkg/utils/releaseArtifacts';
 import mockModules from '@pkg/utils/testUtils/mockModules';
 import type getWSLVersionType from '@pkg/utils/wslVersion';
 import type { WSLVersionInfo } from '@pkg/utils/wslVersion';
@@ -416,7 +417,7 @@ describe('LonghornProvider.getSha512Sum', () => {
 
 describe('LonghornProvider.checkForUpdates', () => {
   const cacheFile = path.join(cacheDir, 'updater-longhorn.json');
-  const assetName = 'Rancher.Desktop.Setup.9.9.9.msi';
+  const assetName = appArtifactName('9.9.9', 'win32', process.arch, 'msi');
   const githubURL = 'https://api.github.com/repos/rancher-sandbox/rancher-desktop/releases/tags/v9.9.9';
   const serverURL = 'http://127.0.0.1:8314';
   let LonghornProviderClass: typeof import('../LonghornProvider').default;
