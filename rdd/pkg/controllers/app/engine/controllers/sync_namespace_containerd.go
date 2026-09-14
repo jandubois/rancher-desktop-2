@@ -9,12 +9,14 @@ import (
 	"errors"
 	"fmt"
 
-	"k8s.io/apimachinery/pkg/util/validation"
+	"github.com/containerd/errdefs"
+
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
 // syncNamespaces lists containerd namespaces, creates or updates their
@@ -36,12 +38,10 @@ func (w *containerdWatcher) syncNamespaces(ctx context.Context) error {
 	// errors below are still fatal.
 	var errs []error
 	for _, ns := range nsNames {
-		if len(validation.IsDNS1123Subdomain(ns)) == 0 {
-			activeNames[ns] = true
-		}
 		if err := w.applyNamespace(ctx, ns); err != nil {
 			log.Error(err, "Skipping namespace during full sync", "namespace", ns)
 		}
+		activeNames[api.MirrorName("cns", ns)] = true
 	}
 
 	// Remove stale ContainerNamespace mirrors.
@@ -69,32 +69,48 @@ func (w *containerdWatcher) syncNamespaces(ctx context.Context) error {
 // finalizer with no handler would only trap user deletes in Terminating.
 //
 // A K8s-side delete therefore stays gone. Only fullSync and the container,
-// image and namespace create events call this, so nothing re-applies the
-// mirror until one of those fires again or the watcher restarts.
+// and image create events, or various namespace change events call this, so
+// nothing re-applies the mirror until one of those fires again or the watcher
+// restarts.
 func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error {
-	// containerd namespace names may contain uppercase or underscores, which
-	// are invalid in K8s object names. Skip the mirror; containers in such a
-	// namespace are still mirrored. Whether a mirror name is hashed turns on
-	// the container's own ID, not on the namespace holding it; the namespace
-	// enters only as hash input, to keep hashed names unique across them.
-	if len(validation.IsDNS1123Subdomain(ns)) > 0 {
-		logf.FromContext(ctx).WithName("containerd-watcher").
-			V(1).Info("Skipping ContainerNamespace mirror for non-DNS1123 namespace", "namespace", ns)
-		return nil
+	applyConfig := containersv1alpha1apply.ContainerNamespace(
+		api.MirrorName("cns", ns),
+		w.apiNamespace)
+
+	err := w.k8s.Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName))
+	if err != nil {
+		return err
 	}
 
-	applyConfig := containersv1alpha1apply.ContainerNamespace(ns, w.apiNamespace)
+	labels, err := w.cli.NamespaceService().Labels(ctx, ns)
+	if errdefs.IsNotFound(err) {
+		// If the namespace is not found, skip updating the status; the object will
+		// be deleted via the namespace delete event.  AI reviews claim this is
+		// unreachable because the error is never "not found"; however, the API does
+		// not indicate that, and that can be changed.
+		return nil
+	} else if err != nil {
+		// If we fail to get labels, don't update the labels but still update the
+		// name.  This is driven by containerd events, which does not requeue like a
+		// reconcile loop would.
+		labels = nil
+		logf.FromContext(ctx).WithName("containerd-watcher").
+			Error(err, "Failed to get labels for namespace", "namespace", ns)
+	}
 
-	return w.k8s.Apply(ctx, applyConfig,
+	applyConfig.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().
+		WithName(ns).
+		WithLabels(labels))
+	return w.k8s.Status().Apply(ctx, applyConfig,
 		client.ForceOwnership, client.FieldOwner(controllerName))
 }
 
 // removeNamespace deletes the ContainerNamespace mirror for a containerd
-// namespace that is gone. A name applyNamespace skipped never got a mirror,
-// and passing it to the API server would be rejected as an invalid name.
+// namespace that is gone.
 func (w *containerdWatcher) removeNamespace(ctx context.Context, ns string) error {
-	if len(validation.IsDNS1123Subdomain(ns)) > 0 {
-		return nil
-	}
-	return w.removeMirrorResource(ctx, &containersv1alpha1.ContainerNamespace{}, ns)
+	return w.removeMirrorResource(
+		ctx,
+		&containersv1alpha1.ContainerNamespace{},
+		api.MirrorName("cns", ns))
 }

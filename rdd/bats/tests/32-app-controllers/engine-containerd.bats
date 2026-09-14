@@ -240,6 +240,43 @@ assert_containerd_socket_open() {
         ContainerNamespace/mirror-ns --timeout=30s
 }
 
+@test "unsupported namespace names are encoded" {
+    local namespace_name=Not_A_Valid_Kubernetes_Namespace encoded_name
+    nerdctl namespace create "${namespace_name}" \
+        --label hello=world
+
+    run_e -0 nerdctl --namespace "${namespace_name}" run --detach --name hidden-ns \
+        busybox sleep inf
+    cid=${output}
+
+    run -0 sha256 "${namespace_name}"
+    encoded_name=cns-${output}
+
+    rdd ctl wait --for=create --namespace="${RDD_NAMESPACE}" \
+        ContainerNamespace/"${encoded_name}" --timeout=30s
+
+    # Status should be set
+    wait_for_resource_status "ContainerNamespace" "${encoded_name}" name "${namespace_name}"
+    wait_for_resource_status "ContainerNamespace" "${encoded_name}" labels.hello "world"
+
+    # Updating labels should be reflected in the status
+    nerdctl namespace update --label hello=foo "${namespace_name}"
+    wait_for_resource_status "ContainerNamespace" "${encoded_name}" labels.hello "foo"
+
+    # The container should be created
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+    assert_resource_status "Container" "${cid}" namespace "${namespace_name}"
+
+    # Deleting the namespace should reap the object
+    nerdctl --namespace "${namespace_name}" rm --force hidden-ns
+    nerdctl --namespace "${namespace_name}" rmi --force busybox
+    nerdctl namespace remove "${namespace_name}"
+
+    rdd ctl wait --for=delete --namespace="${RDD_NAMESPACE}" \
+        ContainerNamespace/"${encoded_name}" --timeout=30s
+}
+
 # --- Container actions via annotation ---
 # The tests below share the test-actions container and build on each
 # other in file order.
@@ -422,35 +459,6 @@ assert_container_pid_changed() { # <container> <previous-pid>
     assert_output 0
 
     nerdctl rm --force signal-actions
-}
-
-# --- Names that are not valid object names ---
-
-@test "a containerd namespace that is not a valid object name gets no mirror" {
-    # containerd namespace names are freer than Kubernetes object names, so
-    # the mirror is skipped; the containers inside it are still mirrored,
-    # which is what makes the skip safe.
-    nerdctl namespace create Not_Valid
-    run_e -0 nerdctl --namespace Not_Valid run --detach --name hidden-ns \
-        busybox sleep inf
-    cid=${output}
-
-    rdd ctl wait --for=jsonpath='{.status.status}'=running \
-        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
-
-    run -0 rdd ctl get container "${cid}" --namespace="${RDD_NAMESPACE}" \
-        -o jsonpath='{.status.namespace}'
-    assert_output "Not_Valid"
-
-    run -0 rdd ctl get containernamespaces --namespace="${RDD_NAMESPACE}" \
-        -o jsonpath='{.items[*].metadata.name}'
-    refute_output --partial "Not_Valid"
-
-    # A namespace only removes once it holds nothing, and the run above
-    # pulled busybox into it.
-    nerdctl --namespace Not_Valid rm --force hidden-ns
-    nerdctl --namespace Not_Valid rmi --force busybox
-    nerdctl namespace remove Not_Valid
 }
 
 # --- Finalizer-forwarded deletes ---

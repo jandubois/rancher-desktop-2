@@ -23,6 +23,7 @@ import (
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
 type containerNamespaceReconciler struct {
@@ -53,7 +54,7 @@ func (r *containerNamespaceReconciler) Reconcile(ctx context.Context, req ctrl.R
 
 	var errs []error
 	for namespace := range namespaces {
-		applyConfig := containersv1alpha1apply.ContainerNamespace(namespace, apiNamespace).
+		applyConfig := containersv1alpha1apply.ContainerNamespace(api.MirrorName("cns", namespace), apiNamespace).
 			WithOwnerReferences(metav1apply.OwnerReference().
 				WithAPIVersion(gvk.GroupVersion().String()).
 				WithKind(gvk.Kind).
@@ -62,6 +63,12 @@ func (r *containerNamespaceReconciler) Reconcile(ctx context.Context, req ctrl.R
 				WithBlockOwnerDeletion(true).
 				WithController(true))
 		err = r.Client.Apply(ctx, applyConfig, client.ForceOwnership, client.FieldOwner(controllerLongName))
+		if err != nil {
+			errs = append(errs, err)
+		}
+		applyConfig.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().
+			WithName(namespace))
+		err = r.Client.Status().Apply(ctx, applyConfig, client.ForceOwnership, client.FieldOwner(controllerLongName))
 		if err != nil {
 			errs = append(errs, err)
 		}

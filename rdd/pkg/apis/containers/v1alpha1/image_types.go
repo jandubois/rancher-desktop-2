@@ -16,10 +16,9 @@ const ImagePullRequestKind = "ImagePullRequest"
 
 // ImageStatus defines the observed state of the image.
 type ImageStatus struct {
-	// Namespace is the container namespace. A `ContainerNamespace` object of
-	// the same name exists in the same Kubernetes namespace whenever the
-	// engine's name for it is a valid object name; containerd namespace
-	// names are freer than that, and one that is not gets no mirror.
+	// Namespace is the container namespace. A `ContainerNamespace` object in the
+	// same Kubernetes namespace exists where its `status.name` matches this value.
+	// See the `ContainerNamespace` documentation for more details.
 	//
 	// +required
 	Namespace string `json:"namespace"`
@@ -113,10 +112,10 @@ const (
 
 // ImagePullRequestSpec defines the parameters for pulling an image.
 type ImagePullRequestSpec struct {
-	// Namespace is the container namespace; a `ContainerNamespace` object of
-	// the same name exists when the engine's name for it is a valid object
-	// name.  If not specified, the image will be pulled into the default
-	// namespace.
+	// Namespace is the container namespace. A `ContainerNamespace` object in the
+	// same Kubernetes namespace exists where its `status.name` matches this value.
+	// See the `ContainerNamespace` documentation for more details.  If not
+	// specified, the image will be pulled into the default namespace.
 	//
 	// +optional
 	Namespace string `json:"namespace"`

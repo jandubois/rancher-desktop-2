@@ -29,6 +29,13 @@ func (w *dockerWatcher) syncContainerNamespace(ctx context.Context) error {
 		client.ForceOwnership, client.FieldOwner(controllerName)); err != nil {
 		return err
 	}
+	applyConfig.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().
+		WithName(containerNamespace).
+		WithLabels(map[string]string{}))
+	if err := w.k8s.Status().Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName)); err != nil {
+		return err
+	}
 
 	// Docker has exactly one namespace, so every other ContainerNamespace
 	// mirror is stale whatever created it; a containerd watcher that ran

@@ -12,10 +12,9 @@ import (
 //
 // ImageStatus defines the observed state of the image.
 type ImageStatusApplyConfiguration struct {
-	// Namespace is the container namespace. A `ContainerNamespace` object of
-	// the same name exists in the same Kubernetes namespace whenever the
-	// engine's name for it is a valid object name; containerd namespace
-	// names are freer than that, and one that is not gets no mirror.
+	// Namespace is the container namespace. A `ContainerNamespace` object in the
+	// same Kubernetes namespace exists where its `status.name` matches this value.
+	// See the `ContainerNamespace` documentation for more details.
 	//
 	Namespace *string `json:"namespace,omitempty"`
 	// ID is the image ID, as reported by the container runtime.
