@@ -10,7 +10,7 @@ require (
 	github.com/containerd/containerd/v2 v2.3.5
 	github.com/containerd/errdefs v1.0.0
 	github.com/containerd/errdefs/pkg v0.3.0
-	github.com/containerd/typeurl/v2 v2.2.3
+	github.com/containerd/typeurl/v2 v2.3.0
 	github.com/containers/gvisor-tap-vsock v0.8.9
 	github.com/coreos/go-semver v0.3.1
 	github.com/distribution/reference v0.6.0
