@@ -76,11 +76,9 @@ lima_instance_exists() {
 }
 
 @test "wait for Created condition to be True" {
-    # This is the first instance creation in the suite, so it must download
-    # and decompress the distro image. A throttled GitHub release CDN can
-    # stretch the download past two minutes.
+    # Creating the instance decodes the embedded distro image.
     rdd ctl wait --for=condition=Created=True \
-        "limavm/${VM_NAME}" --namespace "${NAMESPACE}" --timeout=180s
+        "limavm/${VM_NAME}" --namespace "${NAMESPACE}" --timeout=120s
 }
 
 @test "verify Lima instance directory exists" {

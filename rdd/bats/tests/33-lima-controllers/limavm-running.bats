@@ -446,7 +446,6 @@ assert_restart_annotation_absent() {
 # so we can verify the new template took effect inside the guest.
 
 # Append an env variable to the original template.
-# Keep images identical so Lima doesn't re-download them.
 MODIFIED_TEMPLATE="${RUNNING_TEMPLATE}
 env:
   TEMPLATE_CHANGE_MARKER: applied"
