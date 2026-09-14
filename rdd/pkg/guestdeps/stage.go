@@ -392,7 +392,6 @@ func (s *Stager) downloadOnce(ctx context.Context, asset Asset, destPath string)
 	if resp.StatusCode != http.StatusOK {
 		err := fmt.Errorf("unexpected status %s", resp.Status)
 		// A server naming a delay is asking to be retried, whatever status it sent.
-		// GitHub throttles release downloads with 403 as well as 429.
 		if delay, ok := retryAfter(resp.Header.Get("Retry-After"), time.Now()); ok {
 			return 0, &retryAfterError{err: err, delay: delay}
 		}

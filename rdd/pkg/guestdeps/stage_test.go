@@ -586,8 +586,8 @@ func TestStageRetriesAServerThatNamesADelay(t *testing.T) {
 
 	for name, status := range map[string]int{
 		"too many requests": http.StatusTooManyRequests,
-		// GitHub throttles release downloads with 403 too, and a 403 carrying no
-		// delay is fatal, so the header is the whole difference here.
+		// A 403 carrying no delay is fatal, so the header is the whole
+		// difference here.
 		"forbidden": http.StatusForbidden,
 	} {
 		t.Run(name, func(t *testing.T) {
