@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Claude supplied the starting point for both. It found the stale description, and it saw that <code>finish</code> punches nothing and that the test bound is loose, but it measured only a 64 MiB tail, which APFS leaves as a hole; I measured shorter ones. Codex found that switching <code>GOOS</code> alone reuses the previous build (S1), a gap the merge-base shares, and re-raised the open half of round-1 S3 (S2). Claude and Codex backed their verdicts on round 1&#39;s fixes with commands and CI logs; the two Gemini models asserted theirs without evidence, and neither raised a finding that survived.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code Changed Since This Review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings were addressed on 2026-09-14 by amending <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/50023443d"><code>50023443d</code></a> (the embed) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4e8d32fba"><code>4e8d32fba</code></a> (the sparse decode, reworded), so the cited lines no longer match the branch. The PR description and issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> were edited on GitHub. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -436,6 +442,7 @@ index 514e79293..5aa82a2c9 100644
  	}
  }</code></pre>
       </details>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4e8d32fba"><code>4e8d32fba</code></a>. The code is the patch above; its comments were reworded further to say what the code does, since APFS can keep up to 12 KiB near the end of a file inside a punched range, and the last partial block is never punched.</p>
     </div>
     <div class="card card-important" data-file="rdd/Makefile">
       <div class="finding-title" id="I2">
@@ -486,6 +493,7 @@ bin/app-controller: -tags=&quot;sqlite_omit_load_extension&quot;</code></pre>
 Embeds the guest distro image in `bin/rdd` and `bin/lima-controller` (`with_distro` build tag) and has the lima controller extract it into the instance directory before Lima&#39;s `Prepare`, so creating the app&#39;s VM downloads nothing. `make build-rdd` stages the image with #711&#39;s `download-guest-deps`.
 
 It also decodes the image into a sparse file, names the embedded guest agent after its architecture, and boots the Lima bats VMs from the embedded distro.</code></pre>
+    <p><strong>Resolution:</strong> fixed on GitHub with a revised body that also says rdd now decodes only the embedded image. Issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/708" class="gh-ref" data-title="Implement a mechanism to pass embedded image to LimaVM" data-state="open" data-type="issue">#708</a> got the same corrections.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -508,6 +516,7 @@ bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_I
 	$(call ATTACH_ENTITLEMENTS,$@)</code></pre>
     <p>The manifest keys the distro on the guest&#39;s architecture and variant, so darwin and linux targets of one architecture stage the same <code>distro.raw.xz</code>, and the guest agent&#39;s file name includes only the architecture. After a darwin build, <code>make GOOS=linux GOARCH=arm64 build-rdd</code> finds every prerequisite current, exits 0, and leaves a Mach-O <code>bin/rdd</code>; I reproduced that in the lead worktree. <code>bin/lima-controller</code> behaves the same way. Codex rated it Important, but the merge-base had no target-specific prerequisite either, so the change makes nothing worse. The author skipped the same class in round 1 for the other controllers after an architecture switch.</p>
     <p>Fix: add Codex&#39;s stamp, a <code>FORCE</code>d <code>bin/.go-target</code> rule that rewrites the file only when <code>$(TARGET_OS)/$(TARGET_ARCH)</code> changes, as a prerequisite of every binary; it covers the other controllers too.</p>
+    <p><strong>Resolution:</strong> declined; <code>bin/rdd</code> needs cgo for its target, so a cross-OS build from one checkout fails anyway, and the stale reuse predates the PR.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/embedded/embedded.go">
       <div class="finding-title" id="S2">
@@ -537,6 +546,7 @@ var Distro string</code></pre>
 // linkWSL2BaseDisk hardlinks &lt;inst.Dir&gt;/basedisk to imagePath for WSL2
 // instances, because the WSL2 driver&#39;s EnsureFs reads basedisk and cannot</code></pre>
     <p>Fix: have <code>download-guest-deps</code> stage a small metadata file beside the image (version, variant, architecture, SHA-256), embed it under <code>with_distro</code>, and log it with the duration.</p>
+    <p><strong>Resolution:</strong> declined; <code>rdd --version</code> names the rdd commit, whose <code>rdd/dependencies.yaml</code> pins the distro version.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/lima/limavm/controllers/limavm_controller.go">
       <div class="finding-title" id="S3">
@@ -595,6 +605,7 @@ func ensureImageDecompressed(ctx context.Context, inst *limatype.Instance) error
 
 // decompressEmbeddedImage decompresses the distro image embedded in this</code></pre>
     <p>Fix: rename the entry point <code>extractEmbeddedImage</code>, fold <code>decompressImage</code> into a predicate such as <code>usesEmbeddedImage(inst) bool</code>, and align the log strings and the test file name.</p>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/50023443d"><code>50023443d</code></a>, which also drops <code>linkWSL2BaseDisk</code>&#39;s missing-image guard, now unreachable, with its subtest.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
