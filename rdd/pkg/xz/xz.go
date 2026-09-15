@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-FileCopyrightText: The Rancher Desktop Authors
 
-// Package xz decompresses xz streams in-process with a pure-Go decoder, so rdd
-// can provision a VM image without a system xz binary on the host.
+// Package xz decompresses xz streams in-process with a pure-Go decoder, so
+// the limavm controller can extract the distro image embedded in its binary
+// on any host.
 package xz
 
 import (

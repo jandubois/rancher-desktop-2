@@ -416,7 +416,8 @@ func extractEmbeddedImage(ctx context.Context, inst *limatype.Instance) error {
 }
 
 // usesEmbeddedImage reports whether the first image for the instance's arch
-// has an embedded: location.
+// has an embedded: location. The binary embeds one distro image, so any
+// embedded: location selects it, whatever follows the prefix.
 func usesEmbeddedImage(inst *limatype.Instance) bool {
 	arch := *inst.Config.Arch
 	for _, img := range inst.Config.Images {
