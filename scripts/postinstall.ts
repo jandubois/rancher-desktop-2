@@ -23,6 +23,10 @@ interface DependencyWithContext {
 
 /**
  * The amount of time we allow the post-install script to run, in milliseconds.
+ * The RDD dependency's `make build-rdd` downloads the guest distro image within
+ * this limit whenever the version rdd/dependencies.yaml pins is neither staged
+ * nor in the user's download cache, as after a distro bump or on a new
+ * machine. On a slow link, run `make -C rdd build-rdd` before `yarn install`.
  */
 const InstallTimeout = 10 * 60 * 1_000; // Ten minutes.
 

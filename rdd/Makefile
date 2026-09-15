@@ -38,7 +38,25 @@ LDFLAGS := \
 
 TAGS := sqlite_omit_load_extension
 
-GUESTAGENT_BINARY := pkg/guestagent/lima-guestagent
+# DISTRO_IMAGE is the guest distro image bin/rdd and bin/lima-controller embed
+# under the with_distro tag. WSL2 imports a rootfs tarball, and Lima's other
+# drivers boot a raw disk image.
+#
+# The build target is a GOOS or GOARCH set on the make command line, which GNU
+# make 3.81 hides from $(shell), or else what `go env` reports. The recipes
+# that build binaries pass the target to go explicitly, through WSLENV too, so
+# bin/rdd and bin/lima-controller embed the image and guest agent staged for
+# the target they are compiled for.
+TARGET_OS := $(if $(filter command line,$(origin GOOS)),$(GOOS),$(shell go$(EXE) env GOOS))
+TARGET_ARCH := $(if $(filter command line,$(origin GOARCH)),$(GOARCH),$(shell go$(EXE) env GOARCH))
+HOST_OS := $(shell go$(EXE) env GOHOSTOS)
+HOST_ARCH := $(shell go$(EXE) env GOHOSTARCH)
+DISTRO_IMAGE := pkg/embedded/distro.$(if $(filter windows,$(TARGET_OS)),tar,raw).xz
+
+# The guest agent's file name carries the target architecture, and
+# pkg/guestagent embeds the one matching GOARCH, so a build for another
+# architecture builds its own agent instead of reusing a stale one.
+GUESTAGENT_BINARY := pkg/guestagent/lima-guestagent.$(TARGET_ARCH)
 GUESTAGENT_GZ := $(GUESTAGENT_BINARY).gz
 
 default: build-rdd
@@ -68,8 +86,8 @@ EMBEDDED_SOURCES := $(shell find ./cmd ./pkg -name '*.yaml' -o -name '*.json')
 
 # Build the Lima guest agent from our Go dependency and compress it for embedding.
 $(GUESTAGENT_BINARY): go.mod go.sum
-	WSLENV=${WSLENV}:CGO_ENABLED:GOOS \
-	CGO_ENABLED=0 GOOS=linux \
+	WSLENV=${WSLENV}:CGO_ENABLED:GOOS:GOARCH \
+	CGO_ENABLED=0 GOOS=linux GOARCH=$(TARGET_ARCH) \
 	go$(EXE) build -ldflags="-s -w" -o $@ \
 		github.com/lima-vm/lima/v2/cmd/lima-guestagent
 
@@ -78,10 +96,25 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 
 .INTERMEDIATE: $(GUESTAGENT_BINARY)
 
-bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ)
-	WSLENV=${WSLENV}:CGO_CFLAGS:CGO_ENABLED \
+# The downloader runs on every build, because the staged file name has no
+# architecture in it and only a rerun notices a build for a different one. It
+# leaves an up-to-date file untouched, so make does not relink bin/rdd.
+# Naming the host makes `go run` build the tool for this machine; an empty
+# GOOS or GOARCH would fall back to a target saved with `go env -w`.
+$(DISTRO_IMAGE): FORCE
+	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
+	go$(EXE) run ./cmd/download-guest-deps --os $(TARGET_OS) --arch $(TARGET_ARCH)
+
+FORCE:
+.PHONY: FORCE
+
+# Only bin/rdd and bin/lima-controller embed the distro. Tests, lint and the
+# other standalone controllers build without with_distro and need no image.
+bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE)
+	WSLENV=${WSLENV}:CGO_CFLAGS:CGO_ENABLED:GOOS:GOARCH \
 	CGO_CFLAGS="-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_USE_ALLOCA=1" CGO_ENABLED=1 \
-	go$(EXE) build -tags="$(TAGS)" -gcflags="all=${GCFLAGS}" -ldflags="$(LDFLAGS)" -o $@ ./cmd/rdd
+	GOOS=$(TARGET_OS) GOARCH=$(TARGET_ARCH) \
+	go$(EXE) build -tags="$(TAGS) with_distro" -gcflags="all=${GCFLAGS}" -ldflags="$(LDFLAGS)" -o $@ ./cmd/rdd
 	$(call ATTACH_ENTITLEMENTS,$@)
 	ls -lh $@
 build-rdd: bin/rdd$(EXE)
@@ -96,11 +129,17 @@ ifeq ($(shell uname -s),Darwin)
 CGO_ENABLED_lima := 1
 endif
 
+# The lima controller embeds the guest agent, and the distro it extracts for
+# the App's VM.
+TAGS_lima := with_distro
+bin/lima-controller$(EXE): $(DISTRO_IMAGE) $(GUESTAGENT_GZ)
+
 # Generate build targets for API group controllers
 define CONTROLLER_TARGETS
 bin/$(1)-controller$$(EXE): $$(GOLANG_SOURCES) $$(EMBEDDED_SOURCES)
-	WSLENV=${WSLENV}:CGO_ENABLED CGO_ENABLED=$$(or $$(CGO_ENABLED_$(1)),0) \
-	go$$(EXE) build -tags="$(TAGS)" -gcflags="all=$${GCFLAGS}" -ldflags="$(LDFLAGS)" -o $$@ ./cmd/$(1)-controller
+	WSLENV=${WSLENV}:CGO_ENABLED:GOOS:GOARCH CGO_ENABLED=$$(or $$(CGO_ENABLED_$(1)),0) \
+	GOOS=$(TARGET_OS) GOARCH=$(TARGET_ARCH) \
+	go$$(EXE) build -tags="$$(strip $(TAGS) $$(TAGS_$(1)))" -gcflags="all=$${GCFLAGS}" -ldflags="$(LDFLAGS)" -o $$@ ./cmd/$(1)-controller
 	$$(call ATTACH_ENTITLEMENTS,$$@)
 	ls -lh $$@
 build-$(1)-controller: bin/$(1)-controller$$(EXE)
@@ -193,7 +232,10 @@ $(BATS_TARGETS): bin/rdd$(EXE)
 check: test lint check-ltag
 .PHONY: check
 
+# clean's distro.*.xz* pattern also matches the .tmp-* file a killed
+# downloader leaves beside the staged image.
 clean:
 	-rm -r bin
-	-rm $(GUESTAGENT_BINARY) $(GUESTAGENT_GZ)
+	-rm pkg/guestagent/lima-guestagent.*
+	-rm pkg/embedded/distro.*.xz*
 .PHONY: clean
