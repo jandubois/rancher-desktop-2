@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260915-115221-pr-773</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260915-115221-pr-773</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-15 11:52</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of pr-773)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/773" class="gh-ref" data-title="RDX: Compose: Initial implementation" data-state="open" data-type="pr">#773</a> — RDX: Compose: Initial implementation</td></tr>
+      <tr><td>Branch</td><td><code>rdd/rdx/compose/validate</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/011117602"><code>011117602</code></a> RDD: controllers: Pass context to RegisterWithManager<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c5dcf791f"><code>c5dcf791f</code></a> RDD: Containers: Create Compose API objects<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/91f62400e"><code>91f62400e</code></a> RDD: containers: Implement ComposeUpRequest validator<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f5daa0b57"><code>f5daa0b57</code></a> RDD: containers: Test ComposeUpRequest validator</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f5daa0b57d0302f877ac2774f6ba507b6870c4f9"><code>f5daa0b57d0302f877ac2774f6ba507b6870c4f9</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the new context misses one stop path, three API comments contradict the code or the spec, and the naming test checks the helper against itself; each fix is a few lines</td></tr>
+      <tr><td>Wall-clock time</td><td><code>44 min 18 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This PR adds the <code>ComposeProject</code> and <code>ComposeUpRequest</code> API types, a webhook that checks request names, and a context parameter on <code>RegisterWithManager</code>. The fields and naming rule follow the design doc, and the build, lint, generated-file, and race checks pass. A probe shows the new context stays live after the manager fails. Three API comments, which <code>kubectl explain</code> prints, contradict the code or the spec, and the naming test takes its expected value from the function it tests.</p>
+    <p>Four reviewers ran. Gemini 3.1 Pro&#39;s first run stopped mid-review, and its one retry completed. I ran a reproducer for every Important finding in the lead worktree, two of them envtest probes against a real kube-apiserver, and each fix comes with a patch I tested. The findings fall into four groups: the context contract (I1), API text that the code or the spec contradicts (I2, I4, I5), the naming test (I3), and admission gaps (S1 to S3).</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/service/controllers/manager.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The context passed to <code>RegisterWithManager</code> stays live after the manager stops <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/service/controllers/manager.go#L220-L232">rdd/pkg/service/controllers/manager.go</a></div>
+      <pre data-start="220" data-line="225-227"><code class="language-go">		if webhookController, ok := registration.(base.WebhookController); ok {
+			klog.InfoS(&quot;Setting webhook port for controller&quot;, &quot;controller&quot;, registration.GetName(), &quot;port&quot;, scm.webhookPort)
+			webhookController.SetWebhookPort(scm.webhookPort)
+		}
+
+		if err := registration.RegisterWithManager(ctx, mgr); err != nil {
+			return fmt.Errorf(&quot;failed to register controller %s: %w&quot;, registration.GetName(), err)
+		}
+	}
+
+	// Now that all scheme mutations are done, set up webhooks in parallel.
+	var webhookWaitGroup sync.WaitGroup
+	webhookErrors := make(chan error, len(scm.registrations))</code></pre>
+    <p>The interface comment added in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/011117602"><code>011117602</code></a> says the context &quot;must be cancelled to signal controller shut down&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/base/controller.go#L34-L36"><code>rdd/pkg/controllers/base/controller.go:34-36</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/base/controller.go#L29-L41">rdd/pkg/controllers/base/controller.go</a></div>
+      <pre data-start="29" data-line="34-36"><code class="language-go">	GetAPIGroup() string
+
+	// GetCRDData returns the embedded CRD YAML data
+	GetCRDData() string
+
+	// RegisterWithManager provides complete controller registration including
+	// scheme and setup.  The provided context must last for the lifetime of the
+	// controller, and must be cancelled to signal controller shut down.
+	RegisterWithManager(ctx context.Context, mgr ctrl.Manager) error
+}
+
+// WebhookController is an optional interface that controllers can implement
+// to receive the webhook port allocated by SharedControllerManager and</code></pre>
+    <p><code>Start</code> passes its caller&#39;s context and creates the manager&#39;s own context only at line 274. So when a Runnable fails, <code>mgr.Start</code> returns and every controller stops, but the registration context stays live. A webhook-setup failure (line 261) leaves it live too.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/service/controllers/manager.go#L256-L279">rdd/pkg/service/controllers/manager.go</a></div>
+      <pre data-start="256" data-line="261-274"><code class="language-go">	for err := range webhookErrors {
+		errs = append(errs, err)
+	}
+
+	if len(errs) &gt; 0 {
+		return fmt.Errorf(&quot;webhook setup : %w&quot;, errors.Join(errs...))
+	}
+
+	klog.Info(&quot;All webhook configurations created successfully&quot;)
+
+	scm.started = true
+
+	klog.InfoS(&quot;Starting shared controller manager&quot;,
+		&quot;name&quot;, scm.name,
+		&quot;controllers&quot;, len(scm.registrations),
+		&quot;metricsPort&quot;, scm.metricsPort,
+		&quot;healthPort&quot;, scm.healthPort)
+
+	mgrCtx, mgrCancel := context.WithCancel(ctx)
+	defer mgrCancel()
+	mgrResult := make(chan error, 1)
+	go func() { mgrResult &lt;- mgr.Start(mgrCtx) }()
+
+	managerResult := func(err error) error {</code></pre>
+    <p>The embedded daemon then logs the error and blocks on its own context (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/service/cmd/service.go#L934-L940"><code>rdd/pkg/service/cmd/service.go:934-940</code></a>), so a future <code>docker compose up</code> started under it keeps running until the daemon exits. External controllers exit the process instead.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/service/cmd/service.go#L929-L945">rdd/pkg/service/cmd/service.go</a></div>
+      <pre data-start="929" data-line="934-940"><code class="language-go">					return
+				}
+			}
+
+			// Start the shared manager (this blocks until context is cancelled)
+			if err := sharedManager.Start(ctx); err != nil {
+				klog.Error(err, &quot;Failed to start shared controller manager&quot;)
+			}
+		})
+	}
+
+	&lt;-ctx.Done()
+
+	// Wait for the controller manager to finish shutdown, but don&#39;t block
+	// forever — a misbehaving controller should not prevent the service
+	// from exiting. The graceful shutdown timeout for hostagents is 30s;
+	// allow 45s total before giving up.</code></pre>
+    <p>No implementor runs long work under the context yet, so nothing leaks today; the compose reconciler would be the first.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/service/controllers/probe_ctx_test.go; run from rdd/:
+//   go test -count=1 -run TestRegisterContextEndsWithManager -v ./pkg/service/controllers/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+// envtest downloads kube-apiserver and etcd on first use, as manager_test.go does.
+package controllers
+
+import (
+	&quot;context&quot;
+	&quot;errors&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+	&quot;k8s.io/client-go/kubernetes&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/manager&quot;
+)
+
+// ctxCaptureController keeps the context RegisterWithManager received and
+// adds a Runnable that fails, so the manager stops on its own.
+type ctxCaptureController struct{ ctx context.Context }
+
+func (c *ctxCaptureController) GetName() string     { return &quot;ctx-capture&quot; }
+func (c *ctxCaptureController) GetAPIGroup() string { return &quot;probe.test&quot; }
+func (c *ctxCaptureController) GetCRDData() string  { return &quot;&quot; }
+func (c *ctxCaptureController) RegisterWithManager(ctx context.Context, mgr ctrl.Manager) error {
+	c.ctx = ctx
+	return mgr.Add(manager.RunnableFunc(func(context.Context) error {
+		return errors.New(&quot;runnable failed&quot;)
+	}))
+}
+
+func TestRegisterContextEndsWithManager(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv(&quot;HOME&quot;, home)
+	t.Setenv(&quot;USERPROFILE&quot;, home)
+	t.Setenv(&quot;RDD_INSTANCE&quot;, &quot;test-register-context&quot;)
+
+	env := &amp;envtest.Environment{DownloadBinaryAssets: true}
+	cfg, err := env.Start()
+	assert.NilError(t, err)
+	defer func() { _ = env.Stop() }()
+
+	client, err := kubernetes.NewForConfig(cfg)
+	assert.NilError(t, err)
+	assert.NilError(t, InitDiscovery(t.Context(), client))
+
+	scm, err := NewSharedControllerManager(&quot;test&quot;, cfg, 18090, 18091)
+	assert.NilError(t, err)
+	probe := &amp;ctxCaptureController{}
+	assert.NilError(t, scm.RegisterController(probe))
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	startErr := scm.Start(ctx)
+	t.Logf(&quot;Start returned: %v&quot;, startErr)
+	assert.Assert(t, startErr != nil, &quot;expected the failing Runnable to stop the manager&quot;)
+	t.Logf(&quot;caller context err: %v&quot;, ctx.Err())
+	t.Logf(&quot;controller context err: %v&quot;, probe.ctx.Err())
+	assert.Check(t, probe.ctx.Err() != nil,
+		&quot;the manager has stopped, but the context RegisterWithManager received is still live&quot;)
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestRegisterContextEndsWithManager -v ./pkg/service/controllers/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+=== RUN   TestRegisterContextEndsWithManager
+    probe_ctx_test.go:55: Start returned: failed to start shared controller manager: runnable failed
+    probe_ctx_test.go:57: caller context err: &lt;nil&gt;
+    probe_ctx_test.go:58: controller context err: &lt;nil&gt;
+    probe_ctx_test.go:59: assertion failed: probe.ctx.Err() is nil: the manager has stopped, but the context RegisterWithManager received is still live
+--- FAIL: TestRegisterContextEndsWithManager (7.55s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers	8.309s
+FAIL
+$ git apply fix.patch    # the diff under Fix, from the repo root
+$ go test -count=1 -run TestRegisterContextEndsWithManager -v ./pkg/service/controllers/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+=== RUN   TestRegisterContextEndsWithManager
+    probe_ctx_test.go:55: Start returned: failed to start shared controller manager: runnable failed
+    probe_ctx_test.go:57: caller context err: &lt;nil&gt;
+    probe_ctx_test.go:58: controller context err: context canceled
+--- PASS: TestRegisterContextEndsWithManager (5.68s)
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers	6.427s</code></pre>
+      </details>
+    <p>Fix: create the manager context before the registration loop and pass it to <code>RegisterWithManager</code>, so the existing <code>defer mgrCancel()</code> ends it on every return from <code>Start</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/service/controllers/manager.go b/rdd/pkg/service/controllers/manager.go
+index 5b0281bbd..3d34d381e 100644
+--- a/rdd/pkg/service/controllers/manager.go
++++ b/rdd/pkg/service/controllers/manager.go
+@@ -209,6 +209,11 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
+ 		return fmt.Errorf(&quot;failed to add pass through server to manager: %w&quot;, err)
+ 	}
+ 
++	// Controllers receive mgrCtx so their context ends whenever the manager
++	// stops, including when it fails on its own.
++	mgrCtx, mgrCancel := context.WithCancel(ctx)
++	defer mgrCancel()
++
+ 	// Register all controllers before launching webhook goroutines.
+ 	// RegisterWithManager calls AddToScheme, which writes to the scheme map.
+ 	// Webhook setup reads the scheme via client.Apply. Running both concurrently
+@@ -222,7 +227,7 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
+ 			webhookController.SetWebhookPort(scm.webhookPort)
+ 		}
+ 
+-		if err := registration.RegisterWithManager(ctx, mgr); err != nil {
++		if err := registration.RegisterWithManager(mgrCtx, mgr); err != nil {
+ 			return fmt.Errorf(&quot;failed to register controller %s: %w&quot;, registration.GetName(), err)
+ 		}
+ 	}
+@@ -271,8 +276,6 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
+ 		&quot;metricsPort&quot;, scm.metricsPort,
+ 		&quot;healthPort&quot;, scm.healthPort)
+ 
+-	mgrCtx, mgrCancel := context.WithCancel(ctx)
+-	defer mgrCancel()
+ 	mgrResult := make(chan error, 1)
+ 	go func() { mgrResult &lt;- mgr.Start(mgrCtx) }()
+ </code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The conditions comment says only one is ever True, but a failed request has both <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L31-L42">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="31" data-line="36-37"><code class="language-go">	// ComposeHasMembersReasonCalculating indicates that the controller is
+	// still calculating whether the compose project has any members.
+	ComposeHasMembersReasonCalculating = &quot;Calculating&quot;
+)
+
+// ComposeUpRequest status conditions.  Only one of these is ever set to
+// True at a time.
+const (
+	// ComposeUpRequestConditionSettled indicates that `docker compose up` has
+	// reached a terminal state (succeeded or failed); see the Reason for
+	// which.
+	ComposeUpRequestConditionSettled = &quot;Settled&quot;</code></pre>
+    <p>Lines 204-205 repeat the sentence, and <code>make generate</code> copies it into the CRD description that <code>kubectl explain</code> prints (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/crd.yaml#L287"><code>rdd/pkg/controllers/containers/compose/crd.yaml:287</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/crd.yaml#L282-L292">rdd/pkg/controllers/containers/compose/crd.yaml</a></div>
+      <pre data-start="282" data-line="287"><code class="language-yaml">
+                  - &quot;Settled&quot;: `docker compose up` has reached a terminal state (see the
+                    Reason field for whether it succeeded or failed).
+                  - &quot;Failed&quot;: `docker compose up` failed.
+
+                  Only one of these is ever set to True at a time.  The status of each
+                  condition is one of True, False, or Unknown.
+                items:
+                  description: Condition contains details for one aspect of the current
+                    state of this API Resource.
+                  properties:</code></pre>
+    <p>The spec says a request that ends unsuccessfully has both <code>Settled=True</code> and <code>Failed=True</code>, and its <code>ComposeUpRequest</code> table lists both rows for a failed <code>up</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L39-L41"><code>rdd/docs/design/api_containers.md:39-41</code></a>, and lines 779-783).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L34-L46">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="34" data-line="39-41"><code class="language-markdown">express state.  `Settled` will become `True` when the request object has reached
+a terminal state (it will not produce any more actions).  Once a request object
+has reached such a terminal state, unless it has an owning reference set, it
+will be automatically removed after some timeout.  This will be at least one
+minute (so the caller can read any data), but the precise timing is unspecified.
+If the `Settled` condition is set to `True` but it is not successful, then the
+`Failed` condition will exist and set to `True`, with the reason and message
+describing what the error is.
+
+This API is mainly for use by the Rancher Desktop front end; all other users are
+strongly urged to use the relevant CLI or other API instead.
+
+## Engine Mirroring</code></pre>
+    <p>The tree&#39;s only request reconciler, for <code>ImagePullRequest</code>, writes that pair, and its tests pin it (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler_test.go#L250-L253"><code>rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler_test.go:250-253</code></a>). Its success test, the case where only <code>Settled</code> is True, expects <code>Failed=False</code> with reason <code>Succeeded</code> (lines 212-215). The new constants define no reason for that <code>Failed=False</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler_test.go#L245-L258">rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler_test.go</a></div>
+      <pre data-start="245" data-line="250-253"><code class="language-go">	assert.NilError(t, err)
+
+	updated := &amp;containersv1alpha1.ImagePullRequest{}
+	assert.NilError(t, c.Get(t.Context(), client.ObjectKeyFromObject(req), updated))
+
+	settledCond := apimeta.FindStatusCondition(updated.Status.Conditions, containersv1alpha1.ImagePullRequestConditionSettled)
+	assert.Assert(t, settledCond != nil &amp;&amp; settledCond.Status == metav1.ConditionTrue &amp;&amp; settledCond.Reason == &quot;Errored&quot;)
+	failedCond := apimeta.FindStatusCondition(updated.Status.Conditions, containersv1alpha1.ImagePullRequestConditionFailed)
+	assert.Assert(t, failedCond != nil &amp;&amp; failedCond.Status == metav1.ConditionTrue &amp;&amp; failedCond.Reason == &quot;PullTimeout&quot;)
+	_, exists := r.imagePullRequestState[req.UID]
+	assert.Assert(t, !exists)
+}
+
+// TestEngineImagePullRequestReconcileDeletedRequestCancelsPull verifies that</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L207-L220">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="207" data-line="212-215"><code class="language-go">	// +listType=map
+	// +listMapKey=type
+	// +optional
+	Conditions []metav1.Condition `json:&quot;conditions,omitempty&quot;`
+}
+
+// +kubebuilder:object:root=true
+// +kubebuilder:ac:generate=true
+// +kubebuilder:resource:categories=&quot;all&quot;
+// +kubebuilder:subresource:status
+// +kubebuilder:selectablefield:JSONPath=.spec.namespace
+// +kubebuilder:selectablefield:JSONPath=.spec.name
+// +kubebuilder:metadata:annotations=rdd.rancherdesktop.io/controller=compose
+</code></pre>
+    <p>Nothing sets these conditions yet, so the comment is the contract the compose reconciler and the GUI will code against.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-sh"># Run from rdd/: the terminal-condition tests of the one request reconciler in the tree.
+go test -count=1 -v -run &#39;TestEngineImagePullRequestReconcileTerminalReason(Success|Failure)$&#39; ./pkg/controllers/app/engine/controllers/ 2&gt;&amp;1 | grep -E &#39;^(=== RUN|--- |ok|FAIL|PASS)&#39;</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -v -run &#39;TestEngineImagePullRequestReconcileTerminalReason(Success|Failure)$&#39; ./pkg/controllers/app/engine/controllers/ 2&gt;&amp;1 | grep -E &#39;^(=== RUN|--- |ok|FAIL|PASS)&#39;
+=== RUN   TestEngineImagePullRequestReconcileTerminalReasonSuccess
+--- PASS: TestEngineImagePullRequestReconcileTerminalReasonSuccess (0.05s)
+=== RUN   TestEngineImagePullRequestReconcileTerminalReasonFailure
+--- PASS: TestEngineImagePullRequestReconcileTerminalReasonFailure (0.00s)
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/engine/controllers	0.693s</code></pre>
+      </details>
+    <p>Fix: replace the sentence in both places with the paired rule, then run <code>make generate</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequeststatus.go b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequeststatus.go
+index 927d9d921..1ceaaddc6 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequeststatus.go
++++ b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequeststatus.go
+@@ -18,7 +18,7 @@ type ComposeUpRequestStatusApplyConfiguration struct {
+ 	// Reason field for whether it succeeded or failed).
+ 	// - &quot;Failed&quot;: `docker compose up` failed.
+ 	//
+-	// Only one of these is ever set to True at a time.  The status of each
++	// A failed request has both conditions True.  The status of each
+ 	// condition is one of True, False, or Unknown.
+ 	//
+ 	Conditions []v1.ConditionApplyConfiguration `json:&quot;conditions,omitempty&quot;`
+diff --git a/rdd/pkg/apis/containers/v1alpha1/compose_types.go b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+index cb5287709..82b7e1536 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/compose_types.go
++++ b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+@@ -33,8 +33,8 @@ const (
+ 	ComposeHasMembersReasonCalculating = &quot;Calculating&quot;
+ )
+ 
+-// ComposeUpRequest status conditions.  Only one of these is ever set to
+-// True at a time.
++// ComposeUpRequest status conditions.  A failed request has both set to
++// True.
+ const (
+ 	// ComposeUpRequestConditionSettled indicates that `docker compose up` has
+ 	// reached a terminal state (succeeded or failed); see the Reason for
+@@ -201,7 +201,7 @@ type ComposeUpRequestStatus struct {
+ 	//   Reason field for whether it succeeded or failed).
+ 	// - &quot;Failed&quot;: `docker compose up` failed.
+ 	//
+-	// Only one of these is ever set to True at a time.  The status of each
++	// A failed request has both conditions True.  The status of each
+ 	// condition is one of True, False, or Unknown.
+ 	//
+ 	// +listType=map
+diff --git a/rdd/pkg/controllers/containers/compose/crd.yaml b/rdd/pkg/controllers/containers/compose/crd.yaml
+index 3567d6979..49424c903 100644
+--- a/rdd/pkg/controllers/containers/compose/crd.yaml
++++ b/rdd/pkg/controllers/containers/compose/crd.yaml
+@@ -284,7 +284,7 @@ spec:
+                     Reason field for whether it succeeded or failed).
+                   - &quot;Failed&quot;: `docker compose up` failed.
+ 
+-                  Only one of these is ever set to True at a time.  The status of each
++                  A failed request has both conditions True.  The status of each
+                   condition is one of True, False, or Unknown.
+                 items:
+                   description: Condition contains details for one aspect of the current
+diff --git a/rdd/pkg/controllers/mock/crd.yaml b/rdd/pkg/controllers/mock/crd.yaml
+index 369802744..b792983c0 100644
+--- a/rdd/pkg/controllers/mock/crd.yaml
++++ b/rdd/pkg/controllers/mock/crd.yaml
+@@ -689,7 +689,7 @@ spec:
+                     Reason field for whether it succeeded or failed).
+                   - &quot;Failed&quot;: `docker compose up` failed.
+ 
+-                  Only one of these is ever set to True at a time.  The status of each
++                  A failed request has both conditions True.  The status of each
+                   condition is one of True, False, or Unknown.
+                 items:
+                   description: Condition contains details for one aspect of the current</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/containers/compose/compose_webhooks_test.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The naming test takes its expected value from the helper it should check <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go#L17-L29">rdd/pkg/controllers/containers/compose/compose_webhooks_test.go</a></div>
+      <pre data-start="17" data-line="22-24"><code class="language-go">// newValidComposeUpRequest returns a ComposeUpRequest whose metadata.name
+// matches the deterministic name computed from namespace/name, so that only
+// the specific field under test needs to be overridden by the caller.
+func newValidComposeUpRequest(namespace, name string) *v1alpha1.ComposeUpRequest {
+	return &amp;v1alpha1.ComposeUpRequest{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: composeMirrorName(namespace, name),
+		},
+		Spec: v1alpha1.ComposeUpRequestSpec{
+			Namespace: namespace,
+			Name:      name,
+		},
+	}</code></pre>
+    <p>Both cases build the expected name with <code>composeMirrorName</code> itself, and the negative case swaps in an arbitrary string (line 47), so no test states the naming rule. And the rule is public API, since a client computes the name from the design doc before it creates the request. The case named after &quot;the computed hash&quot; never reaches the hash branch either, since <code>moby.myproject</code> is a valid DNS name.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go#L42-L51">rdd/pkg/controllers/containers/compose/compose_webhooks_test.go</a></div>
+      <pre data-start="42" data-line="47"><code class="language-go">	})
+
+	t.Run(&quot;rejects a request whose metadata.name does not match the computed hash&quot;, func(t *testing.T) {
+		t.Parallel()
+		request := newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;)
+		request.Name = &quot;not-the-right-hash&quot;
+		_, err := v.ValidateCreate(t.Context(), request)
+		assert.ErrorContains(t, err, &quot;metadata.name must be&quot;)
+	})
+}</code></pre>
+    <p>The reproducer changes the separator to <code>/</code> and the hash to <code>CMP-%X</code> through <code>go test -overlay</code>, and the suite stays green. With the two hardcoded vectors in the patch, the same mutation fails.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-sh"># Save as .scratch/mutate-compose-name.sh; run from the repo root: bash .scratch/mutate-compose-name.sh
+# go test -overlay swaps in a mutated helper without touching tracked files.
+set -o errexit
+S=$PWD/.scratch/probe; mkdir -p &quot;$S&quot;
+sed -e &#39;s/namespace + &quot;.&quot; + name/namespace + &quot;\/&quot; + name/&#39; -e &#39;s/&quot;cmp-%x&quot;/&quot;CMP-%X&quot;/&#39; \
+    rdd/pkg/controllers/containers/compose/compose_utils.go &gt; &quot;$S/mutant.go&quot;
+printf &#39;{&quot;Replace&quot;:{&quot;%s/rdd/pkg/controllers/containers/compose/compose_utils.go&quot;:&quot;%s/mutant.go&quot;}}&#39; \
+    &quot;$PWD&quot; &quot;$S&quot; &gt; &quot;$S/overlay.json&quot;
+cd rdd &amp;&amp; go test -count=1 -overlay=&quot;$S/overlay.json&quot; ./pkg/controllers/containers/compose/</code></pre>
+      <pre><code class="language-text">$ bash .scratch/mutate-compose-name.sh
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.502s
+$ git apply fix.patch    # the diff under Fix
+$ bash .scratch/mutate-compose-name.sh
+--- FAIL: TestComposeMirrorName (0.00s)
+    compose_webhooks_test.go:34: assertion failed: CMP-7DD1796EF40D2A9B3CBACE2ACDFEAA57CC0670A5531B258E1B5949AC4F48D9A6 (string) != moby.my-project (string)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.567s
+FAIL
+$ (cd rdd &amp;&amp; go test -count=1 ./pkg/controllers/containers/compose/)    # the fix against the real helper
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.580s</code></pre>
+      </details>
+    <p>Fix: pin both branches with hardcoded vectors; the hash comes from <code>printf &#39;moby.My_Project&#39; | shasum -a 256</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go b/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go
+index d35e4a2a6..65ce9c79c 100644
+--- a/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go
++++ b/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go
+@@ -29,6 +29,13 @@ func newValidComposeUpRequest(namespace, name string) *v1alpha1.ComposeUpRequest
+ 	}
+ }
+ 
++func TestComposeMirrorName(t *testing.T) {
++	t.Parallel()
++	assert.Equal(t, composeMirrorName(&quot;moby&quot;, &quot;my-project&quot;), &quot;moby.my-project&quot;)
++	assert.Equal(t, composeMirrorName(&quot;moby&quot;, &quot;My_Project&quot;),
++		&quot;cmp-940a0ae52669b446755e4dd79838a1ffc65468eb5893c2a2d7449f3f76b34e9d&quot;)
++}
++
+ func TestComposeUpRequestValidator_ValidateCreate(t *testing.T) {
+ 	t.Parallel()
+ </code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> The <code>ComposeProject</code> doc says users cannot create one, and the API server admits it <span class="pill pill-claude">Claude Opus 5</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L133-L144">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="133" data-line="138-139"><code class="language-go">
+// ComposeProject is the Schema for the compose API.  ComposeProject objects do
+// not reflect actual container engine objects; instead, they reflect
+// `docker compose` projects.
+//
+// ComposeProject objects cannot be created directly by users: the reconciler
+// creates (and keeps up to date) a ComposeProject object automatically upon
+// noticing compose project references in containers (via the normal compose
+// labels on them).  Said containers may have been created as a response to
+// [ComposeUpRequest] objects.  metadata.name is constructed by joining
+// `status.namespace` and `status.name` with a dot if the result is a valid
+// Kubernetes name; otherwise it is `cmp-` followed by the lower-case SHA256</code></pre>
+    <p>The sentence is the CRD&#39;s description of the kind (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/crd.yaml#L36"><code>rdd/pkg/controllers/containers/compose/crd.yaml:36</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/crd.yaml#L31-L41">rdd/pkg/controllers/containers/compose/crd.yaml</a></div>
+      <pre data-start="31" data-line="36"><code class="language-yaml">        description: |-
+          ComposeProject is the Schema for the compose API.  ComposeProject objects do
+          not reflect actual container engine objects; instead, they reflect
+          `docker compose` projects.
+
+          ComposeProject objects cannot be created directly by users: the reconciler
+          creates (and keeps up to date) a ComposeProject object automatically upon
+          noticing compose project references in containers (via the normal compose
+          labels on them).  Said containers may have been created as a response to
+          [ComposeUpRequest] objects.  metadata.name is constructed by joining
+          `status.namespace` and `status.name` with a dot if the result is a valid</code></pre>
+    <p>But the package&#39;s own note says nothing enforces the rule (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L50-L54"><code>rdd/pkg/controllers/containers/compose/compose_webhooks.go:50-54</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L45-L54">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="45" data-line="50-54"><code class="language-go">func (v *composeUpRequestValidator) ValidateDelete(_ context.Context, _ *v1alpha1.ComposeUpRequest) (warnings ctrlwebhookadmission.Warnings, err error) {
+	// We do not do any validation on delete.
+	return nil, nil
+}
+
+// ComposeProject objects are, by convention, only ever created/updated by
+// this package&#39;s own reconciler; this is not enforced by a validator, since
+// every local client (including the reconciler itself) authenticates with
+// the same admin-equivalent identity on this single-user desktop, so a
+// group-based identity check would not distinguish the two.</code></pre>
+    <p>The spec says only that projects &quot;should not be manually created&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L688"><code>rdd/docs/design/api_containers.md:688</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L683-L693">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="683" data-line="688"><code class="language-markdown">  `name` is the `metadata.name` of the object (i.e. the container ID).  Each
+  `name` must be unique.  The `uid` is the object UID (i.e. `.metadata.uid`),
+  used to track when the object has been recreated.
+- **status.conditions**: The normal status conditions; see [below](#status-conditions)
+
+`ComposeProject`s should not be manually created; they should only be created by
+the reconciler, when it detects a container with the normal compose labels.  To
+create `ComposeProject`s, the user may create a
+[`ComposeUpRequest`](#composeuprequest) object.
+
+When containers are detected to be part of a project, the `status.containers`</code></pre>
+    <p>The reproducer runs the real compose controller under envtest. The compose webhook denies a misnamed <code>ComposeUpRequest</code>, so admission is running, yet the API server admits a <code>ComposeProject</code> that a user creates.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/containers/compose/probe_admission_test.go; run from rdd/:
+//   go test -count=1 -run TestComposeAdmission -v ./pkg/controllers/containers/compose/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+// envtest downloads kube-apiserver and etcd on first use, as manager_test.go does.
+package compose_test
+
+import (
+	&quot;context&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+	&quot;k8s.io/apimachinery/pkg/runtime&quot;
+	&quot;k8s.io/client-go/kubernetes&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base&quot;
+	_ &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers&quot;
+)
+
+func TestComposeAdmission(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv(&quot;HOME&quot;, home)
+	t.Setenv(&quot;USERPROFILE&quot;, home)
+	t.Setenv(&quot;RDD_INSTANCE&quot;, &quot;test-compose-admission&quot;)
+
+	env := &amp;envtest.Environment{DownloadBinaryAssets: true}
+	cfg, err := env.Start()
+	assert.NilError(t, err)
+	defer func() { _ = env.Stop() }()
+
+	clientset, err := kubernetes.NewForConfig(cfg)
+	assert.NilError(t, err)
+	assert.NilError(t, controllers.InitDiscovery(t.Context(), clientset))
+
+	// Run the real compose controller: its CRDs, certificates and webhook.
+	scm, err := controllers.NewSharedControllerManager(&quot;test&quot;, cfg, 18092, 18093)
+	assert.NilError(t, err)
+	for _, c := range base.GetAllControllers() {
+		if c.GetName() == &quot;compose&quot; {
+			assert.NilError(t, scm.RegisterController(c))
+		}
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go func() { _ = scm.Start(ctx) }()
+	deadline := time.Now().Add(60 * time.Second)
+	for {
+		cm, err := clientset.CoreV1().ConfigMaps(controllers.RDDSystemNamespace).Get(
+			t.Context(), controllers.ControllerManagerConfigMapName, metav1.GetOptions{})
+		if err == nil &amp;&amp; cm.Annotations[controllers.ReadyAnnotation] == &quot;true&quot; {
+			break
+		}
+		assert.Assert(t, time.Now().Before(deadline), &quot;control plane never became ready&quot;)
+		time.Sleep(200 * time.Millisecond)
+	}
+
+	scheme := runtime.NewScheme()
+	assert.NilError(t, v1alpha1.AddToScheme(scheme))
+	c, err := client.New(cfg, client.Options{Scheme: scheme})
+	assert.NilError(t, err)
+	request := func(name string) *v1alpha1.ComposeUpRequest {
+		return &amp;v1alpha1.ComposeUpRequest{
+			ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: &quot;default&quot;},
+			Spec:       v1alpha1.ComposeUpRequestSpec{Namespace: &quot;moby&quot;, Name: &quot;proj&quot;, WorkingDir: &quot;/tmp/proj&quot;},
+		}
+	}
+
+	t.Logf(&quot;ComposeUpRequest named wrong-name: %v&quot;, c.Create(t.Context(), request(&quot;wrong-name&quot;)))
+	t.Logf(&quot;ComposeUpRequest named moby.proj:  %v&quot;, c.Create(t.Context(), request(&quot;moby.proj&quot;)))
+	project := &amp;v1alpha1.ComposeProject{ObjectMeta: metav1.ObjectMeta{Name: &quot;made-by-hand&quot;, Namespace: &quot;default&quot;}}
+	t.Logf(&quot;ComposeProject created by a user: %v&quot;, c.Create(t.Context(), project))
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestComposeAdmission -v ./pkg/controllers/containers/compose/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+=== RUN   TestComposeAdmission
+    probe_admission_test.go:72: ComposeUpRequest named wrong-name: admission webhook &quot;compose-up-request-validating.containers.rancherdesktop.io&quot; denied the request: metadata.name must be &quot;moby.proj&quot; (derived from spec.namespace and spec.name), got &quot;wrong-name&quot;
+    probe_admission_test.go:73: ComposeUpRequest named moby.proj:  &lt;nil&gt;
+    probe_admission_test.go:75: ComposeProject created by a user: &lt;nil&gt;
+--- PASS: TestComposeAdmission (9.70s)
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	10.381s</code></pre>
+      </details>
+    <p>Fix: say &quot;should not&quot;, as the spec does, then run <code>make generate</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeproject.go b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeproject.go
+index 7f36b35d7..3a0edd918 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeproject.go
++++ b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeproject.go
+@@ -15,7 +15,7 @@ import (
+ // not reflect actual container engine objects; instead, they reflect
+ // `docker compose` projects.
+ //
+-// ComposeProject objects cannot be created directly by users: the reconciler
++// ComposeProject objects should not be created directly by users: the reconciler
+ // creates (and keeps up to date) a ComposeProject object automatically upon
+ // noticing compose project references in containers (via the normal compose
+ // labels on them).  Said containers may have been created as a response to
+diff --git a/rdd/pkg/apis/containers/v1alpha1/compose_types.go b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+index cb5287709..931e3eb4c 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/compose_types.go
++++ b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+@@ -135,7 +135,7 @@ type ComposeProjectStatus struct {
+ // not reflect actual container engine objects; instead, they reflect
+ // `docker compose` projects.
+ //
+-// ComposeProject objects cannot be created directly by users: the reconciler
++// ComposeProject objects should not be created directly by users: the reconciler
+ // creates (and keeps up to date) a ComposeProject object automatically upon
+ // noticing compose project references in containers (via the normal compose
+ // labels on them).  Said containers may have been created as a response to
+diff --git a/rdd/pkg/controllers/containers/compose/crd.yaml b/rdd/pkg/controllers/containers/compose/crd.yaml
+index 3567d6979..e6383e721 100644
+--- a/rdd/pkg/controllers/containers/compose/crd.yaml
++++ b/rdd/pkg/controllers/containers/compose/crd.yaml
+@@ -33,7 +33,7 @@ spec:
+           not reflect actual container engine objects; instead, they reflect
+           `docker compose` projects.
+ 
+-          ComposeProject objects cannot be created directly by users: the reconciler
++          ComposeProject objects should not be created directly by users: the reconciler
+           creates (and keeps up to date) a ComposeProject object automatically upon
+           noticing compose project references in containers (via the normal compose
+           labels on them).  Said containers may have been created as a response to
+diff --git a/rdd/pkg/controllers/mock/crd.yaml b/rdd/pkg/controllers/mock/crd.yaml
+index 369802744..2f8b810e4 100644
+--- a/rdd/pkg/controllers/mock/crd.yaml
++++ b/rdd/pkg/controllers/mock/crd.yaml
+@@ -438,7 +438,7 @@ spec:
+           not reflect actual container engine objects; instead, they reflect
+           `docker compose` projects.
+ 
+-          ComposeProject objects cannot be created directly by users: the reconciler
++          ComposeProject objects should not be created directly by users: the reconciler
+           creates (and keeps up to date) a ComposeProject object automatically upon
+           noticing compose project references in containers (via the normal compose
+           labels on them).  Said containers may have been created as a response to</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="I5">
+        <span class="finding-num">I5.</span> The namespace comments promise a <code>ContainerNamespace</code> that the engine never creates for some names <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L167-L178">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="167" data-line="172-173"><code class="language-go">}
+
+// ComposeUpRequestSpec defines the identity of the `docker compose` project
+// to bring up.
+type ComposeUpRequestSpec struct {
+	// Namespace is the container namespace; refers to a [ContainerNamespace]
+	// object in the same Kubernetes namespace.  Immutable once created.
+	//
+	// +required
+	// +kubebuilder:validation:XValidation:rule=&quot;self == oldSelf&quot;,message=&quot;spec.namespace is immutable&quot;
+	Namespace string `json:&quot;namespace&quot;`
+	// Name is the compose project name.  Immutable once created.</code></pre>
+    <p><code>ComposeProjectStatus.Namespace</code> says the same at lines 84-85, and <code>make generate</code> copies both into the CRD.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L79-L90">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="79" data-line="84-85"><code class="language-go">	UID types.UID `json:&quot;uid&quot;`
+}
+
+// ComposeProjectStatus defines the observed state of a `docker compose` project.
+type ComposeProjectStatus struct {
+	// Namespace is the container namespace; refers to a [ContainerNamespace]
+	// object in the same Kubernetes namespace.
+	//
+	// +required
+	Namespace string `json:&quot;namespace&quot;`
+	// Name is the compose project name.
+	//</code></pre>
+    <p>The engine creates no mirror for a containerd namespace whose name is not a valid DNS-1123 subdomain, and it still mirrors that namespace&#39;s containers (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L80-L84"><code>rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go:80-84</code></a>). And the engine deletes every mirror when the App stops.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L75-L89">rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go</a></div>
+      <pre data-start="75" data-line="80-84"><code class="language-go">	// containerd namespace names may contain uppercase or underscores, which
+	// are invalid in K8s object names. Skip the mirror; containers in such a
+	// namespace are still mirrored. Whether a mirror name is hashed turns on
+	// the container&#39;s own ID, not on the namespace holding it; the namespace
+	// enters only as hash input, to keep hashed names unique across them.
+	if len(validation.IsDNS1123Subdomain(ns)) &gt; 0 {
+		logf.FromContext(ctx).WithName(&quot;containerd-watcher&quot;).
+			V(1).Info(&quot;Skipping ContainerNamespace mirror for non-DNS1123 namespace&quot;, &quot;namespace&quot;, ns)
+		return nil
+	}
+
+	applyConfig := containersv1alpha1apply.ContainerNamespace(ns, w.apiNamespace)
+
+	return w.k8s.Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName))</code></pre>
+    <p>Every sibling type states the condition. <code>ImagePullRequestSpec.Namespace</code>, for example, says the object &quot;exists when the engine&#39;s name for it is a valid object name&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/image_types.go#L116-L118"><code>rdd/pkg/apis/containers/v1alpha1/image_types.go:116-118</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/image_types.go#L111-L123">rdd/pkg/apis/containers/v1alpha1/image_types.go</a></div>
+      <pre data-start="111" data-line="116-118"><code class="language-go">	ImagePullRequestConditionFailed = &quot;Failed&quot;
+)
+
+// ImagePullRequestSpec defines the parameters for pulling an image.
+type ImagePullRequestSpec struct {
+	// Namespace is the container namespace; a `ContainerNamespace` object of
+	// the same name exists when the engine&#39;s name for it is a valid object
+	// name.  If not specified, the image will be pulled into the default
+	// namespace.
+	//
+	// +optional
+	Namespace string `json:&quot;namespace&quot;`
+	// RepoTag is the image to pull.</code></pre>
+    <p>A reconciler or client that trusts the new text can wait for a mirror that never appears, or reject a request because the mirror is missing.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/app/engine/controllers/probe_nsmirror_test.go; run from rdd/:
+//   go test -count=1 -run TestNamespaceMirrorSkipped -v ./pkg/controllers/app/engine/controllers/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+package controllers
+
+import &quot;testing&quot;
+
+// The watcher has no Kubernetes client, so any Apply attempt panics.
+func TestNamespaceMirrorSkipped(t *testing.T) {
+	for _, ns := range []string{&quot;My_Namespace&quot;, &quot;k8s.io&quot;} {
+		func() {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Logf(&quot;%-12q applyNamespace tried to create a ContainerNamespace (panic on the nil client)&quot;, ns)
+				}
+			}()
+			err := (&amp;containerdWatcher{}).applyNamespace(t.Context(), ns)
+			t.Logf(&quot;%-12q applyNamespace returned %v without creating a ContainerNamespace&quot;, ns, err)
+		}()
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestNamespaceMirrorSkipped -v ./pkg/controllers/app/engine/controllers/ 2&gt;&amp;1 | grep -v &#39;^[IWE]0&#39;
+=== RUN   TestNamespaceMirrorSkipped
+    probe_nsmirror_test.go:17: &quot;My_Namespace&quot; applyNamespace returned &lt;nil&gt; without creating a ContainerNamespace
+    probe_nsmirror_test.go:13: &quot;k8s.io&quot;     applyNamespace tried to create a ContainerNamespace (panic on the nil client)
+--- PASS: TestNamespaceMirrorSkipped (0.00s)
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/engine/controllers	0.642s</code></pre>
+      </details>
+    <p>Fix: reuse the sibling wording in both places, then run <code>make generate</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go
+index 511a5cdc8..fdbe808c3 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go
++++ b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go
+@@ -11,8 +11,9 @@ import (
+ //
+ // ComposeProjectStatus defines the observed state of a `docker compose` project.
+ type ComposeProjectStatusApplyConfiguration struct {
+-	// Namespace is the container namespace; refers to a [ContainerNamespace]
+-	// object in the same Kubernetes namespace.
++	// Namespace is the container namespace; a `ContainerNamespace` object of
++	// the same name exists when the engine&#39;s name for it is a valid object
++	// name.
+ 	//
+ 	Namespace *string `json:&quot;namespace,omitempty&quot;`
+ 	// Name is the compose project name.
+diff --git a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequestspec.go b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequestspec.go
+index bd30c8c88..6db48f6fd 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequestspec.go
++++ b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeuprequestspec.go
+@@ -8,8 +8,9 @@ package v1alpha1
+ // ComposeUpRequestSpec defines the identity of the `docker compose` project
+ // to bring up.
+ type ComposeUpRequestSpecApplyConfiguration struct {
+-	// Namespace is the container namespace; refers to a [ContainerNamespace]
+-	// object in the same Kubernetes namespace.  Immutable once created.
++	// Namespace is the container namespace; a `ContainerNamespace` object of
++	// the same name exists when the engine&#39;s name for it is a valid object
++	// name.  Immutable once created.
+ 	//
+ 	Namespace *string `json:&quot;namespace,omitempty&quot;`
+ 	// Name is the compose project name.  Immutable once created.
+diff --git a/rdd/pkg/apis/containers/v1alpha1/compose_types.go b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+index cb5287709..2eb65d27f 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/compose_types.go
++++ b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+@@ -81,8 +81,9 @@ type ComposeProjectContainer struct {
+ 
+ // ComposeProjectStatus defines the observed state of a `docker compose` project.
+ type ComposeProjectStatus struct {
+-	// Namespace is the container namespace; refers to a [ContainerNamespace]
+-	// object in the same Kubernetes namespace.
++	// Namespace is the container namespace; a `ContainerNamespace` object of
++	// the same name exists when the engine&#39;s name for it is a valid object
++	// name.
+ 	//
+ 	// +required
+ 	Namespace string `json:&quot;namespace&quot;`
+@@ -169,8 +170,9 @@ type ComposeProjectList struct {
+ // ComposeUpRequestSpec defines the identity of the `docker compose` project
+ // to bring up.
+ type ComposeUpRequestSpec struct {
+-	// Namespace is the container namespace; refers to a [ContainerNamespace]
+-	// object in the same Kubernetes namespace.  Immutable once created.
++	// Namespace is the container namespace; a `ContainerNamespace` object of
++	// the same name exists when the engine&#39;s name for it is a valid object
++	// name.  Immutable once created.
+ 	//
+ 	// +required
+ 	// +kubebuilder:validation:XValidation:rule=&quot;self == oldSelf&quot;,message=&quot;spec.namespace is immutable&quot;
+diff --git a/rdd/pkg/controllers/containers/compose/crd.yaml b/rdd/pkg/controllers/containers/compose/crd.yaml
+index 3567d6979..cf11b334f 100644
+--- a/rdd/pkg/controllers/containers/compose/crd.yaml
++++ b/rdd/pkg/controllers/containers/compose/crd.yaml
+@@ -167,8 +167,9 @@ spec:
+                 type: string
+               namespace:
+                 description: |-
+-                  Namespace is the container namespace; refers to a [ContainerNamespace]
+-                  object in the same Kubernetes namespace.
++                  Namespace is the container namespace; a `ContainerNamespace` object of
++                  the same name exists when the engine&#39;s name for it is a valid object
++                  name.
+                 type: string
+               workingDir:
+                 description: |-
+@@ -256,8 +257,9 @@ spec:
+                   rule: self == oldSelf
+               namespace:
+                 description: |-
+-                  Namespace is the container namespace; refers to a [ContainerNamespace]
+-                  object in the same Kubernetes namespace.  Immutable once created.
++                  Namespace is the container namespace; a `ContainerNamespace` object of
++                  the same name exists when the engine&#39;s name for it is a valid object
++                  name.  Immutable once created.
+                 type: string
+                 x-kubernetes-validations:
+                 - message: spec.namespace is immutable
+diff --git a/rdd/pkg/controllers/mock/crd.yaml b/rdd/pkg/controllers/mock/crd.yaml
+index 369802744..0a0ceefb7 100644
+--- a/rdd/pkg/controllers/mock/crd.yaml
++++ b/rdd/pkg/controllers/mock/crd.yaml
+@@ -572,8 +572,9 @@ spec:
+                 type: string
+               namespace:
+                 description: |-
+-                  Namespace is the container namespace; refers to a [ContainerNamespace]
+-                  object in the same Kubernetes namespace.
++                  Namespace is the container namespace; a `ContainerNamespace` object of
++                  the same name exists when the engine&#39;s name for it is a valid object
++                  name.
+                 type: string
+               workingDir:
+                 description: |-
+@@ -661,8 +662,9 @@ spec:
+                   rule: self == oldSelf
+               namespace:
+                 description: |-
+-                  Namespace is the container namespace; refers to a [ContainerNamespace]
+-                  object in the same Kubernetes namespace.  Immutable once created.
++                  Namespace is the container namespace; a `ContainerNamespace` object of
++                  the same name exists when the engine&#39;s name for it is a valid object
++                  name.  Immutable once created.
+                 type: string
+                 x-kubernetes-validations:
+                 - message: spec.namespace is immutable</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The schema admits project names that <code>docker compose</code> rejects, the empty string included <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L173-L187">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="173" data-line="178-182"><code class="language-go">	// object in the same Kubernetes namespace.  Immutable once created.
+	//
+	// +required
+	// +kubebuilder:validation:XValidation:rule=&quot;self == oldSelf&quot;,message=&quot;spec.namespace is immutable&quot;
+	Namespace string `json:&quot;namespace&quot;`
+	// Name is the compose project name.  Immutable once created.
+	//
+	// +required
+	// +kubebuilder:validation:XValidation:rule=&quot;self == oldSelf&quot;,message=&quot;spec.name is immutable&quot;
+	Name string `json:&quot;name&quot;`
+	// WorkingDir is the compose project directory on the host (i.e. relative
+	// to where the RDD process runs).  Used to look up any files needed.
+	//
+	// +required
+	WorkingDir string `json:&quot;workingDir&quot;`</code></pre>
+    <p>A <code>+required</code> string still admits the empty string. The validator admitted both agents&#39; probes, one with empty <code>spec.namespace</code> and <code>spec.name</code> (named <code>cmp-cdb4ee2a…</code>) and the other with an absolute <code>configs</code> entry, which the spec defines as relative to <code>workingDir</code>.</p>
+    <p>compose-go rejects an empty project name (compose-go v2.12.1 <code>loader/loader.go:577-578</code> in the module cache) and accepts only lowercase letters, digits, <code>-</code>, and <code>_</code>, starting with a letter or digit (<code>InvalidProjectNameErr</code>, line 665). containerd namespaces may contain dots, so <code>(&quot;k8s.io&quot;, &quot;foo&quot;)</code> and <code>(&quot;k8s&quot;, &quot;io.foo&quot;)</code> both map to <code>k8s.io.foo</code>. Compose&#39;s grammar has no dots, so enforcing it would make the join unambiguous.</p>
+    <p>Fix: add <code>+kubebuilder:validation:Pattern=^[a-z0-9][a-z0-9_-]*$</code> to <code>spec.name</code> and <code>+kubebuilder:validation:MinLength=1</code> to <code>spec.namespace</code> and <code>spec.workingDir</code>; schema rules run before the webhook.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>workingDir</code> is called both absolute and &quot;relative to where the RDD process runs&quot; <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L178-L189">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="178" data-line="183-184"><code class="language-go">	// Name is the compose project name.  Immutable once created.
+	//
+	// +required
+	// +kubebuilder:validation:XValidation:rule=&quot;self == oldSelf&quot;,message=&quot;spec.name is immutable&quot;
+	Name string `json:&quot;name&quot;`
+	// WorkingDir is the compose project directory on the host (i.e. relative
+	// to where the RDD process runs).  Used to look up any files needed.
+	//
+	// +required
+	WorkingDir string `json:&quot;workingDir&quot;`
+	// Configs is the list of compose files used to create the project,
+	// relative to WorkingDir.</code></pre>
+    <p>The phrase means &quot;on the machine that runs RDD&quot;, but a reader can also take it as a relative path, resolved against the daemon&#39;s working directory. <code>ComposeProjectStatus.WorkingDir</code> puts &quot;absolute path&quot; and &quot;relative to where the RDD process runs&quot; in one sentence (lines 93-94).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L88-L99">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="88" data-line="93-94"><code class="language-go">	Namespace string `json:&quot;namespace&quot;`
+	// Name is the compose project name.
+	//
+	// +required
+	Name string `json:&quot;name&quot;`
+	// WorkingDir is the absolute path to the compose project directory on the
+	// host (i.e. relative to where the RDD process runs). May be unset.
+	//
+	// +optional
+	WorkingDir string `json:&quot;workingDir,omitempty&quot;`
+	// Configs is the list of compose files used to create the project,
+	// relative to WorkingDir. It is not guaranteed that this is sufficient to</code></pre>
+    <p>The spec repeats the wording (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L766-L767"><code>rdd/docs/design/api_containers.md:766-767</code></a>), and nothing rejects a relative <code>workingDir</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L761-L772">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="761" data-line="766-767"><code class="language-markdown">  `spec.name`.  That is, the resulting `ComposeProject` object will have the
+  same name as the `ComposeUpRequest`.
+- **spec.namespace**: The containerd namespace; same as the `status.name` of a
+  [`ContainerNamespace`](#namespaces) object.
+- **spec.name**: The compose project name.
+- **spec.workingDir**: The compose project directory on the host (i.e. relative
+  to where the RDD process runs).  Used to look up any files needed.
+- **spec.configs**: Optional; the list of compose files used to create the
+  project.  Relative to `spec.workingDir`, which means it&#39;s also a path on the
+  host.  Defaults to the `docker compose` defaults.
+- **status.conditions**: The normal status conditions; see [below](#status-conditions-1)
+</code></pre>
+    <p>Fix: write &quot;an absolute path on the host that runs the RDD daemon&quot; in the types and the spec, and reject <code>!filepath.IsAbs(request.Spec.WorkingDir)</code> in <code>ValidateCreate</code> and <code>ValidateUpdate</code>, since the field is mutable.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_controller.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The webhook intercepts UPDATE only to admit it <span class="pill pill-claude">Claude Opus 5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_controller.go#L72-L87">rdd/pkg/controllers/containers/compose/compose_controller.go</a></div>
+      <pre data-start="72" data-line="77-82"><code class="language-go">
+// setupWebhookWithRuntimeConfig registers a validating webhook that enforces
+// spec.namespace/spec.name-derived naming on ComposeUpRequest create.
+func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
+	mgr.GetLogger().Info(&quot;Setting up compose project webhook&quot;)
+	validatingConfig := base.WebhookConfig[*v1alpha1.ComposeUpRequest]{
+		Name:        &quot;compose-up-request-validating&quot;,
+		WebhookName: &quot;compose-up-request-validating.containers.rancherdesktop.io&quot;,
+		WebhookPort: c.webhookPort,
+		Validator:   &amp;composeUpRequestValidator{},
+	}
+
+	managers, err := base.SetupWebhookForResource(mgr, &amp;v1alpha1.ComposeUpRequest{}, validatingConfig)
+	if err != nil {
+		return err
+	}</code></pre>
+    <p>With <code>Operations</code> unset, <code>base</code> registers the webhook for CREATE and UPDATE with <code>failurePolicy: Fail</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/base/webhook.go#L274-L291"><code>rdd/pkg/controllers/base/webhook.go:274-291</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/base/webhook.go#L269-L296">rdd/pkg/controllers/base/webhook.go</a></div>
+      <pre data-start="269" data-line="274-291"><code class="language-go">	if err != nil {
+		klog.Errorf(&quot;Failed to read CA bundle file: %v&quot;, err)
+		return fmt.Errorf(&quot;failed to read CA bundle file %s: %w&quot;, caBundlePath, err)
+	}
+
+	// Set default failure policy if not specified
+	failurePolicy := admissionregistrationv1.Fail
+	if wm.config.FailurePolicy != nil {
+		failurePolicy = *wm.config.FailurePolicy
+	}
+	// Set default side effects if not specified
+	sideEffects := admissionregistrationv1.SideEffectClassNone
+	if wm.config.SideEffects != nil {
+		sideEffects = *wm.config.SideEffects
+	}
+	// Set default operations if not specified
+	operations := wm.config.Operations
+	if len(operations) == 0 {
+		operations = []admissionregistrationv1.OperationType{
+			admissionregistrationv1.Create,
+			admissionregistrationv1.Update,
+		}
+	}
+	clientConfig := admissionregistrationv1apply.WebhookClientConfig().
+		WithURL(webhookURL).
+		WithCABundle(caBundleBytes...)
+	rules := []*admissionregistrationv1apply.RuleWithOperationsApplyConfiguration{
+		admissionregistrationv1apply.RuleWithOperations().</code></pre>
+    <p><code>ValidateUpdate</code> admits everything (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L37-L42"><code>rdd/pkg/controllers/containers/compose/compose_webhooks.go:37-42</code></a>). So every spec or metadata update, a finalizer included, waits on a webhook round trip that checks nothing, and fails while the webhook server is down.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L32-L47">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="32" data-line="37-42"><code class="language-go">	}
+	return nil, nil
+}
+
+// ValidateUpdate implements [ctrlwebhookadmission.Validator].
+func (v *composeUpRequestValidator) ValidateUpdate(_ context.Context, _, _ *v1alpha1.ComposeUpRequest) (warnings ctrlwebhookadmission.Warnings, err error) {
+	// metadata.name is immutable on update (it is only ever set on create), and
+	// spec.namespace and spec.name are enforced via CEL; we do not have anything
+	// else to validate on update.
+	return nil, nil
+}
+
+// ValidateDelete implements [ctrlwebhookadmission.Validator].
+func (v *composeUpRequestValidator) ValidateDelete(_ context.Context, _ *v1alpha1.ComposeUpRequest) (warnings ctrlwebhookadmission.Warnings, err error) {
+	// We do not do any validation on delete.
+	return nil, nil</code></pre>
+    <p>Fix: set <code>Operations</code> to CREATE only, or keep UPDATE for the <code>workingDir</code> check in S2.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>ComposeUpRequest</code> joins the <code>all</code> category, unlike the other request kinds <span class="pill pill-claude">Claude Opus 5</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L210-L220">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="210" data-line="215"><code class="language-go">	Conditions []metav1.Condition `json:&quot;conditions,omitempty&quot;`
+}
+
+// +kubebuilder:object:root=true
+// +kubebuilder:ac:generate=true
+// +kubebuilder:resource:categories=&quot;all&quot;
+// +kubebuilder:subresource:status
+// +kubebuilder:selectablefield:JSONPath=.spec.namespace
+// +kubebuilder:selectablefield:JSONPath=.spec.name
+// +kubebuilder:metadata:annotations=rdd.rancherdesktop.io/controller=compose
+</code></pre>
+    <p><code>ImagePullRequest</code> and the other request kinds have no category (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/image_types.go#L168-L171"><code>rdd/pkg/apis/containers/v1alpha1/image_types.go:168-171</code></a>), while the mirror kinds and <code>ComposeProject</code> are in <code>all</code>. <code>rdd ctl get all</code> would list short-lived requests beside the mirrors.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/image_types.go#L163-L176">rdd/pkg/apis/containers/v1alpha1/image_types.go</a></div>
+      <pre data-start="163" data-line="168-171"><code class="language-go">	// +listMapKey=type
+	// +optional
+	Conditions []metav1.Condition `json:&quot;conditions,omitempty&quot;`
+}
+
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:selectablefield:JSONPath=.spec.namespace
+// +kubebuilder:metadata:annotations=rdd.rancherdesktop.io/controller=image
+
+// ImagePullRequest defines a request to pull a new image.
+// After an image has been pulled, the ImagePullRequest object will
+// be deleted after a short delay.
+type ImagePullRequest struct {</code></pre>
+    <p>Fix: drop the category from <code>ComposeUpRequest</code>, or add it to every request kind.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_controller.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Log lines name the wrong resource <span class="pill pill-claude">Claude Opus 5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_controller.go#L71-L81">rdd/pkg/controllers/containers/compose/compose_controller.go</a></div>
+      <pre data-start="71" data-line="76"><code class="language-go">}
+
+// setupWebhookWithRuntimeConfig registers a validating webhook that enforces
+// spec.namespace/spec.name-derived naming on ComposeUpRequest create.
+func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
+	mgr.GetLogger().Info(&quot;Setting up compose project webhook&quot;)
+	validatingConfig := base.WebhookConfig[*v1alpha1.ComposeUpRequest]{
+		Name:        &quot;compose-up-request-validating&quot;,
+		WebhookName: &quot;compose-up-request-validating.containers.rancherdesktop.io&quot;,
+		WebhookPort: c.webhookPort,
+		Validator:   &amp;composeUpRequestValidator{},</code></pre>
+    <p>The webhook validates <code>ComposeUpRequest</code>, and the error log at line 101 repeats the wording.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_controller.go#L96-L106">rdd/pkg/controllers/containers/compose/compose_controller.go</a></div>
+      <pre data-start="96" data-line="101"><code class="language-go">	if err := v1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
+		return err
+	}
+
+	if err := c.setupWebhookWithRuntimeConfig(mgr); err != nil {
+		mgr.GetLogger().Error(err, &quot;Failed to set up compose project webhook&quot;)
+		return err
+	}
+
+	return nil
+}</code></pre>
+    <p>Fix: log &quot;Setting up ComposeUpRequest webhook&quot; and &quot;Failed to set up ComposeUpRequest webhook&quot;.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The tree already has a manager-lifetime context that ends on every stop path</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5</span>. The engine reconciler derives <code>watcherCtx</code> from <code>context.Background()</code> and cancels it from a <code>manager.RunnableFunc</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go#L209-L225"><code>rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go:209-225</code></a>), and <code>ImagePullRequest</code> runs its long pulls under it (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/image_pull_request_reconciler.go#L257"><code>image_pull_request_reconciler.go:257</code></a>). controller-runtime cancels a Runnable&#39;s context whenever the manager stops, and waits up to the 10 s <code>GracefulShutdownTimeout</code> for it to return. A compose reconciler could use the same pattern, which would make <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/011117602"><code>011117602</code></a>&#39;s parameter unnecessary. Of its 17 implementors, 16 ignore it, and the 17th, the mock, uses it only during setup. If the parameter stays, apply I1&#39;s fix.</li>
+      <li><em></em>Deterministic request names allow one <code>ComposeUpRequest</code> per project at a time<em></em> (future) <span class="pill pill-claude">Claude Opus 5</span>. A settled request stays for at least a minute (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L36-L38"><code>api_containers.md:36-38</code></a>), so a second <code>up</code> in that window fails with AlreadyExists, and an update with an unchanged spec bumps no generation. The spec should say how a client runs <code>up</code> again.</li>
+      <li><em></em>Reaping can run <code>docker compose down</code> on containers the user never deleted<em></em> (future) <span class="pill pill-claude">Claude Opus 5</span>. <code>cleanupMirrorResources</code> deletes every <code>Container</code> mirror when the App stops (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go#L449-L466"><code>watch_reconciler.go:449-466</code></a>), so every <code>ComposeProject</code> will fall to <code>HasMembers=False</code> and be reaped. Deleting a project runs <code>docker compose down --remove-orphans</code>, which &quot;may be retried later&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L720-L731"><code>api_containers.md:720-731</code></a>); a retry after the next start removes the project&#39;s containers. The spec should say that a project deleted while <code>HasMembers=False</code> drops its finalizer without running <code>down</code>.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The name rule is in a webhook because CEL cannot hash</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. CEL transition rules keep <code>spec.namespace</code> and <code>spec.name</code> immutable, so the name stays consistent with the spec across updates.</li>
+      <li><em></em><code>+listType=map</code> keyed on <code>name</code><em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5</span> makes the API server enforce the spec&#39;s rule that each <code>status.containers</code> name is unique.</li>
+      <li><em></em>The validator does not require the <code>ContainerNamespace</code> to exist<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5</span>, so it avoids the boot-window rejections the <code>ImagePullRequest</code> webhook produces.</li>
+      <li><strong>Both binaries register the compose controller</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>. The <code>containers</code> aggregator&#39;s blank import pulls it into <code>cmd/containers-controller</code> and the embedded service.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ol>
+      <li>The naming rule has no independent test (I3).</li>
+      <li>Nothing exercises the CEL immutability rules or the webhook&#39;s registration (GVK lookup, path, and CREATE and UPDATE routing). The I4 probe runs the real compose controller under envtest in about ten seconds. Extended with an update to <code>spec.name</code>, it would cover all of this without a VM. A BATS suite modeled on <code>rdd/bats/tests/33-lima-controllers/limavm-admission.bats</code> would cover it too.</li>
+      <li>The I1 probe can become a regression test in <code>manager_test.go</code>.</li>
+      <li>I ran these at the review SHA: <code>go build ./...</code>, <code>go vet ./...</code>, <code>make lint-rdd</code> (0 issues), <code>make verify-generate</code> (no drift), and <code>go test -race -count=1 ./pkg/controllers/... ./pkg/service/controllers/... ./pkg/apis/...</code> (every package ok). With the I1 patch applied, <code>go test -race ./pkg/service/controllers/</code> passes too.</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The spec calls each namespace field &quot;the same as the <code>status.name</code> of a <code>ContainerNamespace</code>&quot; six times (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/docs/design/api_containers.md#L210"><code>rdd/docs/design/api_containers.md:210</code></a>, 295, 431, 603, 674, 763), but <code>ContainerNamespace</code> has no status (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/apis/containers/v1alpha1/container_namespace_types.go#L20-L27"><code>rdd/pkg/apis/containers/v1alpha1/container_namespace_types.go:20-27</code></a>). The sentence predates this PR; the compose sections copied it <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+      <li>The <code>ComposeUpRequest</code> condition table has no row for <code>Failed=False</code> on success (I2) <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li>The spec&#39;s name rule (lines 669-671) omits the 253-character limit that <code>IsDNS1123Subdomain</code> applies, so a client that follows it can compute a verbatim name the webhook rejects <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li>The spec does not say that <code>spec.namespace</code> and <code>spec.name</code> are immutable (lines 759-770), though the CRD enforces it <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li><code>rdd/docs/design/controllers.md</code> describes registration (line 109) but not the new context contract <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li>The type comments describe <code>docker compose up</code> and reaping in the present tense, while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_controller.go#L31"><code>compose_controller.go:31</code></a> says no reconciler exists yet, so a consumer cannot tell the behavior is planned <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/011117602"><code>011117602</code></a> has no body, so the reason for the new parameter appears only in the PR description.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f5daa0b57"><code>f5daa0b57</code></a> tests the validator that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/91f62400e"><code>91f62400e</code></a> adds; folding the two keeps the validator commit tested on its own <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_controller.go#L31"><code>rdd/pkg/controllers/containers/compose/compose_controller.go:31</code></a>: &quot;It only registers a validating webhook; there is no reconciler yet.&quot; <code>docker compose up</code>, <code>HasMembers</code> tracking, reaping, and the mirror finalizer are all future work.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f5daa0b57d0302f877ac2774f6ba507b6870c4f9/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L50-L54"><code>rdd/pkg/controllers/containers/compose/compose_webhooks.go:50-54</code></a> leaves user-created <code>ComposeProject</code> objects unblocked, because every local client has the same admin-equivalent identity. I4 concerns only the CRD text that contradicts this note.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5"><span class="pill pill-claude">Claude Opus 5</span> <a href="#claude-opus-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found four of the five Important findings, every single-agent Suggestion (S3 to S5), and all three design concerns, among them the reaping hazard nobody else saw. Its I3 mutation probe ran as pasted and was the strongest agent evidence this round. It left I1 as <code>Unproven:</code> without starting envtest; my probe then settled it in under ten seconds. It rated I3 Important where Codex said Suggestion; I kept Claude&#39;s rating, since the test cannot fail for the rule it is named after. It compared the types against the spec and still missed Codex&#39;s I5.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Codex alone caught I5, by checking the new namespace comment against the <code>ContainerNamespace</code> type and the engine&#39;s skip rule. It traced I1&#39;s mechanism correctly but rated it a Suggestion because nothing uses the context yet. I raised it to Important, since the code contradicts the interface comment the PR adds, and did the same for I3. Its S1 probe ran and failed as claimed, but its quoted output names line 31 where the pasted file reports line 25, so the file it ran differs from the one it pasted. It missed I4, and it opened with a verdict table outside the requested format.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>The first run stopped mid-finding with a zero-token final record. Its one retry completed, raised only I2, and praised <code>manager.go</code> for propagating the manager&#39;s shutdown context correctly, which I1 shows it does not. The retry also broke the run rules. It built <code>rdd</code> in its worktree, ran <code>rdd svc start</code> under <code>RDD_INSTANCE=deep-review-gemini</code> to create a <code>ComposeProject</code>, then ran <code>rdd svc delete</code>, which removed the instance. No VM started, and nothing was left behind. The truncated first attempt had two points the retry dropped, the <code>workingDir</code> wording (S2) and the untested hash branch (I3); I credited both. It also labeled I2 a regression in a file this PR creates.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found I2 and finished first. Its S1 asked for tests of <code>ValidateUpdate</code> and <code>ValidateDelete</code>, which return nil unconditionally, and I dropped it as trivially correct code. Its S2 framed <code>workingDir</code> validation as a path-traversal risk, which does not apply on a single-user desktop where the client can run compose directly; S2 above includes the validation check. It marked <code>manager.go</code> reviewed with no issues and called the tests &quot;robust&quot; coverage of the naming helper, which I3 disproves. The two Gemini reviewers agreed on I2 and missed the same findings, so their agreement counts as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>18m 28s</td><td>20m 07s</td><td>8m 16s</td><td>3m 43s</td></tr>
+        <tr><td>Findings</td><td>4I 5S</td><td>4I 2S</td><td>2I 1S</td><td>1I 1S</td></tr>
+        <tr><td>Tool calls</td><td>75 (Bash 46, Read 27, Skill 1)</td><td>58 (shell 55, apply_patch 3)</td><td>61 (run<em>shell</em>command 61)</td><td>40 (grep<em>search 19, read</em>file 15, glob 3)</td></tr>
+        <tr><td>Design observations</td><td>7</td><td>4</td><td>3</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>7</td><td>2</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>36</td><td>36</td><td>36</td><td>36</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>2</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>4I 5S</strong></td><td><strong>4I 2S</strong></td><td><strong>2I 1S</strong></td><td><strong>1I 1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Codex P1 context lifetime: suggestion S2 → important I1. Codex P1 oracle test: suggestion S3 → important I3. Gemini 3.5 Flash P1 tests for the no-op <code>ValidateUpdate</code> and <code>ValidateDelete</code> (S1): dropped as trivially correct. Gemini 3.1 Pro P1 first attempt, missing hash-branch test: suggestion → important I3 (the attempt has no row of its own).</p>
+    <p>Claude gave the most value this round, and Codex added the one Important finding nobody else had. The two Gemini reviewers converged on the finding all four found.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>Quote the liveness monitor&#39;s glob. The Monitor tool runs its command in the user&#39;s shell, and zsh expands an unquoted <code>$HOME/.gemini/tmp/review-gemini-pass-1-*/chats/*.jsonl</code> once, at launch. When stale session directories from earlier reviews match the pattern, the list holds only their files, the new session never counts, and a Gemini run longer than one interval reports STALLED. Single-quote the pattern in Step 4&#39;s command and table so <code>agent-liveness.sh</code> expands it on every sample, as its header comment assumes.</li>
+      <li>Treat a review that lacks its Coverage Summary, or that ends inside a finding, as truncated even when all three severity headings are present. Read the last record of the agent&#39;s session log; an empty or zero-token final message is a dropped stream, and the transient-error retry applies.</li>
+      <li>Check each agent&#39;s executed commands with a parser for its session format (Claude&#39;s <code>tool_use</code> <code>input.command</code>, Codex&#39;s function and custom tool-call arguments, and Gemini&#39;s <code>toolCalls[].args.command</code>). A regex over the raw JSONL misses commands with escaped quotes and matches the prompt&#39;s own text, so a zero count from it proves nothing.</li>
+      <li>When a change adds a mechanism (a parameter, hook, context, or registry entry) for a feature a later change will build, search the tree for an existing mechanism that serves the same need and compare the two on every exit path, failure paths included. The existing reuse dimension names only the stdlib and installed dependencies.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[repo] UPDATE: the &quot;Live verification setup&quot; section and the live-verification bullet under &quot;Build, test environment, and CI&quot; invite review agents to build <code>rdd</code> and run <code>rdd svc start</code>. Review agents must not start services, VMs, or containers on the reviewer&#39;s machine, and an override later in the prompt does not stop an agent from following these entries. Replace both: tell agents to judge live behavior from the code and leave live checks to the consolidator.</li>
+      <li>[repo] <code>SharedControllerManager</code> can run real controllers, with their CRDs and admission webhooks, against envtest (<code>envtest.Environment{DownloadBinaryAssets: true}</code>, as <code>pkg/service/controllers/manager_test.go</code> does) in about ten seconds. Use it to settle admission, CEL, and webhook-registration claims without BATS or a VM.</li>
+      <li>[repo] Code that needs a context outliving one <code>Reconcile</code> has an in-tree pattern. The engine reconciler derives <code>watcherCtx</code> from <code>context.Background()</code> and cancels it from a <code>manager.RunnableFunc</code>, which controller-runtime stops on every manager exit. A context taken from the caller of <code>SharedControllerManager.Start</code> stays live when the manager exits on an error, so flag long-running work started under one.</li>
+      <li>[repo] Every other <code>containers</code> API type states the <code>ContainerNamespace</code> relationship conditionally. An object of the same name exists only when the engine&#39;s name is a valid object name. Flag a type comment or doc that promises the object unconditionally. The design doc&#39;s &quot;the <code>status.name</code> of a <code>ContainerNamespace</code>&quot; names a field the type does not have.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
