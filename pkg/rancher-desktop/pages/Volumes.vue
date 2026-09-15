@@ -239,14 +239,21 @@ export default defineComponent({
 
       return { content: undefined };
     },
+    /**
+     * Ask the user to confirm deleting the given volumes.
+     */
     async confirmDelete(volumes: Volume[]): Promise<boolean> {
+      const acceptId = 0;
       const cancelId = 1;
       const result = await ipcRenderer.invoke('show-message-box', {
         type:      'question',
         title:     this.t('volumes.confirmDelete.title'),
         message:   this.t('volumes.confirmDelete.message', { count: volumes.length }),
         detail:    volumes.map(volume => volume.status?.name).join('\n'),
-        buttons:   [this.t('volumes.confirmDelete.confirm'), this.t('generic.cancel')],
+        buttons:   Object.assign([], {
+          [acceptId]: this.t('volumes.confirmDelete.confirm'),
+          [cancelId]: this.t('generic.cancel'),
+        }),
         defaultId: cancelId,
         cancelId,
       });
