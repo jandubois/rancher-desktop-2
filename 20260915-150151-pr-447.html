@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260915-150151-pr-447</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260915-150151-pr-447</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-15 15:01</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/447" class="gh-ref" data-title="Add distro-overlay tool to layer RD assets onto the distro" data-state="open" data-type="pr">#447</a> — Add distro-overlay tool to layer RD assets onto the distro</td></tr>
+      <tr><td>Branch</td><td><code>overlay-tool-spike</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a0aecb08d"><code>a0aecb08d</code></a> Add distro-overlay tool to layer RD assets onto the distro<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b8d01e24e"><code>b8d01e24e</code></a> Stop distro-overlay from corrupting the ext4 image</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b8d01e24ec2502e98119de64185a459cc813af6c"><code>b8d01e24ec2502e98119de64185a459cc813af6c</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; five Important defects, each with a verified patch; the approach is sound</td></tr>
+      <tr><td>Wall-clock time</td><td><code>57 min 15 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>distro-overlay handles the common case: representative overlays onto clones of the real v0.2.8 image pass e2fsck. Five Important defects remain, each with a verified patch. Overriding a hard-linked file rewrites every name on its inode. A failed <code>Apply</code> leaves the image open, which turns the Windows unit-test job red. A refused raw write leaves the input corrupt, and <code>--output</code> is ignored for raw. Nested trees depend on manifest order. <code>--output</code> naming the input empties the tarball.</p>
+    <p>Claude Opus 5 raised four of the five Important findings and every Suggestion, and probed each on a clone of the real image. Codex GPT 5.6 Sol was stopped by its provider&#39;s content filter partway through; the two defects its log shows it had formed carry its name. Gemini 3.1 Pro found the <code>--output</code> aliasing, and both Geminis flagged the close asymmetry behind I2. The consolidator found the nested-tree defect, ran every reproducer below against <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b8d01e24e"><code>b8d01e24e</code></a>, and checked each patch against its probe, the test suite, and golangci-lint, singly and all five together.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/overlay/image.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Overriding a hard-linked file rewrites every name on its inode, and the tarball keeps links to the dropped entry <span class="pill pill-claude">Claude Opus 5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/image.go#L213-L232">rdd/pkg/overlay/image.go</a></div>
+      <pre data-start="213" data-line="218-227"><code class="language-go">}
+
+// checkOverride refuses to replace an image file in the ways go-diskfs gets
+// wrong. go-diskfs ignores O_TRUNC, so a shorter file would keep the old tail.
+func (i *imageDistro) checkOverride(info os.FileInfo, st *ext4.StatT, size int64) error {
+	switch {
+	case info.IsDir():
+		return errors.New(&quot;the image has a directory there&quot;)
+	case info.Mode()&amp;os.ModeSymlink != 0:
+		return errors.New(&quot;the image has a symlink there, which go-diskfs would write through&quot;)
+	case size &lt; info.Size():
+		return fmt.Errorf(&quot;go-diskfs cannot shrink the image&#39;s %d-byte file to %d bytes&quot;, info.Size(), size)
+	case i.hasExtentTree(info, st):
+		return errors.New(&quot;the image&#39;s file has an extent tree or an xattr block, which the tool does not rewrite&quot;)
+	}
+	return nil
+}
+
+// hasExtentTree reports whether a file has blocks beyond its data. Those are
+// extent-tree blocks, which a file needs once its extents outgrow the four that</code></pre>
+    <p><code>WriteFile</code> rewrites an existing file&#39;s inode in place (line 130), and <code>checkOverride</code> never reads <code>st.Nlink</code>, so every other name on that inode gets the new bytes while the tool exits 0 and e2fsck stays clean. A walk of v0.2.8 found 141 hard-linked regular files, none under <code>/etc</code> or <code>/usr/local</code>. Busybox alone has 125 names in <code>/usr/bin</code> and <code>/usr/sbin</code>, and Claude showed that replacing <code>/usr/bin/which</code> rewrites <code>/usr/bin/patch</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/image.go#L125-L135">rdd/pkg/overlay/image.go</a></div>
+      <pre data-start="125" data-line="130"><code class="language-go">			return err
+		}
+	} else if err := i.checkParentIndex(r); err != nil {
+		return err
+	}
+	f, err := i.fs.OpenFile(r, os.O_CREATE|os.O_RDWR|os.O_TRUNC)
+	if err != nil {
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()</code></pre>
+    <p>The tarball backend drops the overridden entry (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/tar.go#L44-L46"><code>tar.go:44-46</code></a>), so later <code>TypeLink</code> entries naming it point at a missing file and extraction fails. The WSL tarball holds 1,299 hard links.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/tar.go#L39-L51">rdd/pkg/overlay/tar.go</a></div>
+      <pre data-start="39" data-line="44-46"><code class="language-go">		if err != nil {
+			return fmt.Errorf(&quot;reading base tarball: %w&quot;, err)
+		}
+		name := tarClean(hdr.Name)
+		baseTypes[name] = hdr.Typeflag
+		if override[name] {
+			continue // the overlay replaces this path
+		}
+		if err := tw.WriteHeader(hdr); err != nil {
+			return err
+		}
+		if _, err := io.Copy(tw, tr); err != nil {
+			return err</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/overlay/probe_hardlink_test.go; run from rdd/ with e2fsprogs on PATH:
+//   PATH=&quot;$(brew --prefix)/opt/e2fsprogs/sbin:$PATH&quot; go test -count=1 -run TestProbeHardLinks -v ./pkg/overlay/
+package overlay
+
+import (
+	&quot;archive/tar&quot;
+	&quot;bytes&quot;
+	&quot;errors&quot;
+	&quot;io&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;strings&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+)
+
+func TestProbeHardLinks(t *testing.T) {
+	root := t.TempDir() // image: vi is a second name for busybox&#39;s inode
+	writeSource(t, root, &quot;usr/bin/busybox&quot;, &quot;BUSYBOX&quot;)
+	assert.NilError(t, os.Link(filepath.Join(root, &quot;usr/bin/busybox&quot;), filepath.Join(root, &quot;usr/bin/vi&quot;)))
+	writeSource(t, root, &quot;usr/bin/plain&quot;, &quot;PLAIN&quot;)
+	var base bytes.Buffer // tarball: the same files, vi as a TypeLink entry
+	tw := tar.NewWriter(&amp;base)
+	for _, h := range []tar.Header{
+		{Name: &quot;usr/bin/busybox&quot;, Typeflag: tar.TypeReg, Mode: 0o755, Size: 7},
+		{Name: &quot;usr/bin/vi&quot;, Typeflag: tar.TypeLink, Linkname: &quot;usr/bin/busybox&quot;, Mode: 0o755},
+		{Name: &quot;usr/bin/plain&quot;, Typeflag: tar.TypeReg, Mode: 0o755, Size: 5},
+	} {
+		assert.NilError(t, tw.WriteHeader(&amp;h))
+		_, _ = tw.Write([]byte(map[string]string{&quot;usr/bin/busybox&quot;: &quot;BUSYBOX&quot;, &quot;usr/bin/plain&quot;: &quot;PLAIN&quot;}[h.Name]))
+	}
+	assert.NilError(t, tw.Close())
+	source := t.TempDir()
+	writeSource(t, source, &quot;new&quot;, strings.Repeat(&quot;N&quot;, 64&lt;&lt;10))
+	for _, target := range []string{&quot;/usr/bin/plain&quot;, &quot;/usr/bin/busybox&quot;} {
+		t.Run(target, func(t *testing.T) {
+			m := &amp;Manifest{Entries: []Entry{{Path: target, Source: &quot;new&quot;, Mode: &quot;0755&quot;}}}
+			img := mkfsImage(t, root)
+			t.Logf(&quot;image Apply: %v&quot;, Apply(openImage(t, img), m, source, testMtime))
+			vi := filepath.Join(t.TempDir(), &quot;vi&quot;)
+			e2fsprogs(t, &quot;debugfs&quot;, &quot;-R&quot;, &quot;dump /usr/bin/vi &quot;+vi, img)
+			b, _ := os.ReadFile(vi)
+			t.Logf(&quot;image: /usr/bin/vi starts %q&quot;, b[:min(len(b), 7)])
+			assert.Check(t, string(b) == &quot;BUSYBOX&quot;, &quot;image: vi changed&quot;)
+
+			var out bytes.Buffer
+			err := ApplyTar(bytes.NewReader(base.Bytes()), &amp;out, m, source, testMtime)
+			t.Logf(&quot;tar ApplyTar: %v&quot;, err)
+			if err == nil {
+				dangling := danglingLinks(t, out.Bytes())
+				t.Logf(&quot;tar: links to a missing entry: %v&quot;, dangling)
+				assert.Check(t, len(dangling) == 0, &quot;tar: dangling hard link&quot;)
+			}
+		})
+	}
+}
+
+// danglingLinks lists the TypeLink entries whose target no earlier entry names.
+func danglingLinks(t *testing.T, data []byte) []string {
+	seen, dangling := map[string]bool{}, []string{}
+	tr := tar.NewReader(bytes.NewReader(data))
+	for {
+		hdr, err := tr.Next()
+		if errors.Is(err, io.EOF) {
+			return dangling
+		}
+		assert.NilError(t, err)
+		if hdr.Typeflag == tar.TypeLink &amp;&amp; !seen[hdr.Linkname] {
+			dangling = append(dangling, hdr.Name+&quot; -&gt; &quot;+hdr.Linkname)
+		}
+		seen[hdr.Name] = true
+	}
+}</code></pre>
+      <pre><code class="language-text">$ PATH=&quot;$(brew --prefix)/opt/e2fsprogs/sbin:$PATH&quot; go test -count=1 -run TestProbeHardLinks -v ./pkg/overlay/
+=== RUN   TestProbeHardLinks
+=== RUN   TestProbeHardLinks//usr/bin/plain
+    probe_hardlink_test.go:40: image Apply: &lt;nil&gt;
+    probe_hardlink_test.go:44: image: /usr/bin/vi starts &quot;BUSYBOX&quot;
+    probe_hardlink_test.go:49: tar ApplyTar: &lt;nil&gt;
+    probe_hardlink_test.go:52: tar: links to a missing entry: []
+=== RUN   TestProbeHardLinks//usr/bin/busybox
+    probe_hardlink_test.go:40: image Apply: &lt;nil&gt;
+    probe_hardlink_test.go:44: image: /usr/bin/vi starts &quot;NNNNNNN&quot;
+    probe_hardlink_test.go:45: assertion failed: string(b) is not &quot;BUSYBOX&quot;: image: vi changed
+    probe_hardlink_test.go:49: tar ApplyTar: &lt;nil&gt;
+    probe_hardlink_test.go:52: tar: links to a missing entry: [usr/bin/vi -&gt; usr/bin/busybox]
+    probe_hardlink_test.go:53: assertion failed: len(dangling) is not 0: tar: dangling hard link
+--- FAIL: TestProbeHardLinks (0.08s)
+    --- PASS: TestProbeHardLinks//usr/bin/plain (0.04s)
+    --- FAIL: TestProbeHardLinks//usr/bin/busybox (0.03s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/overlay	0.477s
+FAIL</code></pre>
+      </details>
+    <p>Fix: refuse a destination with several links in the image, and any override of either end of a base hard link in <code>ApplyTar</code>, so both backends reject the same manifests; list hard links in the README&#39;s raw-image limits.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/overlay/image.go b/rdd/pkg/overlay/image.go
+index 1f162cf63..8e29b7e30 100644
+--- a/rdd/pkg/overlay/image.go
++++ b/rdd/pkg/overlay/image.go
+@@ -214,12 +214,15 @@ func (i *imageDistro) checkParentIndex(r string) error {
+ 
+ // checkOverride refuses to replace an image file in the ways go-diskfs gets
+ // wrong. go-diskfs ignores O_TRUNC, so a shorter file would keep the old tail.
++// The file is rewritten in place, so its other hard links would change too.
+ func (i *imageDistro) checkOverride(info os.FileInfo, st *ext4.StatT, size int64) error {
+ 	switch {
+ 	case info.IsDir():
+ 		return errors.New(&quot;the image has a directory there&quot;)
+ 	case info.Mode()&amp;os.ModeSymlink != 0:
+ 		return errors.New(&quot;the image has a symlink there, which go-diskfs would write through&quot;)
++	case st.Nlink &gt; 1:
++		return fmt.Errorf(&quot;the image&#39;s file has %d hard links, which would all get the new contents&quot;, st.Nlink)
+ 	case size &lt; info.Size():
+ 		return fmt.Errorf(&quot;go-diskfs cannot shrink the image&#39;s %d-byte file to %d bytes&quot;, info.Size(), size)
+ 	case i.hasExtentTree(info, st):
+diff --git a/rdd/pkg/overlay/tar.go b/rdd/pkg/overlay/tar.go
+index a6bc0cfbd..280de17b6 100644
+--- a/rdd/pkg/overlay/tar.go
++++ b/rdd/pkg/overlay/tar.go
+@@ -31,6 +31,7 @@ func ApplyTar(base io.Reader, out io.Writer, m *Manifest, sourceDir string, mtim
+ 	tr := tar.NewReader(base)
+ 	tw := tar.NewWriter(out)
+ 	baseTypes := map[string]byte{}
++	linked := map[string]bool{} // both ends of every base hard link
+ 	for {
+ 		hdr, err := tr.Next()
+ 		if err == io.EOF {
+@@ -41,6 +42,10 @@ func ApplyTar(base io.Reader, out io.Writer, m *Manifest, sourceDir string, mtim
+ 		}
+ 		name := tarClean(hdr.Name)
+ 		baseTypes[name] = hdr.Typeflag
++		if hdr.Typeflag == tar.TypeLink {
++			linked[name] = true
++			linked[tarClean(hdr.Linkname)] = true
++		}
+ 		if override[name] {
+ 			continue // the overlay replaces this path
+ 		}
+@@ -51,6 +56,13 @@ func ApplyTar(base io.Reader, out io.Writer, m *Manifest, sourceDir string, mtim
+ 			return err
+ 		}
+ 	}
++	// Dropping a link target leaves the links naming a missing entry, and the
++	// image backend refuses hard-linked files, so refuse them here too.
++	for p := range override {
++		if linked[p] {
++			return fmt.Errorf(&quot;/%s is hard-linked in the base, and the overlay cannot replace it&quot;, p)
++		}
++	}
+ 	d := &amp;tarDistro{tw: tw, base: baseTypes, emitted: map[string]bool{}}
+ 	return Apply(d, m, sourceDir, mtime)
+ }</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/overlay/overlay.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>RDD Unit tests (windows-latest)</code> fails: a failed <code>Apply</code> leaves the image open, and Windows cannot delete it <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay.go#L39-L54">rdd/pkg/overlay/overlay.go</a></div>
+      <pre data-start="39" data-line="44-49"><code class="language-go">
+// Apply writes every manifest entry into the distro, stamping mtime on each, and
+// closes it. An explicit entry always overrides a path that a tree copy would also
+// write, whatever the manifest order: directories are created first with their
+// owner and mode resolved up front, then files and symlinks are written.
+func Apply(d Distro, m *Manifest, sourceDir string, mtime time.Time) error {
+	owned := entryPaths(m)
+	dirs, err := plannedDirs(m, sourceDir)
+	if err != nil {
+		return err
+	}
+	// Create directories parents-first so each is written once with its final
+	// owner and mode, before any file or symlink creates the same path implicitly.
+	for _, dir := range sortedKeys(dirs) {
+		meta := dirs[dir]
+		if err := d.EnsureDir(dir, meta.uid, meta.gid, meta.mode, mtime, true); err != nil {</code></pre>
+    <p><code>Apply</code> closes the distro only on its last line (line 84); every error return skips it.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay.go#L79-L89">rdd/pkg/overlay/overlay.go</a></div>
+      <pre data-start="79" data-line="84"><code class="language-go">				e.UID, e.GID, modeOr(e, 0o644), mtime); err != nil {
+				return err
+			}
+		}
+	}
+	return d.Close()
+}
+
+// dirMeta is the resolved owner and mode for a directory the overlay creates.
+type dirMeta struct {
+	uid, gid int</code></pre>
+    <p><code>newImage</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay_test.go#L468-L477"><code>overlay_test.go:468-477</code></a>) registers no cleanup, and every <code>TestImageRefusesUnsafeWrites</code> subtest expects <code>Apply</code> to fail, so Windows cannot delete the open image and TempDir cleanup fails three of the four subtests (job 104580900546).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay_test.go#L463-L482">rdd/pkg/overlay/overlay_test.go</a></div>
+      <pre data-start="463" data-line="468-477"><code class="language-go">	assert.NilError(t, err)
+	return img
+}
+
+// newImage creates an empty ext4 image and returns an imageDistro writing into it.
+func newImage(t *testing.T, path string) *imageDistro {
+	t.Helper()
+	d, err := diskfs.Create(path, 64*1024*1024, diskfs.SectorSizeDefault)
+	assert.NilError(t, err)
+	fsi, err := d.CreateFilesystem(disk.FilesystemSpec{Partition: 0, FSType: filesystem.TypeExt4})
+	assert.NilError(t, err)
+	img, err := newImageDistro(d, fsi.(*ext4.FileSystem), 0)
+	assert.NilError(t, err)
+	return img
+}
+
+// openImageFS reopens an ext4 image read-only for inspection. The disk handle is
+// closed at test end so Windows can delete the image in TempDir cleanup.
+func openImageFS(t *testing.T, path string) *ext4.FileSystem {
+	t.Helper()</code></pre>
+    <p>The fourth passed by luck: one <code>runtime.GC()</code> closes the leaked file through the <code>os.File</code> finalizer, so each cleanup races the collector, and a re-run will likely fail again.</p>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/.github/workflows/lint.yaml#L103"><code>lint.yaml:103</code></a> says the overlay&#39;s ext4 tests skip on Windows; only the e2fsck ones do.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/.github/workflows/lint.yaml#L98-L108">.github/workflows/lint.yaml</a></div>
+      <pre data-start="98" data-line="103"><code class="language-yaml">        brew install e2fsprogs
+        echo &quot;$(brew --prefix)/opt/e2fsprogs/sbin&quot; &gt;&gt; &quot;$GITHUB_PATH&quot;
+    - run: make test
+      working-directory: rdd
+      env:
+        # The overlay&#39;s ext4 tests skip without e2fsprogs. MSYS2 does not package
+        # it, and Windows builds only the distro tarball, so only Windows skips.
+        RDD_REQUIRE_E2FSPROGS: ${{ runner.os != &#39;Windows&#39; }}
+  test-jest:
+    name: Jest Tests
+    needs: get-pr-number</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/overlay/probe_close_test.go; run from rdd/:
+//   go test -count=1 -run TestProbeApplyCloses -v ./pkg/overlay/
+package overlay
+
+import (
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+)
+
+func TestProbeApplyCloses(t *testing.T) {
+	for name, m := range map[string]*Manifest{
+		&quot;Apply succeeds&quot;: {Entries: []Entry{{Path: &quot;/etc/app&quot;, Type: TypeDir}}},
+		&quot;Apply fails&quot;:    {Entries: []Entry{{Path: &quot;/etc/app&quot;, Type: TypeDir, Source: &quot;missing&quot;}}},
+	} {
+		t.Run(name, func(t *testing.T) {
+			img := newImage(t, filepath.Join(t.TempDir(), &quot;distro.raw&quot;))
+			t.Logf(&quot;Apply: %v&quot;, Apply(img, m, t.TempDir(), testMtime))
+			assert.Assert(t, img.disk.Backend == nil, &quot;distro.raw is still open, and Windows cannot delete an open file&quot;)
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestProbeApplyCloses -v ./pkg/overlay/
+=== RUN   TestProbeApplyCloses
+=== RUN   TestProbeApplyCloses/Apply_succeeds
+    probe_close_test.go:19: Apply: &lt;nil&gt;
+=== RUN   TestProbeApplyCloses/Apply_fails
+    probe_close_test.go:19: Apply: lstat /var/folders/s2/9q03h0c11_s4fdw169wqz3qc0000gn/T/TestProbeApplyClosesApply_fails776658131/002/missing: no such file or directory
+    probe_close_test.go:20: assertion failed: img.disk.Backend is not nil: distro.raw is still open, and Windows cannot delete an open file
+--- FAIL: TestProbeApplyCloses (0.06s)
+    --- PASS: TestProbeApplyCloses/Apply_succeeds (0.04s)
+    --- FAIL: TestProbeApplyCloses/Apply_fails (0.02s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/overlay	0.331s
+FAIL</code></pre>
+      <pre><code class="language-bash"># The CI log of the reviewed SHA&#39;s Windows unit-test job; run anywhere gh is logged in.
+gh api --allow-escape-sequences repos/rancher-sandbox/rancher-desktop-2/actions/jobs/104580900546/logs | grep -a -E -- &#39;--- FAIL|TempDir&#39; | cut -c30-</code></pre>
+      <pre><code class="language-text">$ gh api --allow-escape-sequences repos/rancher-sandbox/rancher-desktop-2/actions/jobs/104580900546/logs | grep -a -E -- &#39;--- FAIL|TempDir&#39; | cut -c30-
+--- FAIL: TestImageRefusesUnsafeWrites (7.05s)
+    --- FAIL: TestImageRefusesUnsafeWrites/image_has_a_symlink_there (2.21s)
+        testing.go:1617: TempDir RemoveAll cleanup: unlinkat C:\Users\RUNNER~1\AppData\Local\Temp\TestImageRefusesUnsafeWritesimage_has_a_symlink_there1401661776\001\distro.raw: The process cannot access the file because it is being used by another process.
+    --- FAIL: TestImageRefusesUnsafeWrites/image&#39;s_file_has_an_extent_tree (2.19s)
+        testing.go:1617: TempDir RemoveAll cleanup: unlinkat C:\Users\RUNNER~1\AppData\Local\Temp\TestImageRefusesUnsafeWritesimages_file_has_an_extent_tree3020099955\001\distro.raw: The process cannot access the file because it is being used by another process.
+    --- FAIL: TestImageRefusesUnsafeWrites/path_under_an_image_symlink (2.30s)
+        testing.go:1617: TempDir RemoveAll cleanup: unlinkat C:\Users\RUNNER~1\AppData\Local\Temp\TestImageRefusesUnsafeWritespath_under_an_image_symlink3224203498\001\distro.raw: The process cannot access the file because it is being used by another process.</code></pre>
+      </details>
+    <p>Fix: close the distro on every path and correct the <code>lint.yaml</code> comment; I4&#39;s patch edits the same opening lines of <code>Apply</code> (re-apply the second one&#39;s first hunk by hand), and I3&#39;s removal of a failed copy needs this fix on Windows.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/.github/workflows/lint.yaml b/.github/workflows/lint.yaml
+index ee15dbf65..dd0182728 100644
+--- a/.github/workflows/lint.yaml
++++ b/.github/workflows/lint.yaml
+@@ -100,7 +100,7 @@ jobs:
+     - run: make test
+       working-directory: rdd
+       env:
+-        # The overlay&#39;s ext4 tests skip without e2fsprogs. MSYS2 does not package
++        # The overlay&#39;s e2fsck tests skip without e2fsprogs. MSYS2 does not package
+         # it, and Windows builds only the distro tarball, so only Windows skips.
+         RDD_REQUIRE_E2FSPROGS: ${{ runner.os != &#39;Windows&#39; }}
+   test-jest:
+diff --git a/rdd/pkg/overlay/overlay.go b/rdd/pkg/overlay/overlay.go
+index 79530de9a..a4a1db3f6 100644
+--- a/rdd/pkg/overlay/overlay.go
++++ b/rdd/pkg/overlay/overlay.go
+@@ -38,10 +38,16 @@ type Distro interface {
+ }
+ 
+ // Apply writes every manifest entry into the distro, stamping mtime on each, and
+-// closes it. An explicit entry always overrides a path that a tree copy would also
+-// write, whatever the manifest order: directories are created first with their
+-// owner and mode resolved up front, then files and symlinks are written.
+-func Apply(d Distro, m *Manifest, sourceDir string, mtime time.Time) error {
++// closes it, also when it fails. An explicit entry always overrides a path that a
++// tree copy would also write, whatever the manifest order: directories are created
++// first with their owner and mode resolved up front, then files and symlinks are
++// written.
++func Apply(d Distro, m *Manifest, sourceDir string, mtime time.Time) (err error) {
++	defer func() {
++		if closeErr := d.Close(); err == nil {
++			err = closeErr
++		}
++	}()
+ 	owned := entryPaths(m)
+ 	dirs, err := plannedDirs(m, sourceDir)
+ 	if err != nil {
+@@ -81,7 +87,7 @@ func Apply(d Distro, m *Manifest, sourceDir string, mtime time.Time) error {
+ 			}
+ 		}
+ 	}
+-	return d.Close()
++	return nil
+ }
+ 
+ // dirMeta is the resolved owner and mode for a directory the overlay creates.
+diff --git a/rdd/pkg/overlay/overlay_test.go b/rdd/pkg/overlay/overlay_test.go
+index 749e6a01a..a1b053645 100644
+--- a/rdd/pkg/overlay/overlay_test.go
++++ b/rdd/pkg/overlay/overlay_test.go
+@@ -452,7 +452,8 @@ func openImage(t *testing.T, path string) *imageDistro {
+ 	d, err := diskfs.Open(path, diskfs.WithOpenMode(diskfs.ReadWrite))
+ 	assert.NilError(t, err)
+ 	t.Cleanup(func() {
+-		// Apply closes the disk unless it fails, and a second Close panics.
++		// Apply closes the disk, but a test that stops before calling it leaves
++		// the disk open, and a second Close panics.
+ 		if d.Backend != nil {
+ 			_ = d.Close()
+ 		}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/cmd/distro-overlay/main.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> A refused raw write leaves the input image corrupt, and <code>--output</code> is ignored for raw images <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/cmd/distro-overlay/main.go#L69-L84">rdd/cmd/distro-overlay/main.go</a></div>
+      <pre data-start="69" data-line="74-79"><code class="language-go">		if format, err = detectFormat(distro); err != nil {
+			return err
+		}
+	}
+	switch format {
+	case &quot;raw&quot;:
+		d, err := overlay.OpenImage(distro)
+		if err != nil {
+			return err
+		}
+		return overlay.Apply(d, m, sourceDir, mtime)
+	case &quot;tar&quot;:
+		return applyTarFile(distro, output, m, sourceDir, mtime)
+	default:
+		return fmt.Errorf(&quot;unknown format %q&quot;, format)
+	}</code></pre>
+    <p>The raw path hands <code>&lt;distro&gt;</code> itself to <code>OpenImage</code> and never reads <code>output</code>. <code>--output new.raw d.raw</code> exits 0, modifies <code>d.raw</code>, and creates no <code>new.raw</code>.</p>
+    <p>The extent-tree refusal (<code>image.go:148-151</code>) fires after go-diskfs has written the unchecksummed tree block, so it leaves the input corrupt (Claude reproduced this on v0.2.8 with a 130 MiB file), and any other refusal leaves the earlier entries written. No test reaches it: with lines 148-151 deleted, the suite stays green.</p>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/README.md#L36-L37"><code>README.md:36-37</code></a> promises that the tool &quot;refuses them instead of producing a broken image&quot;.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/README.md#L31-L42">README.md</a></div>
+      <pre data-start="31" data-line="36-37"><code class="language-markdown">[Manual Development Environment Setup](#manual-development-environment-setup)
+with an existing Windows installation.
+
+
+#### Development VM Setup
+
+1. Download a Microsoft Windows 10 [development virtual machine].
+   All of the following steps should be done in that virtual machine.
+2. Open a PowerShell prompt (hit Windows Key + `X` and open
+   `Windows PowerShell`).
+3. Run the [automated setup script]:
+</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/cmd/distro-overlay/probe_raw_test.go; run from rdd/ with e2fsprogs on PATH:
+//   PATH=&quot;$(brew --prefix)/opt/e2fsprogs/sbin:$PATH&quot; go test -count=1 -run TestProbeRaw -v ./cmd/distro-overlay/
+package main
+
+import (
+	&quot;bytes&quot;
+	&quot;fmt&quot;
+	&quot;os&quot;
+	&quot;os/exec&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	diskfs &quot;github.com/diskfs/go-diskfs&quot;
+	&quot;github.com/diskfs/go-diskfs/partition/gpt&quot;
+	&quot;gotest.tools/v3/assert&quot;
+)
+
+func TestProbeRaw(t *testing.T) {
+	dir := t.TempDir()
+	sh := func(name string, args ...string) error { return exec.Command(name, args...).Run() }
+	// A GPT disk whose 20 MiB ext4 root is nearly full, its free space in 1 MiB holes.
+	pristine := filepath.Join(dir, &quot;pristine.raw&quot;)
+	d, err := diskfs.Create(pristine, 24&lt;&lt;20, diskfs.SectorSizeDefault)
+	assert.NilError(t, err)
+	assert.NilError(t, d.Partition(&amp;gpt.Table{LogicalSectorSize: 512, PhysicalSectorSize: 512, ProtectiveMBR: true,
+		Partitions: []*gpt.Partition{{Index: 1, Start: 2048, Size: 20 &lt;&lt; 20, Type: gpt.LinuxFilesystem}}}))
+	assert.NilError(t, d.Close())
+	for n := range 14 {
+		p := filepath.Join(dir, &quot;root&quot;, &quot;fill&quot;, fmt.Sprintf(&quot;f%02d&quot;, n))
+		assert.NilError(t, os.MkdirAll(filepath.Dir(p), 0o755))
+		assert.NilError(t, os.WriteFile(p, bytes.Repeat([]byte{&#39;F&#39;}, 1&lt;&lt;20), 0o644))
+	}
+	assert.NilError(t, sh(&quot;mke2fs&quot;, &quot;-q&quot;, &quot;-F&quot;, &quot;-t&quot;, &quot;ext4&quot;, &quot;-b&quot;, &quot;4096&quot;, &quot;-O&quot;, &quot;metadata_csum&quot;,
+		&quot;-E&quot;, &quot;offset=1048576&quot;, &quot;-d&quot;, filepath.Join(dir, &quot;root&quot;), pristine, &quot;5120&quot;))
+	for n := 0; n &lt; 14; n += 2 {
+		assert.NilError(t, sh(&quot;debugfs&quot;, &quot;-w&quot;, &quot;-R&quot;, fmt.Sprintf(&quot;rm /fill/f%02d&quot;, n), pristine+&quot;?offset=1048576&quot;))
+	}
+	orig, _ := os.ReadFile(pristine)
+	src := filepath.Join(dir, &quot;src&quot;)
+	assert.NilError(t, os.MkdirAll(src, 0o755))
+	assert.NilError(t, os.WriteFile(filepath.Join(src, &quot;big&quot;), bytes.Repeat([]byte{&#39;B&#39;}, 6&lt;&lt;20), 0o644))
+	assert.NilError(t, os.WriteFile(filepath.Join(src, &quot;small&quot;), []byte(&quot;S&quot;), 0o644))
+
+	for _, tc := range []struct{ name, file, output string }{
+		{&quot;small file in place&quot;, &quot;small&quot;, &quot;&quot;},
+		{&quot;6 MiB file in place&quot;, &quot;big&quot;, &quot;&quot;},
+		{&quot;small file with --output&quot;, &quot;small&quot;, &quot;out.raw&quot;},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			img := filepath.Join(t.TempDir(), &quot;distro.raw&quot;)
+			assert.NilError(t, os.WriteFile(img, orig, 0o644))
+			manifest := filepath.Join(src, &quot;m.yaml&quot;)
+			assert.NilError(t, os.WriteFile(manifest, []byte(&quot;entries:\n  - path: /f\n    source: &quot;+tc.file+&quot;\n&quot;), 0o644))
+			output := &quot;&quot;
+			if tc.output != &quot;&quot; {
+				output = filepath.Join(filepath.Dir(img), tc.output)
+			}
+			err := run(manifest, src, &quot;auto&quot;, output, img, time.Unix(0, 0))
+			after, _ := os.ReadFile(img)
+			_, statErr := os.Stat(output)
+			t.Logf(&quot;run: %v; input changed: %v; output written: %v; input passes e2fsck: %v&quot;, err,
+				!bytes.Equal(after, orig), output != &quot;&quot; &amp;&amp; statErr == nil, sh(&quot;e2fsck&quot;, &quot;-fn&quot;, img+&quot;?offset=1048576&quot;) == nil)
+			if err != nil || output != &quot;&quot; {
+				assert.Check(t, bytes.Equal(after, orig), &quot;the input changed&quot;)
+			}
+			if output != &quot;&quot; {
+				assert.Check(t, statErr == nil, &quot;no output written&quot;)
+			}
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ PATH=&quot;$(brew --prefix)/opt/e2fsprogs/sbin:$PATH&quot; go test -count=1 -run TestProbeRaw -v ./cmd/distro-overlay/
+=== RUN   TestProbeRaw
+=== RUN   TestProbeRaw/small_file_in_place
+    probe_raw_test.go:62: run: &lt;nil&gt;; input changed: true; output written: false; input passes e2fsck: true
+=== RUN   TestProbeRaw/6_MiB_file_in_place
+    probe_raw_test.go:62: run: writing file /f: no free run was large enough, so go-diskfs gave the file an extent tree without a checksum; raise the distro&#39;s free-space reserve; input changed: true; output written: false; input passes e2fsck: false
+    probe_raw_test.go:65: assertion failed: expression is false: bytes.Equal(after, orig): the input changed
+=== RUN   TestProbeRaw/small_file_with_--output
+    probe_raw_test.go:62: run: &lt;nil&gt;; input changed: true; output written: false; input passes e2fsck: true
+    probe_raw_test.go:65: assertion failed: expression is false: bytes.Equal(after, orig): the input changed
+    probe_raw_test.go:68: assertion failed: statErr is not nil: no output written
+--- FAIL: TestProbeRaw (0.22s)
+    --- PASS: TestProbeRaw/small_file_in_place (0.02s)
+    --- FAIL: TestProbeRaw/6_MiB_file_in_place (0.02s)
+    --- FAIL: TestProbeRaw/small_file_with_--output (0.02s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/cmd/distro-overlay	0.467s
+FAIL</code></pre>
+      </details>
+    <p>Fix: overlay a copy and rename it over the output (default: the input) only on success, as the tar path does, which also honours <code>--output</code>; the patch corrects the README, the flag help, and the <code>imageDistro</code> comment, and the probe can stay as the missing test.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/cmd/distro-overlay/README.md b/rdd/cmd/distro-overlay/README.md
+index 221e60b09..278efcfcc 100644
+--- a/rdd/cmd/distro-overlay/README.md
++++ b/rdd/cmd/distro-overlay/README.md
+@@ -13,7 +13,7 @@ lives in this repository and is layered on from a single manifest.
+ | `--manifest` | YAML manifest of entries to merge (required) |
+ | `--source` | Directory holding the file sources (default: the manifest&#39;s directory) |
+ | `--format` | `auto` (default), `raw`, or `tar`; `auto` detects by signature |
+-| `--output` | Output path for the tar format (default: overwrite the input) |
++| `--output` | Output path (default: overwrite the input); written only when the overlay succeeds |
+ | `--mtime` | Timestamp for every entry: Unix epoch seconds or RFC3339 (default: now) |
+ 
+ `&lt;distro&gt;` is an uncompressed tarball or raw image. Decompress it first and
+diff --git a/rdd/cmd/distro-overlay/main.go b/rdd/cmd/distro-overlay/main.go
+index 878869f06..977433df3 100644
+--- a/rdd/cmd/distro-overlay/main.go
++++ b/rdd/cmd/distro-overlay/main.go
+@@ -9,6 +9,7 @@ package main
+ import (
+ 	&quot;flag&quot;
+ 	&quot;fmt&quot;
++	&quot;io&quot;
+ 	&quot;os&quot;
+ 	&quot;path/filepath&quot;
+ 	&quot;strconv&quot;
+@@ -21,7 +22,7 @@ func main() {
+ 	manifest := flag.String(&quot;manifest&quot;, &quot;&quot;, &quot;overlay manifest (YAML)&quot;)
+ 	source := flag.String(&quot;source&quot;, &quot;&quot;, &quot;directory holding file sources (default: manifest directory)&quot;)
+ 	format := flag.String(&quot;format&quot;, &quot;auto&quot;, &quot;distro format: auto, raw, or tar&quot;)
+-	output := flag.String(&quot;output&quot;, &quot;&quot;, &quot;output path for tar format (default: overwrite input)&quot;)
++	output := flag.String(&quot;output&quot;, &quot;&quot;, &quot;output path (default: overwrite input)&quot;)
+ 	mtimeArg := flag.String(&quot;mtime&quot;, &quot;&quot;, &quot;modification time for every entry, as Unix epoch seconds or RFC3339 (default: now)&quot;)
+ 	flag.Parse()
+ 
+@@ -72,11 +73,7 @@ func run(manifestPath, sourceDir, format, output, distro string, mtime time.Time
+ 	}
+ 	switch format {
+ 	case &quot;raw&quot;:
+-		d, err := overlay.OpenImage(distro)
+-		if err != nil {
+-			return err
+-		}
+-		return overlay.Apply(d, m, sourceDir, mtime)
++		return applyRawFile(distro, output, m, sourceDir, mtime)
+ 	case &quot;tar&quot;:
+ 		return applyTarFile(distro, output, m, sourceDir, mtime)
+ 	default:
+@@ -84,6 +81,48 @@ func run(manifestPath, sourceDir, format, output, distro string, mtime time.Time
+ 	}
+ }
+ 
++// applyRawFile overlays a copy of the image and renames it over the output
++// (default: the input) only when the overlay succeeds, because a refused write
++// can leave the image corrupt.
++func applyRawFile(input, output string, m *overlay.Manifest, sourceDir string, mtime time.Time) error {
++	dst := output
++	if dst == &quot;&quot; {
++		dst = input
++	}
++	tmp := dst + &quot;.tmp&quot;
++	if err := copyFile(input, tmp); err != nil {
++		return err
++	}
++	d, err := overlay.OpenImage(tmp)
++	if err == nil {
++		err = overlay.Apply(d, m, sourceDir, mtime)
++	}
++	if err != nil {
++		_ = os.Remove(tmp)
++		return err
++	}
++	return os.Rename(tmp, dst)
++}
++
++// copyFile copies src to a new file at dst.
++func copyFile(src, dst string) error {
++	in, err := os.Open(src)
++	if err != nil {
++		return err
++	}
++	defer in.Close()
++	out, err := os.Create(dst)
++	if err != nil {
++		return err
++	}
++	if _, err := io.Copy(out, in); err != nil {
++		_ = out.Close()
++		_ = os.Remove(dst)
++		return err
++	}
++	return out.Close()
++}
++
+ // detectFormat distinguishes an OEM disk image from a tarball by signature.
+ func detectFormat(p string) (string, error) {
+ 	f, err := os.Open(p)
+diff --git a/rdd/pkg/overlay/image.go b/rdd/pkg/overlay/image.go
+index 1f162cf63..1f7389aa9 100644
+--- a/rdd/pkg/overlay/image.go
++++ b/rdd/pkg/overlay/image.go
+@@ -26,7 +26,9 @@ import (
+ //
+ // go-diskfs writes extent-tree blocks without their metadata_csum checksum,
+ // ignores O_TRUNC, writes through symlinks, and corrupts htree-indexed
+-// directories it adds entries to, so imageDistro refuses those writes.
++// directories it adds entries to, so imageDistro refuses those writes. It finds
++// an extent tree only after go-diskfs has written it, which leaves the image
++// corrupt, so callers overlay a copy.
+ type imageDistro struct {
+ 	disk      *disk.Disk
+ 	fs        *ext4.FileSystem</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/overlay/overlay.go">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> Nested tree entries resolve owner, mode and contents by manifest order, and the tarball gets every nested file twice<a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay.go#L98-L117">rdd/pkg/overlay/overlay.go</a></div>
+      <pre data-start="98" data-line="103-112"><code class="language-go">	for i := range m.Entries {
+		e := &amp;m.Entries[i]
+		if e.kind() != TypeDir || e.Source == &quot;&quot; {
+			continue
+		}
+		dirs[e.Path] = dirMeta{e.UID, e.GID, modeOr(e, 0o755)}
+		members, err := walkTree(sourceDir, e)
+		if err != nil {
+			return nil, err
+		}
+		for _, mem := range members {
+			if mem.isDir {
+				dirs[mem.dest] = dirMeta{e.UID, e.GID, treeDirMode}
+			}
+		}
+	}
+	for i := range m.Entries {
+		e := &amp;m.Entries[i]
+		if e.kind() == TypeDir &amp;&amp; e.Source == &quot;&quot; {
+			dirs[e.Path] = dirMeta{e.UID, e.GID, modeOr(e, 0o755)}</code></pre>
+    <p><code>plannedDirs</code> sets a tree root&#39;s owner and mode in the same pass as every tree&#39;s subdirectories, so with nested trees the entry listed later decides the inner root.</p>
+    <p><code>writeTreeFiles</code> (line 131) skips only exact entry paths, so the outer tree also writes every file under the inner root.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay.go#L126-L136">rdd/pkg/overlay/overlay.go</a></div>
+      <pre data-start="126" data-line="131"><code class="language-go">	members, err := walkTree(sourceDir, e)
+	if err != nil {
+		return err
+	}
+	for _, mem := range members {
+		if mem.isDir || owned[mem.dest] {
+			continue
+		}
+		if err := writeFile(d, mem.dest, mem.srcPath, e.UID, e.GID, treeFileMode, mtime); err != nil {
+			return err
+		}</code></pre>
+    <p>An outer source that mirrors the destination, plus a nested entry giving one subtree its own owner, triggers both. With the inner entry first, <code>data/</code> silently comes out 0755 root instead of 0700 uid 472 and holds the outer tree&#39;s file, and either order writes each nested file twice into the tar. <code>Apply</code>&#39;s doc comment promises an explicit entry wins &quot;whatever the manifest order&quot;.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/overlay/probe_nested_test.go; run from rdd/:
+//   go test -count=1 -run TestProbeNestedTrees -v ./pkg/overlay/
+package overlay
+
+import (
+	&quot;bytes&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+)
+
+func TestProbeNestedTrees(t *testing.T) {
+	source := t.TempDir()
+	writeSource(t, source, &quot;app/data/a.conf&quot;, &quot;FROM-APP&quot;) // the outer source mirrors the destination
+	writeSource(t, source, &quot;data/a.conf&quot;, &quot;DATA&quot;)
+	outer := Entry{Path: &quot;/etc/app&quot;, Type: TypeDir, Source: &quot;app&quot;}
+	inner := Entry{Path: &quot;/etc/app/data&quot;, Type: TypeDir, Source: &quot;data&quot;, Mode: &quot;0700&quot;, UID: 472}
+	for name, entries := range map[string][]Entry{&quot;outer first&quot;: {outer, inner}, &quot;inner first&quot;: {inner, outer}} {
+		t.Run(name, func(t *testing.T) {
+			m := &amp;Manifest{Entries: entries}
+			var out bytes.Buffer
+			assert.NilError(t, ApplyTar(bytes.NewReader(buildTar(t, nil)), &amp;out, m, source, testMtime))
+			got := readTar(t, out.Bytes())
+			dir, file := got[&quot;etc/app/data&quot;].hdr, got[&quot;etc/app/data/a.conf&quot;]
+			copies := count(out.Bytes(), &quot;etc/app/data/a.conf&quot;)
+			t.Logf(&quot;tar: data/ %o uid %d; a.conf %q uid %d, %d copies&quot;, dir.Mode, dir.Uid, file.body, file.hdr.Uid, copies)
+			img := filepath.Join(t.TempDir(), &quot;distro.raw&quot;)
+			if err := Apply(newImage(t, img), m, source, testMtime); err != nil {
+				t.Logf(&quot;image: %v&quot;, err)
+			} else {
+				b, _ := openImageFS(t, img).ReadFile(&quot;etc/app/data/a.conf&quot;)
+				t.Logf(&quot;image: a.conf %q&quot;, b)
+			}
+			assert.Equal(t, dir.Mode, int64(0o700))
+			assert.Equal(t, file.body, &quot;DATA&quot;)
+			assert.Equal(t, copies, 1)
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestProbeNestedTrees -v ./pkg/overlay/
+=== RUN   TestProbeNestedTrees
+=== RUN   TestProbeNestedTrees/inner_first
+    probe_nested_test.go:27: tar: data/ 755 uid 0; a.conf &quot;FROM-APP&quot; uid 0, 2 copies
+    probe_nested_test.go:33: image: a.conf &quot;FROM-APP&quot;
+    probe_nested_test.go:35: assertion failed: 493 (dir.Mode int64) != 448 (int64)
+=== RUN   TestProbeNestedTrees/outer_first
+    probe_nested_test.go:27: tar: data/ 700 uid 472; a.conf &quot;DATA&quot; uid 472, 2 copies
+    probe_nested_test.go:30: image: writing file /etc/app/data/a.conf: go-diskfs cannot shrink the image&#39;s 8-byte file to 4 bytes
+    probe_nested_test.go:37: assertion failed: 2 (copies int) != 1 (int)
+--- FAIL: TestProbeNestedTrees (0.07s)
+    --- FAIL: TestProbeNestedTrees/inner_first (0.05s)
+    --- FAIL: TestProbeNestedTrees/outer_first (0.02s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/overlay	0.339s
+FAIL</code></pre>
+      </details>
+    <p>Fix: let the deepest tree root own the paths under it, and apply every dir entry&#39;s owner and mode, tree roots included, after tree members; the first hunk overlaps I2&#39;s patch.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/overlay/overlay.go b/rdd/pkg/overlay/overlay.go
+index 79530de9a..83bccdace 100644
+--- a/rdd/pkg/overlay/overlay.go
++++ b/rdd/pkg/overlay/overlay.go
+@@ -43,7 +43,8 @@ type Distro interface {
+ // owner and mode resolved up front, then files and symlinks are written.
+ func Apply(d Distro, m *Manifest, sourceDir string, mtime time.Time) error {
+ 	owned := entryPaths(m)
+-	dirs, err := plannedDirs(m, sourceDir)
++	roots := treeRoots(m)
++	dirs, err := plannedDirs(m, sourceDir, roots)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -61,7 +62,7 @@ func Apply(d Distro, m *Manifest, sourceDir string, mtime time.Time) error {
+ 		case e.kind() == TypeDir &amp;&amp; e.Source == &quot;&quot;:
+ 			continue // created above
+ 		case e.kind() == TypeDir:
+-			if err := writeTreeFiles(d, e, sourceDir, mtime, owned); err != nil {
++			if err := writeTreeFiles(d, e, sourceDir, mtime, owned, roots); err != nil {
+ 				return err
+ 			}
+ 		case e.kind() == TypeSymlink:
+@@ -91,29 +92,28 @@ type dirMeta struct {
+ }
+ 
+ // plannedDirs resolves every directory the overlay creates to its final owner and
+-// mode. Tree roots and their subdirectories come first; an explicit dir entry then
++// mode. Tree subdirectories come first; every dir entry, tree roots included, then
+ // overrides any path it shares with a tree, so explicit ownership always wins.
+-func plannedDirs(m *Manifest, sourceDir string) (map[string]dirMeta, error) {
++func plannedDirs(m *Manifest, sourceDir string, roots map[string]bool) (map[string]dirMeta, error) {
+ 	dirs := map[string]dirMeta{}
+ 	for i := range m.Entries {
+ 		e := &amp;m.Entries[i]
+ 		if e.kind() != TypeDir || e.Source == &quot;&quot; {
+ 			continue
+ 		}
+-		dirs[e.Path] = dirMeta{e.UID, e.GID, modeOr(e, 0o755)}
+ 		members, err := walkTree(sourceDir, e)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+ 		for _, mem := range members {
+-			if mem.isDir {
++			if mem.isDir &amp;&amp; ownedByTree(mem.dest, e.Path, roots) {
+ 				dirs[mem.dest] = dirMeta{e.UID, e.GID, treeDirMode}
+ 			}
+ 		}
+ 	}
+ 	for i := range m.Entries {
+ 		e := &amp;m.Entries[i]
+-		if e.kind() == TypeDir &amp;&amp; e.Source == &quot;&quot; {
++		if e.kind() == TypeDir {
+ 			dirs[e.Path] = dirMeta{e.UID, e.GID, modeOr(e, 0o755)}
+ 		}
+ 	}
+@@ -121,14 +121,15 @@ func plannedDirs(m *Manifest, sourceDir string) (map[string]dirMeta, error) {
+ }
+ 
+ // writeTreeFiles writes the files under a tree copy, skipping any path an
+-// explicit entry owns. The tree&#39;s directories are created earlier by plannedDirs.
+-func writeTreeFiles(d Distro, e *Entry, sourceDir string, mtime time.Time, owned map[string]bool) error {
++// explicit entry or a nested tree owns. The tree&#39;s directories are created
++// earlier by plannedDirs.
++func writeTreeFiles(d Distro, e *Entry, sourceDir string, mtime time.Time, owned, roots map[string]bool) error {
+ 	members, err := walkTree(sourceDir, e)
+ 	if err != nil {
+ 		return err
+ 	}
+ 	for _, mem := range members {
+-		if mem.isDir || owned[mem.dest] {
++		if mem.isDir || owned[mem.dest] || !ownedByTree(mem.dest, e.Path, roots) {
+ 			continue
+ 		}
+ 		if err := writeFile(d, mem.dest, mem.srcPath, e.UID, e.GID, treeFileMode, mtime); err != nil {
+@@ -148,6 +149,29 @@ func entryPaths(m *Manifest) map[string]bool {
+ 	return set
+ }
+ 
++// treeRoots is the set of dir entries that copy a source tree.
++func treeRoots(m *Manifest) map[string]bool {
++	set := map[string]bool{}
++	for i := range m.Entries {
++		if e := &amp;m.Entries[i]; e.kind() == TypeDir &amp;&amp; e.Source != &quot;&quot; {
++			set[e.Path] = true
++		}
++	}
++	return set
++}
++
++// ownedByTree reports whether dest, a member of the tree rooted at root, belongs
++// to that tree rather than to a tree nested inside it, so the nested tree keeps
++// its paths in any manifest order.
++func ownedByTree(dest, root string, roots map[string]bool) bool {
++	for p := path.Dir(dest); p != root; p = path.Dir(p) {
++		if roots[p] {
++			return false
++		}
++	}
++	return true
++}
++
+ // sortedKeys returns the directory paths sorted so each ancestor precedes its
+ // descendants, which lexical order guarantees (a path sorts before its extensions).
+ func sortedKeys(dirs map[string]dirMeta) []string {</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/cmd/distro-overlay/main.go">
+      <div class="finding-title" id="I5">
+        <span class="finding-num">I5.</span> <code>--output</code> naming the input truncates the tarball before it is read <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#I5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/cmd/distro-overlay/main.go#L111-L126">rdd/cmd/distro-overlay/main.go</a></div>
+      <pre data-start="111" data-line="116-121"><code class="language-go">	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	dst := output
+	inPlace := output == &quot;&quot;
+	if inPlace {
+		dst = input + &quot;.tmp&quot;
+	}
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	if err := overlay.ApplyTar(in, out, m, sourceDir, mtime); err != nil {
+		_ = out.Close()</code></pre>
+    <p>When <code>--output</code> names the input, <code>inPlace</code> is false and <code>os.Create(dst)</code> (line 121) truncates the input before <code>ApplyTar</code> reads it. The truncated file reads as an empty archive, so the tool writes a tarball holding only the overlay and exits 0. A build that passes the input path as <code>--output</code> ships a WSL distro with no base system.</p>
+    <p>Gemini 3.1 Pro proposed treating a same-file output (<code>os.SameFile</code>) as in place. The patch below instead always writes beside the destination and renames, which needs no stat and leaves a separately named output path correct even when it is a hard link to the input.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-output-alias.sh; run from rdd/: bash probe-output-alias.sh
+set -o errexit -o nounset -o pipefail
+work=$(mktemp -d)
+trap &#39;rm -rf &quot;$work&quot;&#39; EXIT
+go build -o &quot;$work/distro-overlay&quot; ./cmd/distro-overlay
+mkdir -p &quot;$work/base/etc&quot; &quot;$work/files&quot;
+echo base &gt;&quot;$work/base/etc/os-release&quot;
+echo hello &gt;&quot;$work/files/hello&quot;
+printf &#39;entries:\n  - path: /etc/hello\n    source: hello\n&#39; &gt;&quot;$work/files/manifest.yaml&quot;
+run() {
+    tar --directory &quot;$work/base&quot; --format ustar --create --file &quot;$work/distro.tar&quot; etc
+    &quot;$work/distro-overlay&quot; --manifest &quot;$work/files/manifest.yaml&quot; &quot;$@&quot; &quot;$work/distro.tar&quot;
+    echo &quot;exit $?: $(tar --list --file &quot;$work/distro.tar&quot; | sort | tr &#39;\n&#39; &#39; &#39;)&quot;
+}
+echo &quot;no --output:           $(run)&quot;
+echo &quot;--output is the input: $(run --output &quot;$work/distro.tar&quot;)&quot;</code></pre>
+      <pre><code class="language-text">$ bash probe-output-alias.sh
+no --output:           exit 0: etc/ etc/hello etc/os-release 
+--output is the input: exit 0: etc/ etc/hello </code></pre>
+      </details>
+    <p>Fix: write to <code>&lt;destination&gt;.tmp</code> and rename it over the destination whether or not <code>--output</code> is set.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/cmd/distro-overlay/main.go b/rdd/cmd/distro-overlay/main.go
+index 878869f06..55d360cb8 100644
+--- a/rdd/cmd/distro-overlay/main.go
++++ b/rdd/cmd/distro-overlay/main.go
+@@ -106,6 +106,8 @@ func readAt(f *os.File, b []byte, off int64) bool {
+ }
+ 
+ // applyTarFile overlays a tarball, overwriting the input when output is empty.
++// It writes beside the destination and renames, so an output naming the input
++// is not truncated before it is read.
+ func applyTarFile(input, output string, m *overlay.Manifest, sourceDir string, mtime time.Time) error {
+ 	in, err := os.Open(input)
+ 	if err != nil {
+@@ -114,25 +116,23 @@ func applyTarFile(input, output string, m *overlay.Manifest, sourceDir string, m
+ 	defer in.Close()
+ 
+ 	dst := output
+-	inPlace := output == &quot;&quot;
+-	if inPlace {
+-		dst = input + &quot;.tmp&quot;
++	if dst == &quot;&quot; {
++		dst = input
+ 	}
+-	out, err := os.Create(dst)
++	tmp := dst + &quot;.tmp&quot;
++	out, err := os.Create(tmp)
+ 	if err != nil {
+ 		return err
+ 	}
+ 	if err := overlay.ApplyTar(in, out, m, sourceDir, mtime); err != nil {
+ 		_ = out.Close()
+-		_ = os.Remove(dst)
++		_ = os.Remove(tmp)
+ 		return err
+ 	}
+ 	if err := out.Close(); err != nil {
++		_ = os.Remove(tmp)
+ 		return err
+ 	}
+-	if inPlace {
+-		_ = in.Close()
+-		return os.Rename(dst, input)
+-	}
+-	return nil
++	_ = in.Close()
++	return os.Rename(tmp, dst)
+ }</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/overlay/image.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The refusals miss two go-diskfs defects that corrupt silently; the v0.2.8 image happens to avoid both <span class="pill pill-claude">Claude Opus 5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/image.go#L235-L242">rdd/pkg/overlay/image.go</a></div>
+      <pre data-start="235" data-line="240-241"><code class="language-go">func (i *imageDistro) hasExtentTree(info os.FileInfo, st *ext4.StatT) bool {
+	unit := int64(512)
+	if st.Flags.HugeFile {
+		unit = i.blockSize
+	}
+	data := (info.Size() + i.blockSize - 1) / i.blockSize * i.blockSize
+	return int64(st.Blocks)*unit &gt; data
+}</code></pre>
+    <p>A destination with holes passes <code>checkOverride</code>, which tests only for extra blocks, and go-diskfs then starts the write before the file&#39;s first block. On an mke2fs image, overriding a file with a 16-block leading hole put 61,444 bytes of the new contents inside a neighbouring file while <code>Apply</code> returned nil.</p>
+    <p>go-diskfs also never clears a group&#39;s <code>BLOCK_UNINIT</code> flag when it allocates there, so e2fsck (exit 4 in Claude&#39;s probe) and the kernel still count those blocks free.</p>
+    <p>v0.2.8 has neither: no sparse file among the 3,585 walked, and none of its 12 groups is <code>BLOCK_UNINIT</code>. Check the reserved image too.</p>
+    <p>Fix: refuse destinations whose blocks fall short of their size, and images with a <code>BLOCK_UNINIT</code> group, or state both preconditions in the README.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/overlay/image.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> A symlink entry at an existing image path fails, and the image ignores a symlink&#39;s uid and gid <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/image.go#L150-L167">rdd/pkg/overlay/image.go</a></div>
+      <pre data-start="150" data-line="155-162"><code class="language-go">			&quot;without a checksum; raise the distro&#39;s free-space reserve&quot;)
+	}
+	return nil
+}
+
+func (i *imageDistro) Symlink(link, target string, _, _ int, mtime time.Time) error {
+	r := rel(link)
+	if err := i.checkParentIndex(r); err != nil {
+		return err
+	}
+	if err := i.fs.Symlink(target, r); err != nil {
+		return err
+	}
+	// Stamp the link&#39;s own mtime for a reproducible image. Chtimes writes the
+	// link inode without following it; ownership is left at the go-diskfs default
+	// because Chown would follow the link to its target.
+	return i.fs.Chtimes(r, mtime, mtime, mtime)
+}</code></pre>
+    <p>go-diskfs&#39;s <code>Symlink</code> refuses a name that exists, so replacing a base symlink (a systemd <code>.wants</code> link, say) fails on the raw image after the earlier entries were written, while the tarball replaces it. The README&#39;s four raw-image limits and the example&#39;s &quot;Overwrites win&quot; leave this case out.</p>
+    <p>The image also gives a new link its parent directory&#39;s owner, since <code>Chown</code> would follow the link, while the tarball writes the entry&#39;s <code>uid</code>/<code>gid</code>. In a probe the same entry came out 7:7 in the image and 5:5 in the tar. <code>Entry.validate</code> accepts <code>uid</code> on a symlink without comment. Flash&#39;s design note puts the image&#39;s default at 0:0; it is the parent&#39;s owner.</p>
+    <p>Fix: stat the path first and refuse with a message naming the limit, list it in the README, and either reject <code>uid</code>/<code>gid</code> on symlink entries or document that the image ignores them.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/README.md">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The &quot;raise the reserve&quot; advice cannot help a file over about 127 MiB <span class="pill pill-claude">Claude Opus 5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/cmd/distro-overlay/README.md#L34-L49">rdd/cmd/distro-overlay/README.md</a></div>
+      <pre data-start="34" data-line="39-44"><code class="language-markdown">## Raw image limits
+
+go-diskfs, which writes the ext4 image, mishandles the four cases below, so the
+tool refuses them instead of producing a broken image.
+
+- **Files needing an extent tree.** go-diskfs writes extent-tree blocks without
+  their `metadata_csum` checksum. The tool writes each file in one piece, which
+  gets it a single extent when the image has a contiguous free run at least as
+  large as the file. Otherwise go-diskfs splits the file across several runs,
+  and if the file then needs a tree, the tool fails and asks for a larger
+  reserve.
+- **Shrinking a file.** go-diskfs ignores `O_TRUNC`, so the tool refuses to
+  replace an image file with a shorter one.
+- **Replacing a symlink.** go-diskfs writes through a symlink to its target, so
+  the tool refuses a file entry where the image has a symlink.
+- **Adding to an indexed directory.** go-diskfs corrupts an htree-indexed</code></pre>
+    <p>go-diskfs gives a file one extent only when one free run inside a single block group holds it, at most 32,768 blocks. A larger file goes to a fallback allocator that takes every free run in group 0 first. v0.2.8&#39;s group 0 has four, so any such file needs a fifth extent and a tree, however large the reserve. The largest single-group run in v0.2.8 is 32,594 blocks, 127.3 MiB (<code>dumpe2fs</code>).</p>
+    <p>The error at <code>image.go:149-150</code> sends the user to the reserve as well.</p>
+    <p>Fix: state the per-file limit (one block group, 128 MiB at 4 KiB blocks) in the README and the error, and word the error differently for a file larger than a group.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/overlay/manifest.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> Manifest validation lets the backends diverge <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/manifest.go#L107-L119">rdd/pkg/overlay/manifest.go</a></div>
+      <pre data-start="107" data-line="112-114"><code class="language-go">			return errors.New(&quot;symlink entry cannot have a source&quot;)
+		}
+	default:
+		return fmt.Errorf(&quot;unknown type %q (want file, dir, or symlink)&quot;, e.Type)
+	}
+	if e.Source != &quot;&quot; &amp;&amp; !fs.ValidPath(e.Source) {
+		return errors.New(&quot;source must be relative and within the source directory&quot;)
+	}
+	if e.Mode != &quot;&quot; {
+		if _, err := e.mode(0); err != nil {
+			return fmt.Errorf(&quot;invalid mode %q: %w&quot;, e.Mode, err)
+		}
+	}</code></pre>
+    <p>Run through both backends:</p>
+    <ul>
+      <li><code>uid: -1</code> means &quot;leave unchanged&quot; to go-diskfs, so the image keeps the parent&#39;s owner while the tar writes -1 in a PAX record; a gid of -2 becomes 4294967294 in the image.</li>
+      <li><code>uid: 4294967297</code> stays as is in the tar and becomes 1 in the image, which stores <code>uint32(uid)</code> (Claude&#39;s run).</li>
+      <li>A duplicated <code>path</code> passes validation and writes two tar entries; a dir and a file at one path give a tar holding both, while the image refuses.</li>
+      <li>On a Windows build host <code>..\..\x</code> passes <code>fs.ValidPath</code>, and <code>filepath.Join</code> resolves it outside <code>--source</code>, contrary to the error text.</li>
+    </ul>
+    <p>Flash&#39;s fix still accepts -1, the value where the backends disagree most.</p>
+    <p>Fix: reject a UID or GID outside 0 to 2^32-1, reject duplicate paths, and check <code>source</code> with <code>filepath.IsLocal(filepath.FromSlash(e.Source))</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/overlay/image.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>OpenImage</code> drops the reason it found no ext4 partition <span class="pill pill-claude">Claude Opus 5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/image.go#L43-L57">rdd/pkg/overlay/image.go</a></div>
+      <pre data-start="43" data-line="48-52"><code class="language-go">	table, err := d.GetPartitionTable()
+	if err != nil {
+		_ = d.Close()
+		return nil, fmt.Errorf(&quot;reading partition table: %w&quot;, err)
+	}
+	for i, part := range table.GetPartitions() {
+		candidate, err := d.GetFilesystem(i + 1)
+		if err != nil || candidate.Type() != filesystem.TypeExt4 {
+			continue
+		}
+		if root, ok := candidate.(*ext4.FileSystem); ok {
+			img, err := newImageDistro(d, root, part.GetStart())
+			if err != nil {
+				_ = d.Close()
+				return nil, err</code></pre>
+    <p>When go-diskfs cannot parse the root partition (an unsupported feature, a short read), line 50 discards the error, and the user sees only <code>no ext4 root partition in X</code>.</p>
+    <p>Fix: keep the last <code>GetFilesystem</code> error and wrap it into the final message.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/main.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The production entry points have no tests, and the negative tests check no error text <span class="pill pill-claude">Claude Opus 5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+    <p>Every image test enters through <code>openImage</code> or <code>newImage</code> at partition 0, so <code>OpenImage</code>&#39;s GPT scan and superblock offset run only in production, and <code>detectFormat</code> and <code>applyTarFile</code>&#39;s rename have no tests at all. I3&#39;s probe builds a GPT disk and drives <code>run</code>, which a test could keep.</p>
+    <p><code>TestValidateRejectsBadEntries</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay_test.go#L49-L65"><code>overlay_test.go:49-65</code></a>) and <code>TestParseMtime</code>&#39;s invalid case assert only that some error occurred, so a case that fails for the wrong reason still passes.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/rdd/pkg/overlay/overlay_test.go#L44-L70">rdd/pkg/overlay/overlay_test.go</a></div>
+      <pre data-start="44" data-line="49-65"><code class="language-go">	assert.NilError(t, err)
+	assert.Equal(t, mode, os.FileMode(0o755))
+	assert.Equal(t, m.Entries[1].kind(), TypeDir)
+}
+
+func TestValidateRejectsBadEntries(t *testing.T) {
+	cases := map[string]Entry{
+		&quot;relative path&quot;:   {Path: &quot;usr/local/bin/x&quot;, Source: &quot;x&quot;},
+		&quot;file no source&quot;:  {Path: &quot;/x&quot;},
+		&quot;symlink target&quot;:  {Path: &quot;/x&quot;, Type: TypeSymlink},
+		&quot;dir with target&quot;: {Path: &quot;/x&quot;, Type: TypeDir, Target: &quot;/y&quot;},
+		&quot;escaping source&quot;: {Path: &quot;/x&quot;, Source: &quot;../x&quot;},
+		&quot;bad mode&quot;:        {Path: &quot;/x&quot;, Source: &quot;x&quot;, Mode: &quot;9999&quot;},
+		&quot;setuid mode&quot;:     {Path: &quot;/x&quot;, Source: &quot;x&quot;, Mode: &quot;4755&quot;},
+		&quot;unknown type&quot;:    {Path: &quot;/x&quot;, Type: &quot;socket&quot;},
+	}
+	for name, e := range cases {
+		t.Run(name, func(t *testing.T) {
+			assert.Assert(t, e.validate() != nil, &quot;expected validation error&quot;)
+		})
+	}
+}
+
+func TestApplyTarOverridesNewFilesDirsAndLinks(t *testing.T) {
+	base := buildTar(t, []tarItem{
+		{name: &quot;usr/local/bin/&quot;, dir: true},
+		{name: &quot;usr/local/bin/old&quot;, body: &quot;OLD&quot;},</code></pre>
+    <p>Fix: drive <code>run</code> through a GPT disk in a test, and switch the validation table to <code>assert.ErrorContains</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Check every entry before writing any</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5</span>. <code>Apply</code> interleaves refusals with writes, so the user learns of one conflicting entry per run. The htree, symlink, shrink and hard-link refusals depend only on the base image, so a first pass could stat every destination and its parent and report them all at once. With I3&#39;s copy the input survives a refusal either way.</li>
+      <li><strong>go-diskfs defects keep surfacing</strong> (future) <span class="pill pill-claude">Claude Opus 5</span>. The PR works around four; this review found hard links, holes, <code>BLOCK_UNINIT</code> groups, and one more: <code>inode.toBytes</code> zero-fills everything past offset 0x98, so every inode go-diskfs rewrites loses its in-inode xattrs. That covers each file written and each directory that gains an entry or gets metadata; v0.2.8 directories carry none. Claude suggests a backend that drives e2fsprogs&#39; <code>debugfs -w</code>, which handles all of these and can set ctime, making the image reproducible. The cost is the external binary the pure-Go design set out to avoid, though CI already installs it.</li>
+      <li><strong>Replacing a file drops its file capabilities</strong> (future) <span class="pill pill-claude">Claude Opus 5</span>. Claude measured <code>/usr/bin/newuidmap</code> losing <code>security.capability</code> in the image, and tar entries carry no xattrs, so a replaced binary that needs capabilities would need a manifest field.</li>
+      <li><strong>No way to delete a base path</strong> (future) <span class="pill pill-gemini">Gemini 3.1 Pro</span>. The manifest only adds and replaces; pruning a package from the base would need a delete entry, which go-diskfs&#39;s <code>Remove</code> (it leaks blocks in v1.9.4) cannot yet back.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>One <code>Distro</code> interface drives both backends, and <code>plannedDirs</code> settles directory ownership before any write, so an explicit file or plain dir entry overrides a tree in either order, and the tests check both orders <span class="pill pill-claude">Claude Opus 5</span>. Nested tree roots are the exception (I4).</li>
+      <li>The e2fsck-backed tests, with <code>RDD_REQUIRE_E2FSPROGS</code> set in CI, cannot skip silently on Linux or macOS <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li>The common case works on the real image. Claude&#39;s representative overlay onto a v0.2.8 clone passes e2fsck at the reviewed SHA; the consolidator&#39;s run with I1&#39;s check (a 30 MB nerdctl override, a 60 MiB file, a systemd drop-in) passed too, and nerdctl read back byte-identical [Claude Opus 5, Consolidator].</li>
+      <li>Fixed tree modes make the result independent of the build host&#39;s permission model <span class="pill pill-gemini">Gemini 3.5 Flash</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The consolidator ran <code>go test -race</code> on <code>pkg/overlay</code> and <code>cmd/distro-overlay</code> in the lead worktree at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b8d01e24e"><code>b8d01e24e</code></a> on macOS arm64, with e2fsprogs 1.47.4 on PATH and <code>RDD_REQUIRE_E2FSPROGS=true</code>. All 14 top-level tests pass, the e2fsck ones included. At the same SHA, CI&#39;s <code>RDD Unit tests (windows-latest)</code> fails (I2). Every other check had passed except BATS (macos-15-intel, bats-app), which was still pending.</p>
+    <p>Gaps:</p>
+    <ol>
+      <li>The post-write extent-tree refusal (<code>image.go:148-151</code>) has no test; with it deleted, the suite still passes (I3). I3&#39;s probe covers it through <code>run</code>.</li>
+      <li>No test overrides a hard-linked file in either backend (I1).</li>
+      <li>The order tests pair one explicit entry with one tree; no test nests one tree in another (I4).</li>
+      <li><code>OpenImage</code>, <code>detectFormat</code>, and <code>--output</code> handling are untested (S6, I3, I5).</li>
+      <li>The go-diskfs-only image tests do run on Windows, where a failed <code>Apply</code> leaks the image (I2).</li>
+      <li>The negative tests check no error text (S6).</li>
+      <li>Holes, <code>BLOCK_UNINIT</code> groups, and a symlink over an existing path are untested (S1, S2).</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/README.md#L36-L37"><code>README.md:36-37</code></a> and the <code>imageDistro</code> comment promise refusal before damage; the extent-tree refusal comes after it (I3).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/README.md#L16"><code>README.md:16</code></a> and the flag help call <code>--output</code> tar-only; the tool accepts it for raw and ignores it (I3).</li>
+      <li>The README&#39;s raw-image limits leave out hard links and a symlink over an existing path (I1, S2), and the reserve advice ignores the per-file limit (S3).</li>
+      <li><code>Apply</code>&#39;s doc comment promises order independence (I4) and a close it skips on failure (I2).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/b8d01e24ec2502e98119de64185a459cc813af6c/.github/workflows/lint.yaml#L103-L104"><code>lint.yaml:103-104</code></a> misstates which overlay tests skip on Windows (I2).</li>
+      <li><code>manifest.example.yaml:17</code> says uid and gid default to root; an image symlink takes its parent&#39;s owner (S2).</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>ctime</strong> (@jandubois, PR comment): the raw image is not bit-reproducible because go-diskfs stamps ctime with the current time and its <code>Chtimes</code> never sets it. Not a blocker while rdd embeds the image.</li>
+      <li><strong>mtime</strong> (@jandubois, PR comment): git keeps no mtime, so <code>--mtime</code> stamps every entry. Resolved.</li>
+      <li><strong>Directory trees</strong> (@mook-as, inline comment): a <code>dir</code> entry with a <code>source</code> copies a tree. Resolved.</li>
+      <li><strong>Reserve</strong>: the image fills only the space the distro reserves and fails rather than growing the filesystem.</li>
+      <li><strong>Tree modes and symlinks</strong>: tree members get fixed modes, and a tree may not contain symlinks.</li>
+      <li><strong>Build wiring</strong>: nothing calls the tool yet; embedding comes later.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>@mook-as&#39;s review body has no reply in the thread: &quot;Note that we still get lima to download the opensuse image at runtime, so I&#39;m not sure how the output image is supposed to be used.&quot; One sentence in the PR description about the planned embedding step would close it <span class="pill pill-claude">Claude Opus 5</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5"><span class="pill pill-claude">Claude Opus 5</span> <a href="#claude-opus-5" class="pilcrow">&#182;</a></h3>
+    <p>The most valuable review by a wide margin. It found the hard-link defect in both backends, the gap between the README&#39;s promise and the post-write refusal, the raw <code>--output</code> drop, the <code>BLOCK_UNINIT</code> and 127 MiB allocator limits, and the in-inode xattr loss, and it probed each on a clone of the real image. It rated the Windows CI failure Critical; consolidation made it Important, because the failure is in test cleanup and no shipped behavior is wrong. Its one miss was I4: its coverage table calls the ordering in <code>plannedDirs</code> correct, and its Strengths credit the order independence that nested trees break. Its fix for the Windows job works but leaves <code>Apply</code>&#39;s asymmetric close in place.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Codex produced no review. Its provider&#39;s content filter stopped it (&quot;flagged for possible cybersecurity risk&quot;) while it wrote a probe that fragments a GPT disk image and inspects a file after a refused write. By then its progress log had named three areas: tar input and output aliasing, raw-image replacement, and whether the ext4 refusals run before or after the image changes. The first and third are I5 and I3, and its leftover probe targets I3&#39;s mechanism, so both carry its name. It was not retried, per the content-filter rule.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>A short review with one sound Important, the <code>--output</code> aliasing (I5), plus the <code>Apply</code> close asymmetry as a Suggestion that the red Windows job raised to Important. Its Unresolved Feedback claims @mook-as&#39;s &quot;bit after the semicolon&quot; clause is still in the example; the clause was rewritten away, so the claim is false. It marked <code>image.go</code> and <code>tar.go</code> clean and missed the hard-link and nested-tree defects. Its go-diskfs experiments stayed inside its worktree&#39;s <code>rdd/.scratch/</code>.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Its sandbox refused reads of the go-diskfs module cache, so its go-diskfs claims rest on the PR&#39;s own comments, and its design note gets the image&#39;s symlink owner wrong. Its Important, <code>Apply</code> skipping <code>Close</code> on failure, was right, but it argued from a hypothetical long-lived caller and missed the real consequence, the red Windows job. Its negative-uid suggestion stands, though its fix keeps -1, the value where the backends disagree most. Both Geminis raised the close asymmetry, so count that as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>33m 50s</td><td>4m 04s</td><td>7m 23s</td><td>5m 33s</td></tr>
+        <tr><td>Findings</td><td>4I 6S</td><td>2I</td><td>2I</td><td>1I 1S</td></tr>
+        <tr><td>Tool calls</td><td>91 (Bash 75, Read 16)</td><td>16 (shell 12, apply_patch 2, stdin 2)</td><td>17 (run<em>shell</em>command 17)</td><td>51 (run<em>shell</em>command 28, read<em>file 16, grep</em>search 5)</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>0</td><td>1</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>6</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>12</td><td>0</td><td>12</td><td>12</td></tr>
+        <tr><td>Coverage misses</td><td>1</td><td>0</td><td>5</td><td>3</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>4I 6S</strong></td><td><strong>2I</strong></td><td><strong>2I</strong></td><td><strong>1I 1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Claude carried this review: four of the five Important findings and all six Suggestions came from it, each backed by a probe. Gemini 3.1 Pro&#39;s aliasing finding was the other independent Important. Every agent missed the nested-tree defect, which surfaced only when the consolidator built nested inputs the tests do not cover.</p>
+    <p><strong>Reconciliation.</strong> Claude pass 1 C1 (Windows CI): critical → important I2. Gemini 3.1 Pro pass 1 S1 (<code>Apply</code> close): suggestion → important, merged into I2, because the red Windows job is its consequence. Gemini 3.5 Flash pass 1 I1 merged into I2 at the same severity. Claude pass 1 I3 split into I3 (raw <code>--output</code>) and I5 (tar aliasing). Dropped: Gemini 3.5 Flash S1 (a Makefile target; the prompt put wiring the tool into the build out of scope) and S3 (walking each tree twice; the trees hold tens of files). Rejected as a false positive: Gemini 3.1 Pro&#39;s Unresolved Feedback item.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>Broaden the comment-claim rule in <code>instructions.md</code>: a comment or doc that claims a property for every input (&quot;in any order&quot;, &quot;never duplicated&quot;, &quot;always wins&quot;) needs the inputs its tests skip, such as two instances of the same kind that overlap or the same key twice, built and run before the claim is credited. Tests encode the pairing the author had in mind, and a reviewer who reads them inherits the same blind spot.</li>
+      <li>Add a dimension for in-place writes: when code writes into an existing object instead of replacing it (a file&#39;s inode, a record, an output path that may equal the input), list everything else that refers to that object (hard links, aliases, the caller&#39;s own input stream) and check that each still sees the intended content. An in-place write changes every reference at once, and none of the others shows at the write site.</li>
+      <li>When the code under review consumes a large real-world artifact (a disk image, a dataset, a release tarball), stage a read-only copy for the agents and name it in the prompt, with instructions to probe on copies. Realistic inputs expose layout-dependent defects that small synthetic fixtures lack.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[repo] ADD: rdd&#39;s guest-deps cache, <code>os.UserCacheDir()/rancher-desktop.guest-deps/distro/&lt;version&gt;/</code>, holds the released distro images (the raw GPT disk and the WSL tarball, xz-compressed). A review of code that reads or writes the distro can decompress one read-only and have agents probe APFS <code>cp -c</code> clones of it.</li>
+      <li>[repo] ADD: go-diskfs&#39;s ext4 writer (v1.9.4) never clears a block group&#39;s <code>BLOCK_UNINIT</code> flag, starts a grown file&#39;s new extent at the file&#39;s allocated block count (so a file with holes gets data written outside it), zero-fills in-inode xattrs whenever it rewrites an inode, refuses a symlink name that exists, and gives a new symlink its parent directory&#39;s owner. Its <code>Chown</code> and <code>Chmod</code> follow symlinks, and <code>Chtimes</code> never sets ctime. Check code that writes ext4 through go-diskfs against each.</li>
+      <li>[repo] UPDATE: the &quot;Build, test environment, and CI&quot; entry that tells agents to run <code>rdd svc start</code> for live verification, and the &quot;Live verification setup&quot; section, invite review agents to start the rdd service. Review agents must not start containers, VMs, or services on the host; remove both invitations.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
