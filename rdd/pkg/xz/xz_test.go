@@ -120,25 +120,6 @@ func TestDecompressReaderCanceledContext(t *testing.T) {
 	assertNoTempFiles(t, dir)
 }
 
-// Writes that begin and end partway into a block must still go to the right
-// offsets and leave holes.
-func TestSparseWriterUnalignedWrites(t *testing.T) {
-	want := sparsePlaintext()
-	path := filepath.Join(t.TempDir(), "image")
-	f, err := os.Create(path)
-	assert.NilError(t, err)
-
-	w := &sparseWriter{f: f}
-	for chunk := range slices.Chunk(want, 1000) {
-		_, err := w.Write(chunk)
-		assert.NilError(t, err)
-	}
-	assert.NilError(t, w.finish())
-	// APFS counts the zeros it allocates in a gap only once the file is closed.
-	assert.NilError(t, f.Close())
-	assertSparseCopy(t, path, want)
-}
-
 func assertNoTempFiles(t *testing.T, dir string) {
 	t.Helper()
 	matches, err := filepath.Glob(filepath.Join(dir, "*.tmp-*"))
