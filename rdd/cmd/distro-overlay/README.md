@@ -6,14 +6,15 @@ lives in this repository and is layered on from a single manifest.
 
 ## Usage
 
-    distro-overlay --manifest manifest.yaml --source ./files [--mtime T] <distro>
+    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--mtime T] <distro>
 
 | Flag | Meaning |
 |------|---------|
 | `--manifest` | YAML manifest of entries to merge (required) |
 | `--source` | Directory holding the file sources (default: the manifest's directory) |
 | `--format` | `auto` (default), `raw`, or `tar`; `auto` detects by signature |
-| `--output` | Output path (default: overwrite the input); the tool writes through to it, empties one it has begun writing when the run fails, and refuses one naming the distro |
+| `--output` | Write the result here, leaving the distro alone; the tool writes through to it, empties it when the run fails, and refuses one naming the distro |
+| `--in-place` | Overlay the distro itself, modifying it; pass this or `--output`, never both |
 | `--mtime` | Timestamp for every entry: Unix epoch seconds or RFC3339 (default: now) |
 
 `<distro>` is an uncompressed tarball or raw image. Decompress it first and
@@ -36,9 +37,11 @@ The same manifest drives both forms:
 
 go-diskfs, which writes the ext4 image, mishandles the cases below, so the tool
 refuses them. It checks each entry before writing it, but it can only find an
-extent tree after go-diskfs has written one, and it writes the image you name,
-the distro itself without `--output`. A write that fails therefore empties an
-`--output`, and leaves the distro to discard when you overlaid it in place.
+extent tree after go-diskfs has written one. A failed write therefore empties an
+`--output`. With `--in-place` there is no copy to fall back on. The distro keeps
+whatever the run wrote before it failed, and the only recovery is to start again
+from the pristine image. So the tool modifies a distro only when you pass
+`--in-place`.
 
 - **Files needing an extent tree.** go-diskfs writes extent-tree blocks without
   their `metadata_csum` checksum, and an inode holds four extents before it

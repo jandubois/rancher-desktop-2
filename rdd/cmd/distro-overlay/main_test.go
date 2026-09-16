@@ -41,6 +41,15 @@ func TestParseMtime(t *testing.T) {
 	})
 }
 
+// TestCheckTarget checks that the tool takes one destination flag and refuses
+// both or neither.
+func TestCheckTarget(t *testing.T) {
+	assert.NilError(t, checkTarget("overlaid.raw", false))
+	assert.NilError(t, checkTarget("", true))
+	assert.ErrorContains(t, checkTarget("overlaid.raw", true), "not both")
+	assert.ErrorContains(t, checkTarget("", false), "pass --output")
+}
+
 // TestRunRawImage drives the raw path end to end, through the GPT scan and the
 // format detection no other test reaches. An --output leaves the distro alone,
 // and the tool writes through to whatever that output names.

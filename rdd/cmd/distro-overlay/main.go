@@ -25,12 +25,18 @@ func main() {
 	manifest := flag.String("manifest", "", "overlay manifest (YAML)")
 	source := flag.String("source", "", "directory holding file sources (default: manifest directory)")
 	format := flag.String("format", "auto", "distro format: auto, raw, or tar")
-	output := flag.String("output", "", "output path (default: overwrite input)")
+	output := flag.String("output", "", "write the overlaid distro here")
+	inPlace := flag.Bool("in-place", false, "overlay the distro itself, modifying it")
 	mtimeArg := flag.String("mtime", "", "modification time for every entry, as Unix epoch seconds or RFC3339 (default: now)")
 	flag.Parse()
 
 	if *manifest == "" || flag.NArg() != 1 {
-		fmt.Fprintln(os.Stderr, "usage: distro-overlay --manifest M [--source D] [--format auto|raw|tar] [--output O] [--mtime T] <distro>")
+		fmt.Fprintln(os.Stderr, "usage: distro-overlay --manifest M (--output O | --in-place)"+
+			" [--source D] [--format auto|raw|tar] [--mtime T] <distro>")
+		os.Exit(2)
+	}
+	if err := checkTarget(*output, *inPlace); err != nil {
+		fmt.Fprintln(os.Stderr, "distro-overlay:", err)
 		os.Exit(2)
 	}
 	mtime, err := parseMtime(*mtimeArg)
@@ -42,6 +48,19 @@ func main() {
 		fmt.Fprintln(os.Stderr, "distro-overlay:", err)
 		os.Exit(1)
 	}
+}
+
+// checkTarget requires exactly one destination. A raw overlay writes as it goes,
+// so a failed --in-place run leaves the distro half-overlaid with no copy to
+// restore it from, and modifying it therefore takes an explicit flag.
+func checkTarget(output string, inPlace bool) error {
+	if inPlace && output != "" {
+		return errors.New("pass --output or --in-place, not both")
+	}
+	if !inPlace && output == "" {
+		return errors.New("pass --output to write a new distro, or --in-place to modify this one")
+	}
+	return nil
 }
 
 // parseMtime reads the --mtime flag as Unix epoch seconds or an RFC3339
@@ -134,8 +153,8 @@ func emptyOutput(output string, cause error) error {
 }
 
 // refuseAliasedOutput rejects an output naming the distro, which creating it
-// would empty before the overlay reads it. Omitting --output is how to overlay
-// the distro itself.
+// would empty before the overlay reads it. --in-place is how to overlay the
+// distro itself.
 func refuseAliasedOutput(input, output string) error {
 	inInfo, err := os.Stat(input)
 	if err != nil {
@@ -149,7 +168,7 @@ func refuseAliasedOutput(input, output string) error {
 		return err
 	}
 	if os.SameFile(inInfo, outInfo) {
-		return fmt.Errorf("--output %s names the distro itself; omit --output to overlay it in place", output)
+		return fmt.Errorf("--output %s names the distro itself; pass --in-place to overlay it", output)
 	}
 	return nil
 }
