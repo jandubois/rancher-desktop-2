@@ -243,6 +243,18 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Codex GPT 5.6 Sol and Claude Opus 5 found the tarball defect independently, from opposite ends: Codex through a CLI probe, Claude by reading the guard against its own rationale. Codex raised the in-place test gap as a finding, and Claude found its permission half in its own Testing Assessment. Both Geminis returned clean. The consolidator reproduced every finding below, found that the collision runs in both directions, and widened the fix accordingly.</p>
     </div>
     <hr>
+    <h2 id="since-this-review-ran">Since this review ran <a href="#since-this-review-ran" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every finding below was addressed on 2026-09-16, and the two commits under review were reorganised into three, none of which keeps their SHAs: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/adb5440a9"><code>adb5440a9</code></a> moves the sparse writer into its own package, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6dc3e9d8f"><code>6dc3e9d8f</code></a> adds the <code>pkg/overlay</code> library, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9da551ddc"><code>9da551ddc</code></a> adds the CLI. Line numbers and quoted code no longer match the branch. Each finding ends with a <strong>Resolution</strong> line saying what happened to it.</p>
+    <p>Three things the fixes left open, none of them regressions:</p>
+    <ul>
+      <li>The tarball still accepts a <em>base</em> symlink or file replaced with another type, where the image backend refuses it. <code>checkType</code>&#39;s comment records it.</li>
+      <li><code>copyTo</code>&#39;s sparse behaviour has no regression test; reverting it to <code>io.Copy</code> leaves the suite green.</li>
+      <li><code>emptyOutput</code> discards the error from <code>os.Truncate</code>, so both README sentences about emptying an <code>--output</code> are best-effort. Pre-existing.</li>
+    </ul>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -440,6 +452,7 @@ FAIL</code></pre>
  	return nil
  }</code></pre>
       </details>
+    <p><strong>Resolution:</strong> Fixed. The tarball backend now records the type it wrote at each path and refuses a conflicting one in either direction, covered by <code>TestBackendsAgreeOnOverlayTypeConflicts</code> and <code>TestTarRefusesFileAndSymlinkAtOnePath</code>. A <em>base</em> symlink or file replaced with another type still passes the tarball where the image refuses it; <code>checkType</code>&#39;s comment records that residual gap.</p>
     </div>
     <div class="card card-important" data-file="rdd/cmd/distro-overlay/main_test.go">
       <div class="finding-title" id="I2">
@@ -507,6 +520,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/overlay	1.062s
 ok  	github.com/rancher-sandbox/rancher-desktop-daemon/cmd/distro-overlay	0.982s</code></pre>
       </details>
     <p>Fix: in each successful case of that table, resolve the path the run wrote and assert the overlay entry is present, and assert the distro lacks it only where a separate <code>--output</code> was given. Add one mode assertion for the in-place replacement.</p>
+    <p><strong>Resolution:</strong> Fixed. The in-place case asserts the overlay reached the distro and that its permissions carried over, and a new failing in-place case pins the error return and the temp-file cleanup. Both mutations named here now fail the suite, as do two more (a swallowed <code>ApplyTar</code> error and a skipped <code>os.Remove</code>).</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -545,6 +559,7 @@ func writeFile(d Distro, dest, srcPath string, uid, gid int, mode os.FileMode, m
 		return fmt.Errorf(&quot;uid and gid must be between 0 and %d&quot;, maxID)
 	}</code></pre>
     <p>Fix: resolve each candidate against a canonicalized source root with <code>filepath.EvalSymlinks</code> and reject any result outside it.</p>
+    <p><strong>Resolution:</strong> Fixed. <code>sourcePath</code> resolves each source against a canonicalised source root and refuses one a symlinked parent takes outside it, at both the file branch and <code>walkTree</code>. A source of <code>.</code>, which names the source directory itself, stays legal and is pinned by <code>TestTreeSourceMayNameTheSourceDirectory</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/main.go">
       <div class="finding-title" id="S2">
@@ -578,6 +593,7 @@ It includes a command line tool, `rdctl`, which is written in Go.
 Most developer activities, such as running a development build, building/packaging
 Rancher Desktop, running unit tests, and running end-to-end tests, are done through</code></pre>
     <p>Fix: open the input before <code>copyTo</code> on the raw path, and move the cleanup to one place in <code>run</code> that covers manifest loading and format detection.</p>
+    <p><strong>Resolution:</strong> Fixed, but narrower than proposed. Two wider attempts were reverted after each was measured destroying a file the tool never wrote: an <code>--output</code> naming the <code>--manifest</code> (47 to 0 bytes), a file under <code>--source</code>, an unrelated symlink target, and a pre-existing output on <code>--format bogus</code>. The tool now opens both the distro and the output before the cleanup takes charge, so it empties only an output it has opened, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d073bf8c08c7acb70a24a425f89a574b60c015fe/README.md#L16"><code>README.md:16</code></a> states that narrower promise. A failure before either file opens leaves the output as it was. The measurement quoted above is also corrected: an unreadable (mode 000) distro <em>is</em> emptied; the case that survives untouched is a <em>missing</em> distro.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/overlay.go">
       <div class="finding-title" id="S3">
@@ -599,6 +615,7 @@ Rancher Desktop, running unit tests, and running end-to-end tests, are done thro
 			isDir:   de.IsDir(),
 		})</code></pre>
     <p>Fix: test <code>!info.Mode().IsRegular()</code> and name the offending type in the message.</p>
+    <p><strong>Resolution:</strong> Fixed. The guard tests <code>IsRegular</code> and names the offending type, so a fifo source fails at once instead of hanging.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/tar.go">
       <div class="finding-title" id="S4">
@@ -651,6 +668,7 @@ func (i *imageDistro) Symlink(link, target string, _, _ int, mtime time.Time) er
 	}
 	if err := i.checkParentIndex(r); err != nil {</code></pre>
     <p>Fix: document both halves in <code>manifest.example.yaml</code>, or drop the now-always-zero <code>uid, gid</code> parameters from <code>Distro.Symlink</code>.</p>
+    <p><strong>Resolution:</strong> Fixed. <code>Distro.Symlink</code> lost its always-zero <code>uid, gid</code> parameters, and <code>manifest.example.yaml</code> now documents the tarball&#39;s <code>root:root</code> beside the image&#39;s parent-owner behaviour.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/main.go">
       <div class="finding-title" id="S5">
@@ -674,6 +692,7 @@ func (i *imageDistro) Symlink(link, target string, _, _ int, mtime time.Time) er
 }</code></pre>
     <p><code>io.Copy</code> writes every zero range, which undoes the sparseness <code>pkg/xz/xz.go</code> goes out of its way to produce. Its <code>sparseWriter</code> skips each zero block and punches a hole, because &quot;writing every byte would allocate a disk image&#39;s free space along with its data&quot;. The distro image is mostly reserved free space, so the copy is exactly the case that comment describes. Codex measured a 64 MiB sparse file going from 16 KiB allocated to 64 MiB on APFS. Nothing calls the tool yet, so this costs disk in no build today.</p>
     <p>Fix: reuse the xz sparse writer for the copy, or clone the file where the platform supports it and fall back to a zero-skipping copy.</p>
+    <p><strong>Resolution:</strong> Fixed. The sparse writer moved out of <code>pkg/xz</code> into a new <code>pkg/sparse</code>, and the raw <code>--output</code> copy goes through it. Measured: a 64 MiB sparse image copies at 8 KiB allocated, against the full 64 MiB before. <code>copyTo</code> itself has no regression test, per the decision on the optional testing gaps below.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/overlay.go">
       <div class="finding-title" id="S6">
@@ -693,6 +712,7 @@ func (i *imageDistro) Symlink(link, target string, _, _ int, mtime time.Time) er
 }
 </code></pre>
     <p>Fix: call <code>m.validate()</code> at the top of both entry points, or state the precondition in both doc comments.</p>
+    <p><strong>Resolution:</strong> Fixed. <code>Apply</code> and <code>ApplyTar</code> both call <code>validate</code>, and <code>ownedByTree</code>&#39;s comment no longer concedes the gap.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/image.go">
       <div class="finding-title" id="S7">
@@ -719,6 +739,7 @@ func (i *imageDistro) Symlink(link, target string, _, _ int, mtime time.Time) er
 If you find the `lint:go` tests are failing mysteriously, it&#39;s possible that the line-endings are incorrect.
 </code></pre>
     <p>Fix: rename the function to cover both, or split the 64bit test out, and extend the doc comment.</p>
+    <p><strong>Resolution:</strong> Fixed. The 64bit and descriptor-size tests moved into <code>checkGroupDescriptors</code>, which returns the size the group scan needs.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/README.md">
       <div class="finding-title" id="S8">
@@ -726,6 +747,7 @@ If you find the `lint:go` tests are failing mysteriously, it&#39;s possible that
       </div>
     <p>Line 32 tells a builder whose overlay does not fit to &quot;raise the reserve and rebuild&quot;. Lines 66-73 then explain that <code>mke2fs</code> leaves a <code>BLOCK_UNINIT</code> group &quot;in any filesystem from about 768 MiB up&quot;, which the tool refuses, and offer only that &quot;the fix belongs in the distro build&quot;. Following the first instruction past 768 MiB therefore produces an image the tool will not open, with no named way out. Claude measured the escape routes at 768 MiB: neither <code>-O ^uninit_bg</code> nor <code>-E lazy_itable_init=0</code> suppresses the group, and only dropping <code>metadata_csum</code> clears it, which this image cannot do.</p>
     <p>Fix: say in the <code>BLOCK_UNINIT</code> paragraph that no <code>mke2fs</code> option avoids it on a <code>metadata_csum</code> filesystem, and name the lever that does work.</p>
+    <p><strong>Resolution:</strong> Fixed. The <code>BLOCK_UNINIT</code> paragraph now says that no <code>mke2fs</code> option avoids the group on a <code>metadata_csum</code> filesystem and names what does work, and line 32 points at it before advising a larger reserve. Measured at 768 MiB: <code>-O ^uninit_bg</code> and <code>-E lazy_itable_init=0</code> each leave one such group, dropping <code>metadata_csum</code> clears it, and 700 MiB of <code>-d</code> data clears it.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/overlay_test.go">
       <div class="finding-title" id="S9">
@@ -757,6 +779,7 @@ func e2fsprogs(t *testing.T, name string, args ...string) (code int, output stri
 	return 0, string(out)
 }</code></pre>
     <p>Fix: leave it until a third caller appears, but as a decision rather than an accident.</p>
+    <p><strong>Resolution:</strong> Commented. Two copies beat a test-helper package no third caller needs; both now record that as a decision, and that the <code>RDD_REQUIRE_E2FSPROGS</code> contract has to stay in step. A third copy joined them in <code>pkg/sparse</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/overlay.go">
       <div class="finding-title" id="S10">
@@ -796,6 +819,7 @@ func e2fsprogs(t *testing.T, name string, args ...string) (code int, output stri
 }
 
 // overridePaths returns every destination the manifest writes, so ApplyTar can</code></pre>
+    <p><strong>Resolution:</strong> Fixed. Both <code>sortedKeys</code> and the hard-link scan use <code>slices.Sorted(maps.Keys(...))</code>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
