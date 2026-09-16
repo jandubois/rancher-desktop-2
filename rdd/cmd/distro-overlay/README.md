@@ -94,3 +94,18 @@ files, directories, directory trees, and symlinks.
 Every entry is stamped with one modification time from `--mtime` (default: the
 tool's start time). Passing a deterministic value — for example a git commit
 time — is what makes a rebuild reproducible.
+
+## Tests
+
+The tests in this package and in `pkg/overlay` that write a real ext4 image
+shell out to `mke2fs`, `e2fsck`, and `debugfs`. Without those on `PATH` they
+skip, and `go test` still prints `ok`, so the ext4 backend looks covered when
+nothing exercised it. On macOS the Homebrew formula is keg-only, so its `sbin`
+goes on `PATH` by hand:
+
+    brew install e2fsprogs
+    export PATH="$(brew --prefix)/opt/e2fsprogs/sbin:$PATH"
+
+Set `RDD_REQUIRE_E2FSPROGS=true` to fail instead of skipping. CI sets it
+everywhere but Windows, which has no e2fsprogs package and builds only the
+tarball.
