@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Claude Opus 5 raised four of the five Important findings and every Suggestion, and probed each on a clone of the real image. Codex GPT 5.6 Sol was stopped by its provider&#39;s content filter partway through; the two defects its log shows it had formed carry its name. Gemini 3.1 Pro found the <code>--output</code> aliasing, and both Geminis flagged the close asymmetry behind I2. The consolidator found the nested-tree defect, ran every reproducer below against <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b8d01e24e"><code>b8d01e24e</code></a>, and checked each patch against its probe, the test suite, and golangci-lint, singly and all five together.</p>
     </div>
     <hr>
+    <h2 id="since-this-review-ran">Since this review ran <a href="#since-this-review-ran" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every finding below is addressed, and the code these excerpts quote has moved. The report describes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b8d01e24e"><code>b8d01e24e</code></a>, which the fixes replaced with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c96df1b6d"><code>c96df1b6d</code></a>, so the line numbers and snippets here are the reviewed versions rather than the current ones. Each finding ends with a line naming what happened to it.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -462,6 +468,7 @@ index a6bc0cfbd..280de17b6 100644
  	return Apply(d, m, sourceDir, mtime)
  }</code></pre>
       </details>
+    <p><strong>Fixed.</strong> Both backends refuse an override of a hard-linked file.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/overlay/overlay.go">
       <div class="finding-title" id="I2">
@@ -647,6 +654,7 @@ index 749e6a01a..a1b053645 100644
  			_ = d.Close()
  		}</code></pre>
       </details>
+    <p><strong>Fixed.</strong> <code>Apply</code> closes the image on every path, and the Windows job runs the image tests again.</p>
     </div>
     <div class="card card-important" data-file="rdd/cmd/distro-overlay/main.go">
       <div class="finding-title" id="I3">
@@ -893,6 +901,7 @@ index 1f162cf63..1f7389aa9 100644
  	disk      *disk.Disk
  	fs        *ext4.FileSystem</code></pre>
       </details>
+    <p><strong>Fixed.</strong> <code>--output</code> now applies to raw images and the tool writes through to it, emptying the output when a run fails. An in-place raw run can still leave the image corrupt, which the README states.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/overlay/overlay.go">
       <div class="finding-title" id="I4">
@@ -1103,6 +1112,7 @@ index 79530de9a..83bccdace 100644
  // descendants, which lexical order guarantees (a path sorts before its extensions).
  func sortedKeys(dirs map[string]dirMeta) []string {</code></pre>
       </details>
+    <p><strong>Fixed.</strong> The innermost entry covering a path wins whatever the manifest order, and the tarball no longer writes nested files twice.</p>
     </div>
     <div class="card card-important" data-file="rdd/cmd/distro-overlay/main.go">
       <div class="finding-title" id="I5">
@@ -1221,6 +1231,7 @@ index 878869f06..55d360cb8 100644
     <p>go-diskfs also never clears a group&#39;s <code>BLOCK_UNINIT</code> flag when it allocates there, so e2fsck (exit 4 in Claude&#39;s probe) and the kernel still count those blocks free.</p>
     <p>v0.2.8 has neither: no sparse file among the 3,585 walked, and none of its 12 groups is <code>BLOCK_UNINIT</code>. Check the reserved image too.</p>
     <p>Fix: refuse destinations whose blocks fall short of their size, and images with a <code>BLOCK_UNINIT</code> group, or state both preconditions in the README.</p>
+    <p><strong>Fixed.</strong> A destination with holes, an image with a <code>BLOCK_UNINIT</code> group, and a non-64bit image are each refused.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/image.go">
       <div class="finding-title" id="S2">
@@ -1248,6 +1259,7 @@ func (i *imageDistro) Symlink(link, target string, _, _ int, mtime time.Time) er
     <p>go-diskfs&#39;s <code>Symlink</code> refuses a name that exists, so replacing a base symlink (a systemd <code>.wants</code> link, say) fails on the raw image after the earlier entries were written, while the tarball replaces it. The README&#39;s four raw-image limits and the example&#39;s &quot;Overwrites win&quot; leave this case out.</p>
     <p>The image also gives a new link its parent directory&#39;s owner, since <code>Chown</code> would follow the link, while the tarball writes the entry&#39;s <code>uid</code>/<code>gid</code>. In a probe the same entry came out 7:7 in the image and 5:5 in the tar. <code>Entry.validate</code> accepts <code>uid</code> on a symlink without comment. Flash&#39;s design note puts the image&#39;s default at 0:0; it is the parent&#39;s owner.</p>
     <p>Fix: stat the path first and refuse with a message naming the limit, list it in the README, and either reject <code>uid</code>/<code>gid</code> on symlink entries or document that the image ignores them.</p>
+    <p><strong>Fixed.</strong> A symlink over an existing path is refused, and the manifest rejects uid and gid on a symlink entry.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/README.md">
       <div class="finding-title" id="S3">
@@ -1273,6 +1285,7 @@ tool refuses them instead of producing a broken image.
     <p>go-diskfs gives a file one extent only when one free run inside a single block group holds it, at most 32,768 blocks. A larger file goes to a fallback allocator that takes every free run in group 0 first. v0.2.8&#39;s group 0 has four, so any such file needs a fifth extent and a tree, however large the reserve. The largest single-group run in v0.2.8 is 32,594 blocks, 127.3 MiB (<code>dumpe2fs</code>).</p>
     <p>The error at <code>image.go:149-150</code> sends the user to the reserve as well.</p>
     <p>Fix: state the per-file limit (one block group, 128 MiB at 4 KiB blocks) in the README and the error, and word the error differently for a file larger than a group.</p>
+    <p><strong>Fixed.</strong> The README and the error describe the four-extent limit and the sizes it allows, replacing the reserve advice.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/manifest.go">
       <div class="finding-title" id="S4">
@@ -1301,6 +1314,7 @@ tool refuses them instead of producing a broken image.
     </ul>
     <p>Flash&#39;s fix still accepts -1, the value where the backends disagree most.</p>
     <p>Fix: reject a UID or GID outside 0 to 2^32-1, reject duplicate paths, and check <code>source</code> with <code>filepath.IsLocal(filepath.FromSlash(e.Source))</code>.</p>
+    <p><strong>Fixed.</strong> The manifest is checked up front for uid and gid range, duplicate destinations, and sources inside the source directory.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/image.go">
       <div class="finding-title" id="S5">
@@ -1324,6 +1338,7 @@ tool refuses them instead of producing a broken image.
 				return nil, err</code></pre>
     <p>When go-diskfs cannot parse the root partition (an unsupported feature, a short read), line 50 discards the error, and the user sees only <code>no ext4 root partition in X</code>.</p>
     <p>Fix: keep the last <code>GetFilesystem</code> error and wrap it into the final message.</p>
+    <p><strong>Fixed.</strong> <code>OpenImage</code> wraps the error that stopped it reading a partition.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/distro-overlay/main.go">
       <div class="finding-title" id="S6">
@@ -1360,6 +1375,7 @@ func TestApplyTarOverridesNewFilesDirsAndLinks(t *testing.T) {
 		{name: &quot;usr/local/bin/&quot;, dir: true},
 		{name: &quot;usr/local/bin/old&quot;, body: &quot;OLD&quot;},</code></pre>
     <p>Fix: drive <code>run</code> through a GPT disk in a test, and switch the validation table to <code>assert.ErrorContains</code>.</p>
+    <p><strong>Fixed.</strong> Tests drive <code>run</code> and <code>detectFormat</code>, and the negative tests assert error text.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
