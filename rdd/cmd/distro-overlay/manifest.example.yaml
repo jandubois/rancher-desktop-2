@@ -1,0 +1,78 @@
+# Example distro-overlay manifest.
+#
+# distro-overlay merges these entries into a pristine openSUSE distro at build
+# time, into both the WSL tarball and the Lima ext4 image. Apply it with:
+#
+#   distro-overlay --manifest manifest.yaml --source ./files [--mtime T] <distro>
+#
+# `<distro>` is an uncompressed tarball or raw image; the format is detected from
+# its signature. Sources come from --source (default: this manifest's directory).
+
+# A single ordered list. Every entry has a `path`; the rest is optional.
+entries:
+  # --- A regular file (the default type) -------------------------------------
+  - path: /usr/local/bin/rancher-desktop-guest-agent  # absolute dest, required on every entry
+    source: bin/rancher-desktop-guest-agent           # contents, relative to --source
+    mode: "0755"   # octal string, quoted so YAML keeps it a string; default 0644
+    # uid/gid: numeric, default 0 (root). Host user names do not map into the distro.
+
+  # --- A file owned by a non-root account ------------------------------------
+  - path: /etc/some-service/config
+    source: configs/some-service.conf
+    mode: "0640"
+    uid: 472   # a service account that exists in the distro
+    gid: 472
+
+  # --- A directory -----------------------------------------------------------
+  # Parent directories of files and symlinks are created automatically as
+  # root:root 0755, so most directories need no entry. Add a dir entry only to
+  # set a non-default owner or mode, to create an empty directory, or to copy a
+  # whole tree (give it a `source`).
+  - path: /var/lib/rancher-desktop
+    type: dir
+    mode: "0700"
+
+  # --- A directory tree ------------------------------------------------------
+  # With a `source`, a dir entry copies that directory recursively. Files get
+  # mode 0644 and subdirectories 0755, whatever the build host reports, and the
+  # entry's uid/gid owns the whole tree. A tree holds only files and
+  # directories, so add symlinks as symlink entries. To give one path, such as
+  # an executable, a different owner or mode, list it explicitly; the explicit
+  # entry overrides the tree at that path, in any manifest order. Overriding a
+  # directory in the tree takes a dir entry, since a file there conflicts with
+  # the directory and both backends refuse it. A dir entry that has its own
+  # source and sits inside a tree takes over that subtree: the outer tree's
+  # copies of those paths are skipped, and whatever the distro already has there
+  # and neither source replaces stays as it is.
+  - path: /usr/local/lib/systemd/system
+    type: dir
+    source: trees/systemd
+  - path: /usr/local/lib/systemd/system/special.conf  # overrides the tree's copy
+    source: systemd/special.conf
+    mode: "0600"
+
+  # --- A symlink -------------------------------------------------------------
+  # A symlink takes no uid/gid. The tarball stamps it root:root; the image gives
+  # the link its parent directory's owner, because go-diskfs cannot set a link's
+  # own. So a symlink under a non-root directory comes out owned differently in
+  # the two forms.
+  - path: /usr/local/bin/rdctl
+    type: symlink
+    target: /usr/local/bin/rancher-desktop-guest-agent  # stored verbatim, absolute or relative
+
+# Notes:
+#   * Overwrites win: an overlay entry replaces a base path of the same name.
+#     Both backends refuse a path the overlay writes as both a file and a
+#     directory, and the raw image backend refuses more kinds of replacement;
+#     see the README.
+#   * Every path appears once. Two entries for one path are rejected, because
+#     the tarball would carry both while the image applied the second over the
+#     first or refused it.
+#   * Modes are permission bits only; setuid, setgid, and sticky are rejected.
+#   * Only file, dir, and symlink are supported. Sockets, fifos, device nodes,
+#     and hard links are rejected.
+#   * Every entry is stamped with the tool's --mtime (default: now). Pass a fixed
+#     value, such as a git commit time, for a reproducible build.
+#   * The ext4 image fills free space the distro reserves at build time (kiwi
+#     `<size additive>`); an overlay larger than that reserve fails rather than
+#     growing the filesystem. Raise the reserve and rebuild the distro.
