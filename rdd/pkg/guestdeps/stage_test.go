@@ -131,10 +131,10 @@ func shortenRetries(t *testing.T) {
 // shortenStallTimeout brings the deadline on the body read within a test's
 // patience. httpClient keeps the response-header deadline it was built with;
 // shortenHeaderTimeout moves that one.
-func shortenStallTimeout(t *testing.T) {
+func shortenStallTimeout(t *testing.T, d time.Duration) {
 	t.Helper()
 	old := stallTimeout
-	stallTimeout = 50 * time.Millisecond
+	stallTimeout = d
 	t.Cleanup(func() { stallTimeout = old })
 }
 
@@ -143,7 +143,7 @@ func shortenStallTimeout(t *testing.T) {
 // what newHTTPClient reads.
 func shortenHeaderTimeout(t *testing.T) {
 	t.Helper()
-	shortenStallTimeout(t)
+	shortenStallTimeout(t, 50*time.Millisecond)
 	old := httpClient
 	httpClient = newHTTPClient()
 	t.Cleanup(func() { httpClient = old })
@@ -410,7 +410,7 @@ func TestStageGivesUpAfterEveryAttemptFails(t *testing.T) {
 // so without the stall timer the retry loop never runs at all.
 func TestStageFailsAStalledTransfer(t *testing.T) {
 	shortenRetries(t)
-	shortenStallTimeout(t)
+	shortenStallTimeout(t, 50*time.Millisecond)
 
 	body := []byte("distro image")
 	server := newStallingServer(t, body)
@@ -476,12 +476,15 @@ func TestDefaultCacheDirIsNobodyElses(t *testing.T) {
 // covering every attempt.
 func TestStageGivesUpOnATricklingTransfer(t *testing.T) {
 	shortenRetries(t)
-	shortenStallTimeout(t)
+	// A loaded runner can hold this process off the CPU long enough for a
+	// short stall timer to fire; the retry that follows would break the
+	// request-count assertion below.
+	shortenStallTimeout(t, 500*time.Millisecond)
 	shortenDownloadTimeout(t, time.Second)
 
-	// A tenth of the stall window leaves the stall timer no chance to fire, so
-	// the deadline is what ends this, and it ends the first attempt: any retry
-	// here would mean the transfer stalled instead of running out of time.
+	// A tenth of the stall window keeps the trickle clear of the timer, so the
+	// deadline is what ends this, and it ends the first attempt: any retry here
+	// would mean the transfer stalled instead of running out of time.
 	server := newTricklingServer(t, stallTimeout/10)
 	dep := server.dependency([]byte("distro image"))
 	stager, cacheDir, destPath := stagerFor(t, nil)
