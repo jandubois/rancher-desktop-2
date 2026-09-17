@@ -38,6 +38,9 @@ type Asset struct {
 	// but differ in kind, such as the distro's raw disk image and its rootfs
 	// tarball.
 	Variant string `json:"variant,omitempty"`
+	// Filename is the name the build stages this artifact under. It stays the
+	// same across versions, so the Makefile can depend on it.
+	Filename string `json:"filename"`
 	// URL is the fully-resolved download URL.
 	URL string `json:"url"`
 	// Checksum is the sha256 of the downloaded bytes, `sha256:`-prefixed.
@@ -123,6 +126,11 @@ func (a Asset) validate() error {
 	if !checksumPattern.MatchString(a.Checksum) {
 		return fmt.Errorf("asset %s has checksum %q, want sha256:<64 lowercase hex digits>", a, a.Checksum)
 	}
+	// Stage joins the filename onto the destination directory, so a name with a
+	// separator in it would write outside the build tree.
+	if !isPathElement(a.Filename) {
+		return fmt.Errorf("asset %s has filename %q, want a single file name", a, a.Filename)
+	}
 	return nil
 }
 
@@ -149,12 +157,15 @@ type Selector struct {
 }
 
 // matches reports whether asset satisfies the selector. An empty Arch or
-// Variant matches any value, as does an asset with no architecture, which is
-// arch-independent. The platform always has to match.
+// Variant matches any value, and so does an asset that leaves either empty: an
+// arch-independent artifact suits any architecture, and a dependency that ships
+// one kind of artifact suits a build asking for a particular kind. That lets
+// one selector pick every dependency, whether or not it has variants. The
+// platform always has to match.
 func (s Selector) matches(a Asset) bool {
 	return a.Platform == s.Platform &&
 		(s.Arch == "" || a.Arch == "" || a.Arch == s.Arch) &&
-		(s.Variant == "" || a.Variant == s.Variant)
+		(s.Variant == "" || a.Variant == "" || a.Variant == s.Variant)
 }
 
 // String renders a selector for error messages.
