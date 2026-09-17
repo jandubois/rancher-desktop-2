@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260916-205725-pr-772</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260916-205725-pr-772</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-16 20:57</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>3 (of PR 772)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/772" class="gh-ref" data-title="RDD: engine: Fix containerd namespace mirroring" data-state="open" data-type="pr">#772</a> — RDD: engine: Fix containerd namespace mirroring</td></tr>
+      <tr><td>Branch</td><td><code>rdd/container/ns/hash-names</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0149a45e8"><code>0149a45e8</code></a> RDD: engine: Fix containerd namespace mirroring<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e9b1d1f14"><code>e9b1d1f14</code></a> rdd-client: regenerate<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1d98a4b15"><code>1d98a4b15</code></a> RDA: Fix the use of namespaces</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1d98a4b152486f24ac501c1f4d2371ceb7fa7972"><code>1d98a4b152486f24ac501c1f4d2371ceb7fa7972</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the round-3 delta fixes all four round-2 findings and introduces two of its own, one in the daemon and one in the renderer surface nobody had reviewed before</td></tr>
+      <tr><td>Wall-clock time</td><td><code>51 min 35 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 2&#39;s four findings are fixed: the selectable marker, a shared <code>api.MirrorName</code>, the mock&#39;s status write, and the BATS race. The delta adds two of its own. A label-fetch failure now erases <code>status.labels</code> through server-side apply, the opposite of what its new comment promises (I1). Switching <code>supportsNamespaces</code> to a live read lights up three namespace pickers that nothing initializes, validates, or clears, and one of them cannot work at all (I2).</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> A label-fetch failure erases <code>status.labels</code> instead of leaving them alone <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L88-L102">rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go</a></div>
+      <pre data-start="88" data-line="93-97"><code class="language-go">		// If the namespace is not found, skip updating the status; the object will
+		// be deleted via the namespace delete event.  AI reviews claim this is
+		// unreachable because the error is never &quot;not found&quot;; however, the API does
+		// not indicate that, and that can be changed.
+		return nil
+	} else if err != nil {
+		// If we fail to get labels, don&#39;t update the labels but still update the
+		// name.  This is driven by containerd events, which does not requeue like a
+		// reconcile loop would.
+		labels = nil
+		logf.FromContext(ctx).WithName(&quot;containerd-watcher&quot;).
+			Error(err, &quot;Failed to get labels for namespace&quot;, &quot;namespace&quot;, ns)
+	}
+
+	applyConfig.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().</code></pre>
+    <p><code>WithLabels(nil)</code> does nothing: the generated setter guards on <code>if b.Labels == nil &amp;&amp; len(entries) &gt; 0</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/containernamespacestatus.go#L37"><code>applyconfiguration/containers/v1alpha1/containernamespacestatus.go:37</code></a>). So the apply at line 105 sends <code>status: {name: …}</code> with no <code>labels</code> key, and server-side apply removes every label key this field manager owns. The comment promises the opposite.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/containernamespacestatus.go#L32-L42">rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/containernamespacestatus.go</a></div>
+      <pre data-start="32" data-line="37"><code class="language-go">// WithLabels puts the entries into the Labels field in the declarative configuration
+// and returns the receiver, so that objects can be build by chaining &quot;With&quot; function invocations.
+// If called multiple times, the entries provided by each call will be put on the Labels field,
+// overwriting an existing map entries in Labels field with the same key.
+func (b *ContainerNamespaceStatusApplyConfiguration) WithLabels(entries map[string]string) *ContainerNamespaceStatusApplyConfiguration {
+	if b.Labels == nil &amp;&amp; len(entries) &gt; 0 {
+		b.Labels = make(map[string]string, len(entries))
+	}
+	for k, v := range entries {
+		b.Labels[k] = v
+	}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L100-L110">rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go</a></div>
+      <pre data-start="100" data-line="105"><code class="language-go">	}
+
+	applyConfig.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().
+		WithName(ns).
+		WithLabels(labels))
+	return w.k8s.Status().Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName))
+}
+
+// removeNamespace deletes the ContainerNamespace mirror for a containerd
+// namespace that is gone.</code></pre>
+    <p>This is the round-3 fix for round 2&#39;s S6 overshooting. At <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/655dbfb5d"><code>655dbfb5d</code></a> the branch was <code>return err</code>, which dropped the triggering event but left the stored labels intact. Per the comment at lines 71-74, nothing re-applies the mirror until the next event for that namespace or a watcher restart, so the mirror reports a namespace with no labels until then.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L66-L79">rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go</a></div>
+      <pre data-start="66" data-line="71-74"><code class="language-go">// namespace. This resource has no mirror finalizer: deleting the mirror is
+// not offered as a way to delete the containerd namespace, and
+// cleanupMirrorResources sweeps it unconditionally on VM stop, so a
+// finalizer with no handler would only trap user deletes in Terminating.
+//
+// A K8s-side delete therefore stays gone. Only fullSync and the container,
+// and image create events, or various namespace change events call this, so
+// nothing re-applies the mirror until one of those fires again or the watcher
+// restarts.
+func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error {
+	applyConfig := containersv1alpha1apply.ContainerNamespace(
+		api.MirrorName(&quot;cns&quot;, ns),
+		w.apiNamespace)
+</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-sh"># Save as probe-labels-wipe.sh; run from the repo root: bash probe-labels-wipe.sh
+# Starts a real kube-apiserver (envtest downloads it), installs the
+# ContainerNamespace CRD, and replays applyNamespace&#39;s status apply twice with
+# the same field manager: once with labels (the success path) and once with
+# labels == nil (the new label-fetch-failure path).
+set -e
+root=$(git rev-parse --show-toplevel)
+crds=${root}/rdd/.probecrds
+probe=${root}/rdd/pkg/controllers/app/engine/controllers/zz_probe_labels_test.go
+trap &#39;rm -rf &quot;${crds}&quot; &quot;${probe}&quot;&#39; EXIT
+
+mkdir -p &quot;${crds}&quot;
+cp &quot;${root}/rdd/pkg/controllers/containers/containernamespace/crd.yaml&quot; &quot;${crds}/cns.yaml&quot;
+
+cat &gt;&quot;${probe}&quot; &lt;&lt;&#39;GO&#39;
+package controllers
+
+import (
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+
+	&quot;k8s.io/apimachinery/pkg/runtime&quot;
+	&quot;k8s.io/client-go/kubernetes/scheme&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;
+
+	containersv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+	containersv1alpha1apply &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1&quot;
+)
+
+func TestLabelFetchFailureWipesLabels(t *testing.T) {
+	env := &amp;envtest.Environment{
+		CRDDirectoryPaths:    []string{&quot;../../../../../.probecrds&quot;},
+		DownloadBinaryAssets: true,
+	}
+	cfg, err := env.Start()
+	assert.NilError(t, err)
+	defer func() { _ = env.Stop() }()
+
+	sch := runtime.NewScheme()
+	assert.NilError(t, scheme.AddToScheme(sch))
+	assert.NilError(t, containersv1alpha1.AddToScheme(sch))
+	c, err := client.New(cfg, client.Options{Scheme: sch})
+	assert.NilError(t, err)
+
+	const manager = &quot;probe-controller&quot;
+
+	// applyStatus replays applyNamespace: apply the object, then apply its
+	// status with whatever Labels() returned.
+	applyStatus := func(t *testing.T, name string, labels map[string]string) {
+		t.Helper()
+		ac := containersv1alpha1apply.ContainerNamespace(name, &quot;default&quot;)
+		assert.NilError(t, c.Apply(t.Context(), ac,
+			client.ForceOwnership, client.FieldOwner(manager)))
+		ac.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().
+			WithName(name).
+			WithLabels(labels))
+		assert.NilError(t, c.Status().Apply(t.Context(), ac,
+			client.ForceOwnership, client.FieldOwner(manager)))
+	}
+
+	read := func(t *testing.T, name string) containersv1alpha1.ContainerNamespaceStatus {
+		t.Helper()
+		var got containersv1alpha1.ContainerNamespace
+		assert.NilError(t, c.Get(t.Context(),
+			client.ObjectKey{Namespace: &quot;default&quot;, Name: name}, &amp;got))
+		return got.Status
+	}
+
+	// The failure path: Labels() errored, so applyNamespace sets labels = nil
+	// and applies the status anyway.
+	applyStatus(t, &quot;failure-path&quot;, map[string]string{&quot;hello&quot;: &quot;world&quot;})
+	t.Logf(&quot;failure-path after successful fetch: name=%q labels=%v&quot;,
+		read(t, &quot;failure-path&quot;).Name, read(t, &quot;failure-path&quot;).Labels)
+	applyStatus(t, &quot;failure-path&quot;, nil)
+	after := read(t, &quot;failure-path&quot;)
+	t.Logf(&quot;failure-path after failed fetch:     name=%q labels=%v&quot;,
+		after.Name, after.Labels)
+
+	// The neighbouring case that behaves correctly: Labels() succeeded and
+	// returned the same map, so the second apply carries them.
+	applyStatus(t, &quot;success-path&quot;, map[string]string{&quot;hello&quot;: &quot;world&quot;})
+	applyStatus(t, &quot;success-path&quot;, map[string]string{&quot;hello&quot;: &quot;world&quot;})
+	ok := read(t, &quot;success-path&quot;)
+	t.Logf(&quot;success-path after second fetch:     name=%q labels=%v&quot;,
+		ok.Name, ok.Labels)
+
+	// The patched failure path: read the mirror&#39;s current labels and carry
+	// them into the apply instead of leaving the field out.
+	applyStatus(t, &quot;patched-path&quot;, map[string]string{&quot;hello&quot;: &quot;world&quot;})
+	applyStatus(t, &quot;patched-path&quot;, read(t, &quot;patched-path&quot;).Labels)
+	patched := read(t, &quot;patched-path&quot;)
+	t.Logf(&quot;patched-path after failed fetch:     name=%q labels=%v&quot;,
+		patched.Name, patched.Labels)
+
+	assert.Equal(t, len(after.Labels), 0, &quot;labels survived the failed fetch&quot;)
+	assert.Equal(t, ok.Labels[&quot;hello&quot;], &quot;world&quot;, &quot;labels survived the good fetch&quot;)
+	assert.Equal(t, patched.Labels[&quot;hello&quot;], &quot;world&quot;, &quot;labels survived the patched failed fetch&quot;)
+}
+GO
+
+cd &quot;${root}/rdd&quot;
+go test ./pkg/controllers/app/engine/controllers/ -run TestLabelFetchFailureWipesLabels -v -count=1 2&gt;&amp;1 | grep -v &#39;^=== RUN\|^--- PASS\|^=== NAME&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-labels-wipe.sh
+    zz_probe_labels_test.go:59: failure-path after successful fetch: name=&quot;failure-path&quot; labels=map[hello:world]
+    zz_probe_labels_test.go:63: failure-path after failed fetch:     name=&quot;failure-path&quot; labels=map[]
+    zz_probe_labels_test.go:71: success-path after second fetch:     name=&quot;success-path&quot; labels=map[hello:world]
+    zz_probe_labels_test.go:79: patched-path after failed fetch:     name=&quot;patched-path&quot; labels=map[hello:world]
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/engine/controllers	8.559s</code></pre>
+      </details>
+    <p>Fix: re-state the labels the mirror already has, so the apply carries what it cannot refresh.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go b/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go
+index a256f3b96..58c067193 100644
+--- a/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go
++++ b/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go
+@@ -73,8 +73,9 @@ func (w *containerdWatcher) syncNamespaces(ctx context.Context) error {
+ // nothing re-applies the mirror until one of those fires again or the watcher
+ // restarts.
+ func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error {
++	mirrorName := api.MirrorName(&quot;cns&quot;, ns)
+ 	applyConfig := containersv1alpha1apply.ContainerNamespace(
+-		api.MirrorName(&quot;cns&quot;, ns),
++		mirrorName,
+ 		w.apiNamespace)
+ 
+ 	err := w.k8s.Apply(ctx, applyConfig,
+@@ -91,10 +92,15 @@ func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error
+ 		// not indicate that, and that can be changed.
+ 		return nil
+ 	} else if err != nil {
+-		// If we fail to get labels, don&#39;t update the labels but still update the
+-		// name.  This is driven by containerd events, which does not requeue like a
+-		// reconcile loop would.
++		// If we fail to get labels, keep the ones the mirror already carries but
++		// still update the name.  The apply below is a server-side apply, so
++		// leaving the field out would delete them instead.  This is driven by
++		// containerd events, which does not requeue like a reconcile loop would.
++		var mirror containersv1alpha1.ContainerNamespace
+ 		labels = nil
++		if getErr := w.k8s.Get(ctx, client.ObjectKey{Namespace: w.apiNamespace, Name: mirrorName}, &amp;mirror); getErr == nil {
++			labels = mirror.Status.Labels
++		}
+ 		logf.FromContext(ctx).WithName(&quot;containerd-watcher&quot;).
+ 			Error(err, &quot;Failed to get labels for namespace&quot;, &quot;namespace&quot;, ns)
+ 	}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/store/container-engine.ts">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The namespace pickers go live with nothing initializing, validating, or clearing the selection <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/store/container-engine.ts#L56-L70">pkg/rancher-desktop/store/container-engine.ts</a></div>
+      <pre data-start="56" data-line="61-65"><code class="language-typescript">  error:            undefined as undefined | { error: Error, source: resourceNames },
+});
+
+export const getters = {
+  /** Whether the current container engine supports namespaces */
+  supportsNamespaces(state, getters, rootState, rootGetters): boolean {
+    const app: RDDClient.IoRancherdesktopAppV1alpha1App | undefined = rootGetters[&#39;rdd/app&#39;];
+
+    return app?.status?.supportsNamespaces ?? false;
+  },
+  /** The namespaces in the current container engine, as an array of names */
+  namespaces(state): string[] {
+    return (state.namespaces ?? []).map(ns =&gt; ns.status?.name).filter(defined);
+  },
+  /** The currently selected namespace, or undefined if namespaces are not supported */</code></pre>
+    <p>The getter returned a hardcoded <code>false</code> until this commit, so every <code>v-if=&quot;supportsNamespaces&quot;</code> branch is reachable for the first time. Nothing sets <code>state.currentNamespace</code> (line 55), so <code>resourceFieldSelector</code> (line 21) sends no selector and the lists show every namespace, while the Images picker reads <code>default</code> from its prop default. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/pages/Containers.vue#L215"><code>Containers.vue:215</code></a> also stops hiding <code>kube-system</code> containers.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/pages/Containers.vue#L210-L220">pkg/rancher-desktop/pages/Containers.vue</a></div>
+      <pre data-start="210" data-line="215"><code class="language-markup">      return (this.containers ?? [])
+        .filter(hasField(&#39;metadata&#39;))
+        .filter(hasField(&#39;status&#39;))
+        .filter(container =&gt; {
+          // Filter out containers from the &#39;kube-system&#39; namespace
+          return this.supportsNamespaces || container.status.labels?.[&#39;io.kubernetes.pod.namespace&#39;] !== &#39;kube-system&#39;;
+        })
+        .sort((a, b) =&gt; {
+          // Sort by status, showing running first.
+          if ((a.status.status === StatusRunning || b.status.status === StatusRunning) &amp;&amp; a.status.status !== b.status.status) {
+            // One of the two is running; put that first.</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/store/container-engine.ts#L16-L26">pkg/rancher-desktop/store/container-engine.ts</a></div>
+      <pre data-start="16" data-line="21"><code class="language-typescript">
+function resourceFieldSelector(untypedContext: any): string | undefined {
+  const context: ActionContext&lt;ContainerEngineState&gt; = untypedContext;
+  const currentNamespace = context.getters.currentNamespace;
+
+  return currentNamespace ? `status.namespace=${ currentNamespace }` : undefined;
+}
+
+const resources = [
+  defineResource({
+    name:          &#39;containers&#39;,</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/store/container-engine.ts#L50-L60">pkg/rancher-desktop/store/container-engine.ts</a></div>
+      <pre data-start="50" data-line="55"><code class="language-typescript">
+type resourceNames = ResourceNames&lt;typeof resources&gt;;
+
+export const state = () =&gt; ({
+  ...resourceState(resources),
+  currentNamespace: undefined as string | undefined,
+  error:            undefined as undefined | { error: Error, source: resourceNames },
+});
+
+export const getters = {
+  /** Whether the current container engine supports namespaces */</code></pre>
+    <p>Switching back to moby is the trap: <code>setCurrentNamespace</code> refuses to clear the stale value, and the only automatic rewatch fires on a Kubernetes namespace change (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/store/rddConnection.ts#L107-L127"><code>rddConnection.ts:107-127</code></a>), so the watch keeps <code>status.namespace=k8s.io</code> and the moby list stays empty until remount.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/store/rddConnection.ts#L102-L132">pkg/rancher-desktop/store/rddConnection.ts</a></div>
+      <pre data-start="102" data-line="107-127"><code class="language-typescript">  /** Vuex plugin to automatically fetch connection configuration on startup. */
+  function(store) {
+    store.dispatch(&#39;rdd-connection/fetchConfig&#39;).catch(ex =&gt; {
+      console.error(ex);
+    });
+  },
+  /** Vuex plugin to re-watch resources on Kubernetes namespace change. */
+  function(store) {
+    let currentNamespace = store.state[&#39;rdd-connection&#39;].namespace;
+    store.watch(
+      (state) =&gt; state[&#39;rdd-connection&#39;].namespace,
+      (newNamespace) =&gt; {
+        if (newNamespace &amp;&amp; newNamespace !== currentNamespace) {
+          currentNamespace = newNamespace;
+
+          const { namespacedResources } = store.state[&#39;rdd-connection&#39;];
+          for (const [module, resources] of Object.entries(namespacedResources)) {
+            if (resources.size) {
+              store.dispatch(`${ module }/rewatchResources`, Array.from(resources))
+                .catch(error =&gt; {
+                  console.error(`Failed to rewatch resources for module ${ module }:`, error);
+                });
+            }
+          }
+        }
+      },
+    );
+  },
+];
+
+/// /////////////////////////////////////////////////////////////////////////////</code></pre>
+    <p><code>Volumes.vue</code> renders the picker but never watches <code>namespaces</code>, cannot reach <code>rewatchResources</code>, and lists a resource containerd never populates (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go#L313-L317"><code>containerd_watcher.go:313-317</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go#L308-L322">rdd/pkg/controllers/app/engine/controllers/containerd_watcher.go</a></div>
+      <pre data-start="308" data-line="313-317"><code class="language-go">
+	log.Info(&quot;Full sync complete&quot;, &quot;errors&quot;, len(errs))
+	return errors.Join(errs...)
+}
+
+// pruneVolumes deletes every Volume mirror. containerd has no volumes, so the
+// engine&#39;s own state says none should exist; moby&#39;s syncVolumes reaches the
+// same conclusion from a listing. Without this, a mirror left by the moby
+// backend outlives a switch that skipped the stop-path sweep.
+func (w *containerdWatcher) pruneVolumes(ctx context.Context) error {
+	log := logf.FromContext(ctx).WithName(&quot;containerd-watcher&quot;)
+
+	var volumeMirrors containersv1alpha1.VolumeList
+	if err := w.k8s.List(ctx, &amp;volumeMirrors, client.InNamespace(w.apiNamespace)); err != nil {
+		return fmt.Errorf(&quot;failed to list Volumes: %w&quot;, err)</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-sh"># Save as probe-ns-lifecycle.sh; run from the repo root: bash probe-ns-lifecycle.sh
+# Drives the real setCurrentNamespace action through the engine switch, and
+# mounts the real Images table with the selection the store actually holds
+# before anyone has chosen a namespace.
+set -e
+root=$(git rev-parse --show-toplevel)
+lifecycle=${root}/pkg/rancher-desktop/store/__tests__/zzProbeNsLifecycle.spec.ts
+images=${root}/pkg/rancher-desktop/components/__tests__/zzProbeImagesDefaultNs.spec.ts
+trap &#39;rm -f &quot;${lifecycle}&quot; &quot;${images}&quot;&#39; EXIT
+
+cat &gt;&quot;${lifecycle}&quot; &lt;&lt;&#39;TS&#39;
+import { jest } from &#39;@jest/globals&#39;;
+
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+
+mockModules({
+  electron: { ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn(), removeListener: jest.fn() } },
+});
+
+const { actions, getters, state } = await import(&#39;@pkg/store/container-engine&#39;);
+
+type Call = [string, any];
+
+async function run(supportsNamespaces: boolean, namespace: string | undefined, current: string | undefined) {
+  const calls: Call[] = [];
+  const st: any = { ...state(), currentNamespace: current, namespaces: [{ status: { name: &#39;k8s.io&#39; } }, { status: { name: &#39;default&#39; } }] };
+  const ctx: any = {
+    state:    st,
+    getters:  { supportsNamespaces, currentNamespace: supportsNamespaces ? st.currentNamespace : undefined },
+    commit:   (name: string, payload: any) =&gt; calls.push([`commit:${ name }`, payload?.error?.message ?? payload]),
+    dispatch: (name: string, payload: any) =&gt; { calls.push([`dispatch:${ name }`, payload]); return Promise.resolve(); },
+  };
+  await (actions as any).setCurrentNamespace(ctx, { namespace });
+  return calls;
+}
+
+describe(&#39;namespace selection lifecycle across an engine switch&#39;, () =&gt; {
+  it(&#39;reports what each step does&#39;, async() =&gt; {
+    console.log(`containerd, pick k8s.io      -&gt; ${ JSON.stringify(await run(true, &#39;k8s.io&#39;, undefined)) }`);
+    console.log(`moby, try to clear selection -&gt; ${ JSON.stringify(await run(false, undefined, &#39;k8s.io&#39;)) }`);
+    console.log(`fieldSelector on moby        -&gt; ${ JSON.stringify(
+      (getters as any).currentNamespace({ currentNamespace: &#39;k8s.io&#39; }, { supportsNamespaces: false })) }`);
+
+    const picked = await run(true, &#39;k8s.io&#39;, undefined);
+    expect(picked.map(c =&gt; c[0])).toContain(&#39;dispatch:rewatchResources&#39;);
+
+    const cleared = await run(false, undefined, &#39;k8s.io&#39;);
+    expect(cleared.map(c =&gt; c[0])).not.toContain(&#39;dispatch:rewatchResources&#39;);
+    expect(cleared.map(c =&gt; c[0])).toContain(&#39;commit:SET_ERROR&#39;);
+  });
+});
+TS
+
+cat &gt;&quot;${images}&quot; &lt;&lt;&#39;TS&#39;
+import { jest } from &#39;@jest/globals&#39;;
+import { mount } from &#39;@vue/test-utils&#39;;
+
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+import { t } from &#39;@pkg/utils/testUtils/translations&#39;;
+
+const componentStub = { template: &#39;&lt;div /&gt;&#39; };
+
+mockModules({
+  &#39;@pkg/entry/store&#39;: {
+    mapTypedActions: () =&gt; ({}), mapTypedGetters: () =&gt; ({}),
+    mapTypedMutations: () =&gt; ({}), mapTypedState: () =&gt; ({}),
+  },
+  &#39;@pkg/utils/ipcRenderer&#39;: { ipcRenderer: { on: jest.fn(), send: jest.fn(), invoke: jest.fn(), removeListener: jest.fn() } },
+  &#39;@rancher/components&#39;: new Proxy({}, {
+    get: () =&gt; componentStub,
+    has: () =&gt; true,
+    ownKeys: () =&gt; [&#39;BadgeState&#39;, &#39;Banner&#39;, &#39;Card&#39;, &#39;Checkbox&#39;, &#39;LabeledTooltip&#39;, &#39;StringList&#39;],
+    getOwnPropertyDescriptor: () =&gt; ({ configurable: true, enumerable: true, value: componentStub }),
+  }),
+  electron: { shell: { openExternal: jest.fn() } },
+});
+
+const { default: Images } = await import(&#39;@pkg/components/Images.vue&#39;);
+
+function mountWith(selectedNamespace: string | undefined) {
+  return mount(Images, {
+    props: {
+      images:             [],
+      imageNamespaces:    [&#39;default&#39;, &#39;k8s.io&#39;],
+      selectedNamespace,
+      supportsNamespaces: true,
+    },
+    global: {
+      directives: { &#39;clean-html&#39;: {}, &#39;clean-tooltip&#39;: {}, &#39;close-popper&#39;: {}, shortkey: {}, tooltip: {}, &#39;trim-whitespace&#39;: {} },
+      mocks:      { $store: { getters: { &#39;resource-fetch/isTooManyItemsToAutoUpdate&#39;: false }, commit: jest.fn(), dispatch: jest.fn() }, t },
+      stubs:      { T: { template: &#39;&lt;span&gt;&lt;/span&gt;&#39; }, SortableTable: componentStub, ImagesOutputWindow: componentStub },
+    },
+  });
+}
+
+describe(&#39;Images namespace prop default&#39;, () =&gt; {
+  it(&#39;reports what the table shows when no namespace has been chosen&#39;, () =&gt; {
+    const unchosen = mountWith(undefined);
+    const chosen = mountWith(&#39;k8s.io&#39;);
+    console.log(`store currentNamespace=undefined -&gt; selectedNamespace=${ JSON.stringify(unchosen.vm.selectedNamespace) }, supportsShowAll=${ unchosen.vm.supportsShowAll }`);
+    console.log(`store currentNamespace=&#39;k8s.io&#39;  -&gt; selectedNamespace=${ JSON.stringify(chosen.vm.selectedNamespace) }, supportsShowAll=${ chosen.vm.supportsShowAll }`);
+    expect(unchosen.vm.selectedNamespace).toBe(&#39;default&#39;);
+    expect(chosen.vm.selectedNamespace).toBe(&#39;k8s.io&#39;);
+  });
+});
+TS
+
+cd &quot;${root}&quot;
+BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js \
+  pkg/rancher-desktop/store/__tests__/zzProbeNsLifecycle.spec.ts \
+  pkg/rancher-desktop/components/__tests__/zzProbeImagesDefaultNs.spec.ts --verbose 2&gt;&amp;1 |
+  grep -E &#39;containerd, pick|moby, try|fieldSelector on|currentNamespace=|Tests:&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-ns-lifecycle.sh
+    store currentNamespace=undefined -&gt; selectedNamespace=&quot;default&quot;, supportsShowAll=false
+    store currentNamespace=&#39;k8s.io&#39;  -&gt; selectedNamespace=&quot;k8s.io&quot;, supportsShowAll=true
+    containerd, pick k8s.io      -&gt; [[&quot;commit:SET_CURRENT_NAMESPACE&quot;,&quot;k8s.io&quot;],[&quot;dispatch:rewatchResources&quot;,[&quot;containers&quot;,&quot;images&quot;,&quot;namespaces&quot;,&quot;volumes&quot;]]]
+    moby, try to clear selection -&gt; [[&quot;commit:SET_ERROR&quot;,&quot;Current container engine does not support namespaces&quot;]]
+    fieldSelector on moby        -&gt; undefined
+Tests:       2 passed, 2 total</code></pre>
+      </details>
+    <p>Fix: select a namespace when the list arrives, clear it through the action so the rewatch runs, drop the picker from <code>Volumes.vue</code>, and add an &quot;All namespaces&quot; option. No patch: the shape is a product decision.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/util/api/mirror_name.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>api.MirrorName</code> is not injective: its own output is a valid input <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/util/api/mirror_name.go#L13-L23">rdd/pkg/util/api/mirror_name.go</a></div>
+      <pre data-start="13" data-line="18-23"><code class="language-go">)
+
+// MirrorName returns the mirrored name for a given container resource.  The
+// prefix is prepended to the mirrored name with a dash if the input is not a
+// valid Kubernetes object name.
+func MirrorName(prefix, input string) string {
+	if len(validation.IsDNS1123Subdomain(input)) &lt; 1 {
+		return input
+	}
+	return fmt.Sprintf(&quot;%s-%x&quot;, prefix, sha256.Sum256([]byte(input)))
+}</code></pre>
+    <p><code>cns-&lt;64 hex&gt;</code> is itself a valid DNS-1123 subdomain, so a containerd namespace with that literal name passes straight through and lands on the mirror belonging to whichever invalid name hashes to it. <code>syncNamespaces</code> then records one <code>activeNames</code> entry for both, the status becomes last-writer-wins, and the webhook can validate an <code>ImagePullRequest</code> against the wrong namespace. <code>containerdMirrorName</code> documents its own collision caveat (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L38-L44"><code>sync_containers_containerd.go:38-44</code></a>); this one does not.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L33-L49">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go</a></div>
+      <pre data-start="33" data-line="38-44"><code class="language-go">	containersv1alpha1apply &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1&quot;
+)
+
+// containerdMirrorName returns a deterministic RFC 1123 subdomain name for a
+// containerd container. containerd IDs from nerdctl and k8s are 64-hex, so
+// the common path keeps the container ID as the mirror name, matching the
+// moby UX. IDs that are not valid K8s object names are hashed with a &quot;ctr-&quot;
+// prefix.
+//
+// A hand-picked valid ID duplicated across two containerd namespaces maps to
+// one mirror; this is an accepted caveat, as nerdctl and k8s generate
+// globally unique IDs, so the collision stays theoretical.
+func containerdMirrorName(ns, id string) string {
+	if len(validation.IsDNS1123Subdomain(id)) == 0 {
+		return id
+	}
+	sum := sha256.Sum256([]byte(ns + &quot;/&quot; + id))</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/util/api/zz_probe_collision_test.go, then from rdd/ run:
+//   go test ./pkg/util/api/ -run TestScratchMirrorNameIsInjective -v
+package api
+
+import (
+	&quot;testing&quot;
+)
+
+func TestScratchMirrorNameIsInjective(t *testing.T) {
+	invalid := &quot;invalid_name&quot;
+	encoded := MirrorName(&quot;cns&quot;, invalid)
+	if encoded == invalid {
+		t.Fatalf(&quot;invalid namespace was not encoded: %q&quot;, encoded)
+	}
+	if MirrorName(&quot;cns&quot;, encoded) == encoded {
+		t.Fatalf(&quot;valid namespace %q collides with invalid namespace %q&quot;, encoded, invalid)
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test ./pkg/util/api/ -run TestScratchMirrorNameIsInjective -v
+=== RUN   TestScratchMirrorNameIsInjective
+    zz_probe_collision_test.go:16: valid namespace &quot;cns-f123fd210ff35283833e7e27b312d585673b493a056396475c216d2891c235eb&quot; collides with invalid namespace &quot;invalid_name&quot;
+--- FAIL: TestScratchMirrorNameIsInjective (0.00s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api	0.316s</code></pre>
+      </details>
+    <p>Fix: hash any input that already starts with <code>&lt;prefix&gt;-</code>, or record the caveat in the doc comment the way <code>containerdMirrorName</code> does, and add the pair to <code>TestMirrorName</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rdd-client/gen/models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestSpec.ts">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The regenerated client still carries the <code>spec.namespace</code> wording this PR replaced <span class="pill pill-codex">Codex GPT 5.6 Sol</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rdd-client/gen/models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestSpec.ts#L32-L42">pkg/rdd-client/gen/models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestSpec.ts</a></div>
+      <pre data-start="32" data-line="37"><code class="language-typescript">    /**
+    * Name of the container to create; if not specified, a random name will be generated.
+    */
+    &#39;name&#39;?: string;
+    /**
+    * Namespace is the container namespace; a `ContainerNamespace` object of the same name exists when the engine\&#39;s name for it is a valid object name.  If not specified, the container will be created in the default namespace.
+    */
+    &#39;namespace&#39;?: string;
+    /**
+    * Path is the path to the executable (within the image) for the process. Defaults to the image\&#39;s default command if not specified.
+    */</code></pre>
+    <p>Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0149a45e8"><code>0149a45e8</code></a> rewrote that sentence in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/container_types.go#L267-L270"><code>container_types.go:267-270</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/image_types.go#L112-L118"><code>image_types.go:112-118</code></a> to the <code>status.name</code> join, and the CRDs this PR ships carry the new text. The regeneration commit that follows picked up the <em>previous</em> revision of those two: it moved them off the pre-round-1 wording but not onto the round-3 wording. <code>ImagePullRequestSpec.ts:20</code> has the same stale copy, while the four <code>…Status.ts</code> models did get the new text, so the generated surface disagrees with itself. <code>make verify-generate</code> covers only the Go artifacts, so nothing catches this.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/container_types.go#L262-L275">rdd/pkg/apis/containers/v1alpha1/container_types.go</a></div>
+      <pre data-start="262" data-line="267-270"><code class="language-go">	// Name of the container to create; if not specified, a random name will be
+	// generated.
+	//
+	// +optional
+	Name string `json:&quot;name&quot;`
+	// Namespace is the container namespace. A `ContainerNamespace` object in the
+	// same Kubernetes namespace exists where its `status.name` matches this value.
+	// See the `ContainerNamespace` documentation for more details.  If not
+	// specified, the container will be created in the default namespace.
+	//
+	// +optional
+	Namespace string `json:&quot;namespace&quot;`
+	// Path is the path to the executable (within the image) for the process.
+	// Defaults to the image&#39;s default command if not specified.</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/image_types.go#L107-L123">rdd/pkg/apis/containers/v1alpha1/image_types.go</a></div>
+      <pre data-start="107" data-line="112-118"><code class="language-go">	// ImagePullRequestConditionSettled indicates the request has reached a terminal state.
+	ImagePullRequestConditionSettled = &quot;Settled&quot;
+	// ImagePullRequestConditionFailed indicates the request failed.
+	ImagePullRequestConditionFailed = &quot;Failed&quot;
+)
+
+// ImagePullRequestSpec defines the parameters for pulling an image.
+type ImagePullRequestSpec struct {
+	// Namespace is the container namespace. A `ContainerNamespace` object in the
+	// same Kubernetes namespace exists where its `status.name` matches this value.
+	// See the `ContainerNamespace` documentation for more details.  If not
+	// specified, the image will be pulled into the default namespace.
+	//
+	// +optional
+	Namespace string `json:&quot;namespace&quot;`
+	// RepoTag is the image to pull.
+	//</code></pre>
+    <p>Fix: re-run <code>yarn generate:rdd-client</code> against an <code>rdd</code> built from the head of this branch and amend <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e9b1d1f14"><code>e9b1d1f14</code></a>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/sync_namespace.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>WithLabels(map[string]string{})</code> still cannot write the <code>labels: {}</code> the doc shows, and <code>omitzero</code> does not change that <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace.go#L27-L39">rdd/pkg/controllers/app/engine/controllers/sync_namespace.go</a></div>
+      <pre data-start="27" data-line="32-34"><code class="language-go">	applyConfig := containersv1alpha1apply.ContainerNamespace(containerNamespace, w.apiNamespace)
+	if err := w.k8s.Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName)); err != nil {
+		return err
+	}
+	applyConfig.WithStatus(containersv1alpha1apply.ContainerNamespaceStatus().
+		WithName(containerNamespace).
+		WithLabels(map[string]string{}))
+	if err := w.k8s.Status().Apply(ctx, applyConfig,
+		client.ForceOwnership, client.FieldOwner(controllerName)); err != nil {
+		return err
+	}
+</code></pre>
+    <p>Round 2&#39;s S3, unaddressed. The generated setter ignores an empty map, so the moby mirror never stores a <code>labels</code> key while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/docs/design/api_containers.md#L135"><code>rdd/docs/design/api_containers.md:135</code></a> shows <code>labels: {}</code> four lines above a note saying labels do not apply to moby. This round changed the API type&#39;s tag from <code>omitempty</code> to <code>omitzero</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/container_namespace_types.go#L23"><code>container_namespace_types.go:23</code></a>), which cannot reach this path: the apply configuration is a separate generated type and keeps <code>json:&quot;labels,omitempty&quot;</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/containernamespacestatus.go#L15"><code>containernamespacestatus.go:15</code></a>). The CRD is byte-identical either way.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/docs/design/api_containers.md#L130-L140">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="130" data-line="135"><code class="language-markdown">metadata:
+  name: moby
+  namespace: rancher-desktop
+status:
+  name: moby
+  labels: {}
+```
+
+- **metadata.namespace**: the Kubernetes namespace; this must be the same value
+  as the [App](api_app.md#app-object) resources&#39;s `spec.namespace` field.
+- **metadata.name**: If the container namespace is a valid Kubernetes object</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/container_namespace_types.go#L18-L28">rdd/pkg/apis/containers/v1alpha1/container_namespace_types.go</a></div>
+      <pre data-start="18" data-line="23"><code class="language-go">	// +optional
+	Name string `json:&quot;name,omitempty&quot;`
+	// Labels are the labels associated with the container namespace.
+	//
+	// +optional
+	Labels map[string]string `json:&quot;labels,omitzero&quot;`
+}
+
+// +kubebuilder:object:root=true
+// +kubebuilder:ac:generate=true
+// +kubebuilder:subresource:status</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/containernamespacestatus.go#L10-L20">rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/containernamespacestatus.go</a></div>
+      <pre data-start="10" data-line="15"><code class="language-go">	// Name is the name of the container namespace.
+	//
+	Name *string `json:&quot;name,omitempty&quot;`
+	// Labels are the labels associated with the container namespace.
+	//
+	Labels map[string]string `json:&quot;labels,omitempty&quot;`
+}
+
+// ContainerNamespaceStatusApplyConfiguration constructs a declarative configuration of the ContainerNamespaceStatus type for use with
+// apply.
+func ContainerNamespaceStatus() *ContainerNamespaceStatusApplyConfiguration {</code></pre>
+    <p>Fix: drop the <code>WithLabels</code> call, restore <code>omitempty</code>, and delete <code>labels: {}</code> from the moby example.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/mock/app_reconciler.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The mock never enables the renderer path this PR adds <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/mock/app_reconciler.go#L45-L61">rdd/pkg/controllers/mock/app_reconciler.go</a></div>
+      <pre data-start="45" data-line="50-56"><code class="language-go">	// Ensure the `Settled` condition matches the running state.
+	status := metav1.ConditionFalse
+	if app.Spec.Running {
+		status = metav1.ConditionTrue
+	}
+	changed := apimeta.SetStatusCondition(&amp;app.Status.Conditions, metav1.Condition{
+		Type:               v1alpha1.AppConditionSettled,
+		Status:             status,
+		ObservedGeneration: app.Generation,
+		Reason:             &quot;MockController&quot;,
+		Message:            fmt.Sprintf(&quot;app.running set to %v&quot;, app.Spec.Running),
+	})
+	if changed {
+		if err := r.Status().Update(ctx, &amp;app); err != nil {
+			log.Error(err, &quot;Failed to update App status&quot;, &quot;name&quot;, req.NamespacedName)
+			return ctrl.Result{}, err
+		}</code></pre>
+    <p>The mock App reconciler writes only the <code>Settled</code> condition, so <code>status.supportsNamespaces</code> stays absent and I2&#39;s getter returns <code>false</code> under the Playwright harness. The mock does mirror a <code>buildkit</code> <code>ContainerNamespace</code>, so the fixture is there; the capability flag that would exercise it is not. Every renderer change in this PR is therefore unreachable from e2e.</p>
+    <p>Fix: have the mock App reconciler set <code>SupportsNamespaces</code> to true, then assert the selected namespace and the rendered rows.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/helpers/utils.bash">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> The <code>sha256</code> helper&#39;s comment describes stripping the helper does not do <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/bats/helpers/utils.bash#L223-L234">rdd/bats/helpers/utils.bash</a></div>
+      <pre data-start="223" data-line="228-229"><code class="language-bash"># `A &gt; B &gt; C`
+semver_gt() {
+    [[ $# -gt 0 ]] &amp;&amp; semver_gte &quot;$@&quot; &amp;&amp; semver_neq &quot;$@&quot;
+}
+
+# sha256 returns the SHA-256 sum of the first argument, as a lower-case
+# hexadecimal string.  Any new line markers are stripped from the end.
+sha256() {
+    if command -v sha256sum &gt;/dev/null 2&gt;&amp;1; then
+        printf &quot;%s&quot; &quot;${1:-}&quot; | sha256sum | awk &#39;{print $1}&#39;
+    else
+        printf &quot;%s&quot; &quot;${1:-}&quot; | shasum --algorithm 256 | awk &#39;{print $1}&#39;</code></pre>
+    <p><code>awk &#39;{print $1}&#39;</code> terminates its output with a newline; piping the helper through <code>xxd</code> shows the trailing <code>0a</code>. Both callers hide it, since <code>$( )</code> and bats&#39;s <code>${output}</code> each strip trailing newlines, so the code is right and the sentence is not. The digest itself matches the Go side: <code>sha256 Not_A_Valid_Kubernetes_Namespace</code> and <code>fmt.Sprintf(&quot;%x&quot;, sha256.Sum256(...))</code> agree.</p>
+    <p>Fix: say that the argument is hashed with no trailing newline and that callers capture the digest with <code>$( )</code> or <code>run -0</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/Containers.vue">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> <code>defined</code> is imported but no longer used <span class="pill pill-claude">Claude Opus 5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/pkg/rancher-desktop/pages/Containers.vue#L137-L147">pkg/rancher-desktop/pages/Containers.vue</a></div>
+      <pre data-start="137" data-line="142"><code class="language-typescript">
+import ContainerStatusBadge from &#39;@pkg/components/ContainerStatusBadge.vue&#39;;
+import SortableTable from &#39;@pkg/components/SortableTable&#39;;
+import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from &#39;@pkg/entry/store&#39;;
+import { hasField } from &#39;@pkg/utils/iterator&#39;;
+import { defined } from &#39;@pkg/utils/typeUtils&#39;;
+import { IoRancherdesktopContainersV1alpha1Container as Container } from &#39;@rdd-client&#39;;
+
+interface Action {
+  label:    string;
+  action:   string;</code></pre>
+    <p>The <code>namespaces()</code> computed this commit deleted was the only use, and <code>defined</code> now appears exactly once in the file. <code>eslint.config.mts:177</code> turns <code>@typescript-eslint/no-unused-vars</code> off for the whole repo inside the <code>rancher-desktop-compatibility</code> block, so <code>yarn lint:typescript:nofix</code> stays green. <code>Images.vue</code> and <code>Volumes.vue</code> still use the import.</p>
+    <p>Fix: drop the import.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/util/api/mirror_name.go">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> Three sibling helpers still carry their own naming rules, and <code>&quot;cns&quot;</code> is a bare literal at four call sites <span class="pill pill-claude">Claude Opus 5</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/util/api/mirror_name.go#L10-L22">rdd/pkg/util/api/mirror_name.go</a></div>
+      <pre data-start="10" data-line="15-17"><code class="language-go">	&quot;fmt&quot;
+
+	&quot;k8s.io/apimachinery/pkg/util/validation&quot;
+)
+
+// MirrorName returns the mirrored name for a given container resource.  The
+// prefix is prepended to the mirrored name with a dash if the input is not a
+// valid Kubernetes object name.
+func MirrorName(prefix, input string) string {
+	if len(validation.IsDNS1123Subdomain(input)) &lt; 1 {
+		return input
+	}
+	return fmt.Sprintf(&quot;%s-%x&quot;, prefix, sha256.Sum256([]byte(input)))</code></pre>
+    <p>The doc promises a general rule for &quot;a container resource&quot;, but <code>containerdMirrorName</code> tests <code>id</code> while hashing <code>ns + &quot;/&quot; + id</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L45-L51"><code>sync_containers_containerd.go:45-51</code></a>), and <code>containerdImageMirrorName</code> and <code>volumeMirrorName</code> hash unconditionally. Someone reaching for the shared helper on the next mirror gets the wrong rule with no warning. The prefix appears as a literal in <code>sync_namespace_containerd.go:44,77,115</code>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L40"><code>image_pull_request_webhooks.go:40</code></a> and the mock.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go#L40-L56">rdd/pkg/controllers/app/engine/controllers/sync_containers_containerd.go</a></div>
+      <pre data-start="40" data-line="45-51"><code class="language-go">// prefix.
+//
+// A hand-picked valid ID duplicated across two containerd namespaces maps to
+// one mirror; this is an accepted caveat, as nerdctl and k8s generate
+// globally unique IDs, so the collision stays theoretical.
+func containerdMirrorName(ns, id string) string {
+	if len(validation.IsDNS1123Subdomain(id)) == 0 {
+		return id
+	}
+	sum := sha256.Sum256([]byte(ns + &quot;/&quot; + id))
+	return fmt.Sprintf(&quot;ctr-%x&quot;, sum)
+}
+
+// syncAllContainers lists all containerd containers across every namespace,
+// creates or updates their Container mirrors, and prunes stale ones.
+func (w *containerdWatcher) syncAllContainers(ctx context.Context) error {
+	log := logf.FromContext(ctx).WithName(&quot;containerd-watcher&quot;)</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L39-L49">rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go</a></div>
+      <pre data-start="39" data-line="44"><code class="language-go">	var errs []error
+	for _, ns := range nsNames {
+		if err := w.applyNamespace(ctx, ns); err != nil {
+			log.Error(err, &quot;Skipping namespace during full sync&quot;, &quot;namespace&quot;, ns)
+		}
+		activeNames[api.MirrorName(&quot;cns&quot;, ns)] = true
+	}
+
+	// Remove stale ContainerNamespace mirrors.
+	var nsMirrors containersv1alpha1.ContainerNamespaceList
+	if err := w.k8s.List(ctx, &amp;nsMirrors, client.InNamespace(w.apiNamespace)); err != nil {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L35-L45">rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go</a></div>
+      <pre data-start="35" data-line="40"><code class="language-go">		// worry about already existing image pull requests; if it is already known
+		// to be valid, we don&#39;t care if the engine is not ready yet.
+		// Note that the namespace name may be encoded.
+		key := types.NamespacedName{
+			Namespace: imagePullRequest.Namespace,
+			Name:      api.MirrorName(&quot;cns&quot;, imagePullRequest.Spec.Namespace),
+		}
+		var containerNamespace v1alpha1.ContainerNamespace
+		err := v.reader.Get(ctx, key, &amp;containerNamespace)
+		if apierrors.IsNotFound(err) {
+			errs = append(errs, fmt.Errorf(&quot;spec.namespace %q does not refer to an existing ContainerNamespace in namespace %q&quot;, imagePullRequest.Spec.Namespace, imagePullRequest.Namespace))</code></pre>
+    <p>Fix: say in the doc which rule this is and which callers cannot use it, and export the prefix as a constant beside <code>ContainerNamespaceKind</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/util/api/mirror_name_test.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> Nothing tests the selectable field, the webhook&#39;s encoded branch, or the name the feature exists for <span class="pill pill-claude">Claude Opus 5</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/util/api/mirror_name_test.go#L11-L24">rdd/pkg/util/api/mirror_name_test.go</a></div>
+      <pre data-start="11" data-line="16-19"><code class="language-go">
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api&quot;
+)
+
+func TestMirrorName(t *testing.T) {
+	testCases := map[string]string{
+		&quot;hello&quot;:        &quot;hello&quot;,
+		&quot;invalid_name&quot;: &quot;zz-f123fd210ff35283833e7e27b312d585673b493a056396475c216d2891c235eb&quot;,
+	}
+	for input, expected := range testCases {
+		t.Run(input, func(t *testing.T) {
+			actual := api.MirrorName(&quot;zz&quot;, input)
+			assert.Equal(t, actual, expected)
+		})</code></pre>
+    <p>Both expectations are correct against <code>shasum --algorithm 256</code>, but the table covers neither the uppercase name the containerd fix is about nor the empty string, and no test exercises <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L40"><code>image_pull_request_webhooks.go:40</code></a> with an encoded namespace — every case in <code>image_pull_request_webhooks_test.go</code> uses <code>moby</code>. Round 2&#39;s I1 asked for the selectable marker and got it, but a repository-wide search for <code>status.name=</code> finds only <code>Volume</code> selectors in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/bats/tests/32-app-controllers/engine-docker.bats#L423-L442"><code>engine-docker.bats:423-442</code></a>, so deleting <code>+kubebuilder:selectablefield</code> would leave every test green.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L35-L45">rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go</a></div>
+      <pre data-start="35" data-line="40"><code class="language-go">		// worry about already existing image pull requests; if it is already known
+		// to be valid, we don&#39;t care if the engine is not ready yet.
+		// Note that the namespace name may be encoded.
+		key := types.NamespacedName{
+			Namespace: imagePullRequest.Namespace,
+			Name:      api.MirrorName(&quot;cns&quot;, imagePullRequest.Spec.Namespace),
+		}
+		var containerNamespace v1alpha1.ContainerNamespace
+		err := v.reader.Get(ctx, key, &amp;containerNamespace)
+		if apierrors.IsNotFound(err) {
+			errs = append(errs, fmt.Errorf(&quot;spec.namespace %q does not refer to an existing ContainerNamespace in namespace %q&quot;, imagePullRequest.Spec.Namespace, imagePullRequest.Namespace))</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/bats/tests/32-app-controllers/engine-docker.bats#L418-L447">rdd/bats/tests/32-app-controllers/engine-docker.bats</a></div>
+      <pre data-start="418" data-line="423-442"><code class="language-bash">
+@test &quot;docker volume create creates Volume resource&quot; {
+    docker volume create test-vol
+
+    rdd ctl wait --for=create --namespace=&quot;${RDD_NAMESPACE}&quot; volume \
+        --field-selector &quot;status.name=test-vol&quot; --timeout=30s
+}
+
+@test &quot;docker volume rm deletes Volume resource&quot; {
+    docker volume rm test-vol
+    rdd ctl wait --for=delete --namespace=&quot;${RDD_NAMESPACE}&quot; volume \
+        --field-selector &quot;status.name=test-vol&quot; --timeout=30s
+}
+
+@test &quot;volume name with uppercase and underscore is mirrored&quot; {
+    # Docker permits characters (uppercase, underscore) that are
+    # invalid in RFC 1123 subdomain names. volumeK8sName hashes the
+    # Docker name into a valid subdomain; the original is preserved
+    # in status.name and queryable via the field selector.
+    docker volume create My_Vol_Ume
+    rdd ctl wait --for=create --namespace=&quot;${RDD_NAMESPACE}&quot; volume \
+        --field-selector &quot;status.name=My_Vol_Ume&quot; --timeout=30s
+    docker volume rm My_Vol_Ume
+    rdd ctl wait --for=delete --namespace=&quot;${RDD_NAMESPACE}&quot; volume \
+        --field-selector &quot;status.name=My_Vol_Ume&quot; --timeout=30s
+}
+
+# --- Deletion via the API removes the Docker object ---
+
+@test &quot;deleting Container resource removes Docker container&quot; {</code></pre>
+    <p>Fix: add the uppercase and empty inputs to the table, one webhook subtest that stores <code>ContainerNamespace/cns-&lt;hash&gt;</code> and submits <code>spec.namespace: Not_Valid</code>, and one <code>--field-selector &quot;status.name=…&quot;</code> wait in the containerd BATS test, mirroring what <code>engine-docker.bats</code> already does for <code>Volume</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>The <code>IsNotFound</code> branch fires after the mirror it would skip has already been created<em></em> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5</span>. <code>applyNamespace</code> applies the object at line 80 and only then calls <code>Labels</code> (line 86), so the branch the author kept as future-proofing returns after re-creating a mirror for a namespace containerd says is gone. Fetching the labels first, or deleting the mirror in that branch, makes the guard do what its comment describes. This is about the ordering, not the reachability the author declined.</li>
+      <li><em></em><code>applyNamespace</code> now costs three round trips on every container and image create<em></em> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5</span>. Each call is an object apply, a containerd <code>Labels</code> call, and a status apply, all on the single event-loop goroutine (<code>containerd_watcher.go:195,236</code>). A k3s startup burst in <code>k8s.io</code> multiplies that by the number of containers, where the merge-base paid one no-op apply. Unmeasured.</li>
+      <li><em></em><code>resourceFieldSelector</code> is evaluated when a watch is established, not when its inputs change<em></em> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>. <code>currentNamespace</code> depends on another store module, and the only automatic rewatch watches the Kubernetes namespace. That is the mechanism behind I2&#39;s engine-switch case, and it will bite any future selector built the same way.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The selectable field reached every artifact it needed to</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>. <code>status.name</code> is wired through the API type, both CRD copies, the apply configuration, the deepcopy, the TypeScript model, the serializer and the status API methods, and <code>make verify-generate</code> agrees.</li>
+      <li><em></em><code>activeNames</code> survived the reroute<em></em> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L41-L44"><code>sync_namespace_containerd.go:41-44</code></a> still records the mirror name outside the apply&#39;s error branch, so a failed apply cannot make the prune loop classify a live mirror as stale.</li>
+      <li><em></em>Dropping the existence check from <code>ValidateUpdate</code> is the right narrowing<em></em> <code>(in-scope)</code> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-claude">Claude Opus 5</span>. <code>spec.namespace</code> is immutable, so re-checking on update only blocked controllers during the windows where mirrors do not exist. The retained comment says so.</li>
+      <li><strong>The BATS test now covers the whole encoded-name round trip</strong> <code>(in-scope)</code> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: the hashed name, both status fields through <code>wait_for_resource_status</code>, a label update through the new <code>NamespaceUpdate</code> path, the container inside the namespace, and the reaping.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran these in a clean lead worktree at the review SHA, with <code>node_modules</code> linked from the main checkout:</p>
+    <ul>
+      <li><code>make verify-generate</code> — exit 0, worktree clean, so every generated Go artifact matches its source.</li>
+      <li><code>go test</code> over <code>pkg/util/api</code>, <code>pkg/apis/containers/...</code>, <code>pkg/controllers/containers/...</code>, <code>pkg/controllers/app/engine/...</code> and <code>pkg/controllers/mock</code> — all pass.</li>
+      <li><code>yarn lint:typescript:nofix</code> — exit 0, no output.</li>
+      <li><code>go build ./...</code> — fails only at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/guestagent/guestagent_arm64.go#L11"><code>pkg/guestagent/guestagent_arm64.go:11</code></a> on an embed that <code>make</code> produces. Unrelated, and unchanged since round 2.</li>
+    </ul>
+    <p>No BATS test ran; that needs a VM.</p>
+    <p>Gaps, highest risk first:</p>
+    <ol>
+      <li><strong>The label-fetch failure path</strong> (I1). A silent status change with no user-visible error, and the probe above is the test.</li>
+      <li><strong>The whole renderer surface.</strong> <code>supportsNamespaces</code> is false under the mock (S4), so no Playwright run enters any of the branches this PR turns on, and I2 would not surface. The one existing page test, <code>pages/__tests__/Containers.spec.ts</code>, mocks <code>mapTypedGetters</code> to return <code>jest.fn()</code> per getter, which is truthy, so its <code>rows</code> never evaluates the <code>supportsNamespaces</code> branch either way.</li>
+      <li><strong>The webhook&#39;s encoded-namespace branch and the selectable field</strong> (S8), neither exercised anywhere.</li>
+      <li><em></em>The Docker path&#39;s <code>status.name</code> write.<em></em> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/bats/tests/32-app-controllers/engine-docker.bats#L66-L69"><code>engine-docker.bats:66-69</code></a> waits for <code>ContainerNamespace/moby</code> and asserts nothing about its status, so deleting the whole status apply would ship green.</li>
+    </ol>
+    <p>One note on the new test&#39;s dependency: <code>assert_resource_status</code> captures an <code>rdd ctl get</code> through plain <code>run</code>, which merges stderr into <code>$output</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/bats/helpers/controller.bash#L52-L54"><code>controller.bash:52-54</code></a>). CI runs bats at <code>-v=4</code>, so a debug line on that path would make <code>wait_for_resource_status</code> retry 30 times and then fail as though the status never arrived. The helper is pre-existing, but the new test is the heaviest user of it.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/docs/design/api_containers.md#L120-L144"><code>rdd/docs/design/api_containers.md:120-144</code></a> matches the code now: the <code>metadata.name</code> bullet states the valid-or-<code>cns-&lt;sha256&gt;</code> rule, and the <code>#namespaces</code> cross-reference resolves. The <code>labels: {}</code> line is S3.</li>
+      <li>The four <code>spec.namespace</code> and <code>status.namespace</code> Go comments and their CRD copies now describe the <code>status.name</code> join, closing round 2&#39;s S5 on the Go side. The generated client is S2.</li>
+      <li>The new sentence promises that &quot;a <code>ContainerNamespace</code> object in the same Kubernetes namespace exists where its <code>status.name</code> matches this value&quot; without qualification, which is false during VM boot and stop, after a manual mirror delete, and when a per-namespace apply is skipped — all states the controller documents at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L71-L74"><code>sync_namespace_containerd.go:71-74</code></a>, and the <code>ImagePullRequest</code> webhook rejects the request in each of them. &quot;When the mirror is present, its <code>status.name</code> matches this value&quot; would be accurate. <span class="pill pill-codex">Codex GPT 5.6 Sol</span></li>
+      <li><code>applyNamespace</code>&#39;s rewritten trigger list is accurate against its five callers, but &quot;Only fullSync and the container, and image create events, or various namespace change events call this&quot; reads as a mis-edit. &quot;fullSync, container and image create events, and namespace create and update events&quot; says the same thing.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The three commits split cleanly by tree, and isolating <code>rdd-client: regenerate</code> follows the repo&#39;s convention. Two gaps. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e9b1d1f14"><code>e9b1d1f14</code></a> regenerates against a tree older than the commit beneath it (S2). And <code>1d98a4b15 RDA: Fix the use of namespaces</code> describes only the move to <code>.status.name</code>, while its larger effect is replacing the hardcoded <code>supportsNamespaces</code> with a live read — the change that turns the namespace pickers on for containerd users for the first time. Neither that commit body nor the PR description mentions it.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><code>local</code> inside an <code>@test</code> block<em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L244"><code>engine-containerd.bats:244</code></a>). Raised as round 1&#39;s S3 and re-raised as round 2&#39;s S4; all four reviewers raised it again this round. Still present, still undeclined. Recording it here rather than as a fourth finding.</li>
+      <li><strong>Round 2 I3, declined in code.</strong> The <code>errdefs.IsNotFound</code> guard stays, with the author&#39;s reasoning at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L88-L91"><code>sync_namespace_containerd.go:88-91</code></a>. Codex re-read containerd 2.3.5&#39;s metadata namespace store and confirms an absent namespace still answers with an empty label map and a nil error, so the branch is unreachable today; keeping it as future-proofing is the author&#39;s call. The ordering inside that branch is a Design Observation above.</li>
+      <li><strong>Round 1 S2, declined by the author</strong> (&quot;more trouble than it&#39;s worth&quot;). No test covers how <code>syncNamespaces</code> keys <code>activeNames</code>. The reroute through <code>api.MirrorName</code> changed that line and now keys hashed namespaces too, where the merge-base keyed only valid names — an improvement, still untested.</li>
+      <li><strong>Round 2 I1&#39;s decline no longer matches the tree.</strong> The author replied that nobody selects a <code>ContainerNamespace</code> by <code>status.name</code>; the marker is in anyway, and nothing selects by it (Design Observations). Not re-raised.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L65-L74"><code>sync_namespace_containerd.go:65-74</code></a>: a Kubernetes-side delete of a mirror stays gone until an event or a watcher restart re-applies it. Unchanged in substance; the trigger list was rewritten.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L34-L37"><code>sync_namespace_containerd.go:34-37</code></a>: a failed per-namespace apply is logged and skipped rather than failing the sync. Intact.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/containers/containernamespace/container_namespace_webhooks.go#L25-L27"><code>containernamespace/container_namespace_webhooks.go:25-27</code></a>: the pre-existing TODO to reject deleting a non-empty namespace. Untouched.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1d98a4b152486f24ac501c1f4d2371ceb7fa7972/rdd/pkg/controllers/mock/container_namespace_reconciler.go#L65-L77"><code>mock/container_namespace_reconciler.go:65-77</code></a> runs the status apply even when the object apply failed, adding a second error. Harmless in a fixture.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The author reported &quot;Most of the comments are fixed.&quot; Against round 2&#39;s list:</p>
+    <ul>
+      <li><strong>R2-I1</strong> (selectable field): fixed, in both CRD copies and the generated client.</li>
+      <li><strong>R2-I2</strong> (duplicated naming rule): fixed through <code>api.MirrorName</code>, with a unit test. S1 and S7 are new problems in the shared helper, not the old one.</li>
+      <li><strong>R2-I3</strong> (dead <code>IsNotFound</code> guard): declined in code. Settled.</li>
+      <li><strong>R2-I4</strong> (BATS status race): fixed via <code>wait_for_resource_status</code>; no other assertion in either engine suite reads a two-step-written status straight after a create wait.</li>
+      <li><strong>R2-S1</strong> (mock writes no <code>status.name</code>): fixed.</li>
+      <li><strong>R2-S2</strong> (renderer joins on <code>metadata.name</code>): fixed, and the surface it opened is I2 and S4.</li>
+      <li><strong>R2-S3</strong> (<code>WithLabels({})</code> and <code>labels: {}</code>): unaddressed; re-raised once as S3.</li>
+      <li><strong>R2-S4</strong> (BATS residuals): the command substitution and <code>docker_context_dir</code> are fixed, the comment fix introduced S5, and <code>local</code> moves to Acknowledged Limitations.</li>
+      <li><strong>R2-S5</strong> (stale <code>spec.namespace</code> comments): fixed in Go, stale in the generated client (S2).</li>
+      <li><strong>R2-S6</strong> (label-fetch failure drops the event): fixed, and the fix is I1.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude Opus 5]</strong> It found both Important issues and six of the eight suggestions, four of them alone, and it was the only reviewer to open the generated client&#39;s registration, the eslint config, and the three sibling mirror-name helpers. Its I2 traced the whole renderer chain — the <code>selectedNamespace</code> prop default, <code>Volumes.vue</code>&#39;s uncalled repair helper, the <code>kube-system</code> filter flip, and the empty picker when the VM is stopped — and it marked the one link it could not execute, correctly. Against it: it called the eight regenerated spec and status models &quot;Trivial — the reworded <code>namespace</code> description propagated from the Go types&quot;, which is exactly the file where two of them had not been reworded (S2).</p>
+    <p><strong>[Codex GPT 5.6 Sol]</strong> Its prior-round verification table is the most useful artifact any agent produced this round: eleven rows, each with the file and line that settles it, including a re-read of containerd 2.3.5 that re-confirms the round-2 conclusion the author disputed. It alone caught the stale generated client, which is the finding a reader would otherwise have taken three rounds to notice, and its collision probe runs and fails against the reviewed code. It rated the label wipe a Suggestion while the other three rated it Important. All three proposed fixes for it trade the defect for another: returning the error restores the event-dropping round 2&#39;s S6 asked to remove, and returning nil skips the status apply, so a mirror created while containerd is unreachable never gets its <code>status.name</code>.</p>
+    <p><strong>[Gemini 3.1 Pro]</strong> It found the label wipe independently and traced the server-side apply mechanism correctly, and its observation that <code>controller-gen</code> does not propagate <code>omitzero</code> into the apply configuration is right and is what makes S3 more than a repeat. It then wrote that round 2&#39;s S3 premise &quot;was incorrect&quot; and that the round-2 code &quot;already achieved the desired outcome&quot;, conflating the field being omitted with the documented example being satisfied; the doc still shows <code>labels: {}</code> and nothing writes it. Its coverage summary marked the store and all three pages &quot;Verified&quot;, and every one of them holds I2.</p>
+    <p><strong>[Gemini 3.5 Flash]</strong> It found the label wipe too, and its write-up of the mechanism is the clearest of the four, though it marked the finding <code>Unproven</code> on the grounds that the error could not be mocked — which is true of the containerd call and irrelevant to the apply, as three probes since have shown. Its other two suggestions were both raised by others. Five files it marked &quot;Reviewed, no issues&quot; hold I2, including the store getter that causes it. The two Gemini models agreed on the label wipe and on the <code>local</code> residual, which counts as one opinion rather than two.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>19m 14s</td><td>22m 36s</td><td>8m 33s</td><td>4m 28s</td></tr>
+        <tr><td>Findings</td><td>2I 6S</td><td>2I 4S</td><td>1I 2S</td><td>1I 2S</td></tr>
+        <tr><td>Tool calls</td><td>77 (Bash 67, Read 10)</td><td>71 (shell 68, apply_patch 3)</td><td>66 (run<em>shell</em>command 61, write_file 5)</td><td>47 (run<em>shell</em>command 20, read<em>file 16, grep</em>search 9)</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>4</td><td>4</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>2</td><td>1</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>51</td><td>51</td><td>51</td><td>51</td></tr>
+        <tr><td>Coverage misses</td><td>1</td><td>0</td><td>7</td><td>5</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 6S</strong></td><td><strong>2I 4S</strong></td><td><strong>1I 2S</strong></td><td><strong>1I 2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Reconciliation: Codex pass 1 S1 (label wipe): suggestion → important I1. Codex pass 1 I1 (namespace lifecycle) merged into I2 with Claude&#39;s. Codex pass 1 S4 (field comments overpromise): suggestion → Documentation Assessment. Claude pass 1 S1 (<code>IsNotFound</code> ordering): suggestion → Design Observation. The <code>local</code>-in-<code>@test</code> suggestion, raised by all four, moved to Acknowledged Limitations under the prior-round rule that a suggestion is re-raised once; this is its third round.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a change edits an error branch that feeds a server-side apply, check what the apply sends on that branch, not only what the branch computes. A generated apply-configuration setter that ignores an empty or nil value leaves the field out of the request, and an apply that omits a field the manager previously owned deletes it. A comment saying the branch &quot;does not update&quot; that field then describes the opposite of what happens, and no test catches it because the change is silent.</li>
+      <li>When a change flips a capability flag from a constant to a live value, enumerate every branch guarded by that flag and review each as new code. The diff shows one line; the behavior change is every <code>if</code>, <code>v-if</code>, and default that the constant had been pinning. Check in particular whether anything initializes the state those branches now depend on, and whether the flag can go false again while that state persists.</li>
+      <li>When a PR contains a commit that regenerates client code from the source in a sibling commit, diff the regenerated output against the source of record rather than treating it as machine-produced and therefore correct. A regeneration run before the last amendment to the schema produces output that is internally inconsistent, and a verification target that covers only one language will not see it.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><code>[repo]</code> REMOVE the entry saying <code>supportsNamespaces()</code> in the container-engine store returns a hardcoded <code>false</code>, that the namespace picker is dead code, and that renderer-side namespace defects should be rated as latent. The getter reads <code>app.status.supportsNamespaces</code> from the <code>rdd/app</code> root getter, so it is true whenever the container engine is containerd and the <code>ContainerEngineReady</code> reason is not <code>NotApplicable</code> — including while the VM is stopped. Rate renderer namespace defects as live.</li>
+      <li><code>[repo]</code> UPDATE the entry saying a new CRD field missing from the generated TypeScript is expected follow-up work. That still holds for a PR that adds a field without regenerating, but when a PR contains its own <code>rdd-client: regenerate</code> commit the generated tree is in scope, and the regeneration can predate the commit it sits on. Compare the generated descriptions against the CRDs the same PR ships.</li>
+      <li><code>[repo]</code> <code>@typescript-eslint/no-unused-vars</code> is off for the whole repository: the <code>rancher-desktop-compatibility</code> block in <code>eslint.config.mts</code> has no <code>files</code> restriction and turns it off globally, so an unused import or variable never fails <code>yarn lint:typescript:nofix</code> despite <code>--max-warnings=0</code>. Flag dead imports and bindings by reading, because the lint will not.</li>
+      <li><code>[repo]</code> The renderer&#39;s resource watches take their field selector when the watch is established. <code>rewatchResources</code> is dispatched from exactly two places: the <code>setCurrentNamespace</code> action, and a Vuex plugin that watches the <em>Kubernetes</em> namespace in <code>rddConnection.ts</code>. Any state a <code>fieldSelector</code> callback reads must therefore be changed through an action that rewatches, or the live watch keeps the stale selector until the page remounts.</li>
+      <li><code>[repo]</code> The Playwright mock control plane&#39;s App reconciler writes only the <code>Settled</code> condition. Any renderer behavior gated on another <code>App.status</code> field is unreachable from the e2e suite until the mock sets that field, whatever fixtures the mock creates for the resources underneath.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){e.languages.typescript=e.languages.extend("javascript",{"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,lookbehind:!0,greedy:!0,inside:null},builtin:/\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/}),e.languages.typescript.keyword.push(/\b(?:abstract|declare|is|keyof|readonly|require)\b/,/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,/\btype\b(?=\s*(?:[\{*]|$))/),delete e.languages.typescript.parameter,delete e.languages.typescript["literal-property"];var s=e.languages.extend("typescript",{});delete s["class-name"],e.languages.typescript["class-name"].inside=s,e.languages.insertBefore("typescript","function",{decorator:{pattern:/@[$\w\xA0-\uFFFF]+/,inside:{at:{pattern:/^@/,alias:"operator"},function:/^[\s\S]+/}},"generic-function":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,greedy:!0,inside:{function:/^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,generic:{pattern:/<[\s\S]+/,alias:"class-name",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
