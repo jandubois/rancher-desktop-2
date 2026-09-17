@@ -1,9 +1,11 @@
 # download-guest-deps
 
-`download-guest-deps` stages the guest dependencies for the rdd build to embed.
-It currently stages only the distro image, as the raw disk image that Lima's
-`vz` and `qemu` drivers boot or, for a Windows build, as the rootfs tarball
-that WSL2 imports.
+`download-guest-deps` stages the guest dependencies for the rdd build: the
+pristine distro image, the nerdctl-full tarball, and mkcert. The distro is the
+raw disk image that Lima's `vz` and `qemu` drivers boot or, for a Windows
+build, the rootfs tarball that WSL2 imports. `rdd/Makefile` writes mkcert and
+the binaries from that tarball into the image with `distro-overlay` before the
+build embeds it.
 
 It reads `dependencies.yaml`, which `yarn rddepman guest` writes, picks the
 asset for the build target, and checks the downloaded bytes against the sha256
@@ -25,7 +27,7 @@ go run ./cmd/download-guest-deps [--manifest FILE] [--dest DIR] [--cache DIR] [-
 | Option | Default | Meaning |
 |---|---|---|
 | `--manifest` | `dependencies.yaml` | The guest dependency manifest to read. |
-| `--dest` | `pkg/embedded` | The directory to stage the assets into. |
+| `--dest` | `overlay/build` | The directory to stage the assets into. |
 | `--cache` | see [Cache](#cache) | The directory that keeps verified downloads. |
 | `--os` | the host's | The operating system the build targets, as a `GOOS` value. |
 | `--arch` | the host's | The architecture the build targets, as a `GOARCH` value. |
@@ -34,9 +36,15 @@ A cross-compiling build passes `--os` and `--arch`. Setting `GOOS` or `GOARCH`
 in the environment instead would cross-compile this command as well, and leave
 nothing that runs on the build machine.
 
-A Windows target gets `distro.tar.xz` and any other target gets
-`distro.raw.xz`. Either one is the Linux asset for `--arch`, because the guest
-VM runs Linux.
+Each asset carries the `filename` it is staged under, so the command needs no
+knowledge of any package: it stages every dependency the manifest lists, under
+the name the manifest gives. Adding one is a change to
+`scripts/dependencies/`, not to this command.
+
+Every asset it picks is a Linux one for `--arch`, because the guest VM runs
+Linux. Only the image variant follows the target: Windows gets the distro's
+`tar` asset and everything else its `raw` one, while a dependency shipping one
+artifact per architecture records no variant and suits either.
 
 The command exits 0 once everything is staged, 1 on any failure, and 2 on a
 usage error. Failing to prune the cache only prints a warning.
@@ -68,35 +76,36 @@ download logs its progress every five seconds.
 ## Trying it out
 
 These steps stage into a scratch directory with its own cache, so they leave
-`pkg/embedded` and your real cache alone and the first run has to download.
+`overlay/build` and your real cache alone and the first run has to download.
 Run them from `rdd/` in a POSIX shell.
 
 ```sh
 scratch=$(mktemp -d)
-go run ./cmd/download-guest-deps --dest "$scratch/embedded" --cache "$scratch/cache"
+go run ./cmd/download-guest-deps --dest "$scratch/staged" --cache "$scratch/cache"
 ```
 
 The first run downloads the raw image for this machine's architecture, 200 to
-250 MiB, and stages it as `$scratch/embedded/distro.raw.xz`. Running the same
-command again reports the staged file up to date and does no network work.
+250 MiB, plus the nerdctl tarball and mkcert, and stages all three under
+`$scratch/staged`. Running the same command again reports them up to date and
+does no network work.
 
 ```sh
-go run ./cmd/download-guest-deps --dest "$scratch/embedded" --cache "$scratch/cache"
+go run ./cmd/download-guest-deps --dest "$scratch/staged" --cache "$scratch/cache"
 ```
 
-Damage the staged file, and the next run copies it back from the cache, still
+Damage the staged image, and the next run copies it back from the cache, still
 without downloading.
 
 ```sh
-printf broken > "$scratch/embedded/distro.raw.xz"
-go run ./cmd/download-guest-deps --dest "$scratch/embedded" --cache "$scratch/cache"
+printf broken > "$scratch/staged/distro.raw.xz"
+go run ./cmd/download-guest-deps --dest "$scratch/staged" --cache "$scratch/cache"
 ```
 
 Staging for Windows downloads the rootfs tarball, about 180 MiB, and stages it
-as `$scratch/embedded/distro.tar.xz`.
+as `$scratch/staged/distro.tar.xz`.
 
 ```sh
-go run ./cmd/download-guest-deps --dest "$scratch/embedded" --cache "$scratch/cache" --os windows --arch amd64
+go run ./cmd/download-guest-deps --dest "$scratch/staged" --cache "$scratch/cache" --os windows --arch amd64
 ```
 
 Remove the scratch directory when you are done.

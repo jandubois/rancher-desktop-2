@@ -29,7 +29,7 @@ import (
 
 func main() {
 	manifest := flag.String("manifest", "dependencies.yaml", "guest dependency manifest (YAML)")
-	dest := flag.String("dest", filepath.Join("pkg", "embedded"), "directory to stage the assets into")
+	dest := flag.String("dest", filepath.Join("overlay", "build"), "directory to stage the assets into")
 	cache := flag.String("cache", "", "directory the verified downloads are kept and pruned in (default: under the user cache directory)")
 	goos := flag.String("os", runtime.GOOS, "the operating system the build targets")
 	goarch := flag.String("arch", runtime.GOARCH, "the architecture the build targets")
