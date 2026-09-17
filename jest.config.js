@@ -31,6 +31,9 @@ export default {
     '^@rdd-client$':      '<rootDir>/pkg/rdd-client',
     '^@/(.*)$':           '<rootDir>/$1',
   },
+  setupFiles: [
+    '<rootDir>/pkg/rancher-desktop/utils/testUtils/setupBrowserApis.ts',
+  ],
   testEnvironment:        'jsdom',
   testEnvironmentOptions: {
     customExportConditions: [
