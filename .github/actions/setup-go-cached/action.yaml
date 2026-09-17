@@ -1,0 +1,58 @@
+# The prefix fallback and the main-only write follow Dan Peterson, "Better
+# GitHub Actions caching for Go": https://danp.net/posts/github-actions-go-cache/
+name: Setup Go with a cache
+description: >-
+  Installs the Go version rdd/go.mod names and restores rdd's module and build
+  caches. When rdd/go.sum has changed the restore falls back to the newest cache
+  for the same runner and Go version, so a dependency bump recompiles only the
+  packages it affects.
+
+inputs:
+  save:
+    description: >-
+      Whether this job may write the cache. Turn it off for a job that does not
+      build rdd, because the first job to finish claims the key and every later
+      job restores what it stored.
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+  - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+    with:
+      cache: false
+      go-version-file: rdd/go.mod
+
+  # GOCACHE is under %LocalAppData% on Windows and ~/.cache elsewhere, so ask
+  # the toolchain for both paths. The key includes the architecture because
+  # macos-latest and macos-15-intel both report runner.os == 'macOS'.
+  - id: go-env
+    shell: bash
+    run: |
+      set -o errexit -o pipefail
+      {
+        echo "build-path=$(go env GOCACHE)"
+        echo "module-path=$(go env GOMODCACHE)"
+        echo "prefix=go-${{ runner.os }}-${{ runner.arch }}-$(go env GOVERSION)-"
+        echo "save=${{ inputs.save == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}"
+      } >>"$GITHUB_OUTPUT"
+
+  # A cache written on a pull request is visible to that pull request alone and
+  # dies with it, so only main writes and every other ref reads what main left.
+  - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+    if: steps.go-env.outputs.save == 'true'
+    with:
+      path: |
+        ${{ steps.go-env.outputs.build-path }}
+        ${{ steps.go-env.outputs.module-path }}
+      key: ${{ steps.go-env.outputs.prefix }}${{ hashFiles('rdd/go.sum') }}
+      restore-keys: ${{ steps.go-env.outputs.prefix }}
+
+  - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+    if: steps.go-env.outputs.save != 'true'
+    with:
+      path: |
+        ${{ steps.go-env.outputs.build-path }}
+        ${{ steps.go-env.outputs.module-path }}
+      key: ${{ steps.go-env.outputs.prefix }}${{ hashFiles('rdd/go.sum') }}
+      restore-keys: ${{ steps.go-env.outputs.prefix }}

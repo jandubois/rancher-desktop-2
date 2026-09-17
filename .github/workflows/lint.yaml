@@ -40,10 +40,10 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
-    - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+    - uses: $/.github/actions/setup-go-cached
       with:
-        go-version-file: rdd/go.mod
-        cache-dependency-path: rdd/go.sum
+        # This job finishes first, and generating files does not build rdd.
+        save: false
     - run: make verify-generate
       working-directory: rdd
   lint-rdd:
@@ -64,10 +64,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
-    - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-      with:
-        go-version-file: rdd/go.mod
-        cache-dependency-path: rdd/go.sum
+    - uses: $/.github/actions/setup-go-cached
     - run: make lint-rdd
       working-directory: rdd
   test-rdd:
@@ -88,10 +85,7 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
-    - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-      with:
-        go-version-file: rdd/go.mod
-        cache-dependency-path: rdd/go.sum
+    - uses: $/.github/actions/setup-go-cached
     - name: "macOS: Install e2fsprogs"
       if: runner.os == 'macOS'
       run: |
