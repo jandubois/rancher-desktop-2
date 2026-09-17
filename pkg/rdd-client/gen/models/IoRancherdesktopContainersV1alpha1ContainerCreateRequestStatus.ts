@@ -18,7 +18,7 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopContainersV1alpha1ContainerCreateRequestStatus {
     /**
-    * Conditions represent the state of the container creation request. Current known condition types include: - \"Complete\": the container creation request has successfully completed. - \"Failed\": the container creation request has failed. The status of each condition is one of True, False, or Unknown.
+    * Conditions represent the state of the container creation request. Current known condition types include: - \"Settled\": the container creation request has reached a terminal state. - \"Failed\": the container creation request has failed. The status of each condition is one of True, False, or Unknown.
     */
     'conditions'?: Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>;
     /**

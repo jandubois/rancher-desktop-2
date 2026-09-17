@@ -254,9 +254,8 @@ func (w *containerdWatcher) handleEvent(ctx context.Context, e *events.Envelope)
 		log.V(1).Info("Namespace deleted", "namespace", ev.Name)
 		return w.removeNamespace(ctx, ev.Name)
 	case *apievents.NamespaceUpdate:
-		// The mirror carries nothing but the name, so a label change on the
-		// containerd namespace has nothing to propagate.
-		return nil
+		log.V(1).Info("Namespace updated", "namespace", ev.Name)
+		return w.applyNamespace(ctx, ev.Name)
 	default:
 		return nil
 	}

@@ -38,7 +38,7 @@ export class IoRancherdesktopContainersV1alpha1ImageStatus {
     */
     'labels'?: { [key: string]: string; };
     /**
-    * Namespace is the container namespace; refers to a `ContainerNamespace` object in the same Kubernetes namespace.
+    * Namespace is the container namespace. A `ContainerNamespace` object in the same Kubernetes namespace exists where its `status.name` matches this value. See the `ContainerNamespace` documentation for more details.
     */
     'namespace': string;
     /**
@@ -50,7 +50,7 @@ export class IoRancherdesktopContainersV1alpha1ImageStatus {
     */
     'repoDigests'?: Array<string>;
     /**
-    * RepoTag is the tag of the image.  Images with multiple tags will have multiple Image objects.  Images without tags will have this unset, but only one Image object should exist in that case.
+    * RepoTag is the tag of the image.  Images with multiple tags will have multiple Image objects.  An unset RepoTag means the engine record was not named by a tag; containerd registers a digest reference as its own record, so one image ID can have several Image objects without a tag.
     */
     'repoTag'?: string;
     /**

@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus';
 import { V1ObjectMeta } from '../models/V1ObjectMeta';
 import { HttpFile } from '../http/http';
 
@@ -26,6 +27,7 @@ export class IoRancherdesktopContainersV1alpha1ContainerNamespace {
     */
     'kind'?: string;
     'metadata'?: V1ObjectMeta;
+    'status'?: IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -48,6 +50,12 @@ export class IoRancherdesktopContainersV1alpha1ContainerNamespace {
             "name": "metadata",
             "baseName": "metadata",
             "type": "V1ObjectMeta",
+            "format": ""
+        },
+        {
+            "name": "status",
+            "baseName": "status",
+            "type": "IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus",
             "format": ""
         }    ];
 

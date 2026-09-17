@@ -3,7 +3,7 @@ import { Plugin } from 'vuex';
 import { RootState } from '@pkg/entry/store';
 import { defineResource, resourceMutations, resourceState, resourceWatchActions, ResourceNames } from '@pkg/store/rddConnection';
 import { ActionContext, ActionTree, GetterTree, MutationsType } from '@pkg/store/ts-helpers';
-import { RecursivePartial } from '@pkg/utils/typeUtils';
+import { defined, RecursivePartial } from '@pkg/utils/typeUtils';
 import * as RDDClient from '@rdd-client';
 
 type ContainerEngineState = ReturnType<typeof state>;
@@ -57,13 +57,21 @@ export const state = () => ({
 });
 
 export const getters = {
-  supportsNamespaces(): boolean {
-    // TODO: Determine if the backend supports namespaces.
-    return false;
+  /** Whether the current container engine supports namespaces */
+  supportsNamespaces(state, getters, rootState, rootGetters): boolean {
+    const app: RDDClient.IoRancherdesktopAppV1alpha1App | undefined = rootGetters['rdd/app'];
+
+    return app?.status?.supportsNamespaces ?? false;
   },
+  /** The namespaces in the current container engine, as an array of names */
+  namespaces(state): string[] {
+    return (state.namespaces ?? []).map(ns => ns.status?.name).filter(defined);
+  },
+  /** The currently selected namespace, or undefined if namespaces are not supported */
   currentNamespace(state, getters): string | undefined {
     return getters.supportsNamespaces ? state.currentNamespace : undefined;
   },
+  /** Get a container by its ID */
   containerById(state) {
     return (id: string) => state.containers?.find(container => container.metadata?.name === id);
   },
@@ -89,7 +97,7 @@ export const actions = {
       const error = new Error('Current container engine does not support namespaces');
       commit('SET_ERROR', { error, source: 'namespaces' });
       console.log(error);
-    } else if (namespace !== undefined && !state.namespaces?.some(ns => ns.metadata?.name === namespace)) {
+    } else if (namespace !== undefined && !state.namespaces?.some(ns => ns.status?.name === namespace)) {
       const error = new Error(`Cannot set current namespace to nonexistent namespace ${ namespace }`);
       commit('SET_ERROR', { error, source: 'namespaces' });
       console.log(error);

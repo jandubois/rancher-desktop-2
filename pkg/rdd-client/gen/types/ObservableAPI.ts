@@ -36,6 +36,7 @@ import { IoRancherdesktopContainersV1alpha1ContainerCreateRequestStatus } from '
 import { IoRancherdesktopContainersV1alpha1ContainerList } from '../models/IoRancherdesktopContainersV1alpha1ContainerList';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespace } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespace';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespaceList } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceList';
+import { IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusLastAction } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusLastAction';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner';
@@ -7096,6 +7097,52 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * partially update status of the specified ContainerNamespace
+     * @param name name of the ContainerNamespace
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedContainerNamespaceStatusWithHttpInfo(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.patchNamespacedContainerNamespaceStatus(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.patchNamespacedContainerNamespaceStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * partially update status of the specified ContainerNamespace
+     * @param name name of the ContainerNamespace
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedContainerNamespaceStatus(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
+        return this.patchNamespacedContainerNamespaceStatusWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>) => apiResponse.data));
+    }
+
+    /**
      * partially update status of the specified Container
      * @param name name of the Container
      * @param namespace object name and auth scope, such as for teams and projects
@@ -7846,6 +7893,44 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * read status of the specified ContainerNamespace
+     * @param name name of the ContainerNamespace
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedContainerNamespaceStatusWithHttpInfo(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.readNamespacedContainerNamespaceStatus(name, namespace, pretty, resourceVersion, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.readNamespacedContainerNamespaceStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * read status of the specified ContainerNamespace
+     * @param name name of the ContainerNamespace
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedContainerNamespaceStatus(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
+        return this.readNamespacedContainerNamespaceStatusWithHttpInfo(name, namespace, pretty, resourceVersion, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>) => apiResponse.data));
+    }
+
+    /**
      * read status of the specified Container
      * @param name name of the Container
      * @param namespace object name and auth scope, such as for teams and projects
@@ -8513,6 +8598,50 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
      */
     public replaceNamespacedContainerNamespace(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ContainerNamespace, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
         return this.replaceNamespacedContainerNamespaceWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>) => apiResponse.data));
+    }
+
+    /**
+     * replace status of the specified ContainerNamespace
+     * @param name name of the ContainerNamespace
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedContainerNamespaceStatusWithHttpInfo(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ContainerNamespace, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.replaceNamespacedContainerNamespaceStatus(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.replaceNamespacedContainerNamespaceStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * replace status of the specified ContainerNamespace
+     * @param name name of the ContainerNamespace
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedContainerNamespaceStatus(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ContainerNamespace, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
+        return this.replaceNamespacedContainerNamespaceStatusWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>) => apiResponse.data));
     }
 
     /**

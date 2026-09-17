@@ -17,9 +17,9 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopContainersV1alpha1VolumeStatus {
     /**
-    * CreatedAt is the time the volume was created.
+    * CreatedAt is the time the volume was created; unset if the engine reported no readable timestamp.
     */
-    'createdAt': Date;
+    'createdAt'?: Date;
     /**
     * Driver the volume uses.
     */
@@ -37,7 +37,7 @@ export class IoRancherdesktopContainersV1alpha1VolumeStatus {
     */
     'name': string;
     /**
-    * Namespace of the volume; refers to a `ContainerNamespace` object in the same Kubernetes namespace.
+    * Namespace of the volume. A `ContainerNamespace` object of the same name exists in the same Kubernetes namespace whenever the engine\'s name for it is a valid object name.
     */
     'namespace': string;
     /**

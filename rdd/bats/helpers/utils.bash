@@ -225,6 +225,16 @@ semver_gt() {
     [[ $# -gt 0 ]] && semver_gte "$@" && semver_neq "$@"
 }
 
+# sha256 returns the SHA-256 sum of the first argument, as a lower-case
+# hexadecimal string.  Any new line markers are stripped from the end.
+sha256() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        printf "%s" "${1:-}" | sha256sum | awk '{print $1}'
+    else
+        printf "%s" "${1:-}" | shasum --algorithm 256 | awk '{print $1}'
+    fi
+}
+
 ########################################################################
 
 get_setting() {

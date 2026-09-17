@@ -26,9 +26,11 @@ finalizer is `engine.rancherdesktop.io/mirror`, the cleanup
 helper is `cleanupMirrorResources`, and the name helper is
 `volumeMirrorName`.
 
-When running `containerd`, the containerd namespace is listed as the `namespace`
-label rather than re-using the Kubernetes namespace.  When running `dockerd`,
-namespaces are not supported and we always use `moby` as the value for that label.
+When running `containerd`, the containerd namespace is generally stored in
+either `status.namespace` or `spec.namespace`, as appropriate.  The Kubernetes
+namespace is a separate concept, as among other things the naming requirements
+are distinct.   When running `dockerd`, namespaces are not supported and we
+always use `moby` as the value for the affected fields.
 
 For the `*Request` resources, they use the `Settled` and `Failed` conditions to
 express state.  `Settled` will become `True` when the request object has reached
@@ -50,22 +52,18 @@ for the `Running` condition.  When the VM is running with the `moby` backend,
 the controller:
 
 1. Connects to the Docker engine via the host socket.
-2. Creates the `moby` `ContainerNamespace` resource. The `rancher-desktop`
-   Kubernetes namespace itself is the App controller's.
+2. Creates the `moby` `ContainerNamespace` resource.  This is not the Kubernetes
+   namespace.
 3. Lists all Docker containers, images, and volumes and creates the
    corresponding `Container`, `Image`, and `Volume` mirrors.
 4. Watches the Docker event stream for create, update, and delete events.
 
 With `containerEngine.name=containerd` the controller runs a containerd watcher
 instead, mirroring each containerd namespace along with its containers and
-images.  A namespace whose name is not a valid Kubernetes object name gets no
-`ContainerNamespace` mirror; its containers are still mirrored.  Whether a
-container's mirror name is hashed turns on its own ID, not on the namespace
-holding it, so a container with an ordinary ID keeps that ID as its mirror
-name in a skipped namespace exactly as it would anywhere else.  Its
-`.status.namespace` then names a namespace no `ContainerNamespace` object
-represents.  containerd has no volume concept, so it creates no `Volume`
-mirrors.
+images.  A namespace whose name is not a valid Kubernetes object name will have
+its name encoded; see [`ContainerNamespace`](#namespaces) for details.
+Since containerd has no volume concept, it never creates any `Volume` mirrors.
+
 Windows is the exception, since nothing serves the containerd named pipe there
 yet; the controller sets `ContainerEngineReady` to `True` with reason
 `NotApplicable` and takes no mirroring action.
@@ -87,9 +85,9 @@ controller removes all mirror resources and sets `ContainerEngineReady` to
 `engine.rancherdesktop.io/mirror` finalizer. A K8s-side delete triggers
 the finalizer handler, which deletes the corresponding engine object and
 then strips the finalizer so the mirror can be garbage-collected.
-`ContainerNamespace` mirrors carry no finalizer: deleting one is not
+`ContainerNamespace` mirrors do not carry a finalizer: deleting one is not
 offered as a way to delete the engine namespace, so a finalizer with no
-handler would only trap the delete in Terminating.
+handler would only trap the delete in _Terminating_.
 
 An engine-side delete (for example, `docker rm`) goes the other way:
 the engine controller strips the finalizer and deletes the mirror

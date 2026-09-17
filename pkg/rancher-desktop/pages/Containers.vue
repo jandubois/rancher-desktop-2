@@ -203,12 +203,8 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapTypedState('container-engine', { namespaceObjects: 'namespaces' }),
     ...mapTypedState('container-engine', ['containers', 'images', 'currentNamespace', 'error']),
-    ...mapTypedGetters('container-engine', ['supportsNamespaces']),
-    namespaces() {
-      return (this.namespaceObjects ?? []).map(ns => ns.metadata?.name).filter(defined);
-    },
+    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces']),
     rows(): RowItem[] {
       const StatusRunning = 'running';
       return (this.containers ?? [])

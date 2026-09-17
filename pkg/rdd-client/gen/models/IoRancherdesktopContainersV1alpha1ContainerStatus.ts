@@ -57,7 +57,7 @@ export class IoRancherdesktopContainersV1alpha1ContainerStatus {
     */
     'name': string;
     /**
-    * Namespace is the container namespace; refers to a `ContainerNamespace` object in the same Kubernetes namespace.
+    * Namespace is the container namespace. A `ContainerNamespace` object in the same Kubernetes namespace exists where its `status.name` matches this value. See the `ContainerNamespace` documentation for more details.
     */
     'namespace': string;
     /**

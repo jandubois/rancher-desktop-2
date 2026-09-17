@@ -25,6 +25,10 @@ export class IoRancherdesktopAppV1alpha1AppStatus {
     * kubernetesPort is the intended port for the Kubernetes API server. AppReconciler calls ResolvePort to find a free port, closes the listener, then persists this value. Lima\'s identity port-forward rule (guestPortRange:[1,65535] → hostPortRange:[0,0]) later binds the same port on the host.  The window between ResolvePort releasing the port and Lima binding it spans VM boot, provisioning, and k3s install — minutes on a cold start. If another process claims the port during that window, Lima logs \"failed to set up forwarding tcp port\" and kubectl gets connection refused; the LimaVM still reports Running. A future improvement would keep the listener open until Lima is ready to bind, or read the bound host port from Lima state instead of storing an intent.
     */
     'kubernetesPort'?: number;
+    /**
+    * supportsNamespaces reports whether the selected container engine scopes containers and images into namespaces: true for containerd, false for moby. The engine controller writes it together with the ContainerEngineReady condition; the field is absent until that first write, so absence means unknown. It is also false whenever that condition\'s reason is NotApplicable, because a backend that mirrors nothing offers no namespaces to choose from.
+    */
+    'supportsNamespaces'?: boolean;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -41,6 +45,12 @@ export class IoRancherdesktopAppV1alpha1AppStatus {
             "name": "kubernetesPort",
             "baseName": "kubernetesPort",
             "type": "number",
+            "format": ""
+        },
+        {
+            "name": "supportsNamespaces",
+            "baseName": "supportsNamespaces",
+            "type": "boolean",
             "format": ""
         }    ];
 

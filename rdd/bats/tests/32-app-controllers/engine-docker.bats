@@ -793,12 +793,7 @@ EOF
 docker_context_dir() {
     local name="$1"
     local hash
-    # sha256sum on Linux, shasum on macOS
-    if command -v sha256sum &>/dev/null; then
-        hash=$(printf '%s' "${name}" | sha256sum | awk '{print $1}')
-    else
-        hash=$(printf '%s' "${name}" | shasum -a 256 | awk '{print $1}')
-    fi
+    hash=$(sha256 "${name}")
     echo "${DOCKER_CONFIG}/contexts/meta/${hash}"
 }
 

@@ -17,6 +17,9 @@ type ContainerNamespaceApplyConfiguration struct {
 	v1.TypeMetaApplyConfiguration `json:",inline"`
 	// Metadata is a standard object metadata
 	*v1.ObjectMetaApplyConfiguration `json:"metadata,omitempty"`
+	// Status defines the observed state of the container namespace.
+	//
+	Status *ContainerNamespaceStatusApplyConfiguration `json:"status,omitempty"`
 }
 
 // ContainerNamespace constructs a declarative configuration of the ContainerNamespace type for use with
@@ -188,6 +191,14 @@ func (b *ContainerNamespaceApplyConfiguration) ensureObjectMetaApplyConfiguratio
 	if b.ObjectMetaApplyConfiguration == nil {
 		b.ObjectMetaApplyConfiguration = &v1.ObjectMetaApplyConfiguration{}
 	}
+}
+
+// WithStatus sets the Status field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the Status field is set to the value of the last call.
+func (b *ContainerNamespaceApplyConfiguration) WithStatus(value *ContainerNamespaceStatusApplyConfiguration) *ContainerNamespaceApplyConfiguration {
+	b.Status = value
+	return b
 }
 
 // GetKind retrieves the value of the Kind field in the declarative configuration.

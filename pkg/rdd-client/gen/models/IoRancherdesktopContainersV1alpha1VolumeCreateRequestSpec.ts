@@ -25,7 +25,7 @@ export class IoRancherdesktopContainersV1alpha1VolumeCreateRequestSpec {
     */
     'name'?: string;
     /**
-    * Namespace of the volume; refers to a `ContainerNamespace` object in the same Kubernetes namespace.  If not specified, the volume will be created in the default namespace.
+    * Namespace of the volume. A `ContainerNamespace` object of the same name exists in the same Kubernetes namespace whenever the engine\'s name for it is a valid object name.  If not specified, the volume will be created in the default namespace.
     */
     'namespace'?: string;
 

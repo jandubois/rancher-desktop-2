@@ -18,16 +18,9 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopAppV1alpha1AppSpecApplication {
     /**
-    * addPath controls whether and where the Rancher Desktop bin directory
-    * (~/.rd<suffix>/bin) is added to the user's PATH, by editing their shell
-    * startup files (Unix) or the user Environment (Windows):
-    *   - "front":  prepend, so the bin directory wins   (bin:$PATH)
-    *   - "back":   append,  so existing PATH entries win ($PATH:bin)
-    *   - "manual": leave PATH alone; remove any lines a previous front/back added.
-    * It defaults to "manual" so CLI-created instances don't touch shell startup
-    * files unasked; the GUI sends "front" when the user opts in.
+    * addPath controls whether and where the Rancher Desktop bin directory (~/.rd<suffix>/bin) is added to the user\'s PATH, by editing their shell startup files (Unix) or the user Environment (Windows):   - \"front\":  prepend, so the bin directory wins   (bin:$PATH)   - \"back\":   append,  so existing PATH entries win ($PATH:bin)   - \"manual\": leave PATH alone; remove any lines a previous front/back added. It defaults to \"manual\" so CLI-created instances don\'t touch shell startup files unasked; the GUI sends \"front\" when the user opts in.  On Windows the user Environment Path is a plain semicolon-separated list with nowhere to fence our entry, so under \"manual\" we can\'t tell an entry we added from one the user typed. We therefore remove the bin directory only when it sits at the very front or back of Path (the two spots front/back would have written) and leave a copy the user placed in the middle alone. The trade-off: an entry parked at either end is treated as ours and removed, so a user who wants the bin directory at the front or back on Windows must use \"front\"/\"back\", not place it there under \"manual\". Unix files use start/end markers, so only our own block is touched regardless of position.
     */
-    'addPath'?: string;
+    'addPath'?: IoRancherdesktopAppV1alpha1AppSpecApplicationAddPathEnum;
     /**
     * locale is the language/locale to use for the Rancher Desktop App.
     */
@@ -42,7 +35,7 @@ export class IoRancherdesktopAppV1alpha1AppSpecApplication {
         {
             "name": "addPath",
             "baseName": "addPath",
-            "type": "string",
+            "type": "IoRancherdesktopAppV1alpha1AppSpecApplicationAddPathEnum",
             "format": ""
         },
         {
@@ -65,3 +58,10 @@ export class IoRancherdesktopAppV1alpha1AppSpecApplication {
     public constructor() {
     }
 }
+
+export enum IoRancherdesktopAppV1alpha1AppSpecApplicationAddPathEnum {
+    Front = 'front',
+    Back = 'back',
+    Manual = 'manual'
+}
+

@@ -134,11 +134,7 @@ export default defineComponent({
   },
   computed: {
     ...mapTypedState('container-engine', ['error', 'currentNamespace', 'volumes']),
-    ...mapTypedState('container-engine', { namespaceObjects: 'namespaces' }),
-    ...mapTypedGetters('container-engine', ['supportsNamespaces']),
-    namespaces() {
-      return (this.namespaceObjects ?? []).map(ns => ns.metadata?.name).filter(defined);
-    },
+    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces']),
     rows(): RowItem[] {
       return (this.volumes ?? [])
         .filter(hasField('metadata'))

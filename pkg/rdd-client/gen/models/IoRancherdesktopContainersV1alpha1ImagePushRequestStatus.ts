@@ -18,7 +18,7 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopContainersV1alpha1ImagePushRequestStatus {
     /**
-    * Conditions represent the state of the image push request. Current known condition types include:  - \"Complete\": the image push request has successfully completed.  - \"Failed\": the image push request has failed. The status of each condition is one of True, False, or Unknown.
+    * Conditions represent the state of the image push request. Current known condition types include:  - \"Settled\": the image push request has reached a terminal state.  - \"Failed\": the image push request has failed. The status of each condition is one of True, False, or Unknown.
     */
     'conditions'?: Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>;
 

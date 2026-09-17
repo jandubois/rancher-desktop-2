@@ -11,8 +11,22 @@ import (
 // ContainerNamespaceKind is the Kind string for ContainerNamespace resources.
 const ContainerNamespaceKind = "ContainerNamespace"
 
+// ContainerNamespaceStatus defines the observed state of a ContainerNamespace.
+type ContainerNamespaceStatus struct {
+	// Name is the name of the container namespace.
+	//
+	// +optional
+	Name string `json:"name,omitempty"`
+	// Labels are the labels associated with the container namespace.
+	//
+	// +optional
+	Labels map[string]string `json:"labels,omitzero"`
+}
+
 // +kubebuilder:object:root=true
 // +kubebuilder:ac:generate=true
+// +kubebuilder:subresource:status
+// +kubebuilder:selectablefield:JSONPath=.status.name
 // +kubebuilder:resource:shortName=cns,categories="all"
 
 // ContainerNamespace defines a container engine namespace; note that this is distinct
@@ -24,6 +38,11 @@ type ContainerNamespace struct {
 	//
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitempty,omitzero"`
+
+	// Status defines the observed state of the container namespace.
+	//
+	// +optional
+	Status ContainerNamespaceStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true

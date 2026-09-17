@@ -35,13 +35,9 @@ export default defineComponent({
 
   computed: {
     ...mapTypedGetters('extensions', ['installedExtensions']),
-    ...mapTypedGetters('container-engine', ['supportsNamespaces']),
+    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces']),
     ...mapTypedState('rdd-connection', { kubeNamespace: 'namespace' }),
     ...mapTypedState('container-engine', ['currentNamespace', 'images']),
-    ...mapTypedState('container-engine', { namespaceObjects: 'namespaces' }),
-    namespaces() {
-      return (this.namespaceObjects ?? []).map(ns => ns.metadata?.name).filter(defined);
-    },
     rancherImages(): string[] {
       return (this.images ?? [])
         .map(image => image.status?.repoTag)

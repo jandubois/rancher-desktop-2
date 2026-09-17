@@ -34,7 +34,7 @@ export class IoRancherdesktopContainersV1alpha1ContainerCreateRequestSpec {
     */
     'name'?: string;
     /**
-    * Namespace is the container namespace; refers to a `ContainerNamespace` object in the same Kubernetes namespace.  If not specified, the container will be created in the default namespace.
+    * Namespace is the container namespace; a `ContainerNamespace` object of the same name exists when the engine\'s name for it is a valid object name.  If not specified, the container will be created in the default namespace.
     */
     'namespace'?: string;
     /**

@@ -22,6 +22,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &containersv1alpha1.ContainerLastActionApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("ContainerNamespace"):
 		return &containersv1alpha1.ContainerNamespaceApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("ContainerNamespaceStatus"):
+		return &containersv1alpha1.ContainerNamespaceStatusApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("ContainerPort"):
 		return &containersv1alpha1.ContainerPortApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("ContainerPortBinding"):
