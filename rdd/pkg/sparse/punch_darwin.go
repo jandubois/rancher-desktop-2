@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-FileCopyrightText: The Rancher Desktop Authors
 
-package xz
+package sparse
 
 import (
 	"os"
