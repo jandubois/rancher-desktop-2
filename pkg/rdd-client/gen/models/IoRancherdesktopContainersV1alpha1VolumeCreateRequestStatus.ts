@@ -18,7 +18,7 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopContainersV1alpha1VolumeCreateRequestStatus {
     /**
-    * Conditions represent the state of the volume creation request. Current known condition types include:  - \"Complete\": the volume creation request has successfully completed.  - \"Failed\": the volume creation request has failed. The status of each condition is one of True, False, or Unknown.
+    * Conditions represent the state of the volume creation request. Current known condition types include:  - \"Settled\": the volume creation request has reached a terminal state.  - \"Failed\": the volume creation request has failed. The status of each condition is one of True, False, or Unknown.
     */
     'conditions'?: Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>;
 

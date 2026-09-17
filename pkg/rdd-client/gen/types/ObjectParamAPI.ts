@@ -35,6 +35,7 @@ import { IoRancherdesktopContainersV1alpha1ContainerCreateRequestStatus } from '
 import { IoRancherdesktopContainersV1alpha1ContainerList } from '../models/IoRancherdesktopContainersV1alpha1ContainerList';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespace } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespace';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespaceList } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceList';
+import { IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusLastAction } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusLastAction';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner';
@@ -10231,6 +10232,64 @@ export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedContainerNa
     force?: boolean
 }
 
+export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedContainerNamespaceStatusRequest {
+    /**
+     * name of the ContainerNamespace
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    namespace: string
+    /**
+     * 
+     * @type any
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    body: any
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    fieldValidation?: string
+    /**
+     * Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedContainerNamespaceStatus
+     */
+    force?: boolean
+}
+
 export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedContainerStatusRequest {
     /**
      * name of the Container
@@ -11109,6 +11168,37 @@ export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedContainerNam
     resourceVersion?: string
 }
 
+export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedContainerNamespaceStatusRequest {
+    /**
+     * name of the ContainerNamespace
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedContainerNamespaceStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedContainerNamespaceStatus
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedContainerNamespaceStatus
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedContainerNamespaceStatus
+     */
+    resourceVersion?: string
+}
+
 export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedContainerStatusRequest {
     /**
      * name of the Container
@@ -11712,6 +11802,57 @@ export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedContainer
      * Defaults to: undefined
      * @type string
      * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespace
+     */
+    fieldValidation?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedContainerNamespaceStatusRequest {
+    /**
+     * name of the ContainerNamespace
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ContainerNamespace
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
+     */
+    body: IoRancherdesktopContainersV1alpha1ContainerNamespace
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedContainerNamespaceStatus
      */
     fieldValidation?: string
 }
@@ -13171,6 +13312,22 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * partially update status of the specified ContainerNamespace
+     * @param param the request object
+     */
+    public patchNamespacedContainerNamespaceStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedContainerNamespaceStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>> {
+        return this.api.patchNamespacedContainerNamespaceStatusWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update status of the specified ContainerNamespace
+     * @param param the request object
+     */
+    public patchNamespacedContainerNamespaceStatus(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedContainerNamespaceStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
+        return this.api.patchNamespacedContainerNamespaceStatus(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
      * partially update status of the specified Container
      * @param param the request object
      */
@@ -13443,6 +13600,22 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * read status of the specified ContainerNamespace
+     * @param param the request object
+     */
+    public readNamespacedContainerNamespaceStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedContainerNamespaceStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>> {
+        return this.api.readNamespacedContainerNamespaceStatusWithHttpInfo(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read status of the specified ContainerNamespace
+     * @param param the request object
+     */
+    public readNamespacedContainerNamespaceStatus(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedContainerNamespaceStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
+        return this.api.readNamespacedContainerNamespaceStatus(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
      * read status of the specified Container
      * @param param the request object
      */
@@ -13712,6 +13885,22 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
      */
     public replaceNamespacedContainerNamespace(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedContainerNamespaceRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
         return this.api.replaceNamespacedContainerNamespace(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace status of the specified ContainerNamespace
+     * @param param the request object
+     */
+    public replaceNamespacedContainerNamespaceStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedContainerNamespaceStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ContainerNamespace>> {
+        return this.api.replaceNamespacedContainerNamespaceStatusWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace status of the specified ContainerNamespace
+     * @param param the request object
+     */
+    public replaceNamespacedContainerNamespaceStatus(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedContainerNamespaceStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ContainerNamespace> {
+        return this.api.replaceNamespacedContainerNamespaceStatus(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
     }
 
     /**

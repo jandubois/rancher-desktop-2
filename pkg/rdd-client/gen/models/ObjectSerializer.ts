@@ -31,6 +31,7 @@ export * from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateReques
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerList';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespace';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceList';
+export * from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusLastAction';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner';
@@ -220,7 +221,7 @@ import { EventsV1EventSeries } from '../models/EventsV1EventSeries';
 import { IoRancherdesktopAppV1alpha1App } from '../models/IoRancherdesktopAppV1alpha1App';
 import { IoRancherdesktopAppV1alpha1AppList } from '../models/IoRancherdesktopAppV1alpha1AppList';
 import { IoRancherdesktopAppV1alpha1AppSpec } from '../models/IoRancherdesktopAppV1alpha1AppSpec';
-import { IoRancherdesktopAppV1alpha1AppSpecApplication } from '../models/IoRancherdesktopAppV1alpha1AppSpecApplication';
+import { IoRancherdesktopAppV1alpha1AppSpecApplication, IoRancherdesktopAppV1alpha1AppSpecApplicationAddPathEnum     } from '../models/IoRancherdesktopAppV1alpha1AppSpecApplication';
 import { IoRancherdesktopAppV1alpha1AppSpecApplicationUpdates } from '../models/IoRancherdesktopAppV1alpha1AppSpecApplicationUpdates';
 import { IoRancherdesktopAppV1alpha1AppSpecContainerEngine, IoRancherdesktopAppV1alpha1AppSpecContainerEngineNameEnum   } from '../models/IoRancherdesktopAppV1alpha1AppSpecContainerEngine';
 import { IoRancherdesktopAppV1alpha1AppSpecKubernetes } from '../models/IoRancherdesktopAppV1alpha1AppSpecKubernetes';
@@ -239,6 +240,7 @@ import { IoRancherdesktopContainersV1alpha1ContainerCreateRequestStatus } from '
 import { IoRancherdesktopContainersV1alpha1ContainerList } from '../models/IoRancherdesktopContainersV1alpha1ContainerList';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespace } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespace';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespaceList } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceList';
+import { IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatus               , IoRancherdesktopContainersV1alpha1ContainerStatusStatusEnum   } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusLastAction, IoRancherdesktopContainersV1alpha1ContainerStatusLastActionActionEnum     , IoRancherdesktopContainersV1alpha1ContainerStatusLastActionStateEnum   } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusLastAction';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner';
@@ -427,6 +429,7 @@ let primitives = [
                  ];
 
 let enumsMap: Set<string> = new Set<string>([
+    "IoRancherdesktopAppV1alpha1AppSpecApplicationAddPathEnum",
     "IoRancherdesktopAppV1alpha1AppSpecContainerEngineNameEnum",
     "IoRancherdesktopAppV1alpha1AppStatusConditionsInnerStatusEnum",
     "IoRancherdesktopContainersV1alpha1ContainerStatusStatusEnum",
@@ -490,6 +493,7 @@ let typeMap: {[index: string]: any} = {
     "IoRancherdesktopContainersV1alpha1ContainerList": IoRancherdesktopContainersV1alpha1ContainerList,
     "IoRancherdesktopContainersV1alpha1ContainerNamespace": IoRancherdesktopContainersV1alpha1ContainerNamespace,
     "IoRancherdesktopContainersV1alpha1ContainerNamespaceList": IoRancherdesktopContainersV1alpha1ContainerNamespaceList,
+    "IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus": IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus,
     "IoRancherdesktopContainersV1alpha1ContainerStatus": IoRancherdesktopContainersV1alpha1ContainerStatus,
     "IoRancherdesktopContainersV1alpha1ContainerStatusLastAction": IoRancherdesktopContainersV1alpha1ContainerStatusLastAction,
     "IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner": IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner,

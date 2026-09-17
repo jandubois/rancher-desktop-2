@@ -18,7 +18,7 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopContainersV1alpha1ImageScanRequestStatus {
     /**
-    * Conditions represent the state of the image scan request. Current known condition types include:  - \"Complete\": the image scan request has successfully completed.  - \"Failed\": the image scan request has failed. The status of each condition is one of True, False, or Unknown.
+    * Conditions represent the state of the image scan request. Current known condition types include:  - \"Settled\": the image scan request has reached a terminal state.  - \"Failed\": the image scan request has failed. The status of each condition is one of True, False, or Unknown.
     */
     'conditions'?: Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>;
     /**

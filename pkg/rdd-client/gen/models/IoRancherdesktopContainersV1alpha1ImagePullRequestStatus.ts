@@ -18,9 +18,29 @@ import { HttpFile } from '../http/http';
 */
 export class IoRancherdesktopContainersV1alpha1ImagePullRequestStatus {
     /**
-    * Conditions represent the state of the image pull request. Current known condition types include:  - \"Complete\": the image pull request has successfully completed.  - \"Failed\": the image pull request has failed. The status of each condition is one of True, False, or Unknown.
+    * Conditions represent the state of the image pull request. Current known condition types include:  - \"Settled\": the image pull request has reached a terminal state.  - \"Failed\": the image pull request has failed. The status of each condition is one of True, False, or Unknown.
     */
     'conditions'?: Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>;
+    /**
+    * Current is the current progress of the image pull request.
+    */
+    'current'?: number;
+    /**
+    * LastUpdateTime is the time the status was last updated.
+    */
+    'lastUpdateTime'?: Date;
+    /**
+    * Start is the initial progress of the image pull request.
+    */
+    'start'?: number;
+    /**
+    * Total is the total amount of work for the image pull request.
+    */
+    'total'?: number;
+    /**
+    * Units is the unit of measurement for the progress fields, including Start, Current, and Total.
+    */
+    'units'?: string;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -31,6 +51,36 @@ export class IoRancherdesktopContainersV1alpha1ImagePullRequestStatus {
             "name": "conditions",
             "baseName": "conditions",
             "type": "Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>",
+            "format": ""
+        },
+        {
+            "name": "current",
+            "baseName": "current",
+            "type": "number",
+            "format": "int64"
+        },
+        {
+            "name": "lastUpdateTime",
+            "baseName": "lastUpdateTime",
+            "type": "Date",
+            "format": "date-time"
+        },
+        {
+            "name": "start",
+            "baseName": "start",
+            "type": "number",
+            "format": "int64"
+        },
+        {
+            "name": "total",
+            "baseName": "total",
+            "type": "number",
+            "format": "int64"
+        },
+        {
+            "name": "units",
+            "baseName": "units",
+            "type": "string",
             "format": ""
         }    ];
 

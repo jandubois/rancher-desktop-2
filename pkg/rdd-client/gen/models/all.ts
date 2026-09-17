@@ -31,6 +31,7 @@ export * from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateReques
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerList'
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespace'
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceList'
+export * from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus'
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus'
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusLastAction'
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner'

@@ -13,17 +13,17 @@
 import { HttpFile } from '../http/http';
 
 /**
-* Spec defines the desired state of ImagePullRequest
+* Status defines the observed state of the container namespace.
 */
-export class IoRancherdesktopContainersV1alpha1ImagePullRequestSpec {
+export class IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus {
     /**
-    * Namespace is the container namespace; a `ContainerNamespace` object of the same name exists when the engine\'s name for it is a valid object name.  If not specified, the image will be pulled into the default namespace.
+    * Labels are the labels associated with the container namespace.
     */
-    'namespace'?: string;
+    'labels'?: { [key: string]: string; };
     /**
-    * RepoTag is the image to pull.
+    * Name is the name of the container namespace.
     */
-    'repoTag': string;
+    'name'?: string;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -31,20 +31,20 @@ export class IoRancherdesktopContainersV1alpha1ImagePullRequestSpec {
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "namespace",
-            "baseName": "namespace",
-            "type": "string",
+            "name": "labels",
+            "baseName": "labels",
+            "type": "{ [key: string]: string; }",
             "format": ""
         },
         {
-            "name": "repoTag",
-            "baseName": "repoTag",
+            "name": "name",
+            "baseName": "name",
             "type": "string",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return IoRancherdesktopContainersV1alpha1ImagePullRequestSpec.attributeTypeMap;
+        return IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus.attributeTypeMap;
     }
 
     public constructor() {
