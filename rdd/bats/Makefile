@@ -10,9 +10,9 @@ BATS_CORE := ./lib/bats-core/bin/bats
 # support-bundle capture; for long local runs, set a large value
 # (e.g. 86400) instead of 0.
 #
-# bats-app on macos-15-intel runners exceeds 45 minutes. Raising the cap is a
-# stopgap; splitting the suite and cutting VM restarts is the real fix.
-BATS_TIMEOUT ?= 3600
+# bats-app on macos-15-intel is the run this value has to cover. Raising it is
+# a stopgap; splitting the suite and cutting VM restarts is the real fix.
+BATS_TIMEOUT ?= 4500
 BATS = $(if $(filter-out 0,$(BATS_TIMEOUT)),../scripts/bats-with-timeout.sh $(BATS_TIMEOUT)) $(BATS_CORE)
 
 default: bats-all
