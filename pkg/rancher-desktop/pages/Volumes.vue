@@ -158,7 +158,7 @@ export default defineComponent({
             },
           ],
           deleteVolume: async(args?: Volume[]) => {
-            const targets = Array.isArray(args) ? args : [volume];
+            const targets = args?.length ? args : [volume];
 
             if (await this.confirmDelete(targets)) {
               await Promise.all(targets.map(target => this.volumeDelete({ volume: target })));
