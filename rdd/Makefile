@@ -3,6 +3,11 @@
 # SPDX-FileCopyrightText: The Rancher Desktop Authors
 # SPDX-FileCopyrightText: The KCP Authors
 
+# Delete the target of a recipe that fails, so make cannot take a truncated
+# file for a good one. GNU make applies this to every target in the file;
+# listing prerequisites does not narrow it.
+.DELETE_ON_ERROR:
+
 EXE := $(if $(shell sh -c 'command -v winver.exe'),.exe,)
 KUBE_VERSION := $(shell go$(EXE) list -m -f '{{.Version}}' 'k8s.io/kubernetes')
 KUBE_MAJOR_VERSION := $(shell echo $(KUBE_VERSION) | sed 's/v\([0-9]*\).*/\1/')
@@ -147,23 +152,23 @@ $(NERDCTL_DIR)/bin/nerdctl: $(NERDCTL_TARBALL)
 $(NERDCTL_DIR)/bin/buildctl $(NERDCTL_DIR)/bin/buildkitd: $(NERDCTL_DIR)/bin/nerdctl ;
 
 # distro-overlay works on the uncompressed distro, so the build unpacks the
-# pristine artifact, overlays that copy, and compresses the result for the
-# embed. The copy is over a gigabyte, so the recipe deletes it as soon as xz
-# has read it.
-$(DISTRO_IMAGE): $(PRISTINE_DISTRO) $(OVERLAY_SOURCES) $(OVERLAY_TOOL_SOURCES)
+# pristine artifact and overlays that copy in place. The copy is over a
+# gigabyte, and make deletes an intermediate after a failed or interrupted
+# build as well as a finished one.
+$(WORKING_DISTRO): $(PRISTINE_DISTRO) $(OVERLAY_SOURCES) $(OVERLAY_TOOL_SOURCES)
 	@command -v xz >/dev/null || { \
 		echo 'xz is missing; install it to build the guest distro image.' >&2; \
 		exit 1; }
-	xz --decompress --stdout $(PRISTINE_DISTRO) > $(WORKING_DISTRO)
+	xz --decompress --stdout $(PRISTINE_DISTRO) > $@
 	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
 	go$(EXE) run ./cmd/distro-overlay --manifest overlay/manifest.yaml --source overlay \
-		--mtime $(OVERLAY_MTIME) --in-place $(WORKING_DISTRO)
-	xz $(XZ_OPTIONS) --stdout $(WORKING_DISTRO) > $@
-	rm -f $(WORKING_DISTRO)
-	ls -lh $@
+		--mtime $(OVERLAY_MTIME) --in-place $@
 
-# A failed xz leaves a truncated image that make would take for a good one.
-.DELETE_ON_ERROR:
+.INTERMEDIATE: $(WORKING_DISTRO)
+
+$(DISTRO_IMAGE): $(WORKING_DISTRO)
+	xz $(XZ_OPTIONS) --stdout $< > $@
+	ls -lh $@
 
 FORCE:
 .PHONY: FORCE
