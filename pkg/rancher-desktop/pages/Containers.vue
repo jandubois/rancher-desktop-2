@@ -138,7 +138,7 @@ import Banner from '@pkg/components/Banner.vue';
 import ContainerStatusBadge from '@pkg/components/ContainerStatusBadge.vue';
 import SortableTable from '@pkg/components/SortableTable';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
-import { ipcRenderer } from '@pkg/utils/ipcRenderer';
+import { showDeleteConfirmation } from '@pkg/utils/deleteConfirmation';
 import { hasField } from '@pkg/utils/iterator';
 import { defined } from '@pkg/utils/typeUtils';
 import { IoRancherdesktopContainersV1alpha1Container as Container } from '@rdd-client';
@@ -299,23 +299,13 @@ export default defineComponent({
      * Ask the user to confirm deleting the given containers.
      */
     async confirmDelete(containers: Container[]): Promise<boolean> {
-      const acceptId = 0;
-      const cancelId = 1;
-      const result = await ipcRenderer.invoke('show-message-box', {
-        type:      'question',
-        title:     this.t('containers.confirmDelete.title'),
-        message:   this.t('containers.confirmDelete.message', { count: containers.length }),
-        detail:    containers.map(container => container.status?.name || container.metadata?.name).join('\n'),
-        buttons:   Object.assign([], {
-          [acceptId]: this.t('containers.confirmDelete.confirm'),
-          [cancelId]: this.t('generic.cancel'),
-        }),
-        defaultId:           cancelId,
-        cancelId,
-        normalizeAccessKeys: true,
+      return await showDeleteConfirmation({
+        title:   this.t('containers.confirmDelete.title'),
+        message: this.t('containers.confirmDelete.message', { count: containers.length }),
+        confirm: this.t('containers.confirmDelete.confirm'),
+        cancel:  this.t('generic.cancel'),
+        names:   containers.map(container => container.status?.name || container.metadata?.name || ''),
       });
-
-      return result.response !== cancelId;
     },
     getContainerActions(container: Container) {
       return [
