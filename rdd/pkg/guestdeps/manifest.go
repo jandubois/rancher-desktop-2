@@ -14,10 +14,12 @@ package guestdeps
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"net/url"
 	"os"
 	"path"
 	"regexp"
+	"slices"
 	"strings"
 
 	"sigs.k8s.io/yaml"
@@ -76,7 +78,41 @@ func LoadManifest(manifestPath string) (Manifest, error) {
 			return nil, fmt.Errorf("dependency %s in %s: %w", name, manifestPath, err)
 		}
 	}
+	if err := m.checkFilenames(); err != nil {
+		return nil, fmt.Errorf("%s: %w", manifestPath, err)
+	}
 	return m, nil
+}
+
+// checkFilenames rejects a manifest where one build target would stage two
+// assets under the same name, which leaves the build with whichever was staged
+// last. A name reused across targets is how the Makefile depends on a staged
+// file at all, so two assets collide only when one target selects both.
+func (m Manifest) checkFilenames() error {
+	type staged struct {
+		dependency string
+		asset      Asset
+	}
+	var seen []staged
+	for _, name := range slices.Sorted(maps.Keys(m)) {
+		for _, asset := range m[name].Assets {
+			for _, other := range seen {
+				if other.asset.Filename == asset.Filename && sharesTarget(other.asset, asset) {
+					return fmt.Errorf("%s %s and %s %s both stage %q",
+						other.dependency, other.asset, name, asset, asset.Filename)
+				}
+			}
+			seen = append(seen, staged{name, asset})
+		}
+	}
+	return nil
+}
+
+// sharesTarget reports whether one build target can select both assets. An
+// asset describes the targets it suits exactly as a selector describes the one
+// it looks for, so reading a as a selector answers the question.
+func sharesTarget(a, b Asset) bool {
+	return Selector{Platform: a.Platform, Arch: a.Arch, Variant: a.Variant}.matches(b)
 }
 
 // validate rejects an entry a downloader cannot act on. Everything it checks is

@@ -256,3 +256,52 @@ func TestSelectRejectsAmbiguousAndMissingAssets(t *testing.T) {
 	_, err = m.Select("nerdctl", Selector{Platform: "linux", Arch: "amd64"})
 	assert.ErrorContains(t, err, `no dependency "nerdctl"`)
 }
+
+// Two dependencies staging one file name would have the second overwrite the
+// first, leaving the build with the wrong bytes under a name it depends on.
+// One dependency reusing a name across architectures stays fine, because no
+// build stages both; sampleManifest does that with distro.raw.xz.
+func TestLoadManifestRejectsTwoDependenciesStagingOneFilename(t *testing.T) {
+	for name, content := range map[string]string{
+		"assets sharing a target": `
+mkcert:
+  version: 1.4.4
+  assets:
+    - platform: linux
+      arch: amd64
+      url: https://example.test/mkcert-v1.4.4-linux-amd64
+      checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: mkcert
+tools:
+  version: 1.0.0
+  assets:
+    - platform: linux
+      arch: amd64
+      url: https://example.test/tools-1.0.0-linux-amd64
+      checksum: sha256:a6d9e52dbafa69138ac84d2812b01c158ba3b19cf7c8725edefcee0b776afb61
+      filename: mkcert
+`,
+		"an arch-independent asset against an arch-specific one": `
+mkcert:
+  version: 1.4.4
+  assets:
+    - platform: linux
+      arch: amd64
+      url: https://example.test/mkcert-v1.4.4-linux-amd64
+      checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: mkcert
+tools:
+  version: 1.0.0
+  assets:
+    - platform: linux
+      url: https://example.test/tools-1.0.0.tar.gz
+      checksum: sha256:a6d9e52dbafa69138ac84d2812b01c158ba3b19cf7c8725edefcee0b776afb61
+      filename: mkcert
+`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := LoadManifest(writeManifest(t, content))
+			assert.ErrorContains(t, err, `both stage "mkcert"`)
+		})
+	}
+}
