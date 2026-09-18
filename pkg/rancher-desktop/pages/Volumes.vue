@@ -79,7 +79,7 @@ import Banner from '@pkg/components/Banner.vue';
 import SortableTable from '@pkg/components/SortableTable';
 import type { Settings } from '@pkg/config/settings';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
-import { ipcRenderer } from '@pkg/utils/ipcRenderer';
+import { showDeleteConfirmation } from '@pkg/utils/deleteConfirmation';
 import { hasField } from '@pkg/utils/iterator';
 import { IoRancherdesktopContainersV1alpha1Volume as Volume } from '@rdd-client';
 
@@ -243,23 +243,13 @@ export default defineComponent({
      * Ask the user to confirm deleting the given volumes.
      */
     async confirmDelete(volumes: Volume[]): Promise<boolean> {
-      const acceptId = 0;
-      const cancelId = 1;
-      const result = await ipcRenderer.invoke('show-message-box', {
-        type:      'question',
-        title:     this.t('volumes.confirmDelete.title'),
-        message:   this.t('volumes.confirmDelete.message', { count: volumes.length }),
-        detail:    volumes.map(volume => volume.status?.name).join('\n'),
-        buttons:   Object.assign([], {
-          [acceptId]: this.t('volumes.confirmDelete.confirm'),
-          [cancelId]: this.t('generic.cancel'),
-        }),
-        defaultId:           cancelId,
-        cancelId,
-        normalizeAccessKeys: true,
+      return await showDeleteConfirmation({
+        title:   this.t('volumes.confirmDelete.title'),
+        message: this.t('volumes.confirmDelete.message', { count: volumes.length }),
+        confirm: this.t('volumes.confirmDelete.confirm'),
+        cancel:  this.t('generic.cancel'),
+        names:   volumes.map(volume => volume.status?.name ?? ''),
       });
-
-      return result.response !== cancelId;
     },
     clearError() {
       switch (this.error?.source) {
