@@ -19,7 +19,7 @@ type ComposeProjectStatusApplyConfiguration struct {
 	//
 	Name *string `json:"name,omitempty"`
 	// WorkingDir is the absolute path to the compose project directory on the
-	// host (i.e. relative to where the RDD process runs). May be unset.
+	// host (i.e. where the RDD process runs). May be unset.
 	//
 	WorkingDir *string `json:"workingDir,omitempty"`
 	// Configs is the list of compose files used to create the project,

@@ -92,7 +92,7 @@ type ComposeProjectStatus struct {
 	// +required
 	Name string `json:"name"`
 	// WorkingDir is the absolute path to the compose project directory on the
-	// host (i.e. relative to where the RDD process runs). May be unset.
+	// host (i.e. where the RDD process runs). May be unset.
 	//
 	// +optional
 	WorkingDir string `json:"workingDir,omitempty"`
@@ -180,6 +180,7 @@ type ComposeUpRequestSpec struct {
 	//
 	// +required
 	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="spec.name is immutable"
+	// +kubebuilder:validation:Pattern="^[a-z0-9][a-z0-9_-]*$"
 	Name string `json:"name"`
 	// WorkingDir is the absolute path to the compose project directory on the
 	// host (i.e. where the RDD process runs).  Used to look up any files needed.

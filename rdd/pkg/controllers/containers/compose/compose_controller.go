@@ -24,6 +24,8 @@ const ControllerName = "compose"
 // APIGroup is the API group this controller belongs to.
 const APIGroup = "containers"
 
+const composeMirrorName = "cmp"
+
 //go:embed crd.yaml
 var controllerCRD string
 
@@ -70,8 +72,8 @@ func (c *controller) GetWebhookManagers() []base.WebhookManager {
 	return c.webhookManagers
 }
 
-// setupWebhookWithRuntimeConfig registers a validating webhook that enforces
-// spec.namespace/spec.name-derived naming on ComposeUpRequest create.
+// setupWebhookWithRuntimeConfig registers a validating webhook for
+// ComposeUpRequest.
 func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
 	mgr.GetLogger().Info("Setting up compose project webhook")
 	validatingConfig := base.WebhookConfig[*v1alpha1.ComposeUpRequest]{
@@ -79,7 +81,6 @@ func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
 		WebhookName: "compose-up-request-validating.containers.rancherdesktop.io",
 		WebhookPort: c.webhookPort,
 		Validator: &composeUpRequestValidator{
-			Client: mgr.GetClient(),
 			Reader: mgr.GetAPIReader(),
 		},
 	}
