@@ -79,21 +79,28 @@ export const GUEST_DEP_VERSIONS_PATH = 'rdd/dependencies.yaml';
  */
 export interface DependencyAsset {
   /** The platform this artifact targets. */
-  platform: AssetPlatform;
+  platform:  AssetPlatform;
   /**
    * The architecture this artifact targets.  Omitted for arch-independent
    * artifacts (e.g. the WiX .NET toolset), which match any architecture.
    */
-  arch?:    GoArch;
+  arch?:     GoArch;
   /** The fully-resolved download URL. */
-  url:      string;
+  url:       string;
   /** The sha256 of the downloaded bytes, `sha256:`-prefixed. */
-  checksum: Sha256Checksum;
+  checksum:  Sha256Checksum;
   /**
    * Distinguishes artifacts that share a platform/arch but differ in kind,
    * such as a Helm chart versus its CRDs.
    */
-  variant?: string;
+  variant?:  string;
+  /**
+   * The name a build stages this artifact under, which stays the same across
+   * versions so the build can depend on it.  Set for guest packages, which
+   * `download-guest-deps` stages by this name; host packages are unpacked by
+   * `postinstall` and carry none.
+   */
+  filename?: string;
 }
 
 /**
@@ -111,11 +118,12 @@ export interface DependencyEntry {
 export type DependencyManifest = Record<string, DependencyEntry>;
 
 interface RawAsset {
-  platform: unknown;
-  arch?:    unknown;
-  url:      unknown;
-  checksum: unknown;
-  variant?: unknown;
+  platform:  unknown;
+  arch?:     unknown;
+  url:       unknown;
+  checksum:  unknown;
+  variant?:  unknown;
+  filename?: unknown;
 }
 
 interface RawEntry {
@@ -140,6 +148,9 @@ function parseAsset(name: string, path: string, raw: RawAsset): DependencyAsset 
   if (raw.variant !== undefined && typeof raw.variant !== 'string') {
     throw new Error(`Asset for ${ name } in ${ path } has invalid variant ${ JSON.stringify(raw.variant) }`);
   }
+  if (raw.filename !== undefined && typeof raw.filename !== 'string') {
+    throw new Error(`Asset for ${ name } in ${ path } has invalid filename ${ JSON.stringify(raw.filename) }`);
+  }
   const asset: DependencyAsset = {
     platform: raw.platform as AssetPlatform,
     url:      raw.url,
@@ -151,6 +162,9 @@ function parseAsset(name: string, path: string, raw: RawAsset): DependencyAsset 
   }
   if (raw.variant !== undefined) {
     asset.variant = raw.variant;
+  }
+  if (raw.filename !== undefined) {
+    asset.filename = raw.filename;
   }
 
   return asset;

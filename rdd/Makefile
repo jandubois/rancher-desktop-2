@@ -3,6 +3,11 @@
 # SPDX-FileCopyrightText: The Rancher Desktop Authors
 # SPDX-FileCopyrightText: The KCP Authors
 
+# Delete the target of a recipe that fails, so make cannot take a truncated
+# file for a good one. GNU make applies this to every target in the file;
+# listing prerequisites does not narrow it.
+.DELETE_ON_ERROR:
+
 EXE := $(if $(shell sh -c 'command -v winver.exe'),.exe,)
 KUBE_VERSION := $(shell go$(EXE) list -m -f '{{.Version}}' 'k8s.io/kubernetes')
 KUBE_MAJOR_VERSION := $(shell echo $(KUBE_VERSION) | sed 's/v\([0-9]*\).*/\1/')
@@ -55,7 +60,32 @@ TARGET_OS := $(if $(filter command line,$(origin GOOS)),$(GOOS),$(shell go$(EXE)
 TARGET_ARCH := $(if $(filter command line,$(origin GOARCH)),$(GOARCH),$(shell go$(EXE) env GOARCH))
 HOST_OS := $(shell go$(EXE) env GOHOSTOS)
 HOST_ARCH := $(shell go$(EXE) env GOHOSTARCH)
-DISTRO_IMAGE := pkg/embedded/distro.$(if $(filter windows,$(TARGET_OS)),tar,raw).xz
+DISTRO_VARIANT := $(if $(filter windows,$(TARGET_OS)),tar,raw)
+DISTRO_IMAGE := pkg/embedded/distro.$(DISTRO_VARIANT).xz
+
+# The overlay adds the binaries the distro stopped shipping once Rancher
+# Desktop took them over. download-guest-deps stages the pristine distro and
+# those downloads into OVERLAY_BUILD, and overlay/manifest.yaml says where each
+# one goes in the guest.
+OVERLAY_BUILD := overlay/build
+PRISTINE_DISTRO := $(OVERLAY_BUILD)/distro.$(DISTRO_VARIANT).xz
+WORKING_DISTRO := $(OVERLAY_BUILD)/distro.$(DISTRO_VARIANT)
+MKCERT := $(OVERLAY_BUILD)/mkcert
+NERDCTL_TARBALL := $(OVERLAY_BUILD)/nerdctl-full.tar.gz
+NERDCTL_DIR := $(OVERLAY_BUILD)/nerdctl
+NERDCTL_BINARIES := $(addprefix $(NERDCTL_DIR)/bin/,buildctl buildkitd nerdctl)
+OVERLAY_SOURCES := overlay/manifest.yaml overlay/nerdctl $(MKCERT) $(NERDCTL_BINARIES)
+OVERLAY_TOOL_SOURCES := $(filter-out %_test.go, \
+	$(wildcard cmd/distro-overlay/*.go pkg/overlay/*.go pkg/sparse/*.go))
+
+# One timestamp for every entry the overlay writes, so the same commit always
+# produces the same image.
+OVERLAY_MTIME := $(shell git$(EXE) log -1 --format=%ct 2>/dev/null || echo 0)
+
+# Compressing the overlaid image dominates this build, and the image size
+# matters only for a build we ship, so the default trades bytes for time. The
+# packaging workflow overrides it.
+XZ_OPTIONS ?= -1 --threads=0
 
 # The guest agent's file name carries the target architecture, and
 # pkg/guestagent embeds the one matching GOARCH, so a build for another
@@ -100,14 +130,49 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 
 .INTERMEDIATE: $(GUESTAGENT_BINARY)
 
-# The downloader runs on every build, because the staged file name has no
-# architecture in it and only a rerun notices a build for a different one. It
-# leaves an up-to-date file untouched, so make does not relink bin/rdd.
+# The downloader runs on every build, because the staged file names have no
+# architecture in them and only a rerun notices a build for a different one. It
+# leaves up-to-date files untouched, so make does not redo the overlay.
 # Naming the host makes `go run` build the tool for this machine; an empty
 # GOOS or GOARCH would fall back to a target saved with `go env -w`.
-$(DISTRO_IMAGE): FORCE
+$(PRISTINE_DISTRO): FORCE
 	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
-	go$(EXE) run ./cmd/download-guest-deps --os $(TARGET_OS) --arch $(TARGET_ARCH)
+	go$(EXE) run ./cmd/download-guest-deps --os $(TARGET_OS) --arch $(TARGET_ARCH) \
+		--dest $(OVERLAY_BUILD)
+
+# That same run stages these, so they have no recipe of their own.
+$(MKCERT) $(NERDCTL_TARBALL): $(PRISTINE_DISTRO) ;
+
+# nerdctl-full also holds containerd, runc and the CNI plugins, which the
+# distro installs from its own repositories. tar restores the archive's own
+# timestamps, which predate the download, so without the touch make unpacks
+# the tarball again on every build.
+$(NERDCTL_DIR)/bin/nerdctl: $(NERDCTL_TARBALL)
+	mkdir -p $(NERDCTL_DIR)
+	tar --extract --gzip --file=$< --directory=$(NERDCTL_DIR) \
+		bin/buildctl bin/buildkitd bin/nerdctl
+	touch $(NERDCTL_BINARIES)
+
+$(NERDCTL_DIR)/bin/buildctl $(NERDCTL_DIR)/bin/buildkitd: $(NERDCTL_DIR)/bin/nerdctl ;
+
+# distro-overlay works on the uncompressed distro, so the build unpacks the
+# pristine artifact and overlays that copy in place. The copy is over a
+# gigabyte, and make deletes an intermediate after a failed or interrupted
+# build as well as a finished one.
+$(WORKING_DISTRO): $(PRISTINE_DISTRO) $(OVERLAY_SOURCES) $(OVERLAY_TOOL_SOURCES)
+	@command -v xz >/dev/null || { \
+		echo 'xz is missing; install it to build the guest distro image.' >&2; \
+		exit 1; }
+	xz --decompress --stdout $(PRISTINE_DISTRO) > $@
+	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
+	go$(EXE) run ./cmd/distro-overlay --manifest overlay/manifest.yaml --source overlay \
+		--mtime $(OVERLAY_MTIME) --in-place $@
+
+.INTERMEDIATE: $(WORKING_DISTRO)
+
+$(DISTRO_IMAGE): $(WORKING_DISTRO)
+	xz $(XZ_OPTIONS) --stdout $< > $@
+	ls -lh $@
 
 FORCE:
 .PHONY: FORCE
@@ -240,10 +305,9 @@ $(BATS_TARGETS): bin/rdd$(EXE)
 check: test lint check-ltag
 .PHONY: check
 
-# clean's distro.*.xz* pattern also matches the .tmp-* file a killed
-# downloader leaves beside the staged image.
 clean:
 	-rm -r bin
 	-rm pkg/guestagent/lima-guestagent.*
-	-rm pkg/embedded/distro.*.xz*
+	-rm pkg/embedded/distro.*.xz
+	-rm -r $(OVERLAY_BUILD)
 .PHONY: clean

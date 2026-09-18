@@ -1,0 +1,25 @@
+# The Rancher Desktop assets distro-overlay merges into the pristine openSUSE
+# distro. `make build-rdd` applies this manifest with --source overlay, so a
+# source path is relative to this directory.
+#
+# download-guest-deps stages mkcert and the nerdctl-full tarball under build/,
+# and the Makefile unpacks the three binaries we use out of that tarball.
+#
+# Everything goes under /usr/local, because the raw image backend cannot add
+# an entry to an htree-indexed directory such as /usr/bin.
+entries:
+- path: /usr/local/bin/nerdctl
+  source: nerdctl
+  mode: "0755"
+- path: /usr/local/libexec/nerdctl/nerdctl
+  source: build/nerdctl/bin/nerdctl
+  mode: "0755"
+- path: /usr/local/bin/buildctl
+  source: build/nerdctl/bin/buildctl
+  mode: "0755"
+- path: /usr/local/bin/buildkitd
+  source: build/nerdctl/bin/buildkitd
+  mode: "0755"
+- path: /usr/local/bin/mkcert
+  source: build/mkcert
+  mode: "0755"

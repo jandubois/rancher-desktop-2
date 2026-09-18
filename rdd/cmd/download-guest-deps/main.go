@@ -17,17 +17,19 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"runtime"
+	"slices"
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestdeps"
 )
 
 func main() {
 	manifest := flag.String("manifest", "dependencies.yaml", "guest dependency manifest (YAML)")
-	dest := flag.String("dest", filepath.Join("pkg", "embedded"), "directory to stage the assets into")
+	dest := flag.String("dest", filepath.Join("overlay", "build"), "directory to stage the assets into")
 	cache := flag.String("cache", "", "directory the verified downloads are kept and pruned in (default: under the user cache directory)")
 	goos := flag.String("os", runtime.GOOS, "the operating system the build targets")
 	goarch := flag.String("arch", runtime.GOARCH, "the architecture the build targets")
@@ -57,13 +59,15 @@ func run(ctx context.Context, log io.Writer, manifestPath, destDir, cacheDir, go
 			return err
 		}
 	}
+	selector := buildSelector(goos, goarch)
 	stager := &guestdeps.Stager{CacheDir: cacheDir, Log: log}
-	for _, staged := range stagedDeps(goos, goarch) {
-		dep, err := manifest.Select(staged.name, staged.selector)
+	// Sorted, so the log reads the same from one build to the next.
+	for _, name := range slices.Sorted(maps.Keys(manifest)) {
+		dep, err := manifest.Select(name, selector)
 		if err != nil {
 			return fmt.Errorf("%s: %w", manifestPath, err)
 		}
-		if err := stager.Stage(ctx, dep, filepath.Join(destDir, staged.filename)); err != nil {
+		if err := stager.Stage(ctx, dep, filepath.Join(destDir, dep.Asset.Filename)); err != nil {
 			return err
 		}
 	}
@@ -75,26 +79,16 @@ func run(ctx context.Context, log io.Writer, manifestPath, destDir, cacheDir, go
 	return nil
 }
 
-// A stagedDep is one guest dependency the build needs on disk, under the file
-// name the build expects it at.
-type stagedDep struct {
-	name     string
-	selector guestdeps.Selector
-	filename string
-}
-
-// stagedDeps lists what a build for goos/goarch stages. Guest dependencies run
-// in the Linux VM, so every asset is a linux one whatever the host; only the
-// image format follows the host, because WSL2 imports the rootfs tarball while
-// Lima's vz and qemu drivers boot the raw ext4 image.
-func stagedDeps(goos, goarch string) []stagedDep {
+// buildSelector picks the asset a dependency ships for the build target. Guest
+// dependencies run in the Linux VM, so every asset is a linux one whatever the
+// host; only the image variant follows the host, because WSL2 imports the
+// rootfs tarball while Lima's vz and qemu drivers boot the raw ext4 image. A
+// dependency that ships one artifact per architecture records no variant and
+// matches either way.
+func buildSelector(goos, goarch string) guestdeps.Selector {
 	variant := "raw"
 	if goos == "windows" {
 		variant = "tar"
 	}
-	return []stagedDep{{
-		name:     "distro",
-		selector: guestdeps.Selector{Platform: "linux", Arch: goarch, Variant: variant},
-		filename: "distro." + variant + ".xz",
-	}}
+	return guestdeps.Selector{Platform: "linux", Arch: goarch, Variant: variant}
 }

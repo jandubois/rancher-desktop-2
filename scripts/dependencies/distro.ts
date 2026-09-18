@@ -42,7 +42,7 @@ export class Distro extends GlobalDependency(GitHubDependency) {
       });
 
       return {
-        platform: 'linux' as const, arch, variant, url, checksum,
+        platform: 'linux' as const, arch, variant, url, checksum, filename: `distro.${ variant }.xz`,
       };
     }));
   }

@@ -20,33 +20,41 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestdeps"
 )
 
-func TestStagedDepsPickTheImageFormatOfTheBackend(t *testing.T) {
+func TestBuildSelectorPicksTheImageFormatOfTheBackend(t *testing.T) {
+	manifest, err := guestdeps.LoadManifest(filepath.Join("..", "..", "dependencies.yaml"))
+	assert.NilError(t, err)
+
 	for goos, want := range map[string]string{
 		"windows": "distro.tar.xz", // WSL2 imports a rootfs tarball
 		"darwin":  "distro.raw.xz", // Lima's vz and qemu drivers boot a raw image
 		"linux":   "distro.raw.xz",
 	} {
 		t.Run(goos, func(t *testing.T) {
-			deps := stagedDeps(goos, "amd64")
-			assert.Equal(t, len(deps), 1)
-			assert.Equal(t, deps[0].filename, want)
-			assert.Equal(t, deps[0].selector.Platform, "linux", "guest assets are Linux ones on every host")
-			assert.Equal(t, deps[0].selector.Arch, "amd64")
+			selector := buildSelector(goos, "amd64")
+			assert.Equal(t, selector.Platform, "linux", "guest assets are Linux ones on every host")
+			assert.Equal(t, selector.Arch, "amd64")
+
+			dep, err := manifest.Select("distro", selector)
+			assert.NilError(t, err)
+			assert.Equal(t, dep.Asset.Filename, want)
 		})
 	}
 }
 
-// Every target the build supports must resolve against the manifest as
-// checked in, so a rename or a dropped asset fails here rather than in a build.
-func TestStagedDepsResolveAgainstTheManifest(t *testing.T) {
+// Every target the build supports must resolve every dependency against the
+// manifest as checked in, so a rename or a dropped asset fails here rather than
+// in a build. One selector has to suit them all, whether or not a dependency
+// ships variants.
+func TestEveryDependencyResolvesAgainstTheManifest(t *testing.T) {
 	manifest, err := guestdeps.LoadManifest(filepath.Join("..", "..", "dependencies.yaml"))
 	assert.NilError(t, err)
+	assert.Assert(t, len(manifest) > 0, "the manifest as checked in has dependencies to resolve")
 
 	for _, goos := range []string{"darwin", "linux", "windows"} {
 		for _, goarch := range []string{"amd64", "arm64"} {
 			t.Run(goos+"/"+goarch, func(t *testing.T) {
-				for _, staged := range stagedDeps(goos, goarch) {
-					dep, err := manifest.Select(staged.name, staged.selector)
+				for name := range manifest {
+					dep, err := manifest.Select(name, buildSelector(goos, goarch))
 					assert.NilError(t, err)
 					assert.Assert(t, dep.Version != "")
 				}
@@ -55,9 +63,10 @@ func TestStagedDepsResolveAgainstTheManifest(t *testing.T) {
 	}
 }
 
-// seedRun writes a manifest naming one arm64 asset and seeds the cache with its
-// bytes, which keeps a run off the network. What these tests exercise is the
-// wiring from manifest to staged file.
+// seedRun writes a manifest naming one arm64 asset per dependency and seeds the
+// cache with the bytes of each, which keeps a run off the network. What these
+// tests exercise is the wiring from manifest to staged file, so every asset
+// holds the same bytes.
 func seedRun(t *testing.T, body []byte) (manifestPath, cacheDir, destDir string) {
 	t.Helper()
 	sum := sha256.Sum256(body)
@@ -72,30 +81,55 @@ distro:
       arch: arm64
       variant: raw
       url: https://example.test/distro.v0.2.7.arm64.raw.xz
-      checksum: sha256:%s
+      checksum: sha256:%[1]s
+      filename: distro.raw.xz
+mkcert:
+  version: 1.4.4
+  assets:
+    - platform: linux
+      arch: arm64
+      url: https://example.test/mkcert-v1.4.4-linux-arm64
+      checksum: sha256:%[1]s
+      filename: mkcert
+nerdctl:
+  version: 2.3.5
+  assets:
+    - platform: linux
+      arch: arm64
+      url: https://example.test/nerdctl-full-2.3.5-linux-arm64.tar.gz
+      checksum: sha256:%[1]s
+      filename: nerdctl-full.tar.gz
 `, hex.EncodeToString(sum[:]))
 	assert.NilError(t, os.WriteFile(manifestPath, []byte(manifest), 0o644))
 
 	cacheDir = filepath.Join(dir, "cache")
-	cachePath := filepath.Join(cacheDir, "distro", "v0.2.7", "distro.v0.2.7.arm64.raw.xz")
-	assert.NilError(t, os.MkdirAll(filepath.Dir(cachePath), 0o755))
-	assert.NilError(t, os.WriteFile(cachePath, body, 0o644))
+	for _, cached := range []struct{ name, version, file string }{
+		{"distro", "v0.2.7", "distro.v0.2.7.arm64.raw.xz"},
+		{"mkcert", "v1.4.4", "mkcert-v1.4.4-linux-arm64"},
+		{"nerdctl", "v2.3.5", "nerdctl-full-2.3.5-linux-arm64.tar.gz"},
+	} {
+		cachePath := filepath.Join(cacheDir, cached.name, cached.version, cached.file)
+		assert.NilError(t, os.MkdirAll(filepath.Dir(cachePath), 0o755))
+		assert.NilError(t, os.WriteFile(cachePath, body, 0o644))
+	}
 
-	return manifestPath, cacheDir, filepath.Join(dir, "embedded")
+	return manifestPath, cacheDir, filepath.Join(dir, "staged")
 }
 
-// run is what a build invokes. It reads the manifest, picks the asset for the
-// target, and leaves it staged under the name the build expects.
-func TestRunStagesTheAssetForTheTarget(t *testing.T) {
-	body := []byte("distro image")
+// run is what a build invokes. It reads the manifest, picks each asset for the
+// target, and leaves them staged under the names the build expects.
+func TestRunStagesEveryAssetForTheTarget(t *testing.T) {
+	body := []byte("guest dependency")
 	manifestPath, cacheDir, destDir := seedRun(t, body)
 
 	var log bytes.Buffer
 	assert.NilError(t, run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64"))
 
-	staged, err := os.ReadFile(filepath.Join(destDir, "distro.raw.xz"))
-	assert.NilError(t, err)
-	assert.Equal(t, string(staged), string(body))
+	for _, filename := range []string{"distro.raw.xz", "mkcert", "nerdctl-full.tar.gz"} {
+		contents, err := os.ReadFile(filepath.Join(destDir, filename))
+		assert.NilError(t, err)
+		assert.Equal(t, string(contents), string(body))
+	}
 	assert.Assert(t, strings.Contains(log.String(), "distro 0.2.7 is already downloaded to"),
 		"the stager reports through run's log; it holds %q", log.String())
 	assert.Assert(t, strings.Contains(log.String(), filepath.Join(destDir, "distro.raw.xz")),
@@ -143,6 +177,7 @@ distro:
       variant: raw
       url: https://example.test/distro.v0.2.7.amd64.raw.xz
       checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: distro.raw.xz
 `), 0o644))
 
 	var log bytes.Buffer

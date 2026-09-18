@@ -24,22 +24,26 @@ distro:
       variant: raw
       url: https://example.test/distro.v0.2.7.amd64.raw.xz
       checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: distro.raw.xz
     - platform: linux
       arch: amd64
       variant: tar
       url: https://example.test/distro.v0.2.7.amd64.tar.xz
       checksum: sha256:a6d9e52dbafa69138ac84d2812b01c158ba3b19cf7c8725edefcee0b776afb61
+      filename: distro.tar.xz
     - platform: linux
       arch: arm64
       variant: raw
       url: https://example.test/distro.v0.2.7.arm64.raw.xz
       checksum: sha256:c03fb8f0ee367d608498adddaf3633491f803f4adab2d4a6499c2d9fb271ec76
+      filename: distro.raw.xz
 config:
   version: 1.0.0
   assets:
     - platform: linux
       url: https://example.test/config-1.0.0.tar.gz
       checksum: sha256:4389cf04704d1b37317ab3e8dc7bec7611f1503af6efc3f9a68f872bcddf806a
+      filename: config.tar.gz
 `
 
 func writeManifest(t *testing.T, content string) string {
@@ -178,6 +182,22 @@ func TestLoadManifestRejectsAnEscapingDependencyName(t *testing.T) {
 	assert.ErrorContains(t, err, "not a single directory name")
 }
 
+// The staged file name is joined onto the build's destination directory, so a
+// separator in it would write outside the build tree.
+func TestLoadManifestRejectsAFilenameWithAPath(t *testing.T) {
+	_, err := LoadManifest(writeManifest(t, `
+distro:
+  version: 0.2.7
+  assets:
+    - platform: linux
+      url: https://example.test/distro.xz
+      checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: ../../escape.xz
+`))
+	assert.ErrorContains(t, err, `has filename "../../escape.xz"`)
+	assert.ErrorContains(t, err, "want a single file name")
+}
+
 // Dots are ordinary in a release file name, so only the traversal itself is
 // rejected.
 func TestLoadManifestAcceptsDotsInAFileName(t *testing.T) {
@@ -188,9 +208,11 @@ distro:
     - platform: linux
       url: https://example.test/distro..amd64.raw.xz
       checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: distro..raw.xz
 `))
 	assert.NilError(t, err)
 	assert.Equal(t, m["distro"].Assets[0].URL, "https://example.test/distro..amd64.raw.xz")
+	assert.Equal(t, m["distro"].Assets[0].Filename, "distro..raw.xz")
 }
 
 func TestSelect(t *testing.T) {
@@ -211,6 +233,16 @@ func TestSelectArchIndependentAsset(t *testing.T) {
 	assert.Equal(t, dep.Asset.URL, "https://example.test/config-1.0.0.tar.gz")
 }
 
+// One selector has to serve every dependency, so naming a variant must not
+// hide a dependency that ships a single kind of artifact.
+func TestSelectAssetWithoutAVariant(t *testing.T) {
+	m := loadSample(t)
+
+	dep, err := m.Select("config", Selector{Platform: "linux", Arch: "arm64", Variant: "raw"})
+	assert.NilError(t, err)
+	assert.Equal(t, dep.Asset.URL, "https://example.test/config-1.0.0.tar.gz")
+}
+
 func TestSelectRejectsAmbiguousAndMissingAssets(t *testing.T) {
 	m := loadSample(t)
 
@@ -223,4 +255,53 @@ func TestSelectRejectsAmbiguousAndMissingAssets(t *testing.T) {
 
 	_, err = m.Select("nerdctl", Selector{Platform: "linux", Arch: "amd64"})
 	assert.ErrorContains(t, err, `no dependency "nerdctl"`)
+}
+
+// Two dependencies staging one file name would have the second overwrite the
+// first, leaving the build with the wrong bytes under a name it depends on.
+// One dependency reusing a name across architectures stays fine, because no
+// build stages both; sampleManifest does that with distro.raw.xz.
+func TestLoadManifestRejectsTwoDependenciesStagingOneFilename(t *testing.T) {
+	for name, content := range map[string]string{
+		"assets sharing a target": `
+mkcert:
+  version: 1.4.4
+  assets:
+    - platform: linux
+      arch: amd64
+      url: https://example.test/mkcert-v1.4.4-linux-amd64
+      checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: mkcert
+tools:
+  version: 1.0.0
+  assets:
+    - platform: linux
+      arch: amd64
+      url: https://example.test/tools-1.0.0-linux-amd64
+      checksum: sha256:a6d9e52dbafa69138ac84d2812b01c158ba3b19cf7c8725edefcee0b776afb61
+      filename: mkcert
+`,
+		"an arch-independent asset against an arch-specific one": `
+mkcert:
+  version: 1.4.4
+  assets:
+    - platform: linux
+      arch: amd64
+      url: https://example.test/mkcert-v1.4.4-linux-amd64
+      checksum: sha256:ac6c23589bc4a92a4c7d823d59b029576fa9bb18bc2c081e95f59fb184547795
+      filename: mkcert
+tools:
+  version: 1.0.0
+  assets:
+    - platform: linux
+      url: https://example.test/tools-1.0.0.tar.gz
+      checksum: sha256:a6d9e52dbafa69138ac84d2812b01c158ba3b19cf7c8725edefcee0b776afb61
+      filename: mkcert
+`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := LoadManifest(writeManifest(t, content))
+			assert.ErrorContains(t, err, `both stage "mkcert"`)
+		})
+	}
 }
