@@ -186,6 +186,26 @@ describe('Containers methods', () => {
       expect(containerDelete).toHaveBeenCalledWith({ container: doomed });
     });
 
+    it('confirms the whole bulk selection, and deletes none of it when cancelled', async() => {
+      const containerDelete = jest.fn();
+      const confirmDelete = jest.fn<(targets: Container[]) => Promise<boolean>>().mockResolvedValue(false);
+      const doomed = [container('one'), container('two')];
+      const row = rowFor(doomed[0], { containerDelete, confirmDelete });
+
+      await row.deleteContainer(doomed);
+      expect(confirmDelete).toHaveBeenCalledWith(doomed);
+      expect(containerDelete).not.toHaveBeenCalled();
+    });
+
+    it('deletes the whole bulk selection once the user confirms', async() => {
+      const containerDelete = jest.fn();
+      const doomed = [container('one'), container('two')];
+      const row = rowFor(doomed[0], { containerDelete, confirmDelete: () => Promise.resolve(true) });
+
+      await row.deleteContainer(doomed);
+      expect(containerDelete.mock.calls).toEqual(doomed.map(target => [{ container: target }]));
+    });
+
     it('leaves the container alone when the user cancels', async() => {
       const containerDelete = jest.fn();
       const row = rowFor(container('spared'), { containerDelete, confirmDelete: () => Promise.resolve(false) });
