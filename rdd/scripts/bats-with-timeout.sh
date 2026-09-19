@@ -33,6 +33,11 @@ instance="${RDD_INSTANCE:-2}"
 # Locate the rdd binary relative to this script rather than via PATH,
 # since CI runners do not add <repo>/bin to PATH.
 script_dir=$(cd "$(dirname "$0")" && pwd)
+
+# shellcheck source=rdd/scripts/metrics.bash
+source "${script_dir}/metrics.bash"
+metrics_init "$(cd "${script_dir}/.." && pwd)"
+
 rdd_bin="${script_dir}/../bin/rdd"
 if [ ! -x "$rdd_bin" ] && [ -x "${rdd_bin}.exe" ]; then
     rdd_bin="${rdd_bin}.exe"
@@ -457,6 +462,9 @@ sig_kill_our_leaks() {
     } >>"${bundle_file}" 2>&1
 }
 
+suite_start_ms=$(metrics_now_ms)
+timed_out=0
+
 "$@" &
 cmd_pid=$!
 
@@ -468,6 +476,7 @@ deadline=$(($(date +%s) + timeout_seconds))
 while kill -0 "${cmd_pid}" 2>/dev/null; do
     if [ "$(date +%s)" -ge "${deadline}" ]; then
         echo "bats-with-timeout: RDD_INSTANCE=${instance} exceeded ${timeout_seconds}s, capturing support bundle" >&2
+        timed_out=1
         capture_state "timeout"
         sig_quit_rdd_service
         sig_quit_our_go_leaks
@@ -490,6 +499,21 @@ done
 
 exit_code=0
 wait "${cmd_pid}" || exit_code=$?
+
+# Record the suite before the post-run bundle, whose capture takes seconds.
+# A killed run's step duration is the cap, not the suite's length, so the
+# outcome column marks which rows are comparable.
+suite_end_ms=$(metrics_now_ms)
+metrics_header suite instance cap_seconds start_ms end_ms elapsed_ms outcome exit_code
+metrics_record suite \
+    "${instance}" "${timeout_seconds}" "${suite_start_ms}" "${suite_end_ms}" \
+    "$((suite_end_ms - suite_start_ms))" \
+    "$([ "${timed_out}" = 1 ] && echo timeout || echo completed)" \
+    "${exit_code}"
+printf 'bats-with-timeout: instance=%s elapsed=%ds cap=%ds outcome=%s exit=%d\n' \
+    "${instance}" "$(((suite_end_ms - suite_start_ms) / 1000))" "${timeout_seconds}" \
+    "$([ "${timed_out}" = 1 ] && echo timeout || echo completed)" \
+    "${exit_code}" >&2
 
 # Always capture a post-run bundle so leaked grandchildren get recorded
 # even when the bats target itself succeeded. sig_kill_our_leaks cleans up
