@@ -11,6 +11,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -70,12 +71,28 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
 		}
 	}()
 
-	w := &sparseWriter{f: tmp}
-	if err = Decompress(ctx, in, w); err != nil {
-		return err
+	// Decode the blocks concurrently when the stream carries the sizes that
+	// makes them independent, which is what "xz --threads" produces. Any
+	// other stream falls back to the single-threaded decode below.
+	parallel := false
+	if ra, ok := in.(readerAtSizer); ok {
+		switch err = decompressParallel(ctx, ra, tmp); {
+		case err == nil:
+			parallel = true
+		case errors.Is(err, errNotSplittable):
+			err = nil
+		default:
+			return err
+		}
 	}
-	if err = w.finish(); err != nil {
-		return err
+	if !parallel {
+		w := &sparseWriter{f: tmp}
+		if err = Decompress(ctx, in, w); err != nil {
+			return err
+		}
+		if err = w.finish(); err != nil {
+			return err
+		}
 	}
 	// os.CreateTemp creates the file 0o600. Match Lima's 0o644 for decompressed
 	// images so the result stays readable beyond its owner.
@@ -105,6 +122,15 @@ type sparseWriter struct {
 	f       *os.File
 	off     int64 // offset in f of the next byte to write
 	dataEnd int64 // offset in f just past the last data written
+	region  bool  // fills part of f, so finish leaves its length alone
+}
+
+// newSparseWriterAt returns a sparseWriter filling f from off. finish punches
+// the zeros at the end of what it wrote but leaves f's length alone, so
+// several writers can fill separate regions of one file at once and the
+// caller sets the length.
+func newSparseWriterAt(f *os.File, off int64) *sparseWriter {
+	return &sparseWriter{f: f, off: off, dataEnd: off, region: true}
 }
 
 func (w *sparseWriter) Write(p []byte) (int, error) {
@@ -161,8 +187,10 @@ func (w *sparseWriter) runEnd(p []byte, i int, zero bool) int {
 // and punches a hole over their whole blocks, because APFS allocates a short
 // extension.
 func (w *sparseWriter) finish() error {
-	if err := w.f.Truncate(w.off); err != nil {
-		return err
+	if !w.region {
+		if err := w.f.Truncate(w.off); err != nil {
+			return err
+		}
 	}
 	w.punchSkipped(w.off)
 	return nil
