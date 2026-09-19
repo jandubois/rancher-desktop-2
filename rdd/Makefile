@@ -248,12 +248,19 @@ generate-crds:
 	scripts/generate-crds.sh
 .PHONY: generate-crds
 
+# We do not run this as part of `make generate` as this requires the service
+# to be buildable and runnable.
+generate-typescript: bin/rdd$(EXE)
+	../scripts/generate-rdd-client.sh
+.PHONY: generate-typescript
+
 generate: generate-deepcopy generate-crds
 .PHONY: generate
 
-verify-generate: generate
+verify-generate: generate generate-typescript
 	@if [ -n "$$(git diff --name-only)" ]; then \
-		echo "ERROR: Generated files are out of date. Run 'make generate' and commit the result." >&2; \
+		printf "ERROR: Generated files are out of date. Run '%s' and commit the result.\n" \
+			"make generate generate-typescript" >&2; \
 		git diff --stat; \
 		exit 1; \
 	fi
