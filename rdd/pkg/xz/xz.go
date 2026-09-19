@@ -10,6 +10,7 @@ package xz
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -71,12 +72,28 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
 		}
 	}()
 
-	w := sparse.NewWriter(tmp)
-	if err = Decompress(ctx, in, w); err != nil {
-		return err
+	// Decode the blocks concurrently when the stream carries the sizes that
+	// makes them independent, which is what "xz --threads" produces. Any
+	// other stream falls back to the single-threaded decode below.
+	parallel := false
+	if ra, ok := in.(readerAtSizer); ok {
+		switch err = decompressParallel(ctx, ra, tmp); {
+		case err == nil:
+			parallel = true
+		case errors.Is(err, errNotSplittable):
+			err = nil
+		default:
+			return err
+		}
 	}
-	if err = w.Finish(); err != nil {
-		return err
+	if !parallel {
+		w := sparse.NewWriter(tmp)
+		if err = Decompress(ctx, in, w); err != nil {
+			return err
+		}
+		if err = w.Finish(); err != nil {
+			return err
+		}
 	}
 	// os.CreateTemp creates the file 0o600. Match Lima's 0o644 for decompressed
 	// images so the result stays readable beyond its owner.
