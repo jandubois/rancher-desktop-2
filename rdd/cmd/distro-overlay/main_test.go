@@ -76,7 +76,7 @@ func TestRunRawImage(t *testing.T) {
 				assert.NilError(t, os.Symlink(filepath.Join(dir, "real.raw"), output))
 			}
 
-			err := run(manifestFor(t, dir, tc.source), source, "auto", output, img, testTime)
+			err := run(manifestFor(t, dir, tc.source), source, "auto", output, img, testTime, "")
 			after, readErr := os.ReadFile(img)
 			assert.NilError(t, readErr)
 			if tc.want != "" {
@@ -103,6 +103,35 @@ func TestRunRawImage(t *testing.T) {
 	}
 }
 
+// TestRunRefusesKernelParamsItCannotApply checks that a tarball and an image
+// with no boot menu each report the flag they cannot apply, rather than
+// ignoring it. The image case is also what proves the flag reaches the image.
+func TestRunRefusesKernelParamsItCannotApply(t *testing.T) {
+	t.Run("tarball", func(t *testing.T) {
+		dir := t.TempDir()
+		tarball := filepath.Join(dir, "distro.tar")
+		writeTar(t, tarball, "etc/os-release", "NAME")
+		source := filepath.Join(dir, "source")
+		assert.NilError(t, os.MkdirAll(source, 0o755))
+		assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
+
+		err := run(manifestFor(t, dir, "small"), source, "auto", filepath.Join(dir, "out.tar"), tarball, testTime, "quiet")
+		assert.ErrorContains(t, err, "needs a raw image")
+	})
+
+	t.Run("image with no boot menu", func(t *testing.T) {
+		pristine, source := fragmentedImage(t)
+		dir := t.TempDir()
+		img := filepath.Join(dir, "distro.raw")
+		orig, err := os.ReadFile(pristine)
+		assert.NilError(t, err)
+		assert.NilError(t, os.WriteFile(img, orig, 0o644))
+
+		err = run(manifestFor(t, dir, "small"), source, "auto", "", img, testTime, "quiet")
+		assert.ErrorContains(t, err, "/boot/grub2/grub.cfg")
+	})
+}
+
 // TestRunRefusesOutputNamingTheDistro checks both formats refuse an --output
 // that is the distro, which creating it would empty before it is read. The raw
 // path is where that bites: its copy step would truncate the image first.
@@ -118,7 +147,7 @@ func TestRunRefusesOutputNamingTheDistro(t *testing.T) {
 		distro := filepath.Join(dir, "distro.raw")
 		assert.NilError(t, os.WriteFile(distro, pristine, 0o644))
 
-		assert.ErrorContains(t, run(manifestFor(t, dir, "small"), imageSource, "auto", distro, distro, testTime),
+		assert.ErrorContains(t, run(manifestFor(t, dir, "small"), imageSource, "auto", distro, distro, testTime, ""),
 			"names the distro itself")
 
 		after, err := os.ReadFile(distro)
@@ -134,7 +163,7 @@ func TestRunRefusesOutputNamingTheDistro(t *testing.T) {
 		assert.NilError(t, os.MkdirAll(source, 0o755))
 		assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
 
-		err := run(manifestFor(t, dir, "small"), source, "auto", distro, distro, testTime)
+		err := run(manifestFor(t, dir, "small"), source, "auto", distro, distro, testTime, "")
 		assert.ErrorContains(t, err, "names the distro itself")
 		assert.Assert(t, tarNames(t, distro)["etc/os-release"], "the refused run emptied the distro")
 	})
@@ -178,7 +207,7 @@ func TestRunTarKeepsSymlinksItIsGiven(t *testing.T) {
 				output = link
 			}
 
-			err = run(manifest, source, "auto", output, input, testTime)
+			err = run(manifest, source, "auto", output, input, testTime, "")
 			switch {
 			case tc.refused && tc.throughLink:
 				assert.Assert(t, err != nil, "the run was expected to fail")
@@ -226,7 +255,7 @@ func TestRunTarWritesThroughToOutput(t *testing.T) {
 	assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
 	output := filepath.Join(dir, "overlaid.tar")
 
-	assert.NilError(t, run(manifestFor(t, dir, "small"), source, "auto", output, tarball, testTime))
+	assert.NilError(t, run(manifestFor(t, dir, "small"), source, "auto", output, tarball, testTime, ""))
 
 	assert.Assert(t, tarNames(t, output)["overlaid"], "the overlay entry is missing")
 	assert.Assert(t, !tarNames(t, tarball)["overlaid"], "the distro gained the overlay entry")

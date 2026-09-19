@@ -87,6 +87,13 @@ OVERLAY_MTIME := $(shell git$(EXE) log -1 --format=%ct 2>/dev/null || echo 0)
 # packaging workflow overrides it.
 XZ_OPTIONS ?= -1 --threads=0
 
+# Kernel parameters to append to the guest image's boot entries, empty for
+# everything we ship. A job sets it for a parameter that suits its own host,
+# such as a clock setting for a CI runner, and resolves the value there rather
+# than hardcoding one. No target depends on the value, so a build after a
+# change reuses the image it already made; remove $(DISTRO_IMAGE) first.
+KERNEL_PARAMS ?=
+
 # The guest agent's file name carries the target architecture, and
 # pkg/guestagent embeds the one matching GOARCH, so a build for another
 # architecture builds its own agent instead of reusing a stale one.
@@ -166,7 +173,8 @@ $(WORKING_DISTRO): $(PRISTINE_DISTRO) $(OVERLAY_SOURCES) $(OVERLAY_TOOL_SOURCES)
 	xz --decompress --stdout $(PRISTINE_DISTRO) > $@
 	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
 	go$(EXE) run ./cmd/distro-overlay --manifest overlay/manifest.yaml --source overlay \
-		--mtime $(OVERLAY_MTIME) --in-place $@
+		--mtime $(OVERLAY_MTIME) \
+		$(if $(KERNEL_PARAMS),--kernel-params '$(KERNEL_PARAMS)') --in-place $@
 
 .INTERMEDIATE: $(WORKING_DISTRO)
 
