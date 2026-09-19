@@ -59,20 +59,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Using macos-intel because macos-aarch64 does not have nested virtualization.
+        # Trimmed to the one leg under measurement. Restore the full matrix
+        # before this branch is used for anything but the timing experiment.
         runs-on:
         - macos-15-intel
-        - ubuntu-latest
-        - windows-latest
-        # bats-app and bats-docker each run on their own runner so their VMs
-        # do not collide with bats-lima's on Windows (Lima hard-codes SSH port
-        # 22 per instance), and so each can grow independently of the rest of
-        # the suite.
         suite:
         - bats-app
-        - bats-lima
-        - bats-docker
-        - bats-others
     # Run on ubuntu-latest if we don't need to actually run the tests, because
     # they start faster (and are cheaper).
     runs-on: ${{ case(needs.check-paths.outputs.should-run == 'true', matrix.runs-on, 'ubuntu-latest') }}
@@ -287,6 +279,7 @@ jobs:
       env:
         RDD_TRACE: true
         RDD_LOG_LEVEL: trace
+        RDD_METRICS_GUEST: 1
 
     - name: "Unix: stop resource sampler"
       if: always() && needs.check-paths.outputs.should-run && runner.os != 'Windows'
