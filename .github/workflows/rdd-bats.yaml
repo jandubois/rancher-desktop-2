@@ -239,6 +239,18 @@ jobs:
         # runner connection.
         echo "RDD_VM_CPUS=4" >> "$GITHUB_ENV"
 
+    - name: "macOS: Give the guest the host's TSC frequency"
+      if: needs.check-paths.outputs.should-run && runner.os == 'macOS'
+      shell: bash
+      # The runner is itself a VM, so the guest cannot calibrate its TSC and
+      # falls back to the HPET, where every clock read traps out to the
+      # hypervisor. tsc_early_khz= hands the kernel the frequency instead.
+      # Only this runner knows its own, so no image can carry the value.
+      run: |
+        set -o errexit -o nounset -o pipefail
+        echo "KERNEL_PARAMS=tsc_early_khz=$(( $(sysctl -n machdep.tsc.frequency) / 1000 ))" \
+          >> "$GITHUB_ENV"
+
     - name: Configure BATS targets
       if: needs.check-paths.outputs.should-run
       shell: bash
