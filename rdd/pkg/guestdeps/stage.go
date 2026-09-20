@@ -141,6 +141,13 @@ func (s *Stager) Stage(ctx context.Context, dep Dependency, destPath string) err
 	return copyFile(cachePath, destPath)
 }
 
+// StageFile makes destPath hold a copy of src, with no checksum to check it
+// against. A build uses it for an artifact it produced itself, such as a distro
+// image built from source, in place of the manifest's download.
+func StageFile(src, destPath string) error {
+	return copyFile(src, destPath)
+}
+
 // touch records that a build used a cache entry, so Prune keeps it for another
 // cacheTTL. A missing entry is not an error, because a build whose staged copy
 // is already correct never opens one. Nor does touch verify the entry, because

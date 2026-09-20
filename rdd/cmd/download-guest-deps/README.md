@@ -21,7 +21,7 @@ hand.
 ## Usage
 
 ```sh
-go run ./cmd/download-guest-deps [--manifest FILE] [--dest DIR] [--cache DIR] [--os OS] [--arch ARCH]
+go run ./cmd/download-guest-deps [--manifest FILE] [--dest DIR] [--cache DIR] [--os OS] [--arch ARCH] [--stage NAME=PATH]
 ```
 
 | Option | Default | Meaning |
@@ -31,6 +31,7 @@ go run ./cmd/download-guest-deps [--manifest FILE] [--dest DIR] [--cache DIR] [-
 | `--cache` | see [Cache](#cache) | The directory that keeps verified downloads. |
 | `--os` | the host's | The operating system the build targets, as a `GOOS` value. |
 | `--arch` | the host's | The architecture the build targets, as a `GOARCH` value. |
+| `--stage` | none | Stage `NAME` from a local file instead of downloading it. Repeatable. |
 
 A cross-compiling build passes `--os` and `--arch`. Setting `GOOS` or `GOARCH`
 in the environment instead would cross-compile this command as well, and leave
@@ -48,6 +49,27 @@ artifact per architecture records no variant and suits either.
 
 The command exits 0 once everything is staged, 1 on any failure, and 2 on a
 usage error. Failing to prune the cache only prints a warning.
+
+## Staging a file the build produced
+
+`--stage NAME=PATH` copies `PATH` into the destination as `NAME`'s asset
+instead of downloading it. The manifest's checksum belongs to the released
+asset, so nothing checks these bytes, and the log line for the copy ends in
+`unverified`. The command stages every other dependency as usual, checksum and
+all.
+
+This is how a distro is tested before it ships. The openSUSE image build
+produces an image no release covers, and the reverse test has to boot rdd with
+that image rather than the pinned one. `rdd/Makefile` passes `STAGE_DISTRO`
+through as `--stage distro=PATH`. Every build recopies the image and redoes the
+overlay, so set it only for a test build.
+
+```sh
+make build-rdd STAGE_DISTRO=/path/to/distro.raw.xz
+```
+
+A `NAME` the manifest does not list fails the run. Ignoring it would download
+the release instead and leave a green build that never saw the file under test.
 
 ## Cache
 

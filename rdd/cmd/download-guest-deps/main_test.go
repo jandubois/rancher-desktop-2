@@ -123,7 +123,7 @@ func TestRunStagesEveryAssetForTheTarget(t *testing.T) {
 	manifestPath, cacheDir, destDir := seedRun(t, body)
 
 	var log bytes.Buffer
-	assert.NilError(t, run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64"))
+	assert.NilError(t, run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64", nil))
 
 	for _, filename := range []string{"distro.raw.xz", "mkcert", "nerdctl-full.tar.gz"} {
 		contents, err := os.ReadFile(filepath.Join(destDir, filename))
@@ -154,7 +154,7 @@ func TestRunWarnsWhenTheCacheCannotBePruned(t *testing.T) {
 	}
 
 	var log bytes.Buffer
-	assert.NilError(t, run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64"))
+	assert.NilError(t, run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64", nil))
 
 	staged, err := os.ReadFile(filepath.Join(destDir, "distro.raw.xz"))
 	assert.NilError(t, err)
@@ -181,7 +181,61 @@ distro:
 `), 0o644))
 
 	var log bytes.Buffer
-	err := run(t.Context(), &log, manifestPath, filepath.Join(dir, "embedded"), filepath.Join(dir, "cache"), "linux", "arm64")
+	err := run(t.Context(), &log, manifestPath, filepath.Join(dir, "embedded"), filepath.Join(dir, "cache"), "linux", "arm64", nil)
 	assert.ErrorContains(t, err, manifestPath)
 	assert.ErrorContains(t, err, "found 0")
+}
+
+// A build that produced its own artifact stages it in place of the download.
+// The manifest's checksum belongs to the released asset, so it cannot apply to
+// these bytes, and the dependencies nobody overrode still come from the cache.
+func TestRunStagesALocalFileInPlaceOfTheDownload(t *testing.T) {
+	body := []byte("guest dependency")
+	manifestPath, cacheDir, destDir := seedRun(t, body)
+
+	built := filepath.Join(t.TempDir(), "distro.raw.xz")
+	local := []byte("an image this build made, matching no checksum")
+	assert.NilError(t, os.WriteFile(built, local, 0o644))
+
+	var log bytes.Buffer
+	assert.NilError(t, run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64",
+		map[string]string{"distro": built}))
+
+	staged, err := os.ReadFile(filepath.Join(destDir, "distro.raw.xz"))
+	assert.NilError(t, err)
+	assert.Equal(t, string(staged), string(local))
+
+	for _, filename := range []string{"mkcert", "nerdctl-full.tar.gz"} {
+		contents, err := os.ReadFile(filepath.Join(destDir, filename))
+		assert.NilError(t, err)
+		assert.Equal(t, string(contents), string(body), "%s still comes from the cache", filename)
+	}
+	assert.Assert(t, strings.Contains(log.String(), "Staging distro from "+built+", unverified"),
+		"the log says the bytes went unchecked; it holds %q", log.String())
+}
+
+// A --stage name the manifest does not list fails the run. Ignoring it would
+// download the released asset instead and leave a green build that never saw
+// the file the caller meant to test.
+func TestRunRejectsAStageNameTheManifestDoesNotList(t *testing.T) {
+	manifestPath, cacheDir, destDir := seedRun(t, []byte("guest dependency"))
+
+	var log bytes.Buffer
+	err := run(t.Context(), &log, manifestPath, destDir, cacheDir, "linux", "arm64",
+		map[string]string{"distros": filepath.Join(t.TempDir(), "typo")})
+	assert.ErrorContains(t, err, "distros")
+	assert.ErrorContains(t, err, manifestPath)
+}
+
+// The flag takes NAME=PATH and refuses a repeat, so a second value for one
+// dependency cannot silently win.
+func TestStagedFilesRejectsMalformedAndRepeatedValues(t *testing.T) {
+	staged := stagedFiles{}
+	assert.NilError(t, staged.Set("distro=/tmp/distro.raw.xz"))
+	assert.Equal(t, staged.String(), "distro=/tmp/distro.raw.xz")
+
+	for _, value := range []string{"distro", "=/tmp/image", "distro=", ""} {
+		assert.ErrorContains(t, staged.Set(value), "want NAME=PATH")
+	}
+	assert.ErrorContains(t, staged.Set("distro=/tmp/other"), "already staged")
 }
