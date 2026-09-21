@@ -242,6 +242,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The build and <code>yarn sign</code> now write the published names themselves, <code>rancher-desktop-&lt;version&gt;.&lt;platform&gt;.&lt;arch&gt;.&lt;ext&gt;</code> and <code>rdd.&lt;version&gt;.&lt;platform&gt;.&lt;arch&gt;[.exe]</code>, all from one helper module, and the Windows updater picks its installer by architecture. The PR&#39;s CI and a fork signing run produce exactly those names. One regression remains. <code>scripts/install-latest-ci.sh</code> still requests the old CI artifact names, so every download from an RD2 run fails. Its default repository is RD1, so the fix has to move that default too.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code Changed Since This Review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings were addressed on 2026-09-21 by amending the naming commit, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5debf53ec"><code>5debf53ec</code></a> (reworded). The updater commit is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2864308d5"><code>2864308d5</code></a>, otherwise unchanged. The cited lines in the signing scripts, <code>scripts/populate-update-server.ts</code> and the two docs no longer match the branch. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -453,6 +459,7 @@ index 5116c07df..3a37d0871 100755
      esac
      gh run download --repo &quot;$OWNER/$REPO&quot; &quot;$ID&quot; --dir &quot;$workdir&quot; --name &quot;$archive&quot;</code></pre>
       </details>
+    <p><strong>Resolution:</strong> declined. The default invocation installs RD1 CI builds, which this PR does not rename, and the PR description notes that the script is not ported to RD2 yet.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -548,6 +555,7 @@ If notarization is not required, append `--skip-notarize` to the command:
   // everything as we wanted already.
   const results = await build({</code></pre>
     <p>Fix: Take the architecture from the <code>win.artifactName</code> or <code>mac.artifactName</code> that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/77dd0437a9364e420c1f246ffda45fcd4e46d6d1/scripts/package.ts#L180"><code>package.ts:180</code></a> writes into the packaged <code>electron-builder.yml</code>, and refuse to sign when <code>buildUtils.arch</code> disagrees. At the least, move the <code>GOARCH</code> note into the steps both platforms share.</p>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5debf53ec"><code>5debf53ec</code></a>. Both signers call <code>buildUtils.checkArchiveArch</code> before signing anything; it refuses an archive whose packaged <code>artifactName</code> names another architecture and says which <code>GOARCH</code> to set. The <code>GOARCH</code> note moved to <code>signing.md</code> step 3.</p>
     </div>
     <div class="card card-suggestion" data-file="scripts/populate-update-server.ts">
       <div class="finding-title" id="S2">
@@ -605,6 +613,7 @@ async function updateRelease(octokit: Octokit, owner: string, repo: string, tag:
     console.error(`Cowardly refusing to touch ${ packageURL }`);
     process.exit(1);</code></pre>
     <p>Fix: Call <code>getChecksum</code> with the environment variable alone for all three, and drop the <code>version</code> line and the <code>appArtifactName</code> import.</p>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5debf53ec"><code>5debf53ec</code></a>, which also removes <code>getChecksum</code>&#39;s unused <code>filenameOverride</code> parameter.</p>
     </div>
     <div class="card card-suggestion" data-file="docs/development/release-checklist.md">
       <div class="finding-title" id="S3">
@@ -647,6 +656,7 @@ async function updateRelease(octokit: Octokit, owner: string, repo: string, tag:
     - name: Upload macOS aarch-64 artifacts
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1</code></pre>
     <p>Fix: List every upload by source: the signed macOS and Windows files from <code>yarn sign</code>&#39;s <code>dist/</code>, and the Linux zip and Linux <code>rdd</code> from the Package run, each with its <code>.sha512sum</code>, all under the names the build gave them.</p>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5debf53ec"><code>5debf53ec</code></a>. The checklist lists each upload by source and warns that the Package run&#39;s copies under the same names are unsigned. The upload step now also comes before the smoke test, which downloads from the draft release.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -672,12 +682,14 @@ async function updateRelease(octokit: Octokit, owner: string, repo: string, tag:
     <p>I ran both changed Jest specs in the lead worktree, with the main checkout&#39;s <code>node_modules</code> linked in after a <code>yarn install</code>: 2 suites passed, 37 tests passed, and 3 Windows-only tests skipped on the macOS host. Restoring the old <code>endsWith(&#39;.msi&#39;)</code> filter in <code>findUpdateAsset</code> fails <code>installs the release asset built for this architecture</code> and <code>picks the win32 x64 asset</code>, so the architecture pick has real coverage.</p>
     <p>CI is green on the head commit. The PR&#39;s Package run 34807664070 uploaded the eleven new artifact names, including <code>rdd.windows.x86_64.exe</code> and <code>rdd.darwin.x86_64</code> from the <code>case()</code> expression. Signing jobs skip on <code>pull_request</code>, but the fork run 34807394866 at the same SHA signed <code>rancher-desktop-2.0.0-alpha.1-fallback.darwin.aarch64.dmg</code> and <code>.zip</code>, <code>rdd.2.0.0-alpha.1-fallback.darwin.aarch64</code>, <code>rancher-desktop-2.0.0-alpha.1-fallback.windows.x86_64.msi</code> and <code>rdd.2.0.0-alpha.1-fallback.windows.x86_64.exe</code>, according to the jobs&#39; <code>Signed results:</code> lines.</p>
     <p>Three consumers cannot run before merge or release: <code>trigger-obs</code> (first runs on the merge push), <code>linux-release.yaml</code> (on publish) and the smoke test&#39;s release download. Their names agree with what the Package run produced, checked by reading. No test covers <code>install-latest-ci.sh</code>; one is optional, since it is a developer tool that fails loudly (I1). The Linux branch of <code>findUpdateAsset</code> has no table case, which is also optional because its behavior did not change.</p>
+    <p><strong>Resolution:</strong> both gaps declined. <code>install-latest-ci.sh</code> is a developer tool that fails loudly, and this PR leaves the Linux <code>findUpdateAsset</code> branch unchanged (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/434" class="gh-ref" data-title="Linux/arm64 and Windows/arm64 support" data-state="open" data-type="issue">#434</a>).</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p><code>signing.md</code> step 4 matches <code>scripts/sign.ts</code>. The archive is extracted before electron-builder writes a file of the same name, so signing a zip from <code>dist/</code> replaces it safely. The release checklist gap is S3, and the missing unsigned-copy warning is under Design Observations. Unrelated to this change, the header of <code>scripts/populate-update-server.ts</code> still names <code>.github/workflows/upgrade-test.yaml</code>; the workflow is <code>upgrade-generate.yaml</code>.</p>
+    <p><strong>Resolution:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5debf53ec"><code>5debf53ec</code></a>. The header names <code>upgrade-generate.yaml</code> and its title, and its <code>RD_BUILD_INFO</code> line now names <code>dist/electron-builder.yaml</code> in place of <code>latest.yml</code>.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
