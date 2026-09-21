@@ -252,6 +252,18 @@ assert_created() {
     assert_output --partial 'context deadline exceeded'
 }
 
+@test "ctl wait-condition --timeout exits with code 4" {
+    rdd ctl create configmap "wait-timeout-vm" --namespace "${LIMA_TEST_NS}" \
+        --from-literal="template=${TEMPLATE}"
+    run_e -0 rdd limavm create "wait-timeout-vm" "wait-timeout-vm" --namespace "${LIMA_TEST_NS}"
+    assert_created "wait-timeout-vm" "${LIMA_TEST_NS}" "wait-timeout-vm"
+
+    # The VM is never started, so Running=True never arrives.
+    run -4 rdd ctl wait-condition "limavm/wait-timeout-vm" Running \
+        --namespace "${LIMA_TEST_NS}" --timeout=3s
+    assert_output --partial 'context deadline exceeded'
+}
+
 @test "lima help text is displayed" {
     # lima is an alias of the limavm command
     run -0 rdd lima --help

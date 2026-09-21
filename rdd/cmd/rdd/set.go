@@ -571,7 +571,7 @@ func watchCondition(ctx context.Context, config *rest.Config, satisfied func(*un
 		return satisfied(obj), nil
 	}
 
-	if _, err := watchtools.UntilWithSync(ctx, lw, &unstructured.Unstructured{}, precondition, condition); err != nil {
+	if err := untilWithSync(ctx, lw, precondition, condition); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return fmt.Errorf("timed out waiting for App state: %w", err)
 		}
@@ -581,6 +581,18 @@ func watchCondition(ctx context.Context, config *rest.Config, satisfied func(*un
 		return fmt.Errorf("failed to watch App: %w", err)
 	}
 	return nil
+}
+
+// untilWithSync runs watchtools.UntilWithSync and returns ctx's error when ctx
+// ends the wait. After the initial sync, UntilWithSync reports an expired or
+// cancelled context as wait.ErrorInterrupted(nil), which wraps neither
+// context.DeadlineExceeded nor context.Canceled.
+func untilWithSync(ctx context.Context, lw cache.ListerWatcher, precondition watchtools.PreconditionFunc, conditions ...watchtools.ConditionFunc) error {
+	_, err := watchtools.UntilWithSync(ctx, lw, &unstructured.Unstructured{}, precondition, conditions...)
+	if err != nil && ctx.Err() != nil {
+		return ctx.Err()
+	}
+	return err
 }
 
 // conditionInfo returns the status, observedGeneration, and presence
