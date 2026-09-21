@@ -60,7 +60,7 @@
           <a
             v-tooltip="getTooltipConfig(row.status?.name || row.metadata?.name || 'unknown')"
             class="container-name-link"
-            @click.stop.prevent="viewInfo(row)"
+            @click="onContainerNameClick($event, row)"
           >
             {{ shortSha(row.status?.name || row.metadata?.name || 'unknown') }}
           </a>
@@ -74,7 +74,7 @@
               :key="hostPort"
               target="_blank"
               class="link"
-              @click="openUrl(hostPort)"
+              @click="onPortClick($event, hostPort)"
             >
               {{ hostPort }}:{{ containerPort }}
             </a>
@@ -94,7 +94,7 @@
                   :key="hostPort"
                   target="_blank"
                   class="link"
-                  @click="openUrl(hostPort)"
+                  @click="onPortClick($event, hostPort)"
                 >
                   {{ hostPort }}:{{ containerPort }}
                 </a>
@@ -140,6 +140,7 @@ import SortableTable from '@pkg/components/SortableTable';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import { showDeleteConfirmation } from '@pkg/utils/deleteConfirmation';
 import { hasField } from '@pkg/utils/iterator';
+import { isSelectionClick } from '@pkg/utils/platform';
 import { defined } from '@pkg/utils/typeUtils';
 import { IoRancherdesktopContainersV1alpha1Container as Container } from '@rdd-client';
 
@@ -396,6 +397,20 @@ export default defineComponent({
           dropdownContent.style.top = `${ dropdownRect.top - dropdownContent.getBoundingClientRect().height }px`;
         }
       }
+    },
+    onContainerNameClick(event: MouseEvent, container: Container) {
+      if (isSelectionClick(event)) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      this.viewInfo(container);
+    },
+    onPortClick(event: MouseEvent, hostPort: number) {
+      if (isSelectionClick(event)) {
+        return;
+      }
+      this.openUrl(hostPort);
     },
     viewInfo(container: Container) {
       this.$router.push(`/containers/info/${ container.metadata!.name }`);
