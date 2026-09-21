@@ -6,7 +6,7 @@ lives in this repository and is layered on from a single manifest.
 
 ## Usage
 
-    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--mtime T] [--kernel-params P] <distro>
+    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--profile lima|wsl] [--mtime T] [--kernel-params P] <distro>
 
 | Flag | Meaning |
 |------|---------|
@@ -15,6 +15,7 @@ lives in this repository and is layered on from a single manifest.
 | `--format` | `auto` (default), `raw`, or `tar`; `auto` detects by signature |
 | `--output` | Write the result here, leaving the distro alone; the tool writes through to it, empties it when the run fails, and refuses one naming the distro |
 | `--in-place` | Overlay the distro itself, modifying it; pass this or `--output`, never both |
+| `--profile` | Build profile to overlay for, `lima` or `wsl`; applies only the entries for it, plus the entries naming no profile. Omitted, every entry applies |
 | `--mtime` | Timestamp for every entry: Unix epoch seconds or RFC3339 (default: now) |
 | `--kernel-params` | Parameters to append to every kernel command line; raw images only |
 
