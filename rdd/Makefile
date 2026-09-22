@@ -154,7 +154,7 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 $(PRISTINE_DISTRO): FORCE
 	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
 	go$(EXE) run ./cmd/download-guest-deps --os $(TARGET_OS) --arch $(TARGET_ARCH) \
-		--dest $(OVERLAY_BUILD) $(if $(STAGE_DISTRO),--stage distro=$(STAGE_DISTRO))
+		--dest $(OVERLAY_BUILD) $(if $(STAGE_DISTRO),--stage 'distro=$(STAGE_DISTRO)')
 
 # That same run stages these, so they have no recipe of their own.
 $(MKCERT) $(NERDCTL_TARBALL): $(PRISTINE_DISTRO) ;
