@@ -32,9 +32,10 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
-// containerNamePrefix is the prefix used for container names when the container
-// id is not a valid Kubernetes object name; this should not happen in practice.
-const containerNamePrefix = "ctr"
+// containerMirrorPrefix is the prefix used for container names when the
+// container id is not a valid Kubernetes object name; this should not happen in
+// practice.
+const containerMirrorPrefix = "ctr"
 
 // syncAllContainers lists all containerd containers across every namespace,
 // creates or updates their Container mirrors, and prunes stale ones.
@@ -63,7 +64,7 @@ func (w *containerdWatcher) syncAllContainers(ctx context.Context) error {
 			return fmt.Errorf("failed to list containers in namespace %s: %w", ns, err)
 		}
 		for _, ctr := range ctrs {
-			activeNames[api.MirrorName(containerNamePrefix, ctr.ID(), ns)] = true
+			activeNames[api.MirrorName(containerMirrorPrefix, ctr.ID(), ns)] = true
 			if err := w.applyContainer(nsCtx, ns, ctr); err != nil {
 				log.Error(err, "Skipping container during full sync", "namespace", ns, "id", ctr.ID())
 			}
@@ -113,7 +114,7 @@ func (w *containerdWatcher) applyContainer(nsCtx context.Context, ns string, ctr
 	if err != nil {
 		return fmt.Errorf("failed to get container info %s: %w", ctr.ID(), err)
 	}
-	mirrorName := api.MirrorName(containerNamePrefix, info.ID, ns)
+	mirrorName := api.MirrorName(containerMirrorPrefix, info.ID, ns)
 
 	// containerd has no display-name concept; nerdctl stores it in this label.
 	name := info.Labels["nerdctl/name"]

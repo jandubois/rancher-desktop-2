@@ -219,9 +219,11 @@ status:
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
 - **metadata.name**: The container ID, in lower case hexidecimal.  This should
-  always a valid Kubernetes object name.  In case this is not, this is encoded
-  using [the algorithm above](#name-encoding), including the container namespace
-  (if supported) as an extra value.
+  always be a valid Kubernetes object name.  In case this is not, this is
+  encoded using [the algorithm above](#name-encoding) using `ctr-` as the prefix,
+  including the container namespace (if supported) as an extra value.  As
+  container IDs are supposed to be globally unique, we ignore the potential
+  issue of the same container ID in different namespaces.
 - **metadata.annotations[containers.rancherdesktop.io/action]**: request a
   one-shot action; see [Container Actions](#container-actions) below.
 - **status.name**: The container name.
@@ -443,10 +445,14 @@ status:
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
 - **metadata.name**: A name encoded using the [algorithm above](#name-encoding),
-  using `img-` as the prefix, and the image id (`status.id`) as the input name.
-  As that contains a colon, it is never a valid Kubernetes name, and is always
-  encoded.  If the image has a tag (`status.repoTag`), that is provided as an
-  extra value to be hashed over.
+  using `img-` as the prefix.  The data differs between container engines:
+  - When using docker, the input is the image id (`status.id`) followed by the
+    image tag (`status.repoTag`), if it exists.  As the image id always contains
+    a colon, the result is always encoded.
+  - When using containerd, the input is the image namespace, followed by a null
+    byte, followed by the image name; there is no extra value.  This is
+    necessary as the delete event does not include the container id; the null
+    byte is used to force the name to become encoded.
 - **status.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.
 - **status.id**: The raw image ID, including the `sha256:` prefix (or whichever

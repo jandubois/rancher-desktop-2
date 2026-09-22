@@ -16,14 +16,11 @@ import (
 )
 
 // MirrorName returns the mirrored name for a given container resource.  If the
-// given name is not a valid Kubernetes object name, or if it looks like the
-// hashed output of this function, the returned value is instead the prefix
-// followed by the SHA-256 hash of the input, possibly followed by any extra
-// strings provided, separated by nulls.
-//
-// Note that the extra values given are only used when the input needs to be
-// encoded; two calls with the same input but different extras will return the
-// same value.
+// given name is a valid Kubernetes object name, and it is not in the same form
+// as the hashed output, then the input is returned as-is.  Otherwise, the
+// output consists of the prefix, followed by a dash, and a SHA-256 hash.  The
+// hash is over the given input, followed by any extra strings provided,
+// separated by nulls.
 func MirrorName(prefix, input string, extras ...string) string {
 	hasher := sha256.New()
 	needsEscape := len(validation.IsDNS1123Subdomain(input)) > 0

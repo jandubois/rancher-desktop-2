@@ -146,7 +146,7 @@ func (w *containerdWatcher) resolveContainer(ctx context.Context, ns, mirrorName
 		return nil, fmt.Errorf("failed to list containers in namespace %s: %w", ns, listErr)
 	}
 	for _, candidate := range ctrs {
-		if api.MirrorName(containerNamePrefix, candidate.ID(), ns) == mirrorName {
+		if api.MirrorName(containerMirrorPrefix, candidate.ID(), ns) == mirrorName {
 			return candidate, nil
 		}
 	}
