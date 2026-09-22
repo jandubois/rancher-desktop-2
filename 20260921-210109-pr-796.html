@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260921-210109-pr-796</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260921-210109-pr-796</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-21 21:01</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/796" class="gh-ref" data-title="RDD: Decode the embedded distro&#39;s xz blocks in parallel" data-state="open" data-type="pr">#796</a> — RDD: Decode the embedded distro&#39;s xz blocks in parallel</td></tr>
+      <tr><td>Branch</td><td><code>xz-parallel-decode</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0c9f7ca11"><code>0c9f7ca11</code></a> RDD: Decode the embedded distro&#39;s xz blocks in parallel<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/eec59f184"><code>eec59f184</code></a> RDD: Split an xz file only when it holds one intact stream</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/eec59f1841899dd570b825d7218475f2c96354b4"><code>eec59f1841899dd570b825d7218475f2c96354b4</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the split decodes both real image layouts correctly; the shipped layout&#39;s peak memory, the commit body&#39;s parity claim, and four comments need work</td></tr>
+      <tr><td>Wall-clock time</td><td><code>47 min 24 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR decodes the blocks of an <code>xz --threads</code> stream concurrently and falls back to the sequential decoder for anything else. Both real image layouts decode byte-identical to <code>xz -d</code> in about 5.5 s instead of 19 to 29 s. On the shipped <code>-9</code> layout, peak RSS rises from about 460 MiB to 1.4 to 1.6 GiB, partly through an avoidable copy. Five malformed blocks the sequential decoder rejects still decode, although the commit body claims parity.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/xz/parallel.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Peak memory on the shipped <code>-9</code> layout roughly triples, partly through an avoidable copy <span class="pill pill-claude">Claude Opus 5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L268-L282">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="268" data-line="273-277"><code class="language-go">	return nil
+}
+
+// decodeBlock decompresses one block into dst and verifies its CRC64.
+func decodeBlock(ctx context.Context, r io.ReaderAt, dst *os.File, blk block, checkTable *crc64.Table) error {
+	comp := make([]byte, blk.compSize)
+	if _, err := r.ReadAt(comp, blk.compOffset); err != nil {
+		return fmt.Errorf(&quot;reading block at %d: %w&quot;, blk.uncompOff, err)
+	}
+	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(bytes.NewReader(comp))
+	if err != nil {
+		return fmt.Errorf(&quot;initializing block at %d: %w&quot;, blk.uncompOff, err)
+	}
+
+	w := sparse.NewWriterAt(dst, blk.uncompOff)</code></pre>
+    <p>Packaged builds compress with <code>XZ_OPTIONS: -9 --threads=0</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/.github/workflows/package.yaml#L58"><code>.github/workflows/package.yaml:58</code></a>), which gives eight blocks with a 64 MiB dictionary each. On a host with eight or more CPUs, line 322 decodes all eight at once, and each worker also copies its whole compressed block onto the heap. Peak RSS reaches 1,425 to 1,684 MiB against 459 to 480 MiB on the sequential path.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/.github/workflows/package.yaml#L53-L63">.github/workflows/package.yaml</a></div>
+      <pre data-start="53" data-line="58"><code class="language-yaml">          runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.runs-on }}
+    env:
+      # This build ships, so it compresses the embedded distro with the
+      # smallest preset; rdd/Makefile defaults to a faster one.
+      XZ_OPTIONS: -9 --threads=0
+    steps:
+    - name: Set GOARCH
+      run: |
+        case &#39;${{ matrix.arch }}&#39; in
+          &#39;aarch64&#39;) echo &quot;GOARCH=arm64&quot; &gt;&gt; &quot;${GITHUB_ENV}&quot; ;;</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L317-L327">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="317" data-line="322"><code class="language-go">		return err
+	}
+
+	// Each worker holds its block&#39;s compressed bytes and its own LZMA2
+	// dictionary, so the worker count bounds memory as much as it bounds CPU.
+	workers := min(runtime.NumCPU(), len(blocks))
+	table := crc64.MakeTable(crc64.ECMA)
+	group, groupCtx := errgroup.WithContext(ctx)
+	group.SetLimit(workers)
+	for _, blk := range blocks {
+		group.Go(func() error {</code></pre>
+    <p>The comment at lines 320-321 says the worker count bounds memory, but the count takes no memory input. CI builds use <code>-1</code>, where the same probe shows about 45 MiB more, so CI never sees the shipped cost.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L315-L326">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="315" data-line="320-321"><code class="language-go">	// the file does nothing, and the blocks finish out of order.
+	if err := dst.Truncate(total); err != nil {
+		return err
+	}
+
+	// Each worker holds its block&#39;s compressed bytes and its own LZMA2
+	// dictionary, so the worker count bounds memory as much as it bounds CPU.
+	workers := min(runtime.NumCPU(), len(blocks))
+	table := crc64.MakeTable(crc64.ECMA)
+	group, groupCtx := errgroup.WithContext(ctx)
+	group.SetLimit(workers)
+	for _, blk := range blocks {</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-decode-rss.sh; run from the repo root:
+#   bash probe-decode-rss.sh &lt;an xz -9 distro image&gt;
+# e.g. ~/Library/Caches/rancher-desktop.guest-deps/distro/v0.2.8/distro.v0.2.8.arm64.raw.xz
+# Needs Go and macOS /usr/bin/time. &quot;seq&quot; hides ReadAt, which is the merge-base path.
+set -o errexit -o nounset
+img=$1
+mkdir -p rdd/cmd/zz-memprobe
+cat &gt; rdd/cmd/zz-memprobe/main.go &lt;&lt;&#39;EOF&#39;
+package main
+
+import (
+	&quot;context&quot;
+	&quot;io&quot;
+	&quot;os&quot;
+	&quot;strings&quot;
+	&quot;syscall&quot;
+	&quot;unsafe&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/xz&quot;
+)
+
+// Map the image rather than read it: the embedded string sits in the binary&#39;s
+// read-only data, so the heap holds only what the decoder allocates.
+func main() {
+	f, err := os.Open(os.Args[1])
+	if err != nil {
+		panic(err)
+	}
+	st, err := f.Stat()
+	if err != nil {
+		panic(err)
+	}
+	b, err := syscall.Mmap(int(f.Fd()), 0, int(st.Size()), syscall.PROT_READ, syscall.MAP_SHARED)
+	if err != nil {
+		panic(err)
+	}
+	var in io.Reader = strings.NewReader(unsafe.String(&amp;b[0], len(b)))
+	if os.Args[3] == &quot;seq&quot; {
+		in = struct{ io.Reader }{in}
+	}
+	if err := xz.DecompressReader(context.Background(), in, os.Args[2]); err != nil {
+		panic(err)
+	}
+}
+EOF
+(cd rdd &amp;&amp; go build -o ../zz-memprobe ./cmd/zz-memprobe)
+rm -r rdd/cmd/zz-memprobe
+for mode in par seq par seq par seq; do
+	/usr/bin/time -l ./zz-memprobe &quot;$img&quot; zz-out.raw &quot;$mode&quot; 2&gt;&amp;1 |
+		awk -v m=&quot;$mode&quot; &#39;/ real /{t=$1} /maximum resident/{printf &quot;%s %.1fs maxrss=%d MiB\n&quot;, m, t, $1/1048576}&#39;
+	rm -f zz-out.raw
+done
+rm zz-memprobe</code></pre>
+      <pre><code class="language-text">$ bash probe-decode-rss.sh ~/Library/Caches/rancher-desktop.guest-deps/distro/v0.2.8/distro.v0.2.8.arm64.raw.xz
+par 6.0s maxrss=1684 MiB
+seq 19.5s maxrss=459 MiB
+par 5.3s maxrss=1684 MiB
+seq 19.5s maxrss=460 MiB
+par 5.3s maxrss=1425 MiB
+seq 19.5s maxrss=480 MiB
+# the same run with the patch below applied
+par 5.9s maxrss=1271 MiB
+seq 19.4s maxrss=480 MiB
+par 5.6s maxrss=1137 MiB
+seq 19.2s maxrss=459 MiB
+par 5.3s maxrss=1010 MiB
+seq 19.5s maxrss=460 MiB</code></pre>
+      </details>
+    <p>Fix: stream each block through a 64 KiB <code>bufio.Reader</code> over an <code>io.NewSectionReader</code>, size the pool by <code>GOMAXPROCS</code>, and correct both comments. The eight dictionaries remain; bounding them trades speed for memory, a maintainer&#39;s call. With I2&#39;s patch, test leftover bytes with <code>comp.ReadByte() != io.EOF</code> (tested together).</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/xz/parallel.go b/rdd/pkg/xz/parallel.go
+index 0b93fb3c5..93090436e 100644
+--- a/rdd/pkg/xz/parallel.go
++++ b/rdd/pkg/xz/parallel.go
+@@ -5,6 +5,7 @@
+ package xz
+ 
+ import (
++	&quot;bufio&quot;
+ 	&quot;bytes&quot;
+ 	&quot;context&quot;
+ 	&quot;encoding/binary&quot;
+@@ -201,8 +202,7 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
+ 		uncompOff += uncompSize
+ 		off = checkOff + crc64CheckSize
+ 	}
+-	// One block decodes no faster in parallel, and the sequential path already
+-	// streams it without holding the compressed bytes in memory.
++	// One block decodes no faster in parallel.
+ 	if len(blocks) &lt; 2 {
+ 		return nil, errNotSplittable
+ 	}
+@@ -270,11 +270,8 @@ func checkStreamEnd(r readerAtSizer, off int64, flags []byte, blocks []block) er
+ 
+ // decodeBlock decompresses one block into dst and verifies its CRC64.
+ func decodeBlock(ctx context.Context, r io.ReaderAt, dst *os.File, blk block, checkTable *crc64.Table) error {
+-	comp := make([]byte, blk.compSize)
+-	if _, err := r.ReadAt(comp, blk.compOffset); err != nil {
+-		return fmt.Errorf(&quot;reading block at %d: %w&quot;, blk.uncompOff, err)
+-	}
+-	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(bytes.NewReader(comp))
++	comp := bufio.NewReaderSize(io.NewSectionReader(r, blk.compOffset, blk.compSize), 64&lt;&lt;10)
++	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(comp)
+ 	if err != nil {
+ 		return fmt.Errorf(&quot;initializing block at %d: %w&quot;, blk.uncompOff, err)
+ 	}
+@@ -317,9 +314,9 @@ func decompressParallel(ctx context.Context, r readerAtSizer, dst *os.File) erro
+ 		return err
+ 	}
+ 
+-	// Each worker holds its block&#39;s compressed bytes and its own LZMA2
+-	// dictionary, so the worker count bounds memory as much as it bounds CPU.
+-	workers := min(runtime.NumCPU(), len(blocks))
++	// Each worker allocates its block&#39;s LZMA2 dictionary, so memory grows with
++	// the worker count.
++	workers := min(runtime.GOMAXPROCS(0), len(blocks))
+ 	table := crc64.MakeTable(crc64.ECMA)
+ 	group, groupCtx := errgroup.WithContext(ctx)
+ 	group.SetLimit(workers)</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/xz/parallel.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The commit body claims parity with the sequential decoder&#39;s checks, but five malformed blocks still decode <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L141-L151">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="141" data-line="146"><code class="language-go">		if headerSize &gt; int64(len(b)) || !crc32Matches(b[:headerSize-4], b[headerSize-4:headerSize]) {
+			return nil, errNotSplittable
+		}
+		b = b[:headerSize-4]
+		blockFlags := b[1]
+		if blockFlags&amp;sizesPresent != sizesPresent || blockFlags&amp;filterCountMask != 0 {
+			return nil, errNotSplittable
+		}
+		i := 2
+		compSize, err := uvarint(b, &amp;i)
+		if err != nil {</code></pre>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/eec59f184"><code>eec59f184</code></a> says the split &quot;checks the metadata the sequential decoder checks&quot;. It skips five checks that ulikunitz v0.5.16 makes, on reserved block-flag bits (line 146 tests only <code>0xc3</code>), nonzero header padding, a property length other than 1 (line 165 discards it), reserved dictionary-size bits (line 171 masks them off), and LZMA2 data that ends before the declared compressed size. Each case decodes with a nil error where the sequential path fails.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L160-L176">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="160" data-line="165-171"><code class="language-go">			return nil, err
+		}
+		if filterID != lzma2FilterID {
+			return nil, errNotSplittable
+		}
+		if _, err := uvarint(b, &amp;i); err != nil { // property length, always 1
+			return nil, err
+		}
+		if i &gt;= len(b) {
+			return nil, errNotSplittable
+		}
+		bits := int(b[i] &amp; 0x3f)
+		if bits &gt; 40 {
+			return nil, errNotSplittable
+		}
+
+		dataOff := off + headerSize</code></pre>
+    <p>Dictionary code 40 diverges the other way: it passes line 172, becomes 2^32 at line 197, and fails where the sequential path decodes. Every case needs a crafted file with valid CRC32s.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L167-L177">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="167" data-line="172"><code class="language-go">		}
+		if i &gt;= len(b) {
+			return nil, errNotSplittable
+		}
+		bits := int(b[i] &amp; 0x3f)
+		if bits &gt; 40 {
+			return nil, errNotSplittable
+		}
+
+		dataOff := off + headerSize
+		dataEnd := dataOff + compSize</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L192-L202">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="192" data-line="197"><code class="language-go">		blocks = append(blocks, block{
+			compOffset:   dataOff,
+			compSize:     compSize,
+			uncompOff:    uncompOff,
+			uncompSize:   uncompSize,
+			dictCap:      (2 | (bits &amp; 1)) &lt;&lt; (bits/2 + 11),
+			check:        check,
+			unpaddedSize: headerSize + compSize + crc64CheckSize,
+		})
+		uncompOff += uncompSize
+		off = checkOff + crc64CheckSize</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/xz/zz_divergence_test.go; from rdd/ run:
+// go test -count=1 -run TestParallelAcceptsWhatSequentialRejects -v ./pkg/xz/
+package xz
+
+import (
+	&quot;bytes&quot;
+	&quot;encoding/binary&quot;
+	&quot;hash/crc32&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+)
+
+// Each case edits multiblock.xz&#39;s metadata and reseals every CRC32, so only a
+// structural check can catch it.
+func TestParallelAcceptsWhatSequentialRejects(t *testing.T) {
+	fixture, err := os.ReadFile(filepath.Join(&quot;testdata&quot;, &quot;multiblock.xz&quot;))
+	assert.NilError(t, err)
+	blocks, err := parseBlocks(bytes.NewReader(fixture))
+	assert.NilError(t, err)
+	const hdr = 16 // every block header in this fixture is 16 bytes
+	h0 := int(blocks[0].compOffset) - hdr
+	resealHeader := func(b []byte, h int) {
+		binary.LittleEndian.PutUint32(b[h+hdr-4:], crc32.ChecksumIEEE(b[h:h+hdr-4]))
+	}
+	for _, tc := range []struct {
+		name   string
+		mutate func(b []byte)
+	}{
+		{&quot;unchanged&quot;, func(b []byte) {}},
+		{&quot;dict-size code 40&quot;, func(b []byte) { b[h0+10] = 40; resealHeader(b, h0) }},
+		{&quot;reserved block flag&quot;, func(b []byte) { b[h0+1] |= 0x04; resealHeader(b, h0) }},
+		{&quot;non-zero header padding&quot;, func(b []byte) { b[h0+11] = 0x01; resealHeader(b, h0) }},
+		{&quot;reserved dict-size bits&quot;, func(b []byte) { b[h0+10] |= 0x40; resealHeader(b, h0) }},
+		{&quot;filter property length 2&quot;, func(b []byte) { b[h0+9] = 0x02; resealHeader(b, h0) }},
+		{&quot;junk after LZMA2 end marker&quot;, func(b []byte) {
+			b[h0+2]++ // compressed size 33469 -&gt; 33470, claiming a padding byte
+			resealHeader(b, h0)
+			footer := len(b) - streamFooterSize
+			index := footer - int(binary.LittleEndian.Uint32(b[footer+4:])+1)*4
+			b[index+2]++ // first record&#39;s unpadded size, same length
+			binary.LittleEndian.PutUint32(b[footer-4:], crc32.ChecksumIEEE(b[index:footer-4]))
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			b := bytes.Clone(fixture)
+			tc.mutate(b)
+			_, seqErr := decode(t, sequential(b))
+			_, parErr := decode(t, bytes.NewReader(b))
+			t.Logf(&quot;sequential: %v; parallel: %v&quot;, seqErr, parErr)
+			assert.Equal(t, parErr != nil, seqErr != nil)
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestParallelAcceptsWhatSequentialRejects -v ./pkg/xz/
+zz_divergence_test.go:52: sequential: &lt;nil&gt;; parallel: &lt;nil&gt;
+zz_divergence_test.go:52: sequential: &lt;nil&gt;; parallel: initializing block at 0: lzma: dictionary capacity is out of range
+zz_divergence_test.go:52: sequential: decompressing xz stream: xz: reserved block header flags set; parallel: &lt;nil&gt;
+zz_divergence_test.go:52: sequential: decompressing xz stream: xz: padding (4 zero bytes) encountered; parallel: &lt;nil&gt;
+zz_divergence_test.go:52: sequential: decompressing xz stream: xz: wrong LZMA2 dictionary size property; parallel: &lt;nil&gt;
+zz_divergence_test.go:52: sequential: decompressing xz stream: xz: wrong LZMA2 filter size; parallel: &lt;nil&gt;
+zz_divergence_test.go:52: sequential: decompressing xz stream: unexpected EOF; parallel: &lt;nil&gt;
+--- FAIL: TestParallelAcceptsWhatSequentialRejects (0.20s)
+--- PASS: TestParallelAcceptsWhatSequentialRejects/unchanged (0.08s)
+--- FAIL: TestParallelAcceptsWhatSequentialRejects/dict-size_code_40 (0.04s)
+--- FAIL: TestParallelAcceptsWhatSequentialRejects/reserved_block_flag (0.02s)
+--- FAIL: TestParallelAcceptsWhatSequentialRejects/non-zero_header_padding (0.01s)
+--- FAIL: TestParallelAcceptsWhatSequentialRejects/reserved_dict-size_bits (0.02s)
+--- FAIL: TestParallelAcceptsWhatSequentialRejects/filter_property_length_2 (0.01s)
+--- FAIL: TestParallelAcceptsWhatSequentialRejects/junk_after_LZMA2_end_marker (0.02s)
+# with the patch below applied
+--- PASS: TestParallelAcceptsWhatSequentialRejects (0.17s)</code></pre>
+      </details>
+    <p>Fix: add the five checks, send code 40 to the sequential path, and drop the now-unused <code>filterCountMask</code>. The package tests pass, and both real images still split to the same sha256. With I1&#39;s patch as well, test leftover bytes with <code>comp.ReadByte() != io.EOF</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/xz/parallel.go b/rdd/pkg/xz/parallel.go
+index 0b93fb3c5..d82e41ef6 100644
+--- a/rdd/pkg/xz/parallel.go
++++ b/rdd/pkg/xz/parallel.go
+@@ -32,8 +32,7 @@ const (
+ 	streamHeaderSize = 12
+ 	streamFooterSize = 12
+ 	lzma2FilterID    = 0x21
+-	sizesPresent     = 0xc0 // block flags: both compressed and uncompressed
+-	filterCountMask  = 0x03
++	sizesPresent     = 0xc0 // block flags: both sizes, one filter, no reserved bits
+ 	indexIndicator   = 0x00
+ )
+ 
+@@ -143,7 +142,7 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
+ 		}
+ 		b = b[:headerSize-4]
+ 		blockFlags := b[1]
+-		if blockFlags&amp;sizesPresent != sizesPresent || blockFlags&amp;filterCountMask != 0 {
++		if blockFlags != sizesPresent {
+ 			return nil, errNotSplittable
+ 		}
+ 		i := 2
+@@ -162,16 +161,16 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
+ 		if filterID != lzma2FilterID {
+ 			return nil, errNotSplittable
+ 		}
+-		if _, err := uvarint(b, &amp;i); err != nil { // property length, always 1
++		propLen, err := uvarint(b, &amp;i)
++		if err != nil {
+ 			return nil, err
+ 		}
+-		if i &gt;= len(b) {
+-			return nil, errNotSplittable
+-		}
+-		bits := int(b[i] &amp; 0x3f)
+-		if bits &gt; 40 {
++		// LZMA2 takes one property byte, and zeros pad the rest of the header.
++		// Code 40 means 4 GiB - 1, which the formula below does not produce.
++		if propLen != 1 || i &gt;= len(b) || b[i] &gt;= 40 || !allZero(b[i+1:]) {
+ 			return nil, errNotSplittable
+ 		}
++		bits := int(b[i])
+ 
+ 		dataOff := off + headerSize
+ 		dataEnd := dataOff + compSize
+@@ -274,7 +273,8 @@ func decodeBlock(ctx context.Context, r io.ReaderAt, dst *os.File, blk block, ch
+ 	if _, err := r.ReadAt(comp, blk.compOffset); err != nil {
+ 		return fmt.Errorf(&quot;reading block at %d: %w&quot;, blk.uncompOff, err)
+ 	}
+-	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(bytes.NewReader(comp))
++	src := bytes.NewReader(comp)
++	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(src)
+ 	if err != nil {
+ 		return fmt.Errorf(&quot;initializing block at %d: %w&quot;, blk.uncompOff, err)
+ 	}
+@@ -288,6 +288,11 @@ func decodeBlock(ctx context.Context, r io.ReaderAt, dst *os.File, blk block, ch
+ 	if n != blk.uncompSize {
+ 		return fmt.Errorf(&quot;block at %d decoded %d bytes, want %d&quot;, blk.uncompOff, n, blk.uncompSize)
+ 	}
++	// The LZMA2 data must fill the compressed size the header declares, as
++	// the sequential decoder requires.
++	if src.Len() != 0 {
++		return fmt.Errorf(&quot;block at %d: %d bytes follow its LZMA2 data&quot;, blk.uncompOff, src.Len())
++	}
+ 	if err := w.Finish(); err != nil {
+ 		return err
+ 	}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/xz/xz.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> Three comments misdescribe the code this PR changes <span class="pill pill-claude">Claude Opus 5</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/xz.go#L37-L50">rdd/pkg/xz/xz.go</a></div>
+      <pre data-start="37" data-line="42-45"><code class="language-go">		return fmt.Errorf(&quot;decompressing xz stream: %w&quot;, err)
+	}
+	return nil
+}
+
+// ctxReader makes the otherwise-uninterruptible decode cancellable: each Read
+// returns the context error once ctx is cancelled, which unwinds io.Copy. The
+// decode is single-threaded and can run for tens of seconds on a large image,
+// so this is what lets a service shutdown propagate instead of blocking on it.
+type ctxReader struct {
+	ctx context.Context
+	r   io.Reader
+}
+</code></pre>
+    <p><code>ctxReader</code> now also wraps each parallel block decode, so &quot;the decode is single-threaded&quot; no longer holds.</p>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/sparse/sparse.go#L96-L98"><code>rdd/pkg/sparse/sparse.go:96-98</code></a> says <code>Finish</code> extends f, but a Writer from <code>NewWriterAt</code> skips the truncate at line 101.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/sparse/sparse.go#L91-L103">rdd/pkg/sparse/sparse.go</a></div>
+      <pre data-start="91" data-line="96-98"><code class="language-go">		i = end
+	}
+	return i
+}
+
+// Finish extends f over the zeros skipped at the end of the stream, if any,
+// and punches a hole over their whole blocks, because APFS allocates a short
+// extension.
+func (w *Writer) Finish() error {
+	if !w.region {
+		if err := w.f.Truncate(w.off); err != nil {
+			return err
+		}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/xz.go#L96-L106">rdd/pkg/xz/xz.go</a></div>
+      <pre data-start="96" data-line="101"><code class="language-go">		}
+	}
+	// os.CreateTemp creates the file 0o600. Match Lima&#39;s 0o644 for decompressed
+	// images so the result stays readable beyond its owner.
+	if err = tmp.Chmod(0o644); err != nil {
+		return err
+	}
+	if err = tmp.Sync(); err != nil {
+		return err
+	}
+	if err = tmp.Close(); err != nil {</code></pre>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/xz.go#L75-L76"><code>rdd/pkg/xz/xz.go:75-76</code></a> says the header sizes make the blocks independent. Every xz block decodes on its own either way; the sizes let <code>parseBlocks</code> find each block without decoding the ones before it. The spec&#39;s Index section says blocks can be reached by random access, and <code>xz --threads=1 --block-size=1MiB</code> writes three blocks whose headers hold no sizes.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/xz.go#L70-L81">rdd/pkg/xz/xz.go</a></div>
+      <pre data-start="70" data-line="75-76"><code class="language-go">			_ = tmp.Close()
+			_ = os.Remove(tmpName)
+		}
+	}()
+
+	// Decode the blocks concurrently when the stream carries the sizes that
+	// makes them independent, which is what &quot;xz --threads&quot; produces. Any
+	// other stream falls back to the single-threaded decode below.
+	parallel := false
+	if ra, ok := in.(readerAtSizer); ok {
+		switch err = decompressParallel(ctx, ra, tmp); {
+		case err == nil:</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-comments.sh; run from the repo root: bash probe-comments.sh
+# Needs xz.
+set -o errexit -o nounset
+cd rdd/pkg
+echo &quot;1. ctxReader&#39;s comment, and the parallel path that now uses it:&quot;
+grep --line-number &#39;single-threaded&#39; xz/xz.go
+grep --line-number &#39;ctxReader{&#39; xz/parallel.go
+echo &quot;2. Finish&#39;s doc, and the branch a NewWriterAt writer takes:&quot;
+sed -n &#39;96,104p&#39; sparse/sparse.go
+echo &quot;3. xz.go&#39;s comment, and a single-threaded file whose blocks carry no sizes:&quot;
+grep --line-number &#39;makes them independent&#39; xz/xz.go
+tmp=$(mktemp -d)
+head -c 3000000 /dev/urandom &gt; &quot;$tmp/in&quot;
+xz --threads=1 --block-size=1MiB --stdout &quot;$tmp/in&quot; &gt; &quot;$tmp/in.xz&quot;
+xz --list --verbose --verbose &quot;$tmp/in.xz&quot; | grep --extended-regexp &#39;^ +Blocks: +[0-9]|Sizes in headers&#39;
+rm -r &quot;$tmp&quot;</code></pre>
+      <pre><code class="language-text">$ bash probe-comments.sh
+1. ctxReader&#39;s comment, and the parallel path that now uses it:
+44:// decode is single-threaded and can run for tens of seconds on a large image,
+77:	// other stream falls back to the single-threaded decode below.
+284:	n, err := io.Copy(io.MultiWriter(w, digest), &amp;ctxReader{ctx: ctx, r: lr})
+2. Finish&#39;s doc, and the branch a NewWriterAt writer takes:
+// Finish extends f over the zeros skipped at the end of the stream, if any,
+// and punches a hole over their whole blocks, because APFS allocates a short
+// extension.
+func (w *Writer) Finish() error {
+	if !w.region {
+		if err := w.f.Truncate(w.off); err != nil {
+			return err
+		}
+	}
+3. xz.go&#39;s comment, and a single-threaded file whose blocks carry no sizes:
+76:	// makes them independent, which is what &quot;xz --threads&quot; produces. Any
+  Blocks:            3
+  Sizes in headers:  No</code></pre>
+      </details>
+    <p>Fix: correct each sentence.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/sparse/sparse.go b/rdd/pkg/sparse/sparse.go
+index 125a33d06..ab1d22914 100644
+--- a/rdd/pkg/sparse/sparse.go
++++ b/rdd/pkg/sparse/sparse.go
+@@ -95,7 +95,7 @@ func (w *Writer) runEnd(p []byte, i int, zero bool) int {
+ 
+ // Finish extends f over the zeros skipped at the end of the stream, if any,
+ // and punches a hole over their whole blocks, because APFS allocates a short
+-// extension.
++// extension. A Writer from NewWriterAt leaves f&#39;s length alone.
+ func (w *Writer) Finish() error {
+ 	if !w.region {
+ 		if err := w.f.Truncate(w.off); err != nil {
+diff --git a/rdd/pkg/xz/xz.go b/rdd/pkg/xz/xz.go
+index 594e4f82a..592c48a93 100644
+--- a/rdd/pkg/xz/xz.go
++++ b/rdd/pkg/xz/xz.go
+@@ -40,9 +40,9 @@ func Decompress(ctx context.Context, in io.Reader, out io.Writer) error {
+ }
+ 
+ // ctxReader makes the otherwise-uninterruptible decode cancellable: each Read
+-// returns the context error once ctx is cancelled, which unwinds io.Copy. The
+-// decode is single-threaded and can run for tens of seconds on a large image,
+-// so this is what lets a service shutdown propagate instead of blocking on it.
++// returns the context error once ctx is cancelled, which unwinds io.Copy. Both
++// the sequential decode and each parallel block decode read through one, so a
++// service shutdown stops them.
+ type ctxReader struct {
+ 	ctx context.Context
+ 	r   io.Reader
+@@ -72,9 +72,9 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
+ 		}
+ 	}()
+ 
+-	// Decode the blocks concurrently when the stream carries the sizes that
+-	// makes them independent, which is what &quot;xz --threads&quot; produces. Any
+-	// other stream falls back to the single-threaded decode below.
++	// Decode the blocks concurrently when every block header records its
++	// sizes, as &quot;xz --threads&quot; output does. Any other stream falls back to
++	// the single-threaded decode below.
+ 	parallel := false
+ 	if ra, ok := in.(readerAtSizer); ok {
+ 		switch err = decompressParallel(ctx, ra, tmp); {</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/xz/parallel_test.go">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> A test comment describes a corruption step the test never performs<a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel_test.go#L186-L199">rdd/pkg/xz/parallel_test.go</a></div>
+      <pre data-start="186" data-line="191-194"><code class="language-go">
+	// The stream is splittable in every other way: three blocks, both sizes.
+	_, err = parseBlocks(bytes.NewReader(compressed))
+	assert.Assert(t, errors.Is(err, errNotSplittable), &quot;got %v&quot;, err)
+
+	// Corrupting the stored check leaves the compressed data decodable, so only
+	// a checksum can catch it. The sequential path must still refuse it.
+	want, err := io.ReadAll(mustSequential(t, compressed))
+	assert.NilError(t, err)
+
+	dst := filepath.Join(t.TempDir(), &quot;crc32.raw&quot;)
+	assert.NilError(t, DecompressReader(t.Context(), bytes.NewReader(compressed), dst))
+	got, err := os.ReadFile(dst)
+	assert.NilError(t, err)</code></pre>
+    <p>The comment says the test corrupts the stored check and the sequential path must refuse it. The test decodes the committed fixture, which <code>xz --test</code> passes, and asserts success on both paths; no version of it on the branch ever corrupted anything. The guard stays covered, because the <code>parseBlocks</code> assertion above fails without it. But a reader who trusts the comment believes a test shows the fallback rejecting a bad CRC32, and none does.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-crc32-comment.sh; run from the repo root: bash probe-crc32-comment.sh
+# Needs xz and python3.
+set -o errexit -o nounset
+cd rdd/pkg/xz
+echo &quot;fixture as committed:&quot;
+xz --test --verbose testdata/multiblock-crc32.xz
+echo &quot;lines that corrupt anything in TestParallelFallsBackOnNonCRC64Check:&quot;
+sed -n &#39;/^func TestParallelFallsBackOnNonCRC64Check/,/^}/p&#39; parallel_test.go |
+	grep --count --regexp=&#39;corrupt\[&#39; --regexp=&#39;\^=&#39; || true
+echo &quot;the fixture with its last block&#39;s CRC32 flipped:&quot;
+tmp=$(mktemp)
+python3 -c &#39;
+import struct, sys
+b = bytearray(open(&quot;testdata/multiblock-crc32.xz&quot;, &quot;rb&quot;).read())
+footer = len(b) - 12
+index = footer - (struct.unpack(&quot;&lt;I&quot;, b[footer + 4:footer + 8])[0] + 1) * 4
+b[index - 1] ^= 0xff
+sys.stdout.buffer.write(b)&#39; &gt; &quot;$tmp&quot;
+xz --test &quot;$tmp&quot; || echo &quot;xz exit status $?&quot;
+rm &quot;$tmp&quot;</code></pre>
+      <pre><code class="language-text">$ bash probe-crc32-comment.sh
+fixture as committed:
+testdata/multiblock-crc32.xz: 6,116 B / 6,000 B = 1.019
+lines that corrupt anything in TestParallelFallsBackOnNonCRC64Check:
+0
+the fixture with its last block&#39;s CRC32 flipped:
+xz: /var/folders/s2/9q03h0c11_s4fdw169wqz3qc0000gn/T/tmp.SZasIOiult: Compressed data is corrupt
+xz exit status 1</code></pre>
+      </details>
+    <p>Fix: perform the corruption the comment describes, flipping the last block&#39;s CRC32 just before the index, and assert the checksum error. The patched test passes, and the probe then counts one corrupting line.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/xz/parallel_test.go b/rdd/pkg/xz/parallel_test.go
+index ed7f607c7..aefe94aba 100644
+--- a/rdd/pkg/xz/parallel_test.go
++++ b/rdd/pkg/xz/parallel_test.go
+@@ -188,8 +188,6 @@ func TestParallelFallsBackOnNonCRC64Check(t *testing.T) {
+ 	_, err = parseBlocks(bytes.NewReader(compressed))
+ 	assert.Assert(t, errors.Is(err, errNotSplittable), &quot;got %v&quot;, err)
+ 
+-	// Corrupting the stored check leaves the compressed data decodable, so only
+-	// a checksum can catch it. The sequential path must still refuse it.
+ 	want, err := io.ReadAll(mustSequential(t, compressed))
+ 	assert.NilError(t, err)
+ 
+@@ -198,6 +196,16 @@ func TestParallelFallsBackOnNonCRC64Check(t *testing.T) {
+ 	got, err := os.ReadFile(dst)
+ 	assert.NilError(t, err)
+ 	assert.Equal(t, bytes.Equal(got, want), true)
++
++	// Corrupting a stored check leaves the compressed data decodable, so only
++	// a checksum can catch it. The sequential path must still refuse it. The
++	// last block&#39;s check ends where the index begins.
++	footer := len(compressed) - streamFooterSize
++	index := footer - int(binary.LittleEndian.Uint32(compressed[footer+4:])+1)*4
++	corrupt := bytes.Clone(compressed)
++	corrupt[index-1] ^= 0xff
++	err = DecompressReader(t.Context(), bytes.NewReader(corrupt), filepath.Join(t.TempDir(), &quot;badcrc.raw&quot;))
++	assert.ErrorContains(t, err, &quot;checksum error&quot;)
+ }
+ 
+ // mustSequential decodes through ulikunitz, which is what the fallback uses.</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/xz/parallel.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Hand-rolled little-endian decode beside an imported <code>encoding/binary</code> <span class="pill pill-claude">Claude Opus 5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L291-L304">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="291" data-line="296-299"><code class="language-go">	if err := w.Finish(); err != nil {
+		return err
+	}
+	// The check is stored little-endian, and parseBlocks accepts CRC64 alone,
+	// so it is always eight bytes.
+	var want uint64
+	for i := 7; i &gt;= 0; i-- {
+		want = want&lt;&lt;8 | uint64(blk.check[i])
+	}
+	if digest.Sum64() != want {
+		return fmt.Errorf(&quot;block at %d: CRC64 %#x, want %#x&quot;, blk.uncompOff, digest.Sum64(), want)
+	}
+	return nil
+}</code></pre>
+    <p>The same file decodes its other little-endian fields through <code>binary.LittleEndian</code> (lines 94 and 231).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L89-L99">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="89" data-line="94"><code class="language-go">}
+
+// crc32Matches reports whether sum holds the little-endian CRC32 of data, as
+// xz stores it in its headers, index and footer.
+func crc32Matches(data, sum []byte) bool {
+	return crc32.ChecksumIEEE(data) == binary.LittleEndian.Uint32(sum)
+}
+
+// allZero reports whether b holds only zero bytes, which xz requires of its
+// padding.
+func allZero(b []byte) bool {</code></pre>
+    <p>Fix: <code>want := binary.LittleEndian.Uint64(blk.check)</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/sparse/sparse.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> No test covers two region writers that share a filesystem block <span class="pill pill-claude">Claude Opus 5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/sparse/sparse.go#L38-L48">rdd/pkg/sparse/sparse.go</a></div>
+      <pre data-start="38" data-line="43"><code class="language-go">
+// NewWriterAt returns a Writer filling f from off. Finish punches the zeros at
+// the end of what it wrote but leaves f&#39;s length alone, so several Writers can
+// fill separate regions of one file at once and the caller sets the length.
+func NewWriterAt(f *os.File, off int64) *Writer {
+	return &amp;Writer{f: f, off: off, dataEnd: off, region: true}
+}
+
+func (w *Writer) Write(p []byte) (int, error) {
+	for i := 0; i &lt; len(p); {
+		data := w.runEnd(p, i, false)</code></pre>
+    <p>The CRC64 hashes the decoder&#39;s output, not the bytes on disk, so a region writer that punched into its neighbour&#39;s block would leave a corrupt image and a nil error. Every fixture that takes the parallel path has 4 KiB-aligned block boundaries, and so do both shipped layouts. Rounding the region start down (<code>dataEnd: off &amp;^ (blockSize - 1)</code>) passes every test in <code>pkg/xz</code> and <code>pkg/sparse</code>.</p>
+    <p>Fix: add the <code>TestWritersAtShareABoundaryBlock</code> test from Claude&#39;s review in the appendix. It writes two regions whose boundary falls inside a 4 KiB block and compares the file with the input; it passes at the review SHA and fails under that mutation.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/xz/parallel_test.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>TestParallelDetectsCorruptBlock</code> passes on either decode path <span class="pill pill-claude">Claude Opus 5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel_test.go#L216-L227">rdd/pkg/xz/parallel_test.go</a></div>
+      <pre data-start="216" data-line="221-222"><code class="language-go">	// Flip a byte inside the second block so the first block still decodes and
+	// the failure has to come from the second.
+	corrupt := bytes.Clone(compressed)
+	corrupt[blocks[1].compOffset+64] ^= 0xff
+
+	err = DecompressReader(t.Context(), bytes.NewReader(corrupt), filepath.Join(t.TempDir(), &quot;corrupt.raw&quot;))
+	assert.Assert(t, err != nil, &quot;corrupt block decoded without error&quot;)
+}
+
+func TestParallelChecksCRC(t *testing.T) {
+	compressed := multiblockFixture(t)
+	blocks, err := parseBlocks(bytes.NewReader(compressed))</code></pre>
+    <p>Both paths reject this input with the same <code>writeMatch: distance out of range</code>; only the parallel one prefixes <code>decompressing block at 1048576</code>. A regression that sent the fixture down the sequential path would still pass.</p>
+    <p>Fix: <code>assert.ErrorContains(t, err, &quot;block at 1048576&quot;)</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/xz/parallel.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> No test cancels a parallel decode <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L279-L289">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="279" data-line="284"><code class="language-go">		return fmt.Errorf(&quot;initializing block at %d: %w&quot;, blk.uncompOff, err)
+	}
+
+	w := sparse.NewWriterAt(dst, blk.uncompOff)
+	digest := crc64.New(checkTable)
+	n, err := io.Copy(io.MultiWriter(w, digest), &amp;ctxReader{ctx: ctx, r: lr})
+	if err != nil {
+		return fmt.Errorf(&quot;decompressing block at %d: %w&quot;, blk.uncompOff, err)
+	}
+	if n != blk.uncompSize {
+		return fmt.Errorf(&quot;block at %d decoded %d bytes, want %d&quot;, blk.uncompOff, n, blk.uncompSize)</code></pre>
+    <p><code>TestDecompressReaderCanceledContext</code> feeds single-block input, so it only reaches the sequential path. Replacing this <code>ctxReader</code> with the bare <code>lr</code> leaves the whole <code>pkg/xz</code> suite green, and a daemon shutdown would then wait out the decode.</p>
+    <p>Fix: add this test. It passes at the review SHA and fails under that mutation (<code>got &lt;nil&gt;</code>).</p>
+      <pre><code class="language-go">func TestParallelCanceledContext(t *testing.T) {
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	dst := filepath.Join(t.TempDir(), &quot;canceled.raw&quot;)
+	err := DecompressReader(ctx, bytes.NewReader(multiblockFixture(t)), dst)
+	assert.Assert(t, errors.Is(err, context.Canceled), &quot;got %v&quot;, err)
+}</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/sparse/sparse.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>NewWriterAt</code> does not state that its region must already read as zeros <span class="pill pill-claude">Claude Opus 5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/sparse/sparse.go#L34-L46">rdd/pkg/sparse/sparse.go</a></div>
+      <pre data-start="34" data-line="39-41"><code class="language-go">// zeros at the end of the stream reach it.
+func NewWriter(f *os.File) *Writer {
+	return &amp;Writer{f: f}
+}
+
+// NewWriterAt returns a Writer filling f from off. Finish punches the zeros at
+// the end of what it wrote but leaves f&#39;s length alone, so several Writers can
+// fill separate regions of one file at once and the caller sets the length.
+func NewWriterAt(f *os.File, off int64) *Writer {
+	return &amp;Writer{f: f, off: off, dataEnd: off, region: true}
+}
+
+func (w *Writer) Write(p []byte) (int, error) {</code></pre>
+    <p>A Writer skips blocks of zeros instead of writing them, so a region holding old data keeps it. <code>decompressParallel</code> meets the precondition by truncating a fresh file (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L316"><code>parallel.go:316</code></a>); the next caller has no warning.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L311-L321">rdd/pkg/xz/parallel.go</a></div>
+      <pre data-start="311" data-line="316"><code class="language-go">		return err
+	}
+	total := blocks[len(blocks)-1].uncompOff + blocks[len(blocks)-1].uncompSize
+	// Give every worker its region up front: a hole punched past the end of
+	// the file does nothing, and the blocks finish out of order.
+	if err := dst.Truncate(total); err != nil {
+		return err
+	}
+
+	// Each worker holds its block&#39;s compressed bytes and its own LZMA2
+	// dictionary, so the worker count bounds memory as much as it bounds CPU.</code></pre>
+    <p>Fix: add &quot;The region must already read as zeros.&quot;</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>(future) The xz preset now also sets decode memory and parallelism</strong> <span class="pill pill-claude">Claude Opus 5</span>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/Makefile#L85-L88"><code>rdd/Makefile:85-88</code></a> and <code>.github/workflows/package.yaml</code> justify <code>XZ_OPTIONS</code> by image size against build time. With the parallel decoder, <code>-9</code>&#39;s 64 MiB dictionary puts a floor of 512 MiB under eight workers even after I1, and its 192 MiB blocks limit the split to eight. <code>-9 --block-size=64MiB</code> would give more, smaller blocks with the same dictionary; each option needs an image-size measurement nobody has made.</li>
+      <li><strong>(future) Windows is unmeasured</strong> <span class="pill pill-claude">Claude Opus 5</span>. <code>punchHole</code> is a no-op there, so after <code>Truncate(total)</code> each out-of-order <code>WriteAt</code> probably makes NTFS zero-fill up to the highest offset written. That is inferred from NTFS&#39;s valid-data-length behavior, not measured; a timing of the decode step on <code>windows-latest</code> would settle whether the split helps there.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>(in-scope) The single-stream check leaves no gap</strong> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. The forward walk must reach the index exactly where the footer&#39;s backward size puts it, so a second stream, stream padding, or trailing data always falls back.</li>
+      <li><strong>(in-scope) Concurrent region writers never punch each other&#39;s bytes</strong> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-claude">Claude Opus 5</span>. Hole boundaries round inward to 4 KiB, so a region boundary inside a block stays safe, as S2&#39;s test shows.</li>
+      <li><strong>(in-scope) Only the container parsing is new</strong> <span class="pill pill-claude">Claude Opus 5</span>. The codec is ulikunitz&#39;s <code>lzma</code> package, and anything the parser does not recognise falls back instead of failing.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The consolidator ran, from the lead worktree at the review SHA:</p>
+    <ul>
+      <li><code>go test -race</code> on <code>pkg/xz</code> and <code>pkg/sparse</code>, <code>go vet</code>, and golangci-lint with GOOS set to darwin, linux and windows: all pass, 0 issues. <code>GOOS=windows go test -c ./pkg/xz/</code> compiles.</li>
+      <li>Both real image layouts (v0.2.8 arm64 at <code>-9</code>, 8 blocks, and re-encoded at <code>-1</code>, 468 blocks) decode to the same sha256 as <code>xz -d</code> (<code>a868cf23742501b1…</code>), in 5.0 to 6.4 s on the parallel path against 19.2 to 19.7 s (<code>-9</code>) and 27.2 to 28.7 s (<code>-1</code>) on the sequential one.</li>
+      <li>Mutations: removing the parallel path&#39;s <code>ctxReader</code> (S4) and rounding a region&#39;s start down (S2) both leave the suite green. Claude&#39;s run showed that disabling hole punching fails <code>TestParallelLeavesHoles</code>, so that behavior is covered.</li>
+    </ul>
+    <p>Gaps, by what an escaped regression would cost:</p>
+    <ul>
+      <li><strong>S2 (optional):</strong> a silent-corruption path, but only a custom <code>--block-size</code> with unaligned boundaries reaches it.</li>
+      <li><strong>I2&#39;s cases (with the fix):</strong> the probe above can become the test, since the commit body promises parity.</li>
+      <li><strong>S3, S4 (optional):</strong> a regression would hide which path caught corruption or delay shutdown by one decode.</li>
+      <li><strong>I4:</strong> the test comment overstates coverage.</li>
+    </ul>
+    <p>CI at the review SHA: 44 checks pass and 3 are skipped. <code>BATS (ubuntu-latest, bats-lima)</code> passed 117 of 117 tests and then failed in the log-collection step on <code>find: &#39;/home/runner/.rdbats-lima-controller/lima/test-running/&#39;: No such file or directory</code>. That is a known harness race, unrelated to this PR. Asynchronous cleanup removes the instance directory between the glob and <code>find</code>. <code>BATS (macos-15-intel, bats-app)</code>, the job <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/763" class="gh-ref" data-title="Embed the guest distro image in rdd" data-state="merged" data-type="pr">#763</a>&#39;s decode slowed, passed in 54 minutes.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The three comments in I3 and the test comment in I4 state what the code does not do.</li>
+      <li>The body of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/eec59f184"><code>eec59f184</code></a> claims parity with the sequential decoder&#39;s checks (I2). The pushed commit cannot be amended, so the fix has to make the claim true.</li>
+      <li>The <code>XZ_OPTIONS</code> comments in <code>rdd/Makefile</code> and <code>package.yaml</code> describe only image size against build time (Design Observations).</li>
+      <li>After I1, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L204-L205"><code>parallel.go:204-205</code></a> no longer tells the two paths apart by memory; the patch shortens it.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>Streams with a check other than CRC64 fall back by design (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L45-L49"><code>parallel.go:45-49</code></a>), because verifying only CRC64 would accept corruption the sequential decoder catches. Do not re-suggest splitting CRC32 or SHA-256 streams.</li>
+      <li>Single-block streams fall back by design (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L204-L208"><code>parallel.go:204-208</code></a>).</li>
+      <li>On Windows the zeros stay allocated (<code>rdd/pkg/sparse/punch_other.go</code>). This predates the PR.</li>
+      <li>Gemini 3.5 Flash&#39;s suggestion to guard <code>parseBlocks</code> against a <code>ReadAt</code> returning <code>0, nil</code> was rejected. <code>io.ReaderAt</code> requires a non-nil error whenever <code>n &lt; len(p)</code>, and only <code>*strings.Reader</code> and <code>*bytes.Reader</code> reach this code. Do not re-suggest.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>@Nino-K on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eec59f1841899dd570b825d7218475f2c96354b4/rdd/pkg/xz/parallel.go#L138"><code>rdd/pkg/xz/parallel.go:138</code></a> asked whether a second stream is silently dropped. It was, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/eec59f184"><code>eec59f184</code></a> fixes it. <code>checkStreamEnd</code> requires the footer to close the parsed stream at the end of the file, and the &quot;second stream&quot;, &quot;stream padding&quot; and &quot;trailing data&quot; cases of <code>TestParallelFallsBackUnlessOneIntactStream</code> pin it. The thread has no reply and is still open.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5"><span class="pill pill-claude">Claude Opus 5</span> <a href="#claude-opus-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude did nearly all of this round&#39;s work. It found three of the four Important findings and every Suggestion but S4, and it was the only reviewer to use the staged real images, which is how it found I1. Its six-case divergence test ran verbatim and turned Gemini Pro&#39;s single property-length suggestion into a disproof of the commit body&#39;s claim. Its I1 saving came out larger than a mapped-image probe shows (means of about 550 MiB against about 460 MiB), because its probe held the image on the heap, but the direction held over three alternating runs per arm. It filed the cancellation gap only in its Testing Assessment, and it missed I4.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Codex produced no review. OpenAI&#39;s content filter stopped it after seven read-only calls (the diff, the changed files, ulikunitz&#39;s format code, and the fixtures&#39; bytes) with &quot;This content was flagged for possible cybersecurity risk.&quot; The skill gives a content-filter refusal no retry, and its session log held no findings to recover. I suspect the orchestrator&#39;s note asking agents to find inputs the new parser accepts and the reference decoder rejects tripped the filter, but that is unverified.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro found one real gap, the unchecked LZMA2 property length, and rated it a suggestion because a crafted file needs a valid CRC32. It became Important only once merged into I2, where the commit body&#39;s parity claim makes it wrong prose as well as lax code. It cited lines 121-123 for code at 165-167. It marked <code>xz.go</code> and <code>sparse.go</code> clean where Claude found I3, and its Testing Assessment reported no missing scenarios.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash&#39;s first run ended after about a minute with an empty final turn and no error on stderr; its one retry produced the review. Its concrete cancellation test became S4 and fails under the mutation that removes the parallel path&#39;s context check. Both of its findings were dropped. One guards against a <code>ReadAt</code> that breaks the <code>io.ReaderAt</code> contract, and the other asks for a doc comment on a method this PR does not touch. It also claimed Windows decodes sequentially, which is wrong. The two Gemini models agreed on nothing, so they count as separate opinions this round.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <p>Claude provided most of the value: three Important findings, the real-image measurements, and a runnable probe behind each claim. Gemini Pro contributed one corroborating check, Flash one test, and Codex nothing. The consolidator&#39;s own probes added I4 and re-measured every number the report quotes.</p>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>21m 27s</td><td>4m 19s</td><td>10m 49s</td><td>5m 14s</td></tr>
+        <tr><td>Findings</td><td>3I 5S</td><td>none</td><td>1I</td><td>1S</td></tr>
+        <tr><td>Tool calls</td><td>58 (Bash 52, Read 6)</td><td>7 (shell 7)</td><td>16 (run<em>shell</em>command 16)</td><td>22 (read<em>file 8, run</em>shell<em>command 6, grep</em>search 3)</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>0</td><td>2</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>6</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>7</td><td>0</td><td>7</td><td>7</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>2</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>3I 5S</strong></td><td><strong>none</strong></td><td><strong>1I</strong></td><td><strong>1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Gemini 3.1 Pro P1 &quot;Accepts LZMA2 property lengths other than 1&quot;: suggestion → important, merged into I2, because the commit body claims parity with the sequential decoder. Claude Opus 5 P1 I3&#39;s <code>NewWriterAt</code> precondition bullet: important → suggestion S5, because missing prose stays a suggestion. Gemini 3.5 Flash P1 S1 dropped as a false positive; S2 dropped as out of scope (unchanged, pre-existing code).</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>Read a test&#39;s comments against its body as strictly as production comments. When a comment describes an injected fault, a mutation, or a corrupted fixture, confirm the body performs it and the fixture is in the state the comment claims; a comment written for a stronger version of the test overstates coverage.</li>
+      <li>When a finding rests on a resource measurement (peak RSS, heap, allocations), make the probe hold its inputs the way production does (embedded data is mapped read-only memory, not heap) and take several alternating samples per arm. A heap-loaded input changes the garbage collector&#39;s target and can double or halve a fix&#39;s apparent saving.</li>
+      <li>When a review asks whether a new parser accepts input a reference implementation rejects, ask agents to derive the missing checks from the reference&#39;s source and leave building malformed inputs to the consolidator. Provider content filters can end an agent&#39;s run when a prompt asks it to craft malformed input.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] Shipped builds compress the embedded distro with <code>XZ_OPTIONS: -9 --threads=0</code> (<code>.github/workflows/package.yaml</code>), and dev and CI builds with <code>-1 --threads=0</code> (<code>rdd/Makefile</code>), so the image&#39;s xz layout differs between release and CI: about eight 192 MiB blocks with 64 MiB dictionaries against hundreds of 3 MiB blocks with 1 MiB dictionaries. A decode change measured on CI or a developer build says nothing about the shipped layout&#39;s memory or parallelism; measure both, using the published asset from the guest-deps cache for the shipped one.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
