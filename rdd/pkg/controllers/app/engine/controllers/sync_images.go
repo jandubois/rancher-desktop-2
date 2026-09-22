@@ -6,7 +6,6 @@ package controllers
 
 import (
 	"context"
-	"crypto/sha256"
 	"errors"
 	"fmt"
 	"slices"
@@ -23,26 +22,25 @@ import (
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
+// imageMirrorPrefix is the prefix used for deterministic Image mirror names.
+const imageMirrorPrefix = "img"
+
 // imageMirrorNames returns the deterministic Image mirror names for a
-// Docker image ID and its RepoTags: one name per tag (hashed over
-// id+tag), or a single name hashed over id alone for a dangling image.
-// The "img-" prefix and SHA-256 match the vol-<sha256(name)> scheme
-// used for Volumes, keeping names short, RFC 1123 valid, and
-// consistent across resource types.
+// Docker image ID and its RepoTags, as determined using [api.MirrorName].
 //
 // syncAllImages shares this helper to seed activeNames from the list
 // response alone, so a transient Inspect failure cannot classify
 // existing mirrors as stale.
 func imageMirrorNames(id string, repoTags []string) []string {
 	if len(repoTags) == 0 {
-		return []string{fmt.Sprintf("img-%x", sha256.Sum256([]byte(id)))}
+		return []string{api.MirrorName(imageMirrorPrefix, id)}
 	}
 	names := make([]string, 0, len(repoTags))
 	for _, tag := range repoTags {
-		names = append(names, fmt.Sprintf("img-%x",
-			sha256.Sum256([]byte(id+"\x00"+tag))))
+		names = append(names, api.MirrorName(imageMirrorPrefix, id, tag))
 	}
 	return names
 }

@@ -442,10 +442,11 @@ status:
 
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
-- **metadata.name**: A `img-` prefix followed by a SHA-256 hash.  If the image
-  has a tag, it is the hash over the image id (`status.id`), followed by a null
-  byte, followed by the tag (`status.repoTag`).  If the image is dangling (i.e.
-  no tags), it is the hash of the image id (`status.id`) by itself.
+- **metadata.name**: A name encoded using the [algorithm above](#name-encoding),
+  using `img-` as the prefix, and the image id (`status.id`) as the input name.
+  As that contains a colon, it is never a valid Kubernetes name, and is always
+  encoded.  If the image has a tag (`status.repoTag`), that is provided as an
+  extra value to be hashed over.
 - **status.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.
 - **status.id**: The raw image ID, including the `sha256:` prefix (or whichever
