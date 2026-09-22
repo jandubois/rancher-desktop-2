@@ -458,9 +458,9 @@ describe('LonghornProvider.checkForUpdates', () => {
         name:         'Rancher Desktop 9.9.9',
         body:         'Simulated release.',
         published_at: '2038-01-01T00:00:00Z',
-        assets:       assetNames.flatMap(name => [
-          { name, browser_download_url: `${ serverURL }/${ name }`, size: 1 },
-          { name: `${ name }.sha512sum`, browser_download_url: `${ serverURL }/${ name }.sha512sum`, size: 1 },
+        assets:       assetNames.flatMap((name, i) => [
+          { name, browser_download_url: `${ serverURL }/msi/${ i }`, size: 1 },
+          { name: `${ name }.sha512sum`, browser_download_url: `${ serverURL }/sha512sum/${ i }`, size: 1 },
         ]),
       }),
     });
@@ -594,7 +594,7 @@ describe('LonghornProvider.checkForUpdates', () => {
 
     mockRelease([appArtifactName('9.9.9', 'win32', otherArch, 'msi'), assetName]);
     await makeProvider()['checkForUpdates']();
-    expect(JSON.parse(fs.readFileSync(cacheFile, 'utf-8')).file.url).toBe(`${ serverURL }/${ assetName }`);
+    expect(JSON.parse(fs.readFileSync(cacheFile, 'utf-8')).file.url).toBe(`${ serverURL }/msi/1`);
   });
 
   it('records the responder override when updates are forced', async() => {

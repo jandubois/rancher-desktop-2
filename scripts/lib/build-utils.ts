@@ -472,14 +472,14 @@ export default {
    * never names its files after another architecture.
    * @param artifactName The `artifactName` in the application's electron-builder.yml.
    */
-  checkArchiveArch(artifactName: string | null | undefined, version: string, platform: string): void {
-    const goarch = _.findKey(archByGoarch, arch => artifactName === appArtifactName(version, platform, arch, EXT_MACRO)) as keyof typeof archByGoarch | undefined;
+  checkArchiveArch(artifactName: string | null | undefined, version: string, platform: NodeJS.Platform): void {
+    const goArch = _.findKey(archByGoarch, arch => artifactName === appArtifactName(version, platform, arch, EXT_MACRO)) as keyof typeof archByGoarch | undefined;
 
-    if (!goarch) {
+    if (!goArch) {
       throw new Error(`Cannot tell the archive's architecture from its artifactName ${ artifactName }; sign it from the checkout that packaged it`);
     }
-    if (archByGoarch[goarch] !== this.arch) {
-      throw new Error(`The archive was built for ${ archByGoarch[goarch] }, but GOARCH or the Node.js architecture selects ${ this.arch }; set GOARCH=${ goarch } to sign it`);
+    if (archByGoarch[goArch] !== this.arch) {
+      throw new Error(`The archive was built for ${ archByGoarch[goArch] }, but GOARCH or the Node.js architecture selects ${ this.arch }; set GOARCH=${ goArch } to sign it`);
     }
   },
 

@@ -10,7 +10,7 @@ export type ArtifactArch = 'aarch64' | 'x86_64';
 /** electron-builder's `${ext}` macro, for an `artifactName` shared by several targets. */
 export const EXT_MACRO = `\${ext}`;
 
-export function artifactPlatform(platform: string): ArtifactPlatform {
+export function artifactPlatform(platform: NodeJS.Platform): ArtifactPlatform {
   switch (platform) {
   case 'darwin':
   case 'linux':
@@ -25,7 +25,7 @@ export function artifactPlatform(platform: string): ArtifactPlatform {
  * No artifact name may contain `arm64`, because electron-updater's MacUpdater
  * treats any update file whose URL contains it as an arm64 build.
  */
-export function artifactArch(arch: string): ArtifactArch {
+export function artifactArch(arch: NodeJS.Architecture): ArtifactArch {
   switch (arch) {
   case 'arm64':
     return 'aarch64';
@@ -36,15 +36,15 @@ export function artifactArch(arch: string): ArtifactArch {
 }
 
 /** The part of an application artifact's name after its version. */
-export function appArtifactSuffix(platform: string, arch: string, ext: string): string {
+export function appArtifactSuffix(platform: NodeJS.Platform, arch: NodeJS.Architecture, ext: string): string {
   return `.${ artifactPlatform(platform) }.${ artifactArch(arch) }.${ ext }`;
 }
 
-export function appArtifactName(version: string, platform: string, arch: string, ext: string): string {
+export function appArtifactName(version: string, platform: NodeJS.Platform, arch: NodeJS.Architecture, ext: string): string {
   return `rancher-desktop-${ version }${ appArtifactSuffix(platform, arch, ext) }`;
 }
 
-export function rddArtifactName(version: string, platform: string, arch: string): string {
+export function rddArtifactName(version: string, platform: NodeJS.Platform, arch: NodeJS.Architecture): string {
   const exe = platform === 'win32' ? '.exe' : '';
 
   return `rdd.${ version }.${ artifactPlatform(platform) }.${ artifactArch(arch) }${ exe }`;

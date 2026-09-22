@@ -21,7 +21,8 @@ In general, the process involves:
 
    To sign an archive built for the other architecture, export `GOARCH`
    (`amd64` or `arm64`) first. `yarn sign` accepts only an archive built for
-   `GOARCH`, or for the architecture of Node.js itself when `GOARCH` is unset.
+   `GOARCH`. When `GOARCH` is unset, it uses the architecture Node.js runs as,
+   which is `x64` under Rosetta even on an Apple silicon Mac.
 
 4. Look in `dist/` for the signed files, such as
    `rancher-desktop-<version>.windows.x86_64.msi`.  They already have their

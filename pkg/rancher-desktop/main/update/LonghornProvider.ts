@@ -370,7 +370,7 @@ export async function queryUpgradeResponder(url: string, currentVersion: semver.
 /**
  * Pick the release asset to install on this platform and architecture.
  */
-export function findUpdateAsset(assets: GitHubReleaseAsset[], platform: ProviderPlatform, arch: string): GitHubReleaseAsset | undefined {
+export function findUpdateAsset(assets: GitHubReleaseAsset[], platform: ProviderPlatform, arch: NodeJS.Architecture): GitHubReleaseAsset | undefined {
   switch (platform) {
   case 'darwin':
     return assets.find(asset => asset.name.endsWith(appArtifactSuffix(platform, arch, 'zip')));
