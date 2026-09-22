@@ -7,8 +7,10 @@ package xz
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"errors"
 	"fmt"
+	"hash/crc32"
 	"hash/crc64"
 	"io"
 	"os"
@@ -28,10 +30,16 @@ var errNotSplittable = errors.New("xz stream is not splittable")
 
 const (
 	streamHeaderSize = 12
+	streamFooterSize = 12
 	lzma2FilterID    = 0x21
 	sizesPresent     = 0xc0 // block flags: both compressed and uncompressed
 	filterCountMask  = 0x03
 	indexIndicator   = 0x00
+)
+
+var (
+	streamHeaderMagic = []byte{0xfd, '7', 'z', 'X', 'Z', 0x00}
+	streamFooterMagic = []byte{'Y', 'Z'}
 )
 
 // crc64CheckID is the check type this decoder verifies. xz can also emit none,
@@ -51,6 +59,9 @@ type block struct {
 	uncompSize int64
 	dictCap    int
 	check      []byte
+	// unpaddedSize is the block's length without its padding, as the index
+	// records it.
+	unpaddedSize int64
 }
 
 // readerAtSizer is the random access the parallel path needs. The embedded
@@ -60,11 +71,12 @@ type readerAtSizer interface {
 	Size() int64
 }
 
-// uvarint decodes an xz multibyte integer from b at *i.
+// uvarint decodes an xz multibyte integer from b at *i. xz caps the encoding
+// at nine bytes, which keeps every value below 2^63.
 func uvarint(b []byte, i *int) (int64, error) {
 	var v int64
 	for shift := 0; ; shift += 7 {
-		if *i >= len(b) || shift > 63 {
+		if *i >= len(b) || shift > 56 {
 			return 0, errNotSplittable
 		}
 		c := b[*i]
@@ -76,17 +88,38 @@ func uvarint(b []byte, i *int) (int64, error) {
 	}
 }
 
-// parseBlocks walks the block headers of a single-stream xz file. It returns
-// errNotSplittable for anything this decoder will not split: a second stream,
-// stream padding, a header without both sizes, more than one filter, or a
-// filter other than LZMA2.
+// crc32Matches reports whether sum holds the little-endian CRC32 of data, as
+// xz stores it in its headers, index and footer.
+func crc32Matches(data, sum []byte) bool {
+	return crc32.ChecksumIEEE(data) == binary.LittleEndian.Uint32(sum)
+}
+
+// allZero reports whether b holds only zero bytes, which xz requires of its
+// padding.
+func allZero(b []byte) bool {
+	for _, c := range b {
+		if c != 0 {
+			return false
+		}
+	}
+	return true
+}
+
+// parseBlocks walks the block headers of a single-stream xz file and checks
+// them against the stream's index and footer. A second stream, stream padding,
+// a block header without both sizes, more than one filter, or a filter other
+// than LZMA2 returns errNotSplittable. So does damaged metadata, which the
+// sequential decoder then reports.
 func parseBlocks(r readerAtSizer) ([]block, error) {
 	size := r.Size()
 	header := make([]byte, streamHeaderSize)
 	if _, err := r.ReadAt(header, 0); err != nil {
 		return nil, errNotSplittable
 	}
-	if header[7]&0x0f != crc64CheckID {
+	flags := header[6:8]
+	if !bytes.Equal(header[:6], streamHeaderMagic) ||
+		!bytes.Equal(flags, []byte{0, crc64CheckID}) ||
+		!crc32Matches(flags, header[8:]) {
 		return nil, errNotSplittable
 	}
 
@@ -94,20 +127,23 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
 	var uncompOff int64
 	// A block header never exceeds 1024 bytes, so one read covers it.
 	buf := make([]byte, 1024)
-	for off := int64(streamHeaderSize); ; {
+	off := int64(streamHeaderSize)
+	for {
 		n, err := r.ReadAt(buf, off)
 		if n == 0 && err != nil {
 			return nil, errNotSplittable
 		}
 		b := buf[:n]
 		if b[0] == indexIndicator {
-			// The index ends the stream. Anything after the stream footer is
-			// a second stream or stream padding, which this decoder skips.
 			break
 		}
 		headerSize := (int64(b[0]) + 1) * 4
-		flags := b[1]
-		if flags&sizesPresent != sizesPresent || flags&filterCountMask != 0 {
+		if headerSize > int64(len(b)) || !crc32Matches(b[:headerSize-4], b[headerSize-4:headerSize]) {
+			return nil, errNotSplittable
+		}
+		b = b[:headerSize-4]
+		blockFlags := b[1]
+		if blockFlags&sizesPresent != sizesPresent || blockFlags&filterCountMask != 0 {
 			return nil, errNotSplittable
 		}
 		i := 2
@@ -138,21 +174,29 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
 		}
 
 		dataOff := off + headerSize
-		checkOff := (dataOff + compSize + 3) &^ 3
+		dataEnd := dataOff + compSize
+		checkOff := (dataEnd + 3) &^ 3
 		if checkOff+crc64CheckSize > size {
 			return nil, errNotSplittable
 		}
-		check := make([]byte, crc64CheckSize)
-		if _, err := r.ReadAt(check, checkOff); err != nil {
+		// Zero padding takes the block data to a multiple of four bytes before
+		// the check.
+		tail := make([]byte, checkOff+crc64CheckSize-dataEnd)
+		if _, err := r.ReadAt(tail, dataEnd); err != nil {
+			return nil, errNotSplittable
+		}
+		padding, check := tail[:checkOff-dataEnd], tail[checkOff-dataEnd:]
+		if !allZero(padding) {
 			return nil, errNotSplittable
 		}
 		blocks = append(blocks, block{
-			compOffset: dataOff,
-			compSize:   compSize,
-			uncompOff:  uncompOff,
-			uncompSize: uncompSize,
-			dictCap:    (2 | (bits & 1)) << (bits/2 + 11),
-			check:      check,
+			compOffset:   dataOff,
+			compSize:     compSize,
+			uncompOff:    uncompOff,
+			uncompSize:   uncompSize,
+			dictCap:      (2 | (bits & 1)) << (bits/2 + 11),
+			check:        check,
+			unpaddedSize: headerSize + compSize + crc64CheckSize,
 		})
 		uncompOff += uncompSize
 		off = checkOff + crc64CheckSize
@@ -162,7 +206,66 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
 	if len(blocks) < 2 {
 		return nil, errNotSplittable
 	}
+	if err := checkStreamEnd(r, off, flags, blocks); err != nil {
+		return nil, err
+	}
 	return blocks, nil
+}
+
+// checkStreamEnd checks the index at off against blocks, and that the stream
+// footer after the index ends the file. A second stream, stream padding or
+// trailing data means the file does not end with this stream's footer, so each
+// returns errNotSplittable.
+func checkStreamEnd(r readerAtSizer, off int64, flags []byte, blocks []block) error {
+	footerOff := r.Size() - streamFooterSize
+	footer := make([]byte, streamFooterSize)
+	if _, err := r.ReadAt(footer, footerOff); err != nil {
+		return errNotSplittable
+	}
+	if !bytes.Equal(footer[10:], streamFooterMagic) ||
+		!bytes.Equal(footer[8:10], flags) ||
+		!crc32Matches(footer[4:10], footer[:4]) {
+		return errNotSplittable
+	}
+	// The footer stores the index length in 4-byte units, less one.
+	indexSize := (int64(binary.LittleEndian.Uint32(footer[4:8])) + 1) * 4
+	if off+indexSize != footerOff {
+		return errNotSplittable
+	}
+	index := make([]byte, indexSize)
+	if _, err := r.ReadAt(index, off); err != nil {
+		return errNotSplittable
+	}
+	body := index[:indexSize-4]
+	if !crc32Matches(body, index[indexSize-4:]) {
+		return errNotSplittable
+	}
+	i := 1 // past the index indicator
+	count, err := uvarint(body, &i)
+	if err != nil {
+		return err
+	}
+	if count != int64(len(blocks)) {
+		return errNotSplittable
+	}
+	for _, blk := range blocks {
+		unpaddedSize, err := uvarint(body, &i)
+		if err != nil {
+			return err
+		}
+		uncompSize, err := uvarint(body, &i)
+		if err != nil {
+			return err
+		}
+		if unpaddedSize != blk.unpaddedSize || uncompSize != blk.uncompSize {
+			return errNotSplittable
+		}
+	}
+	// Zero padding takes the index to a multiple of four bytes before its CRC32.
+	if (i+3)&^3 != len(body) || !allZero(body[i:]) {
+		return errNotSplittable
+	}
+	return nil
 }
 
 // decodeBlock decompresses one block into dst and verifies its CRC64.
@@ -214,8 +317,8 @@ func decompressParallel(ctx context.Context, r readerAtSizer, dst *os.File) erro
 		return err
 	}
 
-	// Each worker holds its own LZMA2 dictionary, 64 MiB for this image, so
-	// the worker count bounds memory as much as it bounds CPU.
+	// Each worker holds its block's compressed bytes and its own LZMA2
+	// dictionary, so the worker count bounds memory as much as it bounds CPU.
 	workers := min(runtime.NumCPU(), len(blocks))
 	table := crc64.MakeTable(crc64.ECMA)
 	group, groupCtx := errgroup.WithContext(ctx)

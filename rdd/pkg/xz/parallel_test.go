@@ -5,8 +5,11 @@ package xz
 
 import (
 	"bytes"
+	"encoding/binary"
 	"errors"
+	"hash/crc32"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"testing"
@@ -26,6 +29,37 @@ func multiblockFixture(t *testing.T) []byte {
 	return b
 }
 
+// decode runs DecompressReader and returns what it wrote.
+func decode(t *testing.T, r io.Reader) ([]byte, error) {
+	t.Helper()
+	dst := filepath.Join(t.TempDir(), "out.raw")
+	if err := DecompressReader(t.Context(), r, dst); err != nil {
+		return nil, err
+	}
+	b, err := os.ReadFile(dst)
+	assert.NilError(t, err)
+	return b, nil
+}
+
+// sequential hides ReadAt, which keeps DecompressReader off the parallel path.
+// Embedding *bytes.Reader instead would promote ReadAt and defeat it.
+func sequential(compressed []byte) io.Reader {
+	return struct{ io.Reader }{bytes.NewReader(compressed)}
+}
+
+func TestUvarintStopsAtNineBytes(t *testing.T) {
+	i := 0
+	v, err := uvarint(append(bytes.Repeat([]byte{0xff}, 8), 0x7f), &i)
+	assert.NilError(t, err)
+	assert.Equal(t, v, int64(math.MaxInt64))
+
+	// A tenth byte could set the sign bit, and decodeBlock panics when make
+	// gets a negative compressed size.
+	i = 0
+	v, err = uvarint(append(bytes.Repeat([]byte{0xff}, 9), 0x01), &i)
+	assert.Assert(t, errors.Is(err, errNotSplittable), "got %d, %v", v, err)
+}
+
 func TestParallelMatchesSequential(t *testing.T) {
 	compressed := multiblockFixture(t)
 
@@ -33,19 +67,78 @@ func TestParallelMatchesSequential(t *testing.T) {
 	assert.NilError(t, err)
 	assert.Equal(t, len(blocks), 3)
 
-	parallel := filepath.Join(t.TempDir(), "parallel.raw")
-	assert.NilError(t, DecompressReader(t.Context(), bytes.NewReader(compressed), parallel))
-
-	// An io.Reader with no ReaderAt keeps DecompressReader on the sequential
-	// path, so this decodes the same bytes the other way.
-	sequential := filepath.Join(t.TempDir(), "sequential.raw")
-	assert.NilError(t, DecompressReader(t.Context(), struct{ *bytes.Reader }{bytes.NewReader(compressed)}, sequential))
-
-	want, err := os.ReadFile(sequential)
+	got, err := decode(t, bytes.NewReader(compressed))
 	assert.NilError(t, err)
-	got, err := os.ReadFile(parallel)
+	want, err := decode(t, sequential(compressed))
 	assert.NilError(t, err)
 	assert.Equal(t, bytes.Equal(got, want), true, "parallel output differs from sequential")
+}
+
+// The parallel path takes only a file holding one intact stream. Each case
+// alters the fixture outside its compressed data, where the per-block CRC64
+// cannot see the change, so parseBlocks must decline it and DecompressReader
+// must then match the sequential decode.
+func TestParallelFallsBackUnlessOneIntactStream(t *testing.T) {
+	// Unlike multiblock.xz, this fixture pads its index as well as its blocks.
+	fixture, err := os.ReadFile(filepath.Join("testdata", "multiblock-padded-index.xz"))
+	assert.NilError(t, err)
+	blocks, err := parseBlocks(bytes.NewReader(fixture))
+	assert.NilError(t, err)
+	footer := len(fixture) - streamFooterSize
+	// The footer's backward size gives the length of the index before it.
+	index := footer - int(binary.LittleEndian.Uint32(fixture[footer+4:])+1)*4
+	// resealIndex recomputes the index CRC32 after an edit, so only the check
+	// on the edited field can catch it.
+	resealIndex := func(b []byte) []byte {
+		binary.LittleEndian.PutUint32(b[footer-4:], crc32.ChecksumIEEE(b[index:footer-4]))
+		return b
+	}
+
+	for _, tc := range []struct {
+		name   string
+		mutate func(b []byte) []byte
+	}{
+		{"second stream", func(b []byte) []byte { return append(b, fixture...) }},
+		{"stream padding", func(b []byte) []byte { return append(b, 0, 0, 0, 0) }},
+		{"trailing data", func(b []byte) []byte { return append(b, "junk"...) }},
+		{"stream header magic", func(b []byte) []byte { b[0] ^= 0x01; return b }},
+		{"stream header checksum", func(b []byte) []byte { b[streamHeaderSize-1] ^= 0xff; return b }},
+		{"block header checksum", func(b []byte) []byte { b[blocks[1].compOffset-1] ^= 0xff; return b }},
+		{"block padding", func(b []byte) []byte { b[blocks[0].compOffset+blocks[0].compSize] ^= 0x01; return b }},
+		{"index checksum", func(b []byte) []byte { b[footer-1] ^= 0xff; return b }},
+		{"footer checksum", func(b []byte) []byte { b[footer] ^= 0xff; return b }},
+		{"footer magic", func(b []byte) []byte { b[len(b)-1] ^= 0x01; return b }},
+		{"record count", func(b []byte) []byte { b[index+1]--; return resealIndex(b) }},
+		{"index record", func(b []byte) []byte {
+			// Change the first block's uncompressed size.
+			i := index + 1
+			for range 2 { // the record count, then the first unpadded size
+				_, err := uvarint(b, &i)
+				assert.NilError(t, err)
+			}
+			b[i] ^= 0x01
+			return resealIndex(b)
+		}},
+		{"index padding", func(b []byte) []byte { b[footer-5] ^= 0x01; return resealIndex(b) }},
+		{"footer flags", func(b []byte) []byte {
+			// Declare CRC32 in the footer and reseal it, so only the comparison
+			// with the stream header can catch it.
+			b[footer+9] = 0x01
+			binary.LittleEndian.PutUint32(b[footer:], crc32.ChecksumIEEE(b[footer+4:footer+10]))
+			return b
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			compressed := tc.mutate(bytes.Clone(fixture))
+			_, err := parseBlocks(bytes.NewReader(compressed))
+			assert.Assert(t, errors.Is(err, errNotSplittable), "got %v", err)
+
+			want, wantErr := decode(t, sequential(compressed))
+			got, gotErr := decode(t, bytes.NewReader(compressed))
+			assert.Equal(t, gotErr != nil, wantErr != nil, "parallel: %v; sequential: %v", gotErr, wantErr)
+			assert.Assert(t, bytes.Equal(got, want), "decoded %d bytes, want %d", len(got), len(want))
+		})
+	}
 }
 
 func TestParallelLeavesHoles(t *testing.T) {
