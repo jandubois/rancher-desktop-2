@@ -46,3 +46,26 @@ func TestWriterUnalignedWrites(t *testing.T) {
 		assert.Assert(t, allocated < int64(len(want))/8, "%d of %d bytes allocated", allocated, len(want))
 	}
 }
+
+// A Writer whose region starts inside a block must leave the data an earlier
+// Writer wrote to that block.
+func TestWritersAtShareABoundaryBlock(t *testing.T) {
+	data := bytes.Repeat([]byte{'x'}, 904)
+	first := slices.Concat(make([]byte, 1<<20), data, make([]byte, 1000))
+	second := slices.Concat(make([]byte, 1<<20), data) // starts mid-block
+	f, err := os.Create(filepath.Join(t.TempDir(), "image"))
+	assert.NilError(t, err)
+	assert.NilError(t, f.Truncate(int64(len(first)+len(second))))
+	a := NewWriterAt(f, 0)
+	_, err = a.Write(first)
+	assert.NilError(t, err)
+	assert.NilError(t, a.Finish())
+	b := NewWriterAt(f, int64(len(first)))
+	_, err = b.Write(second)
+	assert.NilError(t, err)
+	assert.NilError(t, b.Finish())
+	assert.NilError(t, f.Close())
+	got, err := os.ReadFile(f.Name())
+	assert.NilError(t, err)
+	assert.Assert(t, bytes.Equal(got, slices.Concat(first, second)))
+}

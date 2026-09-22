@@ -10,6 +10,7 @@ package xz
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -38,10 +39,10 @@ func Decompress(ctx context.Context, in io.Reader, out io.Writer) error {
 	return nil
 }
 
-// ctxReader makes the otherwise-uninterruptible decode cancellable: each Read
-// returns the context error once ctx is cancelled, which unwinds io.Copy. The
-// decode is single-threaded and can run for tens of seconds on a large image,
-// so this is what lets a service shutdown propagate instead of blocking on it.
+// ctxReader makes the otherwise-uninterruptible decode cancellable. Each Read
+// returns the context error once ctx is cancelled, which unwinds io.Copy. A
+// decode can run for tens of seconds on a large image, so this is what lets a
+// service shutdown propagate instead of blocking on it.
 type ctxReader struct {
 	ctx context.Context
 	r   io.Reader
@@ -71,12 +72,27 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
 		}
 	}()
 
-	w := sparse.NewWriter(tmp)
-	if err = Decompress(ctx, in, w); err != nil {
-		return err
+	// Decode the blocks concurrently when decompressParallel can split the
+	// stream. Any other stream falls back to the single-threaded decode below.
+	parallel := false
+	if ra, ok := in.(readerAtSizer); ok {
+		switch err = decompressParallel(ctx, ra, tmp); {
+		case err == nil:
+			parallel = true
+		case errors.Is(err, errNotSplittable):
+			err = nil
+		default:
+			return err
+		}
 	}
-	if err = w.Finish(); err != nil {
-		return err
+	if !parallel {
+		w := sparse.NewWriter(tmp)
+		if err = Decompress(ctx, in, w); err != nil {
+			return err
+		}
+		if err = w.Finish(); err != nil {
+			return err
+		}
 	}
 	// os.CreateTemp creates the file 0o600. Match Lima's 0o644 for decompressed
 	// images so the result stays readable beyond its owner.

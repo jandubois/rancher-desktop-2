@@ -27,12 +27,21 @@ type Writer struct {
 	f       *os.File
 	off     int64 // offset in f of the next byte to write
 	dataEnd int64 // offset in f just past the last data written
+	region  bool  // fills part of f, so Finish leaves its length alone
 }
 
-// NewWriter returns a Writer filling f. Call Finish before closing f, so the
-// zeros at the end of the stream reach it.
+// NewWriter returns a Writer filling f, which must be empty. Call Finish before
+// closing f, so the zeros at the end of the stream reach it.
 func NewWriter(f *os.File) *Writer {
 	return &Writer{f: f}
+}
+
+// NewWriterAt returns a Writer filling f from off. Finish punches the zeros at
+// the end of what it wrote but leaves f's length alone, so several Writers can
+// fill separate regions of one file at once and the caller sets the length.
+// Each region must already read as zeros.
+func NewWriterAt(f *os.File, off int64) *Writer {
+	return &Writer{f: f, off: off, dataEnd: off, region: true}
 }
 
 func (w *Writer) Write(p []byte) (int, error) {
@@ -87,10 +96,12 @@ func (w *Writer) runEnd(p []byte, i int, zero bool) int {
 
 // Finish extends f over the zeros skipped at the end of the stream, if any,
 // and punches a hole over their whole blocks, because APFS allocates a short
-// extension.
+// extension. A Writer from NewWriterAt leaves f's length alone.
 func (w *Writer) Finish() error {
-	if err := w.f.Truncate(w.off); err != nil {
-		return err
+	if !w.region {
+		if err := w.f.Truncate(w.off); err != nil {
+			return err
+		}
 	}
 	w.punchSkipped(w.off)
 	return nil
