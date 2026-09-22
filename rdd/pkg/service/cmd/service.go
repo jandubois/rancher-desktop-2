@@ -39,6 +39,7 @@ import (
 	watchtools "k8s.io/client-go/tools/watch"
 	cliflag "k8s.io/component-base/cli/flag"
 	"k8s.io/component-base/cli/globalflag"
+	"k8s.io/component-base/logs"
 	logsapi "k8s.io/component-base/logs/api/v1"
 	// Justify blank import.
 	_ "k8s.io/component-base/metrics/prometheus/workqueue"
@@ -743,7 +744,10 @@ func NewServeCommand(ctx context.Context) *cobra.Command {
 	var namedFlagSets cliflag.NamedFlagSets
 	s.AddFlags(&namedFlagSets)
 	verflag.AddFlags(namedFlagSets.FlagSet("global"))
-	globalflag.AddGlobalFlags(namedFlagSets.FlagSet("global"), command.Name())
+	// The "logs" set already defines -v, --vmodule and --log-flush-frequency.
+	// klog's copies would shadow them whenever map order merges "global"
+	// first, and ValidateAndApply would then reset klog to verbosity 0.
+	globalflag.AddGlobalFlags(namedFlagSets.FlagSet("global"), command.Name(), logs.SkipLoggingConfigurationFlags())
 
 	fs := command.Flags()
 	for _, f := range namedFlagSets.FlagSets {
