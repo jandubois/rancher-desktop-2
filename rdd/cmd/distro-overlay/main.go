@@ -28,11 +28,12 @@ func main() {
 	output := flag.String("output", "", "write the overlaid distro here")
 	inPlace := flag.Bool("in-place", false, "overlay the distro itself, modifying it")
 	mtimeArg := flag.String("mtime", "", "modification time for every entry, as Unix epoch seconds or RFC3339 (default: now)")
+	kernelParams := flag.String("kernel-params", "", "kernel parameters to append to every boot entry (raw images only)")
 	flag.Parse()
 
 	if *manifest == "" || flag.NArg() != 1 {
 		fmt.Fprintln(os.Stderr, "usage: distro-overlay --manifest M (--output O | --in-place)"+
-			" [--source D] [--format auto|raw|tar] [--mtime T] <distro>")
+			" [--source D] [--format auto|raw|tar] [--mtime T] [--kernel-params P] <distro>")
 		os.Exit(2)
 	}
 	if err := checkTarget(*output, *inPlace); err != nil {
@@ -44,7 +45,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "distro-overlay:", err)
 		os.Exit(2)
 	}
-	if err := run(*manifest, *source, *format, *output, flag.Arg(0), mtime); err != nil {
+	if err := run(*manifest, *source, *format, *output, flag.Arg(0), mtime, *kernelParams); err != nil {
 		fmt.Fprintln(os.Stderr, "distro-overlay:", err)
 		os.Exit(1)
 	}
@@ -80,7 +81,7 @@ func parseMtime(arg string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("invalid --mtime %q: want Unix epoch seconds or RFC3339", arg)
 }
 
-func run(manifestPath, sourceDir, format, output, distro string, mtime time.Time) error {
+func run(manifestPath, sourceDir, format, output, distro string, mtime time.Time, kernelParams string) error {
 	m, err := overlay.LoadManifest(manifestPath)
 	if err != nil {
 		return err
@@ -95,8 +96,11 @@ func run(manifestPath, sourceDir, format, output, distro string, mtime time.Time
 	}
 	switch format {
 	case "raw":
-		return applyRawFile(distro, output, m, sourceDir, mtime)
+		return applyRawFile(distro, output, m, sourceDir, mtime, kernelParams)
 	case "tar":
+		if kernelParams != "" {
+			return errors.New("--kernel-params needs a raw image; the WSL tarball has no bootloader")
+		}
 		return applyTarFile(distro, output, m, sourceDir, mtime)
 	default:
 		return fmt.Errorf("unknown format %q", format)
@@ -107,7 +111,7 @@ func run(manifestPath, sourceDir, format, output, distro string, mtime time.Time
 // so an output that is a symlink stays one, and a run that fails leaves the image
 // it wrote to be discarded: go-diskfs reveals an extent tree only once it has
 // written one.
-func applyRawFile(input, output string, m *overlay.Manifest, sourceDir string, mtime time.Time) error {
+func applyRawFile(input, output string, m *overlay.Manifest, sourceDir string, mtime time.Time, kernelParams string) error {
 	target := input
 	if output != "" {
 		if err := refuseAliasedOutput(input, output); err != nil {
@@ -136,12 +140,25 @@ func applyRawFile(input, output string, m *overlay.Manifest, sourceDir string, m
 	}
 	d, err := overlay.OpenImage(target)
 	if err == nil {
-		err = overlay.Apply(d, m, sourceDir, mtime)
+		err = overlayImage(d, m, sourceDir, mtime, kernelParams)
 	}
 	if err != nil && output != "" {
 		return emptyOutput(output, err)
 	}
 	return err
+}
+
+// overlayImage makes both passes through one open image, the kernel command
+// line first. Apply closes the image, so a failed rewrite has to close it
+// here.
+func overlayImage(d overlay.Distro, m *overlay.Manifest, sourceDir string, mtime time.Time, kernelParams string) error {
+	if kernelParams != "" {
+		if err := overlay.AppendKernelParams(d, kernelParams, mtime); err != nil {
+			_ = d.Close()
+			return err
+		}
+	}
+	return overlay.Apply(d, m, sourceDir, mtime)
 }
 
 // emptyOutput empties a half-written output and returns the failure that led

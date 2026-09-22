@@ -6,7 +6,7 @@ lives in this repository and is layered on from a single manifest.
 
 ## Usage
 
-    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--mtime T] <distro>
+    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--mtime T] [--kernel-params P] <distro>
 
 | Flag | Meaning |
 |------|---------|
@@ -16,9 +16,14 @@ lives in this repository and is layered on from a single manifest.
 | `--output` | Write the result here, leaving the distro alone; the tool writes through to it, empties it when the run fails, and refuses one naming the distro |
 | `--in-place` | Overlay the distro itself, modifying it; pass this or `--output`, never both |
 | `--mtime` | Timestamp for every entry: Unix epoch seconds or RFC3339 (default: now) |
+| `--kernel-params` | Parameters to append to every kernel command line; raw images only |
 
 `<distro>` is an uncompressed tarball or raw image. Decompress it first and
 recompress afterward; the tool works on the uncompressed artifact.
+
+`--kernel-params` appends to the command line kiwi baked into the image, by
+rewriting `/boot/grub2/grub.cfg`. It is for a parameter that suits one host and
+the shipped image should not carry, such as a clock setting for a CI runner.
 
 ## Distro forms
 
