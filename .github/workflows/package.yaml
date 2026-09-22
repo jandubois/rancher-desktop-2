@@ -54,7 +54,9 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     env:
       # This build ships, so it compresses the embedded distro with the
-      # smallest preset; rdd/Makefile defaults to a faster one.
+      # smallest preset; rdd/Makefile defaults to a faster one. The preset's
+      # dictionary, 64 MiB at -9, is also what each of rdd's parallel decode
+      # workers allocates (rdd/pkg/xz/parallel.go).
       XZ_OPTIONS: -9 --threads=0
     steps:
     - name: Set GOARCH

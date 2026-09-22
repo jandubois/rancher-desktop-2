@@ -39,10 +39,10 @@ func Decompress(ctx context.Context, in io.Reader, out io.Writer) error {
 	return nil
 }
 
-// ctxReader makes the otherwise-uninterruptible decode cancellable: each Read
-// returns the context error once ctx is cancelled, which unwinds io.Copy. The
-// decode is single-threaded and can run for tens of seconds on a large image,
-// so this is what lets a service shutdown propagate instead of blocking on it.
+// ctxReader makes the otherwise-uninterruptible decode cancellable. Each Read
+// returns the context error once ctx is cancelled, which unwinds io.Copy. A
+// decode can run for tens of seconds on a large image, so this is what lets a
+// service shutdown propagate instead of blocking on it.
 type ctxReader struct {
 	ctx context.Context
 	r   io.Reader
@@ -72,9 +72,8 @@ func DecompressReader(ctx context.Context, in io.Reader, dst string) (err error)
 		}
 	}()
 
-	// Decode the blocks concurrently when the stream carries the sizes that
-	// makes them independent, which is what "xz --threads" produces. Any
-	// other stream falls back to the single-threaded decode below.
+	// Decode the blocks concurrently when decompressParallel can split the
+	// stream. Any other stream falls back to the single-threaded decode below.
 	parallel := false
 	if ra, ok := in.(readerAtSizer); ok {
 		switch err = decompressParallel(ctx, ra, tmp); {

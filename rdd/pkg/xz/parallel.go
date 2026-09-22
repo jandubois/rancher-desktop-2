@@ -5,6 +5,7 @@
 package xz
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/binary"
@@ -22,18 +23,17 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/sparse"
 )
 
-// xz writes each block's sizes into its header, so a stream produced by
-// "xz --threads" can be split and decoded block by block. errNotSplittable
-// reports a stream this decoder cannot split, which sends the caller back to
-// the sequential path rather than failing the decode.
+// Multi-threaded xz writes each block's sizes into its header, so its output
+// can be split and decoded block by block. errNotSplittable reports a stream
+// this decoder cannot split, which sends the caller back to the sequential
+// path rather than failing the decode.
 var errNotSplittable = errors.New("xz stream is not splittable")
 
 const (
 	streamHeaderSize = 12
 	streamFooterSize = 12
 	lzma2FilterID    = 0x21
-	sizesPresent     = 0xc0 // block flags: both compressed and uncompressed
-	filterCountMask  = 0x03
+	splittableFlags  = 0xc0 // block flags: both sizes, one filter, nothing reserved
 	indexIndicator   = 0x00
 )
 
@@ -107,9 +107,9 @@ func allZero(b []byte) bool {
 
 // parseBlocks walks the block headers of a single-stream xz file and checks
 // them against the stream's index and footer. A second stream, stream padding,
-// a block header without both sizes, more than one filter, or a filter other
-// than LZMA2 returns errNotSplittable. So does damaged metadata, which the
-// sequential decoder then reports.
+// a block header without both sizes, more than one filter, a filter other than
+// LZMA2, or a dictionary of 4 GiB - 1 returns errNotSplittable. So does
+// damaged metadata, which the sequential decoder then reports.
 func parseBlocks(r readerAtSizer) ([]block, error) {
 	size := r.Size()
 	header := make([]byte, streamHeaderSize)
@@ -143,7 +143,7 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
 		}
 		b = b[:headerSize-4]
 		blockFlags := b[1]
-		if blockFlags&sizesPresent != sizesPresent || blockFlags&filterCountMask != 0 {
+		if blockFlags != splittableFlags {
 			return nil, errNotSplittable
 		}
 		i := 2
@@ -162,16 +162,14 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
 		if filterID != lzma2FilterID {
 			return nil, errNotSplittable
 		}
-		if _, err := uvarint(b, &i); err != nil { // property length, always 1
-			return nil, err
-		}
-		if i >= len(b) {
+		// LZMA2 takes one property byte, so the property length must be the
+		// single byte 1, and zeros pad the rest of the header. Dictionary codes
+		// stop at 40, which means 4 GiB - 1, a size the formula below cannot
+		// express.
+		if i+1 >= len(b) || b[i] != 1 || b[i+1] >= 40 || !allZero(b[i+2:]) {
 			return nil, errNotSplittable
 		}
-		bits := int(b[i] & 0x3f)
-		if bits > 40 {
-			return nil, errNotSplittable
-		}
+		bits := int(b[i+1])
 
 		dataOff := off + headerSize
 		dataEnd := dataOff + compSize
@@ -201,8 +199,7 @@ func parseBlocks(r readerAtSizer) ([]block, error) {
 		uncompOff += uncompSize
 		off = checkOff + crc64CheckSize
 	}
-	// One block decodes no faster in parallel, and the sequential path already
-	// streams it without holding the compressed bytes in memory.
+	// One block decodes no faster in parallel.
 	if len(blocks) < 2 {
 		return nil, errNotSplittable
 	}
@@ -270,11 +267,8 @@ func checkStreamEnd(r readerAtSizer, off int64, flags []byte, blocks []block) er
 
 // decodeBlock decompresses one block into dst and verifies its CRC64.
 func decodeBlock(ctx context.Context, r io.ReaderAt, dst *os.File, blk block, checkTable *crc64.Table) error {
-	comp := make([]byte, blk.compSize)
-	if _, err := r.ReadAt(comp, blk.compOffset); err != nil {
-		return fmt.Errorf("reading block at %d: %w", blk.uncompOff, err)
-	}
-	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(bytes.NewReader(comp))
+	comp := bufio.NewReaderSize(io.NewSectionReader(r, blk.compOffset, blk.compSize), 64<<10)
+	lr, err := lzma.Reader2Config{DictCap: blk.dictCap}.NewReader2(comp)
 	if err != nil {
 		return fmt.Errorf("initializing block at %d: %w", blk.uncompOff, err)
 	}
@@ -288,15 +282,20 @@ func decodeBlock(ctx context.Context, r io.ReaderAt, dst *os.File, blk block, ch
 	if n != blk.uncompSize {
 		return fmt.Errorf("block at %d decoded %d bytes, want %d", blk.uncompOff, n, blk.uncompSize)
 	}
+	// The LZMA2 data must fill the compressed size the header declares, as the
+	// sequential decoder requires.
+	extra, err := io.Copy(io.Discard, comp)
+	if err != nil {
+		return fmt.Errorf("reading block at %d: %w", blk.uncompOff, err)
+	}
+	if extra != 0 {
+		return fmt.Errorf("block at %d: data follows its LZMA2 end marker", blk.uncompOff)
+	}
 	if err := w.Finish(); err != nil {
 		return err
 	}
-	// The check is stored little-endian, and parseBlocks accepts CRC64 alone,
-	// so it is always eight bytes.
-	var want uint64
-	for i := 7; i >= 0; i-- {
-		want = want<<8 | uint64(blk.check[i])
-	}
+	// parseBlocks accepts CRC64 alone, so the check is always eight bytes.
+	want := binary.LittleEndian.Uint64(blk.check)
 	if digest.Sum64() != want {
 		return fmt.Errorf("block at %d: CRC64 %#x, want %#x", blk.uncompOff, digest.Sum64(), want)
 	}
@@ -317,9 +316,9 @@ func decompressParallel(ctx context.Context, r readerAtSizer, dst *os.File) erro
 		return err
 	}
 
-	// Each worker holds its block's compressed bytes and its own LZMA2
-	// dictionary, so the worker count bounds memory as much as it bounds CPU.
-	workers := min(runtime.NumCPU(), len(blocks))
+	// Each worker allocates its block's LZMA2 dictionary, so memory grows with
+	// the worker count.
+	workers := min(runtime.GOMAXPROCS(0), len(blocks))
 	table := crc64.MakeTable(crc64.ECMA)
 	group, groupCtx := errgroup.WithContext(ctx)
 	group.SetLimit(workers)
