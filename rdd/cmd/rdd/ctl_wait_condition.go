@@ -26,8 +26,8 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/cache"
-	watchtools "k8s.io/client-go/tools/watch"
 
+	cliexit "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/exit"
 	service "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/cmd"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers"
 )
@@ -119,7 +119,7 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 			return resource.Watch(ctx, opts)
 		},
 	}
-	_, err = watchtools.UntilWithSync(ctx, lw, &unstructured.Unstructured{}, nil,
+	err = untilWithSync(ctx, lw, nil,
 		func(event watch.Event) (bool, error) {
 			if event.Type == watch.Deleted {
 				return false, errors.New("resource was deleted while waiting")
@@ -131,7 +131,10 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 			return checker.check(obj), nil
 		},
 	)
-	return err
+	if err != nil {
+		return cliexit.Classify(fmt.Errorf("failed waiting for condition %s: %w", positional[1], err))
+	}
+	return nil
 }
 
 // parseConditionArg parses "TYPE[=STATUS]" into condition type and status.

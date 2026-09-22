@@ -152,6 +152,15 @@ local_setup_file() {
     assert_output --partial "valid values"
 }
 
+# --- Wait timeout: reuses App from previous tests ---
+
+@test "rdd set exits with the timeout code when the wait expires" {
+    # Settled never turns True in this suite, so the deadline fires after
+    # the watch has synced.
+    run -4 rdd set --timeout=3s running=false
+    assert_output --partial "timed out waiting for App state"
+}
+
 # --- Create with specified values (1 App creation) ---
 
 @test "rdd set creates App with specified values" {
