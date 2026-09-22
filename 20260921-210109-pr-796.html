@@ -242,6 +242,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR decodes the blocks of an <code>xz --threads</code> stream concurrently and falls back to the sequential decoder for anything else. Both real image layouts decode byte-identical to <code>xz -d</code> in about 5.5 s instead of 19 to 29 s. On the shipped <code>-9</code> layout, peak RSS rises from about 460 MiB to 1.4 to 1.6 GiB, partly through an avoidable copy. Five malformed blocks the sequential decoder rejects still decode, although the commit body claims parity.</p>
     </div>
     <hr>
+    <h2 id="after-this-review">After This Review <a href="#after-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Every finding was addressed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a> on 2026-09-21, and each ends with its outcome. The code the report cites has changed since the review ran, so its line numbers and snippets describe the review SHA, not the branch head.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -432,6 +438,7 @@ index 0b93fb3c5..93090436e 100644
  	group, groupCtx := errgroup.WithContext(ctx)
  	group.SetLimit(workers)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a> as patched. The mmap probe, 3 alternated runs per arm, now measures 1,138 to 1,271 MiB against 1,357 to 1,557 MiB at the review SHA. The eight dictionaries remain; the option to cap workers by dictionary memory was declined.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/xz/parallel.go">
       <div class="finding-title" id="I2">
@@ -642,6 +649,7 @@ index 0b93fb3c5..d82e41ef6 100644
  		return err
  	}</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>. The five cases joined <code>TestParallelFallsBackUnlessOneIntactStream</code>. It also covers a sixth divergence found while fixing, a property length spelled <code>0x81 0x00</code>, which ulikunitz rejects because it reads that field as a raw byte. Code 40 now falls back and is tested at <code>parseBlocks</code> only (<code>TestParallelFallsBackOn4GiBDictionary</code>), since decoding it allocates the whole 4 GiB dictionary. Data after the LZMA2 end marker fails the parallel decode (<code>TestParallelRejectsBytesAfterLZMA2Data</code>).</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/xz/xz.go">
       <div class="finding-title" id="I3">
@@ -789,6 +797,7 @@ index 594e4f82a..592c48a93 100644
  	if ra, ok := in.(readerAtSizer); ok {
  		switch err = decompressParallel(ctx, ra, tmp); {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>. The same commit corrected the <code>errNotSplittable</code> and <code>multiblockFixture</code> docs, which made claims of the same kind.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/xz/parallel_test.go">
       <div class="finding-title" id="I4">
@@ -875,6 +884,7 @@ index ed7f607c7..aefe94aba 100644
  
  // mustSequential decodes through ulikunitz, which is what the fallback uses.</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a> as patched.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -912,6 +922,7 @@ func crc32Matches(data, sum []byte) bool {
 // padding.
 func allZero(b []byte) bool {</code></pre>
     <p>Fix: <code>want := binary.LittleEndian.Uint64(blk.check)</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/sparse/sparse.go">
       <div class="finding-title" id="S2">
@@ -931,6 +942,7 @@ func (w *Writer) Write(p []byte) (int, error) {
 		data := w.runEnd(p, i, false)</code></pre>
     <p>The CRC64 hashes the decoder&#39;s output, not the bytes on disk, so a region writer that punched into its neighbour&#39;s block would leave a corrupt image and a nil error. Every fixture that takes the parallel path has 4 KiB-aligned block boundaries, and so do both shipped layouts. Rounding the region start down (<code>dataEnd: off &amp;^ (blockSize - 1)</code>) passes every test in <code>pkg/xz</code> and <code>pkg/sparse</code>.</p>
     <p>Fix: add the <code>TestWritersAtShareABoundaryBlock</code> test from Claude&#39;s review in the appendix. It writes two regions whose boundary falls inside a 4 KiB block and compares the file with the input; it passes at the review SHA and fails under that mutation.</p>
+    <p><strong>Outcome:</strong> test added in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>, with a corrected comment. It fails with the region start rounded down.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/xz/parallel_test.go">
       <div class="finding-title" id="S3">
@@ -951,6 +963,7 @@ func TestParallelChecksCRC(t *testing.T) {
 	blocks, err := parseBlocks(bytes.NewReader(compressed))</code></pre>
     <p>Both paths reject this input with the same <code>writeMatch: distance out of range</code>; only the parallel one prefixes <code>decompressing block at 1048576</code>. A regression that sent the fixture down the sequential path would still pass.</p>
     <p>Fix: <code>assert.ErrorContains(t, err, &quot;block at 1048576&quot;)</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>; the assertion takes the offset from <code>blocks[1]</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/xz/parallel.go">
       <div class="finding-title" id="S4">
@@ -977,6 +990,7 @@ func TestParallelChecksCRC(t *testing.T) {
 	err := DecompressReader(ctx, bytes.NewReader(multiblockFixture(t)), dst)
 	assert.Assert(t, errors.Is(err, context.Canceled), &quot;got %v&quot;, err)
 }</code></pre>
+    <p><strong>Outcome:</strong> test added in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>. It fails with the parallel path&#39;s <code>ctxReader</code> removed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/sparse/sparse.go">
       <div class="finding-title" id="S5">
@@ -1010,6 +1024,7 @@ func (w *Writer) Write(p []byte) (int, error) {</code></pre>
 	// Each worker holds its block&#39;s compressed bytes and its own LZMA2
 	// dictionary, so the worker count bounds memory as much as it bounds CPU.</code></pre>
     <p>Fix: add &quot;The region must already read as zeros.&quot;</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53d99fad8"><code>53d99fad8</code></a>. <code>NewWriter</code>, which shares the zero skipping, now says its file must be empty.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
