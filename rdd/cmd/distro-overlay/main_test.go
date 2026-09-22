@@ -76,7 +76,7 @@ func TestRunRawImage(t *testing.T) {
 				assert.NilError(t, os.Symlink(filepath.Join(dir, "real.raw"), output))
 			}
 
-			err := run(manifestFor(t, dir, tc.source), source, "auto", output, img, testTime, "")
+			err := run(manifestFor(t, dir, tc.source), source, "auto", output, "", img, testTime, "")
 			after, readErr := os.ReadFile(img)
 			assert.NilError(t, readErr)
 			if tc.want != "" {
@@ -115,7 +115,7 @@ func TestRunRefusesKernelParamsItCannotApply(t *testing.T) {
 		assert.NilError(t, os.MkdirAll(source, 0o755))
 		assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
 
-		err := run(manifestFor(t, dir, "small"), source, "auto", filepath.Join(dir, "out.tar"), tarball, testTime, "quiet")
+		err := run(manifestFor(t, dir, "small"), source, "auto", filepath.Join(dir, "out.tar"), "", tarball, testTime, "quiet")
 		assert.ErrorContains(t, err, "needs a raw image")
 	})
 
@@ -127,7 +127,7 @@ func TestRunRefusesKernelParamsItCannotApply(t *testing.T) {
 		assert.NilError(t, err)
 		assert.NilError(t, os.WriteFile(img, orig, 0o644))
 
-		err = run(manifestFor(t, dir, "small"), source, "auto", "", img, testTime, "quiet")
+		err = run(manifestFor(t, dir, "small"), source, "auto", "", "", img, testTime, "quiet")
 		assert.ErrorContains(t, err, "/boot/grub2/grub.cfg")
 	})
 }
@@ -147,7 +147,7 @@ func TestRunRefusesOutputNamingTheDistro(t *testing.T) {
 		distro := filepath.Join(dir, "distro.raw")
 		assert.NilError(t, os.WriteFile(distro, pristine, 0o644))
 
-		assert.ErrorContains(t, run(manifestFor(t, dir, "small"), imageSource, "auto", distro, distro, testTime, ""),
+		assert.ErrorContains(t, run(manifestFor(t, dir, "small"), imageSource, "auto", distro, "", distro, testTime, ""),
 			"names the distro itself")
 
 		after, err := os.ReadFile(distro)
@@ -163,7 +163,7 @@ func TestRunRefusesOutputNamingTheDistro(t *testing.T) {
 		assert.NilError(t, os.MkdirAll(source, 0o755))
 		assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
 
-		err := run(manifestFor(t, dir, "small"), source, "auto", distro, distro, testTime, "")
+		err := run(manifestFor(t, dir, "small"), source, "auto", distro, "", distro, testTime, "")
 		assert.ErrorContains(t, err, "names the distro itself")
 		assert.Assert(t, tarNames(t, distro)["etc/os-release"], "the refused run emptied the distro")
 	})
@@ -207,7 +207,7 @@ func TestRunTarKeepsSymlinksItIsGiven(t *testing.T) {
 				output = link
 			}
 
-			err = run(manifest, source, "auto", output, input, testTime, "")
+			err = run(manifest, source, "auto", output, "", input, testTime, "")
 			switch {
 			case tc.refused && tc.throughLink:
 				assert.Assert(t, err != nil, "the run was expected to fail")
@@ -255,10 +255,46 @@ func TestRunTarWritesThroughToOutput(t *testing.T) {
 	assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
 	output := filepath.Join(dir, "overlaid.tar")
 
-	assert.NilError(t, run(manifestFor(t, dir, "small"), source, "auto", output, tarball, testTime, ""))
+	assert.NilError(t, run(manifestFor(t, dir, "small"), source, "auto", output, "", tarball, testTime, ""))
 
 	assert.Assert(t, tarNames(t, output)["overlaid"], "the overlay entry is missing")
 	assert.Assert(t, !tarNames(t, tarball)["overlaid"], "the distro gained the overlay entry")
+}
+
+func TestRunProfileAppliesOnlyItsEntries(t *testing.T) {
+	dir := t.TempDir()
+	source := filepath.Join(dir, "source")
+	assert.NilError(t, os.MkdirAll(source, 0o755))
+	assert.NilError(t, os.WriteFile(filepath.Join(source, "l"), []byte("L"), 0o644))
+	assert.NilError(t, os.WriteFile(filepath.Join(source, "w"), []byte("W"), 0o644))
+
+	manifest := filepath.Join(dir, "manifest.yaml")
+	assert.NilError(t, os.WriteFile(manifest, []byte(
+		"entries:\n"+
+			"  - path: /lima-only\n    source: l\n    profiles: [lima]\n"+
+			"  - path: /wsl-only\n    source: w\n    profiles: [wsl]\n"), 0o644))
+
+	tarball := filepath.Join(dir, "distro.tar")
+	writeTar(t, tarball, "etc/os-release", "NAME")
+	output := filepath.Join(dir, "overlaid.tar")
+
+	assert.NilError(t, run(manifest, source, "auto", output, "lima", tarball, testTime, ""))
+
+	names := tarNames(t, output)
+	assert.Assert(t, names["lima-only"], "the lima entry is missing")
+	assert.Assert(t, !names["wsl-only"], "the wsl entry leaked into the lima image")
+}
+
+func TestRunRejectsAnUnknownProfile(t *testing.T) {
+	dir := t.TempDir()
+	source := filepath.Join(dir, "source")
+	assert.NilError(t, os.MkdirAll(source, 0o755))
+	assert.NilError(t, os.WriteFile(filepath.Join(source, "small"), []byte("S"), 0o644))
+	tarball := filepath.Join(dir, "distro.tar")
+	writeTar(t, tarball, "etc/os-release", "NAME")
+
+	err := run(manifestFor(t, dir, "small"), source, "auto", filepath.Join(dir, "out.tar"), "macos", tarball, testTime, "")
+	assert.ErrorContains(t, err, `unknown profile "macos"`)
 }
 
 // fragmentedImage builds a GPT disk whose 20 MiB ext4 root is nearly full, its

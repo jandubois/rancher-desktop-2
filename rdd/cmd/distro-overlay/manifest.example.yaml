@@ -60,6 +60,16 @@ entries:
     type: symlink
     target: /usr/local/bin/rancher-desktop-guest-agent  # stored verbatim, absolute or relative
 
+  # --- A profile-specific entry ----------------------------------------------
+  # profiles limits an entry to some of the distro's build profiles, mirroring
+  # config.kiwi's profiles= attribute: lima builds the raw ext4 image and wsl
+  # the rootfs tarball. distro-overlay applies only the entries for the profile
+  # it is passed with --profile, plus every entry that names no profile, so one
+  # manifest builds either image. An entry with no profiles applies to both.
+  - path: /usr/local/lib/systemd/system/lima-init.service.d/requires-network.conf
+    source: systemd/requires-network.conf
+    profiles: [lima]   # any of lima, wsl
+
 # Notes:
 #   * Overwrites win: an overlay entry replaces a base path of the same name.
 #     Both backends refuse a path the overlay writes as both a file and a
@@ -71,6 +81,9 @@ entries:
 #   * Modes are permission bits only; setuid, setgid, and sticky are rejected.
 #   * Only file, dir, and symlink are supported. Sockets, fifos, device nodes,
 #     and hard links are rejected.
+#   * profiles limits an entry to the lima or wsl build profiles; an entry that
+#     names none applies to both. distro-overlay picks the profile with
+#     --profile.
 #   * Every entry is stamped with the tool's --mtime (default: now). Pass a fixed
 #     value, such as a git commit time, for a reproducible build.
 #   * The ext4 image fills free space the distro reserves at build time (kiwi

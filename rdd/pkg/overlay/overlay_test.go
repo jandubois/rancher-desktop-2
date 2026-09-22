@@ -62,6 +62,7 @@ func TestValidateRejectsBadEntries(t *testing.T) {
 		"unknown type":    {Entry{Path: "/x", Type: "socket"}, "unknown type"},
 		"symlink owner":   {Entry{Path: "/x", Type: TypeSymlink, Target: "/y", UID: 472}, "cannot set uid or gid"},
 		"negative uid":    {Entry{Path: "/x", Source: "x", UID: -1}, "between 0 and"},
+		"unknown profile": {Entry{Path: "/x", Source: "x", Profiles: []string{"macos"}}, "unknown profile"},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -116,6 +117,27 @@ func TestValidateRejectsDuplicatePaths(t *testing.T) {
 		{Path: "/etc/app.conf", Source: "two"},
 	}}
 	assert.ErrorContains(t, m.validate(), "already used by entry 0")
+}
+
+func TestForProfileSelectsMatchingEntries(t *testing.T) {
+	m := &Manifest{Entries: []Entry{
+		{Path: "/both", Source: "both"},
+		{Path: "/lima-only", Source: "lima", Profiles: []string{ProfileLima}},
+		{Path: "/wsl-only", Source: "wsl", Profiles: []string{ProfileWSL}},
+		{Path: "/either", Source: "either", Profiles: []string{ProfileLima, ProfileWSL}},
+	}}
+
+	paths := func(m *Manifest) []string {
+		var got []string
+		for i := range m.Entries {
+			got = append(got, m.Entries[i].Path)
+		}
+		return got
+	}
+
+	assert.DeepEqual(t, paths(m.ForProfile(ProfileLima)), []string{"/both", "/lima-only", "/either"})
+	assert.DeepEqual(t, paths(m.ForProfile(ProfileWSL)), []string{"/both", "/wsl-only", "/either"})
+	assert.DeepEqual(t, paths(m.ForProfile("")), []string{"/both", "/lima-only", "/wsl-only", "/either"})
 }
 
 func TestApplyTarOverridesNewFilesDirsAndLinks(t *testing.T) {

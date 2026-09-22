@@ -63,6 +63,10 @@ HOST_ARCH := $(shell go$(EXE) env GOHOSTARCH)
 DISTRO_VARIANT := $(if $(filter windows,$(TARGET_OS)),tar,raw)
 DISTRO_IMAGE := pkg/embedded/distro.$(DISTRO_VARIANT).xz
 
+# The overlay applies only the entries for the profile it builds. The variant
+# maps one to one onto kiwi's profiles: the wsl tarball and the lima raw image.
+DISTRO_PROFILE := $(if $(filter windows,$(TARGET_OS)),wsl,lima)
+
 # The overlay adds the binaries the distro stopped shipping once Rancher
 # Desktop took them over. download-guest-deps stages the pristine distro and
 # those downloads into OVERLAY_BUILD, and overlay/manifest.yaml says where each
@@ -173,7 +177,7 @@ $(WORKING_DISTRO): $(PRISTINE_DISTRO) $(OVERLAY_SOURCES) $(OVERLAY_TOOL_SOURCES)
 	xz --decompress --stdout $(PRISTINE_DISTRO) > $@
 	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
 	go$(EXE) run ./cmd/distro-overlay --manifest overlay/manifest.yaml --source overlay \
-		--mtime $(OVERLAY_MTIME) \
+		--profile $(DISTRO_PROFILE) --mtime $(OVERLAY_MTIME) \
 		$(if $(KERNEL_PARAMS),--kernel-params '$(KERNEL_PARAMS)') --in-place $@
 
 .INTERMEDIATE: $(WORKING_DISTRO)

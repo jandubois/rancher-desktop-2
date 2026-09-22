@@ -15,6 +15,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strconv"
 
 	"sigs.k8s.io/yaml"
@@ -31,6 +32,21 @@ const (
 	TypeDir     = "dir"
 	TypeSymlink = "symlink"
 )
+
+// Build profiles are a mirror of config.kiwi's
+// profiles= attribute.
+const (
+	ProfileLima = "lima"
+	ProfileWSL  = "wsl"
+)
+
+// ValidProfile reports whether profile is a build profile the overlay knows.
+// distro-overlay checks its --profile flag with it, and the manifest checks
+// each entry's profiles field, so a typo fails the build instead of silently
+// dropping the entry.
+func ValidProfile(profile string) bool {
+	return profile == ProfileLima || profile == ProfileWSL
+}
 
 // Manifest describes the assets to merge into a distro.
 type Manifest struct {
@@ -54,6 +70,9 @@ type Entry struct {
 	// Mode is an octal string of permission bits such as "0755"; it defaults to
 	// 0644 for files and 0755 for directories.
 	Mode string `json:"mode,omitempty"`
+	// Profiles limits the entry to some of the distro's build profiles, each
+	// lima or wsl, mirroring config.kiwi. Empty applies the entry to every one.
+	Profiles []string `json:"profiles,omitempty"`
 }
 
 // LoadManifest reads and validates a YAML manifest.
@@ -141,7 +160,34 @@ func (e *Entry) validate() error {
 			return fmt.Errorf("invalid mode %q: %w", e.Mode, err)
 		}
 	}
+	for _, p := range e.Profiles {
+		if !ValidProfile(p) {
+			return fmt.Errorf("unknown profile %q (want %s or %s)", p, ProfileLima, ProfileWSL)
+		}
+	}
 	return nil
+}
+
+// ForProfile returns a manifest holding only the entries that apply to profile,
+// which is how distro-overlay builds one profile's image from a manifest both
+// share. An entry naming no profile applies to every one. An empty profile
+// returns m itself, so a caller that does not build per profile gets the whole
+// manifest back.
+func (m *Manifest) ForProfile(profile string) *Manifest {
+	if profile == "" {
+		return m
+	}
+	var entries []Entry
+	for i := range m.Entries {
+		if m.Entries[i].hasProfile(profile) {
+			entries = append(entries, m.Entries[i])
+		}
+	}
+	return &Manifest{Entries: entries}
+}
+
+func (e *Entry) hasProfile(profile string) bool {
+	return len(e.Profiles) == 0 || slices.Contains(e.Profiles, profile)
 }
 
 // mode parses the octal Mode, returning def when it is unset.
