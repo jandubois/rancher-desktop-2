@@ -99,6 +99,21 @@ editor_cmd() {
     fi
 }
 
+delete_test_vm() {
+    rdd ctl delete limavm "${VM_NAME}" --namespace "${NAMESPACE}"
+    # Wrap with an outer timeout because rdd ctl wait --timeout may not be
+    # enforced when the reconciler is stalled. On WSL2, a failed
+    # wsl.exe --unregister can deadlock wslservice.exe, blocking all
+    # subsequent wsl.exe calls (including store.Inspect in the reconciler).
+    # If the wait hangs, kill wslservice.exe to recover.
+    if ! timeout 90 rdd ctl wait --for=delete "limavm/${VM_NAME}" --namespace "${NAMESPACE}" --timeout=60s; then
+        if is_windows; then
+            MSYS_NO_PATHCONV=1 taskkill.exe /F /IM wslservice.exe || true
+        fi
+        false
+    fi
+}
+
 @test "create source template ConfigMap for running tests" {
     rdd ctl create configmap "source-template" --namespace "${NAMESPACE}" --from-literal="template=${RUNNING_TEMPLATE}"
     run -0 rdd ctl get configmap "source-template" --namespace "${NAMESPACE}" --output jsonpath='{.data.template}'
@@ -540,18 +555,7 @@ env:
 }
 
 @test "cleanup LimaVM running test" {
-    rdd ctl delete limavm "${VM_NAME}" --namespace "${NAMESPACE}"
-    # Wrap with an outer timeout because rdd ctl wait --timeout may not be
-    # enforced when the reconciler is stalled. On WSL2, a failed
-    # wsl.exe --unregister can deadlock wslservice.exe, blocking all
-    # subsequent wsl.exe calls (including store.Inspect in the reconciler).
-    # If the wait hangs, kill wslservice.exe to recover.
-    if ! timeout 90 rdd ctl wait --for=delete "limavm/${VM_NAME}" --namespace "${NAMESPACE}" --timeout=60s; then
-        if is_windows; then
-            MSYS_NO_PATHCONV=1 taskkill.exe /F /IM wslservice.exe || true
-        fi
-        false
-    fi
+    delete_test_vm
 }
 
 @test "limavm edit command updates template ConfigMap" {
@@ -632,4 +636,8 @@ SCRIPT
 @test "limavm edit rejects invalid template" {
     skip
     # TODO: Implement test for invalid template edit once validation is wired in.
+}
+
+@test "cleanup LimaVM edit test" {
+    delete_test_vm
 }
