@@ -98,6 +98,11 @@ XZ_OPTIONS ?= -1 --threads=0
 # change reuses the image it already made; remove $(DISTRO_IMAGE) first.
 KERNEL_PARAMS ?=
 
+# STAGE_DISTRO names a locally built image to stage in place of the release the
+# manifest pins, so a distro can be tested before it ships. Nothing checks its
+# bytes against a checksum, so only a test build should set it.
+STAGE_DISTRO ?=
+
 # The guest agent's file name carries the target architecture, and
 # pkg/guestagent embeds the one matching GOARCH, so a build for another
 # architecture builds its own agent instead of reusing a stale one.
@@ -149,7 +154,7 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 $(PRISTINE_DISTRO): FORCE
 	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
 	go$(EXE) run ./cmd/download-guest-deps --os $(TARGET_OS) --arch $(TARGET_ARCH) \
-		--dest $(OVERLAY_BUILD)
+		--dest $(OVERLAY_BUILD) $(if $(STAGE_DISTRO),--stage 'distro=$(STAGE_DISTRO)')
 
 # That same run stages these, so they have no recipe of their own.
 $(MKCERT) $(NERDCTL_TARBALL): $(PRISTINE_DISTRO) ;
