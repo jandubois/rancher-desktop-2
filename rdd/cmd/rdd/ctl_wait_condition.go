@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -77,14 +78,18 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 		}
 	}
 
-	// Resolve resource type to a GVR using the discovery API.
+	// Resolve resource type to a GVR and scope using the discovery API.
 	discoveryClient, err := discovery.NewDiscoveryClientForConfig(restConfig)
 	if err != nil {
 		return fmt.Errorf("failed to create discovery client: %w", err)
 	}
 	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
 	typeName, group, _ := strings.Cut(resourceType, ".")
-	gvr, err := mapper.ResourceFor(schema.GroupVersionResource{Resource: typeName, Group: group})
+	gvk, err := mapper.KindFor(schema.GroupVersionResource{Resource: typeName, Group: group})
+	if err != nil {
+		return err
+	}
+	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
 		return err
 	}
@@ -107,7 +112,10 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 	// Watch the single named resource for condition changes.
 	// UntilWithSync handles the initial List, Watch setup, and 410 Gone
 	// recovery (re-list on compacted resource versions).
-	resource := dynClient.Resource(gvr).Namespace(*namespace)
+	var resource dynamic.ResourceInterface = dynClient.Resource(mapping.Resource)
+	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
+		resource = dynClient.Resource(mapping.Resource).Namespace(*namespace)
+	}
 	fieldSelector := "metadata.name=" + resourceName
 	lw := &cache.ListWatch{
 		ListWithContextFunc: func(ctx context.Context, opts metav1.ListOptions) (runtime.Object, error) {

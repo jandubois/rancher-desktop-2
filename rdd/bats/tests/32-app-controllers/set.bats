@@ -43,6 +43,16 @@ local_setup_file() {
     refute_output --partial "namespace"
 }
 
+# --- ctl wait-condition (no App needed) ---
+
+# The CRD stands in for app/app, which is also cluster-scoped but never
+# gets conditions in this suite.
+@test "ctl wait-condition waits on a cluster-scoped resource" {
+    rdd ctl wait-condition \
+        customresourcedefinition/apps.app.rancherdesktop.io \
+        Established --timeout=10s
+}
+
 # --- Error cases (no App mutation, validated before API call) ---
 
 @test "rdd set rejects invalid arguments" {
