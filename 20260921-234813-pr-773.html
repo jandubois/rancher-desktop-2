@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20260921-234813-pr-773</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20260921-234813-pr-773</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-09-21 23:48</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>3 (of pr-773)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/773" class="gh-ref" data-title="RDX: Compose: Initial implementation" data-state="open" data-type="pr">#773</a> — RDX: Compose: Initial implementation</td></tr>
+      <tr><td>Branch</td><td><code>rdd/rdx/compose/validate</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a4dd84096"><code>a4dd84096</code></a> RDD: controllers: Pass context to RegisterWithManager<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/268b47897"><code>268b47897</code></a> RDD: API: Specify that ComposeUp configs must be inside workingDir<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a09cfae27"><code>a09cfae27</code></a> RDD: Containers: Create Compose API objects<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/611fdd476"><code>611fdd476</code></a> RDD: containers: Implement ComposeUpRequest validator<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1dcdc4576"><code>1dcdc4576</code></a> RDD: containers: Test ComposeUpRequest validator</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65"><code>1dcdc4576d46e1af5cb8e0e81a80a108992d4e65</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5</span> (effort: xhigh), <span class="pill pill-codex">Codex GPT 5.6 Sol</span> (effort: xhigh), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; round 3&#39;s fixes work, but no test pins them, and the design doc still calls <code>workingDir</code> relative; a tested patch comes with each</td></tr>
+      <tr><td>Wall-clock time</td><td><code>29 min 10 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 3 points the namespace lookup at the <code>cns-</code> names <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/772" class="gh-ref" data-title="RDD: engine: Fix containerd namespace mirroring" data-state="merged" data-type="pr">#772</a> now creates, reads through the uncached reader before the cache starts, and stops re-checking the filesystem on unrelated updates. All three fixes work, but no test pins any of them, and reverting each one leaves the suite green. The design doc still describes <code>spec.workingDir</code> as relative to where RDD runs, while the validator rejects every relative path. Both problems have small fixes, each with a tested patch.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/controllers/containers/compose/compose_webhooks_test.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> No test pins round 3&#39;s fixes <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go#L90-L106">rdd/pkg/controllers/containers/compose/compose_webhooks_test.go</a></div>
+      <pre data-start="90" data-line="95-101"><code class="language-go">			Namespace: &quot;rancher-desktop&quot;,
+		},
+	}).Build()
+	v := &amp;composeUpRequestValidator{Client: cl}
+
+	t.Run(&quot;accepts a valid update&quot;, func(t *testing.T) {
+		t.Parallel()
+		oldReq := newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, t.TempDir())
+		newReq := newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, t.TempDir())
+		_, err := v.ValidateUpdate(t.Context(), oldReq, newReq)
+		assert.NilError(t, err)
+	})
+
+	simpleCases := map[string]*v1alpha1.ComposeUpRequest{
+		&quot;workingDir must not be empty&quot;: newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, &quot;&quot;),
+		&quot;must be an absolute path&quot;:     newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, &quot;./relative&quot;),
+	}</code></pre>
+    <p>The only accepting update test uses two different directories, so it always takes the <code>changed</code> branch (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L90-L95"><code>compose_webhooks.go:90-95</code></a>). Every test uses the namespace <code>moby</code>, which <code>api.MirrorName</code> returns unchanged, so the hashed <code>cns-</code> lookup never runs. Every test builds the validator with <code>Client</code> alone, so the <code>ErrCacheNotStarted</code> fallback never runs either.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L85-L100">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="85" data-line="90-95"><code class="language-go">	// metadata.name is immutable on update (it is only ever set on create), and
+	// spec.namespace and spec.name are enforced via CEL; we only need to validate
+	// spec.workingDir and spec.configs here.
+	// We only validate it the spec has changed; otherwise a filesystem change
+	// could block unrelated updates.
+	changed := oldRequest.Spec.WorkingDir != newRequest.Spec.WorkingDir ||
+		!slices.Equal(oldRequest.Spec.Configs, newRequest.Spec.Configs)
+	var errs []error
+	if changed {
+		errs = v.validateSpec(ctx, newRequest)
+	}
+
+	return nil, errors.Join(errs...)
+}
+
+// ValidateDelete implements [ctrlwebhookadmission.Validator].</code></pre>
+    <p>All three are bug fixes, which the testing checks require tests for. The gate guards state that changes after admission, the fallback a window before the cache starts, and a broken <code>cns</code> key rejects an existing namespace.</p>
+    <p>Optional: a missing <code>ContainerNamespace</code>, an invalid project name, an accepted config, and a <code>../</code> escape. The &quot;outside&quot; case uses an absolute path, which <code>os.Root</code> rejects anywhere.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-sh"># Save as rdd/mutate.sh; run from rdd/: sh mutate.sh
+# Each sed line reverts one fix; the last one removes the metadata.name check,
+# which the suite already covers, to show a mutant can fail.
+set -o errexit
+f=pkg/controllers/containers/compose/compose_webhooks.go
+tmp=$(mktemp -d)
+for m in \
+    &#39;s#if changed {#if changed || true {#&#39; \
+    &#39;s#isErrCacheNotStarted {#isErrCacheNotStarted \&amp;\&amp; false {#&#39; \
+    &#39;s#api.MirrorName(&quot;cns&quot;,#api.MirrorName(&quot;wrong&quot;,#&#39; \
+    &#39;s#request.ObjectMeta.Name != expectedName#false#&#39;; do
+  sed &quot;$m&quot; &quot;$f&quot; &gt; &quot;$tmp/m.go&quot;
+  cmp -s &quot;$f&quot; &quot;$tmp/m.go&quot; &amp;&amp; { echo &quot;mutation did not apply: $m&quot;; exit 1; }
+  printf &#39;{&quot;Replace&quot;:{&quot;%s/%s&quot;:&quot;%s/m.go&quot;}}&#39; &quot;$PWD&quot; &quot;$f&quot; &quot;$tmp&quot; &gt; &quot;$tmp/o.json&quot;
+  echo &quot;== $m&quot;
+  go test -count=1 -overlay &quot;$tmp/o.json&quot; ./pkg/controllers/containers/compose/ 2&gt;&amp;1 | tail -1 || true
+done
+rm -rf &quot;$tmp&quot;</code></pre>
+      <pre><code class="language-text">$ sh mutate.sh
+== s#if changed {#if changed || true {#
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.727s
+== s#isErrCacheNotStarted {#isErrCacheNotStarted \&amp;\&amp; false {#
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.663s
+== s#api.MirrorName(&quot;cns&quot;,#api.MirrorName(&quot;wrong&quot;,#
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.650s
+== s#request.ObjectMeta.Name != expectedName#false#
+FAIL
+$ git apply i1.diff &amp;&amp; sh mutate.sh    # i1.diff is the patch below
+== s#if changed {#if changed || true {#
+FAIL
+== s#isErrCacheNotStarted {#isErrCacheNotStarted \&amp;\&amp; false {#
+FAIL
+== s#api.MirrorName(&quot;cns&quot;,#api.MirrorName(&quot;wrong&quot;,#
+FAIL
+== s#request.ObjectMeta.Name != expectedName#false#
+FAIL</code></pre>
+      </details>
+    <p>Fix: add one subtest per fix; each passes on the reviewed tree and fails against its mutant. Adopting S1 removes the fallback subtest.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go b/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go
+index aef0053c1..e7aa674b5 100644
+--- a/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go
++++ b/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go
+@@ -5,6 +5,7 @@
+ package compose
+ 
+ import (
++	&quot;context&quot;
+ 	&quot;io/fs&quot;
+ 	&quot;os&quot;
+ 	&quot;path/filepath&quot;
+@@ -14,7 +15,10 @@ import (
+ 
+ 	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+ 	&quot;k8s.io/apimachinery/pkg/runtime&quot;
++	&quot;sigs.k8s.io/controller-runtime/pkg/cache&quot;
++	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+ 	&quot;sigs.k8s.io/controller-runtime/pkg/client/fake&quot;
++	&quot;sigs.k8s.io/controller-runtime/pkg/client/interceptor&quot;
+ 
+ 	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+ )
+@@ -76,6 +80,35 @@ func TestComposeUpRequestValidator_ValidateCreate(t *testing.T) {
+ 		_, err := v.ValidateCreate(t.Context(), request)
+ 		assert.ErrorContains(t, err, &quot;metadata.name must be&quot;)
+ 	})
++
++	t.Run(&quot;accepts a namespace whose mirror has a hashed name&quot;, func(t *testing.T) {
++		t.Parallel()
++		// My_NS is a valid containerd namespace but not a valid object name.
++		cl := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&amp;v1alpha1.ContainerNamespace{
++			ObjectMeta: metav1.ObjectMeta{
++				Name:      &quot;cns-ea271e98cfb7d07ab4130f9782fe462094d371c5d7aa7fb73e4b0b7620a03ded&quot;,
++				Namespace: &quot;rancher-desktop&quot;,
++			},
++		}).Build()
++		v := &amp;composeUpRequestValidator{Client: cl}
++		request := newValidComposeUpRequest(&quot;My_NS&quot;, &quot;myproject&quot;,
++			&quot;cmp-5897155b5d260d13ce4aa865893564cc6e5af9bc5a86f1ab3dbf5aa87dd96276&quot;, t.TempDir())
++		_, err := v.ValidateCreate(t.Context(), request)
++		assert.NilError(t, err)
++	})
++
++	t.Run(&quot;reads through Reader before the cache starts&quot;, func(t *testing.T) {
++		t.Parallel()
++		notStarted := fake.NewClientBuilder().WithScheme(scheme).WithInterceptorFuncs(interceptor.Funcs{
++			Get: func(context.Context, client.WithWatch, client.ObjectKey, client.Object, ...client.GetOption) error {
++				return &amp;cache.ErrCacheNotStarted{}
++			},
++		}).Build()
++		v := &amp;composeUpRequestValidator{Client: notStarted, Reader: cl}
++		request := newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, t.TempDir())
++		_, err := v.ValidateCreate(t.Context(), request)
++		assert.NilError(t, err)
++	})
+ }
+ 
+ func TestComposeUpRequestValidator_ValidateUpdate(t *testing.T) {
+@@ -100,6 +133,15 @@ func TestComposeUpRequestValidator_ValidateUpdate(t *testing.T) {
+ 		assert.NilError(t, err)
+ 	})
+ 
++	t.Run(&quot;accepts an unchanged spec whose workingDir is gone&quot;, func(t *testing.T) {
++		t.Parallel()
++		oldReq := newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, filepath.Join(t.TempDir(), &quot;gone&quot;))
++		newReq := oldReq.DeepCopy()
++		newReq.Finalizers = []string{&quot;example.com/finalizer&quot;}
++		_, err := v.ValidateUpdate(t.Context(), oldReq, newReq)
++		assert.NilError(t, err)
++	})
++
+ 	simpleCases := map[string]*v1alpha1.ComposeUpRequest{
+ 		&quot;workingDir must not be empty&quot;: newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, &quot;&quot;),
+ 		&quot;must be an absolute path&quot;:     newValidComposeUpRequest(&quot;moby&quot;, &quot;myproject&quot;, &quot;moby.myproject&quot;, &quot;./relative&quot;),</code></pre>
+      </details>
+    <p>With the patch, the package tests, <code>go vet</code> and <code>golangci-lint</code> pass.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/docs/design/api_containers.md">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The design doc calls <code>workingDir</code> relative; the validator rejects relative paths <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/docs/design/api_containers.md#L759-L770">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="759" data-line="764-765"><code class="language-markdown">  `spec.name`.  That is, the resulting `ComposeProject` object will have the
+  same name as the `ComposeUpRequest`.
+- **spec.namespace**: The containerd namespace; same as the `status.name` of a
+  [`ContainerNamespace`](#namespaces) object.
+- **spec.name**: The compose project name.
+- **spec.workingDir**: The compose project directory on the host (i.e. relative
+  to where the RDD process runs).  Used to look up any files needed.
+- **spec.configs**: Optional; the list of compose files used to create the
+  project.  Relative to `spec.workingDir`, which means it&#39;s also a path on the
+  host.  Must be inside `spec.workingDir` if given.  Defaults to the
+  `docker compose` defaults.
+- **status.conditions**: The normal status conditions; see [below](#status-conditions-1)</code></pre>
+    <p>The validator rejects every relative <code>workingDir</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L112-L113"><code>compose_webhooks.go:112-113</code></a>), and the Go comment on <code>ComposeUpRequestSpec.WorkingDir</code> now says &quot;absolute&quot;. The design doc, which client authors build against, still tells them the path is relative to where RDD runs.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L107-L118">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="107" data-line="112-113"><code class="language-go">func (v *composeUpRequestValidator) validateSpec(_ context.Context, request *v1alpha1.ComposeUpRequest) []error {
+	var errs []error
+
+	if request.Spec.WorkingDir == &quot;&quot; {
+		errs = append(errs, errors.New(&quot;spec.workingDir must not be empty&quot;))
+	} else if !filepath.IsAbs(request.Spec.WorkingDir) {
+		errs = append(errs, fmt.Errorf(&quot;spec.workingDir %q must be an absolute path&quot;, request.Spec.WorkingDir))
+	} else if root, err := os.OpenRoot(request.Spec.WorkingDir); err != nil {
+		errs = append(errs, fmt.Errorf(&quot;spec.workingDir %q cannot be opened: %w&quot;, request.Spec.WorkingDir, err))
+	} else {
+		defer root.Close()
+		for _, config := range request.Spec.Configs {</code></pre>
+    <p>Round 2&#39;s S3 fix reached only the spec field. <code>ComposeProjectStatus.WorkingDir</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L94-L95"><code>compose_types.go:94-95</code></a>) still reads &quot;absolute path … (i.e. relative to where the RDD process runs)&quot;, and that text has propagated into both <code>crd.yaml</code> files and the generated applyconfiguration. The doc&#39;s own <code>status.workingDir</code> entry (line 675) already has the right wording.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L89-L100">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="89" data-line="94-95"><code class="language-go">	Namespace string `json:&quot;namespace&quot;`
+	// Name is the compose project name.
+	//
+	// +required
+	Name string `json:&quot;name&quot;`
+	// WorkingDir is the absolute path to the compose project directory on the
+	// host (i.e. relative to where the RDD process runs). May be unset.
+	//
+	// +optional
+	WorkingDir string `json:&quot;workingDir,omitempty&quot;`
+	// Configs is the list of compose files used to create the project,
+	// relative to WorkingDir. It is not guaranteed that this is sufficient to</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/docs/design/api_containers.md#L670-L680">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="670" data-line="675"><code class="language-markdown">  - Otherwise, this is `cmp-` followed by the lower-case SHA-256 hash of the
+    candidate name.
+- **status.namespace**: The containerd namespace; same as the `status.name` of a
+  [`ContainerNamespace`](#namespaces) object.
+- **status.name**: The compose project name.
+- **status.workingDir**: Optional; the compose project directory on the host on
+  which the RDD process runs, as an absolute path.
+- **status.configs**: Optional; the list of compose files used to create the
+  project.  Relative to `status.workingDir`, which means it&#39;s also a path on the
+  host.
+- **status.containers**: A list of containers that are part of this project.  The</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-sh"># Save as rdd/probe-workingdir.sh; run from rdd/: sh probe-workingdir.sh
+grep -rn -e &quot;relative to where the RDD process runs&quot; -e &quot;(i.e. relative$&quot; docs pkg/apis/containers/v1alpha1/compose_types.go ||
+  echo &quot;no stale wording&quot;
+cat &gt; pkg/controllers/containers/compose/probe_workingdir_test.go &lt;&lt;&#39;EOF&#39;
+package compose
+
+import (
+	&quot;testing&quot;
+
+	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+	&quot;k8s.io/apimachinery/pkg/runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client/fake&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+)
+
+func TestProbeWorkingDir(t *testing.T) {
+	scheme := runtime.NewScheme()
+	_ = v1alpha1.AddToScheme(scheme)
+	v := &amp;composeUpRequestValidator{Client: fake.NewClientBuilder().WithScheme(scheme).
+		WithObjects(&amp;v1alpha1.ContainerNamespace{
+			ObjectMeta: metav1.ObjectMeta{Name: &quot;moby&quot;, Namespace: &quot;rancher-desktop&quot;},
+		}).Build()}
+	for _, dir := range []string{t.TempDir(), &quot;project&quot;} {
+		_, err := v.ValidateCreate(t.Context(), &amp;v1alpha1.ComposeUpRequest{
+			ObjectMeta: metav1.ObjectMeta{Name: &quot;moby.myproject&quot;, Namespace: &quot;rancher-desktop&quot;},
+			Spec:       v1alpha1.ComposeUpRequestSpec{Namespace: &quot;moby&quot;, Name: &quot;myproject&quot;, WorkingDir: dir},
+		})
+		t.Logf(&quot;workingDir=%q -&gt; %v&quot;, dir, err)
+	}
+}
+EOF
+go test -count=1 -run TestProbeWorkingDir -v ./pkg/controllers/containers/compose/ | grep -e &#39;workingDir=&#39; -e &#39;^ok&#39; -e FAIL
+rm pkg/controllers/containers/compose/probe_workingdir_test.go</code></pre>
+      <pre><code class="language-text">$ sh probe-workingdir.sh
+docs/design/api_containers.md:764:- **spec.workingDir**: The compose project directory on the host (i.e. relative
+pkg/apis/containers/v1alpha1/compose_types.go:95:	// host (i.e. relative to where the RDD process runs). May be unset.
+    probe_workingdir_test.go:25: workingDir=&quot;/var/folders/s2/9q03h0c11_s4fdw169wqz3qc0000gn/T/TestProbeWorkingDir1250973867/001&quot; -&gt; &lt;nil&gt;
+    probe_workingdir_test.go:25: workingDir=&quot;project&quot; -&gt; spec.workingDir &quot;project&quot; must be an absolute path
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.573s
+$ git apply i2.diff &amp;&amp; sh probe-workingdir.sh    # i2.diff is the patch below
+no stale wording
+    probe_workingdir_test.go:25: workingDir=&quot;/var/folders/s2/9q03h0c11_s4fdw169wqz3qc0000gn/T/TestProbeWorkingDir3578090299/001&quot; -&gt; &lt;nil&gt;
+    probe_workingdir_test.go:25: workingDir=&quot;project&quot; -&gt; spec.workingDir &quot;project&quot; must be an absolute path
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.570s</code></pre>
+      </details>
+    <p>Fix: reuse the wording the doc&#39;s <code>status.workingDir</code> entry and the spec comment already use, then run <code>make generate</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/docs/design/api_containers.md b/rdd/docs/design/api_containers.md
+index be43b1627..e61925d22 100644
+--- a/rdd/docs/design/api_containers.md
++++ b/rdd/docs/design/api_containers.md
+@@ -761,8 +761,8 @@ a `ComposeProject`.
+ - **spec.namespace**: The containerd namespace; same as the `status.name` of a
+   [`ContainerNamespace`](#namespaces) object.
+ - **spec.name**: The compose project name.
+-- **spec.workingDir**: The compose project directory on the host (i.e. relative
+-  to where the RDD process runs).  Used to look up any files needed.
++- **spec.workingDir**: The compose project directory on the host on which the
++  RDD process runs, as an absolute path.  Used to look up any files needed.
+ - **spec.configs**: Optional; the list of compose files used to create the
+   project.  Relative to `spec.workingDir`, which means it&#39;s also a path on the
+   host.  Must be inside `spec.workingDir` if given.  Defaults to the
+diff --git a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go
+index 511a5cdc8..d7a241c01 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go
++++ b/rdd/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1/composeprojectstatus.go
+@@ -19,7 +19,7 @@ type ComposeProjectStatusApplyConfiguration struct {
+ 	//
+ 	Name *string `json:&quot;name,omitempty&quot;`
+ 	// WorkingDir is the absolute path to the compose project directory on the
+-	// host (i.e. relative to where the RDD process runs). May be unset.
++	// host (i.e. where the RDD process runs). May be unset.
+ 	//
+ 	WorkingDir *string `json:&quot;workingDir,omitempty&quot;`
+ 	// Configs is the list of compose files used to create the project,
+diff --git a/rdd/pkg/apis/containers/v1alpha1/compose_types.go b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+index 724558bbf..9fb570de2 100644
+--- a/rdd/pkg/apis/containers/v1alpha1/compose_types.go
++++ b/rdd/pkg/apis/containers/v1alpha1/compose_types.go
+@@ -92,7 +92,7 @@ type ComposeProjectStatus struct {
+ 	// +required
+ 	Name string `json:&quot;name&quot;`
+ 	// WorkingDir is the absolute path to the compose project directory on the
+-	// host (i.e. relative to where the RDD process runs). May be unset.
++	// host (i.e. where the RDD process runs). May be unset.
+ 	//
+ 	// +optional
+ 	WorkingDir string `json:&quot;workingDir,omitempty&quot;`
+diff --git a/rdd/pkg/controllers/containers/compose/crd.yaml b/rdd/pkg/controllers/containers/compose/crd.yaml
+index 883767745..2b65bbb3d 100644
+--- a/rdd/pkg/controllers/containers/compose/crd.yaml
++++ b/rdd/pkg/controllers/containers/compose/crd.yaml
+@@ -173,7 +173,7 @@ spec:
+               workingDir:
+                 description: |-
+                   WorkingDir is the absolute path to the compose project directory on the
+-                  host (i.e. relative to where the RDD process runs). May be unset.
++                  host (i.e. where the RDD process runs). May be unset.
+                 type: string
+             required:
+             - name
+diff --git a/rdd/pkg/controllers/mock/crd.yaml b/rdd/pkg/controllers/mock/crd.yaml
+index 86d74424e..98d45f1cc 100644
+--- a/rdd/pkg/controllers/mock/crd.yaml
++++ b/rdd/pkg/controllers/mock/crd.yaml
+@@ -578,7 +578,7 @@ spec:
+               workingDir:
+                 description: |-
+                   WorkingDir is the absolute path to the compose project directory on the
+-                  host (i.e. relative to where the RDD process runs). May be unset.
++                  host (i.e. where the RDD process runs). May be unset.
+                 type: string
+             required:
+             - name</code></pre>
+      </details>
+    <p>The patch is the output of <code>make generate</code> after the two hand edits, so <code>verify-generate</code> stays clean.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_webhooks.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> After startup the lookup reads the cache; the sibling webhook reads uncached, as the repo convention asks <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L50-L63">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="50" data-line="55-58"><code class="language-go">		var namespace v1alpha1.ContainerNamespace
+		key := client.ObjectKey{
+			Namespace: request.ObjectMeta.Namespace,
+			Name:      api.MirrorName(&quot;cns&quot;, request.Spec.Namespace),
+		}
+		err := v.Client.Get(ctx, key, &amp;namespace)
+		if _, isErrCacheNotStarted := errors.AsType[*cache.ErrCacheNotStarted](err); isErrCacheNotStarted {
+			err = v.Reader.Get(ctx, key, &amp;namespace)
+		}
+		if apierrors.IsNotFound(err) {
+			errs = append(errs, fmt.Errorf(&quot;namespace %q does not exist&quot;, request.Spec.Namespace))
+		} else if err != nil {
+			errs = append(errs, fmt.Errorf(&quot;failed to get namespace %q: %w&quot;, request.Spec.Namespace, err))
+		}</code></pre>
+    <p>The fallback works as wired: an envtest probe with the manager stopped admitted an existing mirror and rejected a missing one. After the cache starts, the lookup lags a newly created mirror. With the manager running, a validation issued immediately after creating a <code>ContainerNamespace</code> rejected 2 of 200 requests, and none of 200 once one API round trip separated the two. A real request passes through the API server first, so users should rarely hit it; Codex and Gemini 3.1 Pro rated it Important, and the measurement does not support that.</p>
+    <p>The sibling holds one <code>client.Reader</code> from <code>mgr.GetAPIReader()</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L23-L25"><code>image_pull_request_webhooks.go:23-25</code></a>), as the repo convention asks. Embedding both interfaces also makes <code>Get</code> and <code>List</code> ambiguous and hands the validator write methods it never uses.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L18-L30">rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go</a></div>
+      <pre data-start="18" data-line="23-25"><code class="language-go">
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api&quot;
+)
+
+type imagePullRequestValidator struct {
+	reader client.Reader
+}
+
+// ValidateCreate implements [ctrlwebhookadmission.Validator].
+func (v *imagePullRequestValidator) ValidateCreate(ctx context.Context, imagePullRequest *v1alpha1.ImagePullRequest) (ctrlwebhookadmission.Warnings, error) {
+	var errs []error
+	// spec.namespace is optional: it defaults to the default namespace.</code></pre>
+    <p>Fix: hold one named <code>reader client.Reader</code> and drop the fallback; I1&#39;s fallback subtest goes with it.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_utils.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>composeMirrorName</code> reimplements <code>api.MirrorName</code> <span class="pill pill-claude">Claude Opus 5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_utils.go#L18-L29">rdd/pkg/controllers/containers/compose/compose_utils.go</a></div>
+      <pre data-start="18" data-line="23-29"><code class="language-go">//
+// The candidate name is namespace, followed by a dot, followed by the name.
+// If that candidate is a valid Kubernetes name, it is used
+// directly as metadata.name; otherwise, metadata.name is &quot;cmp-&quot; followed by
+// the lower-case SHA-256 hash of the candidate name.
+func composeMirrorName(namespace, name string) string {
+	candidateName := namespace + &quot;.&quot; + name
+	if len(validation.IsDNS1123Subdomain(candidateName)) == 0 {
+		return candidateName
+	}
+	return fmt.Sprintf(&quot;cmp-%x&quot;, sha256.Sum256([]byte(candidateName)))
+}</code></pre>
+    <p><code>api.MirrorName(&quot;cmp&quot;, namespace+&quot;.&quot;+name)</code> computes the same value: the same DNS-1123 test and the same <code>prefix-%x</code> SHA-256 form (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/util/api/mirror_name.go#L18-L23"><code>mirror_name.go:18-23</code></a>). The webhook already imports <code>api</code> for the <code>cns</code> lookup, and the engine, the mock and the <code>ImagePullRequest</code> webhook already call it for namespace mirrors.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/util/api/mirror_name.go#L13-L23">rdd/pkg/util/api/mirror_name.go</a></div>
+      <pre data-start="13" data-line="18-23"><code class="language-go">)
+
+// MirrorName returns the mirrored name for a given container resource.  The
+// prefix is prepended to the mirrored name with a dash if the input is not a
+// valid Kubernetes object name.
+func MirrorName(prefix, input string) string {
+	if len(validation.IsDNS1123Subdomain(input)) &lt; 1 {
+		return input
+	}
+	return fmt.Sprintf(&quot;%s-%x&quot;, prefix, sha256.Sum256([]byte(input)))
+}</code></pre>
+    <p>Fix: return <code>api.MirrorName(&quot;cmp&quot;, namespace+&quot;.&quot;+name)</code> and drop the local hashing.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_webhooks.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The compose-go import adds 1.41 MB for a rule one regexp expresses <span class="pill pill-claude">Claude Opus 5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L61-L73">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="61" data-line="66-68"><code class="language-go">		} else if err != nil {
+			errs = append(errs, fmt.Errorf(&quot;failed to get namespace %q: %w&quot;, request.Spec.Namespace, err))
+		}
+	}
+
+	if request.Spec.Name == &quot;&quot; || loader.NormalizeProjectName(request.Spec.Name) != request.Spec.Name {
+		errs = append(errs, loader.InvalidProjectNameErr(request.Spec.Name))
+	}
+
+	errs = append(errs, v.validateSpec(ctx, request)...)
+
+	// Check that the name is correct.
+	expectedName := composeMirrorName(request.Spec.Namespace, request.Spec.Name)</code></pre>
+    <p><code>loader</code> pulls 16 compose-go packages into <code>cmd/rdd</code> and the containers controller. Rewriting the check as a regexp shrank the stripped darwin/arm64 <code>containers-controller</code> from 56,909,074 to 55,503,298 bytes, measured at the review SHA. The check holds exactly when the name matches <code>^[a-z0-9][a-z0-9_-]*$</code>, since <code>NormalizeProjectName</code> lowercases, drops characters outside <code>[a-z0-9_-]</code>, and trims leading <code>_</code> and <code>-</code> (compose-go v2.15.0 <code>loader.go:767-772</code>). Round 2 credited the import for tracking upstream&#39;s rule; this is the price of that coupling. Keep it if the reconciler will load compose files through compose-go anyway.</p>
+    <p>Fix: put the pattern on <code>ComposeUpRequestSpec.Name</code> as a <code>+kubebuilder:validation:Pattern</code>, which also publishes it in the CRD, and delete the check.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_webhooks.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> Three rejection messages mislead <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L54-L65">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="54" data-line="59-60"><code class="language-go">		}
+		err := v.Client.Get(ctx, key, &amp;namespace)
+		if _, isErrCacheNotStarted := errors.AsType[*cache.ErrCacheNotStarted](err); isErrCacheNotStarted {
+			err = v.Reader.Get(ctx, key, &amp;namespace)
+		}
+		if apierrors.IsNotFound(err) {
+			errs = append(errs, fmt.Errorf(&quot;namespace %q does not exist&quot;, request.Spec.Namespace))
+		} else if err != nil {
+			errs = append(errs, fmt.Errorf(&quot;failed to get namespace %q: %w&quot;, request.Spec.Namespace, err))
+		}
+	}
+</code></pre>
+    <p>The message fires whenever the mirror is missing, which includes every VM boot and every engine stop. The sibling names the <code>ContainerNamespace</code> instead (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L45"><code>image_pull_request_webhooks.go:45</code></a>) and documents that trade-off at its lookup (lines 32-37).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L40-L50">rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go</a></div>
+      <pre data-start="40" data-line="45"><code class="language-go">			Name:      api.MirrorName(&quot;cns&quot;, imagePullRequest.Spec.Namespace),
+		}
+		var containerNamespace v1alpha1.ContainerNamespace
+		err := v.reader.Get(ctx, key, &amp;containerNamespace)
+		if apierrors.IsNotFound(err) {
+			errs = append(errs, fmt.Errorf(&quot;spec.namespace %q does not refer to an existing ContainerNamespace in namespace %q&quot;, imagePullRequest.Spec.Namespace, imagePullRequest.Namespace))
+		} else if err != nil {
+			errs = append(errs, fmt.Errorf(&quot;failed to validate spec.namespace %q in namespace %q: %w&quot;, imagePullRequest.Spec.Namespace, imagePullRequest.Namespace, err))
+		}
+	}
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L27-L42">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="27" data-line="32-37"><code class="language-go">// composeUpRequestValidator enforces the invariant for ComposeUpRequest that
+// cannot be expressed declaratively in the CRD schema: metadata.name must be
+// calculated from spec.namespace and spec.name (matching the name of the
+// ComposeProject object it will create or update).
+//
+// spec.namespace and spec.name are immutable, enforced via CEL.  The other
+// parts of the spec are mutable, and do require validation.
+type composeUpRequestValidator struct {
+	// Client is the cached API client; this is preferred.
+	client.Client
+	// Reader is an uncached API reader; this is needed to validate things before
+	// the cache is ready.
+	client.Reader
+}
+
+// ValidateCreate implements [ctrlwebhookadmission.Validator].</code></pre>
+    <p>An absolute config path inside <code>workingDir</code> gets <code>statat …: path escapes from parent</code>, although the documented rule holds; <code>os.Root</code> rejects every absolute path (checked).</p>
+    <p><code>configs: [&quot;&quot;, &quot;&quot;]</code> produces two identical lines, still without the index round 2&#39;s S5 asked for (line 120).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L115-L125">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="115" data-line="120"><code class="language-go">		errs = append(errs, fmt.Errorf(&quot;spec.workingDir %q cannot be opened: %w&quot;, request.Spec.WorkingDir, err))
+	} else {
+		defer root.Close()
+		for _, config := range request.Spec.Configs {
+			if config == &quot;&quot; {
+				errs = append(errs, errors.New(&quot;spec.configs path must not be empty&quot;))
+			} else if stat, err := root.Stat(config); err != nil {
+				errs = append(errs, fmt.Errorf(&quot;spec.configs path %q cannot be accessed: %w&quot;, config, err))
+			} else if !stat.Mode().IsRegular() {
+				errs = append(errs, fmt.Errorf(&quot;spec.configs path %q is not a regular file&quot;, config))
+			}</code></pre>
+    <p>Fix: reuse the sibling&#39;s wording and comment, reject absolute config paths as &quot;must be relative to spec.workingDir&quot;, and report <code>spec.configs[%d]</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_controller.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Comments still describe a create-only, naming-only webhook <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_controller.go#L68-L79">rdd/pkg/controllers/containers/compose/compose_controller.go</a></div>
+      <pre data-start="68" data-line="73-74"><code class="language-go">// GetWebhookManagers implements [base.WebhookController].
+func (c *controller) GetWebhookManagers() []base.WebhookManager {
+	return c.webhookManagers
+}
+
+// setupWebhookWithRuntimeConfig registers a validating webhook that enforces
+// spec.namespace/spec.name-derived naming on ComposeUpRequest create.
+func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
+	mgr.GetLogger().Info(&quot;Setting up compose project webhook&quot;)
+	validatingConfig := base.WebhookConfig[*v1alpha1.ComposeUpRequest]{
+		Name:        &quot;compose-up-request-validating&quot;,
+		WebhookName: &quot;compose-up-request-validating.containers.rancherdesktop.io&quot;,</code></pre>
+    <p>Round 2&#39;s S1 is partly fixed. The webhook also runs on UPDATE, the default at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/base/webhook.go#L285-L291"><code>base/webhook.go:285-291</code></a>, and checks the filesystem. The type comment (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L27-L30"><code>compose_webhooks.go:27-30</code></a>) still presents the <code>metadata.name</code> rule as the validator&#39;s invariant, one of five checks. Line 88 reads &quot;validate it the spec&quot;.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/base/webhook.go#L280-L296">rdd/pkg/controllers/base/webhook.go</a></div>
+      <pre data-start="280" data-line="285-291"><code class="language-go">	sideEffects := admissionregistrationv1.SideEffectClassNone
+	if wm.config.SideEffects != nil {
+		sideEffects = *wm.config.SideEffects
+	}
+	// Set default operations if not specified
+	operations := wm.config.Operations
+	if len(operations) == 0 {
+		operations = []admissionregistrationv1.OperationType{
+			admissionregistrationv1.Create,
+			admissionregistrationv1.Update,
+		}
+	}
+	clientConfig := admissionregistrationv1apply.WebhookClientConfig().
+		WithURL(webhookURL).
+		WithCABundle(caBundleBytes...)
+	rules := []*admissionregistrationv1apply.RuleWithOperationsApplyConfiguration{
+		admissionregistrationv1apply.RuleWithOperations().</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L22-L35">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="22" data-line="27-30"><code class="language-go">
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api&quot;
+)
+
+// composeUpRequestValidator enforces the invariant for ComposeUpRequest that
+// cannot be expressed declaratively in the CRD schema: metadata.name must be
+// calculated from spec.namespace and spec.name (matching the name of the
+// ComposeProject object it will create or update).
+//
+// spec.namespace and spec.name are immutable, enforced via CEL.  The other
+// parts of the spec are mutable, and do require validation.
+type composeUpRequestValidator struct {
+	// Client is the cached API client; this is preferred.</code></pre>
+    <p>Fix: list the checks in the type comment, mention UPDATE in the setup comment, and fix the typo.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_webhooks.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> A FIFO as <code>workingDir</code> parks the admission handler until the daemon exits <span class="pill pill-claude">Claude Opus 5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L109-L119">rdd/pkg/controllers/containers/compose/compose_webhooks.go</a></div>
+      <pre data-start="109" data-line="114"><code class="language-go">
+	if request.Spec.WorkingDir == &quot;&quot; {
+		errs = append(errs, errors.New(&quot;spec.workingDir must not be empty&quot;))
+	} else if !filepath.IsAbs(request.Spec.WorkingDir) {
+		errs = append(errs, fmt.Errorf(&quot;spec.workingDir %q must be an absolute path&quot;, request.Spec.WorkingDir))
+	} else if root, err := os.OpenRoot(request.Spec.WorkingDir); err != nil {
+		errs = append(errs, fmt.Errorf(&quot;spec.workingDir %q cannot be opened: %w&quot;, request.Spec.WorkingDir, err))
+	} else {
+		defer root.Close()
+		for _, config := range request.Spec.Configs {
+			if config == &quot;&quot; {</code></pre>
+    <p><code>os.OpenRoot</code> blocks on a FIFO until a writer appears. A probe on macOS was still blocked after 3 s, while a directory and a regular file returned at once. The API server gives up at its webhook timeout and rejects the request, but the handler goroutine stays in <code>open(2)</code>, and <code>validateSpec</code> ignores its context, so each such request leaks one goroutine. Unlikely on a single-user desktop, and cheap to close.</p>
+    <p>Fix: <code>os.Stat</code> the path and require <code>IsDir()</code> before <code>os.OpenRoot</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>Two mechanisms now cancel work that outlives a <code>Reconcile</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>. The engine derives <code>watcherCtx</code> from <code>context.Background()</code> and cancels it from a <code>manager.RunnableFunc</code> when the manager begins stopping (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/app/engine/controllers/engine_reconciler.go#L215-L225"><code>engine_reconciler.go:215-225</code></a>). The new <code>RegisterWithManager</code> context cancels when <code>mgr.Start</code> returns, up to <code>GracefulShutdownTimeout</code> later, but also on registration and webhook-setup failures the runnable never sees. When the compose reconciler lands, pick one or document the difference. Gemini 3.1 Pro asked to revert the parameter; round 2 credited it for covering those failure paths, and that still holds.</li>
+      <li><em></em><code>status.configs</code> is documented as relative, but compose-go makes compose file paths absolute<em></em> (future) <span class="pill pill-claude">Claude Opus 5</span>. <code>ResolveRelativePaths</code> in compose-go <code>loader/paths.go</code> turns <code>ComposeFiles</code> absolute. If the reconciler fills <code>status.configs</code> from the <code>config_files</code> label docker compose writes, those paths will be absolute (the label format itself is unverified; docker/compose is not in the module cache). Either relativize them or change the doc.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Round 3&#39;s fixes behave as intended</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. The <code>cns</code> key matches both producers (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/app/engine/controllers/sync_namespace_containerd.go#L77"><code>sync_namespace_containerd.go:77</code></a>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/app/engine/controllers/sync_namespace.go#L27"><code>sync_namespace.go:27</code></a> for <code>moby</code>), the fallback admits through the API reader with the cache stopped (envtest), and the UPDATE gate compares exactly the two fields <code>validateSpec</code> reads.</li>
+      <li><em></em><code>os.Root</code> enforces the documented confinement<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>. It refuses <code>..</code> escapes and symlinks that resolve outside <code>workingDir</code>, and admits <code>sub/../compose.yaml</code> and symlinks that stay inside.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ol>
+      <li>I ran, at the review SHA in the lead worktree: <code>go build ./...</code>; <code>go vet</code> on the compose and service-controller packages; <code>go test -race -count=1</code> on the compose, service-controller and <code>util/api</code> packages (all <code>ok</code>); <code>make lint-rdd</code> (<code>0 issues.</code>); and <code>make verify-generate</code> (no drift, Go 1.27.1 against the <code>go 1.27.0</code> directive). The PR&#39;s CI shows 46 checks passing and 4 skipped.</li>
+      <li>Three mutants, one per round-3 fix, survive the suite; a control mutant that drops the <code>metadata.name</code> check fails (I1).</li>
+      <li>Two envtest probes settled S1: the fallback admits through the API reader before the cache starts, and the post-start lag measured 2 of 200 at zero gap and 0 of 200 after one API round trip.</li>
+      <li>Required: the three I1 subtests (bug fixes; state- and timing-dependent paths). Optional: a missing <code>ContainerNamespace</code>, an invalid project name, an accepted config, a <code>../</code> escape, and round 2&#39;s S7 guard that the <code>RegisterWithManager</code> context is cancelled when <code>Start</code> returns, which stays optional while nothing uses that context past registration <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+      <li>The <code>ValidateUpdate</code> fixture seeds a <code>ContainerNamespace</code> that <code>ValidateUpdate</code> never reads (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks_test.go#L87-L92"><code>compose_webhooks_test.go:87-92</code></a>) <span class="pill pill-claude">Claude Opus 5</span>.</li>
+    </ol>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/docs/design/api_containers.md#L764-L765"><code>api_containers.md:764-765</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L94-L95"><code>compose_types.go:94-95</code></a> misdescribe <code>workingDir</code> (I2).</li>
+      <li>The validator&#39;s comments trail its checks (S5).</li>
+      <li>The doc could say that a config symlink resolving outside <code>workingDir</code> is refused <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li>The success contract for <code>Failed</code> departs from the other <code>*Request</code> kinds; see Acknowledged Limitations.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/268b47897"><code>268b47897</code></a>&#39;s body describes only the <code>configs</code> rule, but its diff also changes the <code>Failed</code> condition contract (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/docs/design/api_containers.md#L787-L788"><code>api_containers.md:787-788</code></a>) <span class="pill pill-claude">Claude Opus 5</span> <span class="pill pill-codex">Codex GPT 5.6 Sol</span>.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/611fdd476"><code>611fdd476</code></a>&#39;s rule list omits the containerd identifier check and the changed-only UPDATE gate <span class="pill pill-claude">Claude Opus 5</span>.</li>
+      <li>The other three commits describe their diffs accurately.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_controller.go#L31"><code>compose_controller.go:31</code></a>: &quot;It only registers a validating webhook; there is no reconciler yet.&quot; Confirmed; admitted requests are neither acted on nor reaped.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_webhooks.go#L132-L136"><code>compose_webhooks.go:132-136</code></a>: user-created <code>ComposeProject</code> objects are deliberately unblocked, since every local client shares one admin-equivalent identity. Confirmed.</li>
+      <li>Admission depends on the <code>ContainerNamespace</code> mirror, which exists only while the engine watcher runs, so a request for <code>moby</code> is denied through every VM boot and after every stop. The <code>ImagePullRequest</code> webhook follows the same policy and documents it (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/image/image_pull_request_webhooks.go#L32-L37"><code>image_pull_request_webhooks.go:32-37</code></a>); S4 covers the missing comment and message here.</li>
+      <li>Log lines and <code>doc.go</code> name <code>ComposeProject</code> for the <code>ComposeUpRequest</code> webhook (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/compose_controller.go#L76"><code>compose_controller.go:76</code></a>, <code>:104</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/controllers/containers/compose/doc.go#L5-L7"><code>doc.go:5-7</code></a>). Raised in rounds 1 (S5) and 2 (S4), still unaddressed.</li>
+    </ul>
+    <h3 id="declined-in-prior-rounds">Declined in prior rounds <a href="#declined-in-prior-rounds" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>The <code>Failed</code> condition has no reason constant for the success case<em></em> — declined after Round 2: the condition is removed on success instead (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L65-L66"><code>compose_types.go:65-66</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1dcdc4576d46e1af5cb8e0e81a80a108992d4e65/rdd/docs/design/api_containers.md#L787-L788"><code>api_containers.md:787-788</code></a>). The other <code>*Request</code> kinds report <code>Failed=False</code>, so a generic request tracker needs a per-kind branch. Do not re-suggest the constant.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>@jandubois on round 2: &quot;I think at least I1 and I2 should be addressed.&quot; I1 is resolved. I2 is resolved for the window before the cache starts; the lag after startup remains, and the envtest probe measured it as narrow (S1).</li>
+      <li>@mook-as: &quot;I can&#39;t address I1 until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/772" class="gh-ref" data-title="RDD: engine: Fix containerd namespace mirroring" data-state="merged" data-type="pr">#772</a> is merged.&quot; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/772" class="gh-ref" data-title="RDD: engine: Fix containerd namespace mirroring" data-state="merged" data-type="pr">#772</a> merged on 2026-09-17 and is in the base; the lookup now uses its names.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5"><span class="pill pill-claude">Claude Opus 5</span> <a href="#claude-opus-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude gave the most useful review. It mutated each round-3 fix back out and showed the suite stays green, which became I1, and it alone found the FIFO hang, the duplicate of <code>api.MirrorName</code> and the compose-go size. It rated the post-start lag a Suggestion, which the envtest measurement bears out. Every claim I re-ran held; its binary-size delta came within 1.4% of mine. It called all seven missing tests required, where the testing checks make four of them optional.</p>
+    <h3 id="codex-gpt-5-6-sol"><span class="pill pill-codex">Codex GPT 5.6 Sol</span> <a href="#codex-gpt-5-6-sol" class="pilcrow">&#182;</a></h3>
+    <p>Codex rated the cache lag Important on a reproducer that seeds two fake clients with different contents, which proves only what it assumes; the envtest measurement put the window at 1% with zero gap and nothing after one API round trip. It found the stale design-doc line and rated it correctly under the prose rule, and it named the untested UPDATE gate as required. Its per-item verdict table was the clearest record of the round&#39;s delta. It rated the hashed namespace and fallback tests optional, although both guard bug fixes.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro rated the cache lag Important with no reproducer. Its second Important asked to revert the <code>RegisterWithManager</code> context, which the PR description motivates and round 2 credited; I dropped it and kept the concern as a future design observation. Its Testing Assessment says a missing <code>ContainerNamespace</code> case is covered, and its Documentation Assessment calls the <code>workingDir</code> contract consistent; the test file and the design doc refute both. It missed I1 and I2.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found the stale <code>ComposeProjectStatus.WorkingDir</code> comment but not the design-doc line behind I2. Its test finding listed only optional cases and missed the three required ones. Unlike round 2, its claim to have run the tests holds, since its session log records both <code>go test</code> runs. Its output opened with six lines of planning notes before the header. The two Gemini models split on the lag&#39;s severity, so neither vote counts for much.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5</span></th><th><span class="pill pill-codex">Codex GPT 5.6 Sol</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>17m 52s</td><td>19m 50s</td><td>6m 18s</td><td>4m 43s</td></tr>
+        <tr><td>Findings</td><td>2I 6S</td><td>2I 3S</td><td>2S</td><td>2I 3S</td></tr>
+        <tr><td>Tool calls</td><td>103 (Bash 92, Read 11)</td><td>41 (shell 37, apply_patch 4)</td><td>24 (run<em>shell</em>command 23, read_file 1)</td><td>38 (read<em>file 15, grep</em>search 14, run<em>shell</em>command 5)</td></tr>
+        <tr><td>Design observations</td><td>7</td><td>5</td><td>1</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>39</td><td>39</td><td>39</td><td>39</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>3</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 6S</strong></td><td><strong>2I 3S</strong></td><td><strong>2S</strong></td><td><strong>2I 3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Codex P1 steady-state cache lag (I1): important → suggestion S1, on the envtest measurement. Gemini 3.1 Pro P1 cache lag (I1): important → suggestion S1, same reason. Gemini 3.1 Pro P1 revert of the <code>RegisterWithManager</code> context (I2): dropped as a false positive; the context is cancelled on every exit from <code>Start</code>, and the concern is kept as a future design observation. Codex P1 optional test gaps (S3): suggestion → merged into I1, where the <code>cns</code> and fallback cases are required. Claude P1 design-doc <code>workingDir</code> wording (part of S5): suggestion → important I2, under the prose rule. Gemini 3.5 Flash P1 missing create-path tests (I2) merged into I1, and its status-comment finding (I1) merged into I2.</p>
+    <p>Claude provided the most value this round, with Codex second on the strength of I2 and its verdict table. The Gemini reviews added no finding the other two missed.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Skill improvements</strong></p>
+    <ul>
+      <li>Copy, never hard-link, the gitignored inputs the lead worktree needs. A build step that regenerates an artifact in place writes through the shared inode into the main checkout.</li>
+      <li>On a round that fixes prior findings, ask each agent to name, for every fix, the test that fails when the fix is reverted. A fix no test pins is a finding under the testing checks, and agents otherwise verify the fix by reading it and move on.</li>
+    </ul>
+    <p><strong>Repo context updates</strong></p>
+    <ul>
+      <li>[repo] UPDATE the entry &quot;Admission webhooks in this tree take <code>mgr.GetAPIReader()</code>&quot;: the lag of a cached read after startup is narrow. In envtest with a warm informer, a read issued immediately after creating an object missed it in 2 of 200 tries, and never once one API round trip separated the two; a user&#39;s request always passes through the API server first. A cached read with an <code>ErrCacheNotStarted</code> fallback is therefore a convention divergence (Suggestion), while a cached read with no fallback still turns rejections into internal errors during startup (Important).</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
