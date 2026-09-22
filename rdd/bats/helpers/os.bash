@@ -4,6 +4,11 @@ UNAME=$(uname)
 ARCH=$(uname -m)
 ARCH=${ARCH/arm64/aarch64}
 
+is_wsl() {
+    # `wslpath` exists and is a symlink to `/init`; we are running under WSL.
+    [[ /bin/wslpath -ef /init ]]
+}
+
 case ${UNAME} in
 Darwin)
     # OS matches the directory name of the PATH_RESOURCES directory,
@@ -62,11 +67,6 @@ is_windows() {
 # Both report OS=windows, but behave differently from WSL.
 is_msys() {
     [[ "${UNAME}" == MSYS* || "${UNAME}" == MINGW* ]]
-}
-
-is_wsl() {
-    # `wslpath` exists and is a symlink to `/init`; we are running under WSL.
-    [[ /bin/wslpath -ef /init ]]
 }
 
 is_unix() {
