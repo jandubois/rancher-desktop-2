@@ -33,4 +33,16 @@ func TestMirrorName(t *testing.T) {
 	runTest("encoded name with suffix not encoded",
 		"zz-0000000000000000000000000000000000000000000000000000000000000000-suffix",
 		"zz-0000000000000000000000000000000000000000000000000000000000000000-suffix")
+
+	t.Run("extra arguments are incorporated", func(t *testing.T) {
+		withoutExtra := api.MirrorName("zz", "invalid_name")
+		withExtra := api.MirrorName("zz", "invalid_name", "extra1", "extra2")
+		assert.Assert(t, withoutExtra != withExtra)
+	})
+
+	t.Run("extra arguments are separated", func(t *testing.T) {
+		one := api.MirrorName("zz", "aaabbb", "ccc")
+		two := api.MirrorName("zz", "aaa", "bbbccc")
+		assert.Assert(t, one != two, "%s <-> %s", one, two)
+	})
 }

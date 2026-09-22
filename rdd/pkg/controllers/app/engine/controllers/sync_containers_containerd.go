@@ -7,7 +7,6 @@ package controllers
 import (
 	"cmp"
 	"context"
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -25,30 +24,17 @@ import (
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/validation"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
-// containerdMirrorName returns a deterministic RFC 1123 subdomain name for a
-// containerd container. containerd IDs from nerdctl and k8s are 64-hex, so
-// the common path keeps the container ID as the mirror name, matching the
-// moby UX. IDs that are not valid K8s object names are hashed with a "ctr-"
-// prefix.
-//
-// A hand-picked valid ID duplicated across two containerd namespaces maps to
-// one mirror; this is an accepted caveat, as nerdctl and k8s generate
-// globally unique IDs, so the collision stays theoretical.
-func containerdMirrorName(ns, id string) string {
-	if len(validation.IsDNS1123Subdomain(id)) == 0 {
-		return id
-	}
-	sum := sha256.Sum256([]byte(ns + "/" + id))
-	return fmt.Sprintf("ctr-%x", sum)
-}
+// containerNamePrefix is the prefix used for container names when the container
+// id is not a valid Kubernetes object name; this should not happen in practice.
+const containerNamePrefix = "ctr"
 
 // syncAllContainers lists all containerd containers across every namespace,
 // creates or updates their Container mirrors, and prunes stale ones.
@@ -77,7 +63,7 @@ func (w *containerdWatcher) syncAllContainers(ctx context.Context) error {
 			return fmt.Errorf("failed to list containers in namespace %s: %w", ns, err)
 		}
 		for _, ctr := range ctrs {
-			activeNames[containerdMirrorName(ns, ctr.ID())] = true
+			activeNames[api.MirrorName(containerNamePrefix, ctr.ID(), ns)] = true
 			if err := w.applyContainer(nsCtx, ns, ctr); err != nil {
 				log.Error(err, "Skipping container during full sync", "namespace", ns, "id", ctr.ID())
 			}
@@ -127,7 +113,7 @@ func (w *containerdWatcher) applyContainer(nsCtx context.Context, ns string, ctr
 	if err != nil {
 		return fmt.Errorf("failed to get container info %s: %w", ctr.ID(), err)
 	}
-	mirrorName := containerdMirrorName(ns, info.ID)
+	mirrorName := api.MirrorName(containerNamePrefix, info.ID, ns)
 
 	// containerd has no display-name concept; nerdctl stores it in this label.
 	name := info.Labels["nerdctl/name"]

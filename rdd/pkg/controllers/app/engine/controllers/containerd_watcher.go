@@ -24,6 +24,7 @@ import (
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
 var _ engine = (*containerdWatcher)(nil)
@@ -204,7 +205,7 @@ func (w *containerdWatcher) handleEvent(ctx context.Context, e *events.Envelope)
 		return w.syncContainer(ctx, e.Namespace, ev.ID)
 	case *apievents.ContainerDelete:
 		log.V(1).Info("Container deleted", "namespace", e.Namespace, "id", ev.ID)
-		mirrorName := containerdMirrorName(e.Namespace, ev.ID)
+		mirrorName := api.MirrorName(containerNamePrefix, ev.ID, e.Namespace)
 		w.forgetTaskStart(mirrorName)
 		return w.removeMirrorResource(ctx, &containersv1alpha1.Container{}, mirrorName)
 	case *apievents.TaskCreate:
@@ -212,7 +213,7 @@ func (w *containerdWatcher) handleEvent(ctx context.Context, e *events.Envelope)
 		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
 	case *apievents.TaskStart:
 		log.V(1).Info("Task started", "namespace", e.Namespace, "id", ev.ContainerID)
-		w.recordTaskStart(containerdMirrorName(e.Namespace, ev.ContainerID), e.Timestamp)
+		w.recordTaskStart(api.MirrorName(containerNamePrefix, ev.ContainerID, e.Namespace), e.Timestamp)
 		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
 	case *apievents.TaskExit:
 		log.V(1).Info("Task exited", "namespace", e.Namespace, "id", ev.ContainerID)

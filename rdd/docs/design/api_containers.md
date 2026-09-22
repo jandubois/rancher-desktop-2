@@ -122,9 +122,11 @@ name afterwards.
 Where we mention encoding names into a `foo-0000...` form below, we use the
 following algorithm:
 
-- The general encoded form is a prefix (`foo` in this example), followed by a
-  dash (`-`), followed by the SHA-256 hash of the input name, in lower-case
-  hexadecimal.
+- The general encoded form is a prefix (`foo` in this example; by convention,
+  three letters excluding the dash), followed by a dash (`-`), followed by the
+  SHA-256 hash of the input name, in lower-case hexadecimal.
+  - Extra values may be provided for hashing; they are appended to the input
+    name, separated with null characters (`\x00`), before hashing.
 - If the name is not a valid Kubernetes object name (DNS 1123 subdomain), then
   the name is encoded.
 - If the name format matches the encoded form (prefix for the type, dash, and
@@ -216,8 +218,10 @@ status:
 
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
-- **metadata.name**: The container ID, in lower case hexidecimal.  This is
-  always a valid Kubernetes object name.
+- **metadata.name**: The container ID, in lower case hexidecimal.  This should
+  always a valid Kubernetes object name.  In case this is not, this is encoded
+  using [the algorithm above](#name-encoding), including the container namespace
+  (if supported) as an extra value.
 - **metadata.annotations[containers.rancherdesktop.io/action]**: request a
   one-shot action; see [Container Actions](#container-actions) below.
 - **status.name**: The container name.
