@@ -14,7 +14,7 @@
 # Destructive steps (SIGQUIT, SIGKILL of leaked processes) are scoped to
 # our own RDD_INSTANCE so they do not disturb sibling targets.
 #
-# Usage: bats-with-timeout.sh <seconds> <command> [args...]
+# Usage: bats-with-timeout.sh <seconds> <suite> <command> [args...]
 
 set -o errexit -o nounset -o pipefail
 
@@ -26,16 +26,10 @@ set -o errexit -o nounset -o pipefail
 export RDD_KEEP_LOGS=1
 
 timeout_seconds=$1
-shift
+suite=$2
+shift 2
 
 instance="${RDD_INSTANCE:-2}"
-
-# The last argument is the directory bats runs, which names the suite. The
-# instance cannot: bats-helpers sets no RDD_INSTANCE and falls back above, and
-# bats-docker and bats-nerdctl both run tests/40-docker.
-suite=${*: -1}
-suite=${suite%/}
-suite=${suite##*/}
 
 # Locate the rdd binary relative to this script rather than via PATH,
 # since CI runners do not add <repo>/bin to PATH.
@@ -507,9 +501,8 @@ done
 exit_code=0
 wait "${cmd_pid}" || exit_code=$?
 
-# Record the suite before the post-run bundle, whose capture takes seconds.
-# A killed run's step duration is the cap, not the suite's length, so the
-# outcome column marks which rows are comparable.
+# Record the suite before the post-run capture, so elapsed_ms covers only
+# the bats run.
 suite_end_ms=$(metrics_now_ms)
 metrics_header suite suite instance cap_seconds start_ms end_ms elapsed_ms outcome exit_code
 metrics_record suite \

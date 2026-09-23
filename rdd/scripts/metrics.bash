@@ -18,9 +18,10 @@ metrics_init() {
     mkdir -p "${RDD_METRICS_DIR}"
 }
 
-# Milliseconds since the epoch. EPOCHREALTIME (bash 5) has microsecond
-# resolution; BSD date has no %N, so older bash falls back to whole seconds.
+# Milliseconds since the epoch.
 metrics_now_ms() {
+    # EPOCHREALTIME (bash 5) has microsecond resolution; BSD date does not
+    # have %N, so older bash falls back to whole seconds.
     if [[ -n "${EPOCHREALTIME:-}" ]]; then
         echo $((${EPOCHREALTIME/[.,]/} / 1000))
     else
@@ -58,11 +59,12 @@ metrics_phase() {
         "${start_ms}" "${end_ms}" "$((end_ms - start_ms))"
 }
 
-# metrics_timeout <seconds> <command>... GNU timeout is absent from a stock
-# macOS, so run the command bare when it is missing.
+# metrics_timeout <seconds> <command>... Runs the command with a time limit.
 metrics_timeout() {
     local seconds=$1
     shift
+    # GNU timeout is absent from a stock macOS, so run the command bare when
+    # it is missing.
     if command -v timeout >/dev/null 2>&1; then
         timeout --kill-after=1 "${seconds}" "$@"
     else

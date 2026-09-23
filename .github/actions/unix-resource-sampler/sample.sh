@@ -46,8 +46,8 @@ case "$(uname)" in
                      free * ps, pi * ps, po * ps, si * ps, so * ps}'
         }
         sample_processes() {
-            # macOS top has no per-process disk counters; pageins and csw are
-            # the closest proxies it does report.
+            # macOS top does not report per-process disk counters; pageins
+            # and csw are the closest proxies it does report.
             top -l 1 -n 15 -o cpu \
                 -stats pid,command,cpu,mem,rsize,pageins,csw,state 2>/dev/null || true
         }

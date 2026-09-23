@@ -8,8 +8,8 @@ package controllers
 
 import "os"
 
-// allocatedBytes reports the file's size, because Windows exposes no block
-// count through os.FileInfo.
+// allocatedBytes reports the file's size, because os.FileInfo does not
+// expose a block count on Windows.
 func allocatedBytes(info os.FileInfo, _ string) (int64, error) {
 	return info.Size(), nil
 }

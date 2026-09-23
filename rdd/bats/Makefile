@@ -14,7 +14,7 @@ BATS_CORE := ./lib/bats-core/bin/bats
 # a stopgap; splitting the suite and cutting VM restarts is the real fix.
 BATS_TIMEOUT ?= 4500
 # --timing puts each test's duration in the TAP stream.
-BATS = $(if $(filter-out 0,$(BATS_TIMEOUT)),../scripts/bats-with-timeout.sh $(BATS_TIMEOUT)) $(BATS_CORE) --timing
+BATS = $(if $(filter-out 0,$(BATS_TIMEOUT)),../scripts/bats-with-timeout.sh $(BATS_TIMEOUT) $@) $(BATS_CORE) --timing
 
 default: bats-all
 .PHONY: default
