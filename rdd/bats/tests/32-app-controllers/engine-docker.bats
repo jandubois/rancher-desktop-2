@@ -411,10 +411,10 @@ assert_single_mirror() { # <image-id> <expected-tag>
 
 # --- Volume mirroring ---
 
-# Volume mirror names are derived from the Docker name via SHA-256 hashing
-# (see volumeMirrorName in sync_volumes.go), so tests look up Volumes by
-# status.name through the .status.name selectable field rather than by
-# metadata.name.
+# Volume mirror names are derived from the Docker name, possibly via SHA-256
+# hashing (see `pkg/util/api/mirror_name.go`), so tests look up Volumes by
+# `status.name` through the `.status.name` selectable field rather than by
+# `metadata.name`.
 
 @test "docker volume create creates Volume resource" {
     docker volume create test-vol
@@ -431,7 +431,7 @@ assert_single_mirror() { # <image-id> <expected-tag>
 
 @test "volume name with uppercase and underscore is mirrored" {
     # Docker permits characters (uppercase, underscore) that are
-    # invalid in RFC 1123 subdomain names. volumeK8sName hashes the
+    # invalid in RFC 1123 subdomain names. `api.MirrorName` hashes the
     # Docker name into a valid subdomain; the original is preserved
     # in status.name and queryable via the field selector.
     docker volume create My_Vol_Ume

@@ -17,30 +17,6 @@ import (
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 )
 
-func TestContainerdMirrorName(t *testing.T) {
-	const hexID = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-
-	t.Run("keeps a DNS1123 id as the mirror name", func(t *testing.T) {
-		assert.Equal(t, containerdMirrorName("default", hexID), hexID)
-	})
-
-	t.Run("hashes an id that is not a valid object name", func(t *testing.T) {
-		got := containerdMirrorName("default", "Has_Upper")
-		assert.Assert(t, strings.HasPrefix(got, "ctr-"))
-		assert.Equal(t, len(validation.IsDNS1123Subdomain(got)), 0)
-	})
-
-	t.Run("separates the namespace from the id", func(t *testing.T) {
-		// Concatenated without a separator both of these are "abB_c", so this
-		// fails if the separator is ever dropped from the hashed input.
-		assert.Assert(t, containerdMirrorName("a", "bB_c") != containerdMirrorName("ab", "B_c"))
-	})
-
-	t.Run("is stable across calls", func(t *testing.T) {
-		assert.Equal(t, containerdMirrorName("ns", "A_b"), containerdMirrorName("ns", "A_b"))
-	})
-}
-
 func TestContainerdImageMirrorName(t *testing.T) {
 	t.Run("always hashes, since refs are never valid object names", func(t *testing.T) {
 		got := containerdImageMirrorName("default", "docker.io/library/busybox:latest")

@@ -29,6 +29,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
 // processContainerAction handles a container carrying the AnnotationAction
@@ -129,7 +130,7 @@ func (w *containerdWatcher) dispatchContainerAction(ctx context.Context, log log
 // resolveContainer maps a Container mirror name back to its containerd
 // container. The mirror name normally IS the container ID, so LoadContainer
 // hits directly. IDs that are not valid K8s names get hashed mirror names
-// (see containerdMirrorName), which only a scan of the namespace can map back.
+// (see [api.MirrorName]), which only a scan of the namespace can map back.
 func (w *containerdWatcher) resolveContainer(ctx context.Context, ns, mirrorName string) (containerdclient.Container, error) {
 	nsCtx := namespaces.WithNamespace(ctx, ns)
 	ctr, err := w.cli.LoadContainer(nsCtx, mirrorName)
@@ -145,7 +146,7 @@ func (w *containerdWatcher) resolveContainer(ctx context.Context, ns, mirrorName
 		return nil, fmt.Errorf("failed to list containers in namespace %s: %w", ns, listErr)
 	}
 	for _, candidate := range ctrs {
-		if containerdMirrorName(ns, candidate.ID()) == mirrorName {
+		if api.MirrorName(containerNamePrefix, candidate.ID(), ns) == mirrorName {
 			return candidate, nil
 		}
 	}

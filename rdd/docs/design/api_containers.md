@@ -24,7 +24,7 @@ called "Container mirrors", "Image mirrors", and "Volume mirrors", after
 the engine controller's role. The code uses the same terminology: the
 finalizer is `engine.rancherdesktop.io/mirror`, the cleanup
 helper is `cleanupMirrorResources`, and the name helper is
-`volumeMirrorName`.
+`api.MirrorName`.
 
 When running `containerd`, the containerd namespace is generally stored in
 either `status.namespace` or `spec.namespace`, as appropriate.  The Kubernetes
@@ -117,6 +117,25 @@ leaves its name reserved. `nerdctl` releases a name either from
 with no task has run neither, so `nerdctl create --name` rejects that
 name afterwards.
 
+### Name encoding
+
+Where we mention encoding names into a `foo-0000...` form below, we use the
+following algorithm:
+
+- The general encoded form is a prefix (`foo` in this example; by convention,
+  three letters excluding the dash), followed by a dash (`-`), followed by the
+  SHA-256 hash of the input name, in lower-case hexadecimal.
+  - Extra values may be provided for hashing; they are appended to the input
+    name, separated with null characters (`\x00`), before hashing.
+- If the name is not a valid Kubernetes object name (DNS 1123 subdomain), then
+  the name is encoded.
+- If the name format matches the encoded form (prefix for the type, dash, and
+  hash) with no other text before or after, then the name is encoded.
+- Otherwise, the name is used directly.
+
+Note that we generally describe the names below including the dash, as in `foo-`;
+this is to make easier to remember that the dash exists.
+
 ## Namespaces
 
 `ContainerNamespace` objects reflect the container engine namespaces.  This is
@@ -137,9 +156,8 @@ status:
 
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
-- **metadata.name**: If the container namespace is a valid Kubernetes object
-  name, this is the container namespace name.  Otherwise, this is `cns-`
-  followed by the lower-case SHA-256 hash of the container namespace name.
+- **metadata.name**: This is the container namespace name, encoded using the
+  [algorithm above](#name-encoding) using the prefix `cns-`.
 - **status.name**: The container namespace.
 - **status.labels**: Containerd labels for namespaces.  Does not apply to moby.
 
@@ -200,8 +218,10 @@ status:
 
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
-- **metadata.name**: The container ID, in lower case hexidecimal.  This is
-  always a valid Kubernetes object name.
+- **metadata.name**: The container ID, in lower case hexidecimal.  This should
+  always a valid Kubernetes object name.  In case this is not, this is encoded
+  using [the algorithm above](#name-encoding), including the container namespace
+  (if supported) as an extra value.
 - **metadata.annotations[containers.rancherdesktop.io/action]**: request a
   one-shot action; see [Container Actions](#container-actions) below.
 - **status.name**: The container name.
@@ -386,9 +406,9 @@ be represented by an `Image` object without `.status.repoTag`.
 
 containerd names each record by the reference it was registered under, and a
 single pull through the CRI plugin registers up to three: the image config
-digest, the repo tag, and the repo digest.  A pull that names no tag, such as a
-pod pinned to a digest, registers only the first and last.  Each record becomes
-its own `Image` mirror sharing one `.status.id`; the tag one sets
+digest, the repo tag, and the repo digest.  A pull that does not name a tag,
+such as a pod pinned to a digest, registers only the first and last.  Each
+record becomes its own `Image` mirror sharing one `.status.id`; the tag one sets
 `.status.repoTag`, the repo digest one sets `.status.repoDigests`, and the
 config digest one sets neither, so a client keying on `repoTag` sees it as
 untagged.
@@ -422,10 +442,11 @@ status:
 
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
-- **metadata.name**: A `img-` prefix followed by a SHA-256 hash.  If the image
-  has a tag, it is the hash over the image id (`status.id`), followed by a null
-  byte, followed by the tag (`status.repoTag`).  If the image is dangling (i.e.
-  no tags), it is the hash of the image id (`status.id`) by itself.
+- **metadata.name**: A name encoded using the [algorithm above](#name-encoding),
+  using `img-` as the prefix, and the image id (`status.id`) as the input name.
+  As that contains a colon, it is never a valid Kubernetes name, and is always
+  encoded.  If the image has a tag (`status.repoTag`), that is provided as an
+  extra value to be hashed over.
 - **status.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.
 - **status.id**: The raw image ID, including the `sha256:` prefix (or whichever
@@ -581,7 +602,7 @@ mirror on the next full sync.
 apiVersion: containers.rancherdesktop.io/v1alpha1
 kind: Volume
 metadata:
-  name: vol-d404559327842434dee6f7a10d8998594be5b49a7ef9a91a42ca2b3d0174ab9d
+  name: volume-name
   namespace: rancher-desktop
 status:
   namespace: moby
@@ -596,8 +617,8 @@ status:
 
 - **metadata.namespace**: the Kubernetes namespace; this must be the same value
   as the [App](api_app.md#app-object) resources's `spec.namespace` field.
-- **metadata.name**: A `vol-` prefix, followed by the SHA-256 hash of the
-  original Docker/containerd volume name.
+- **metadata.name**: The original Docker/containerd volume name, encoded using
+  the [algorithm above](#name-encoding), with the prefix `vol-`.
 - **status.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.
 - **status.name**: The docker / nerdctl volume name.  This may contain uppercase
@@ -661,14 +682,10 @@ status:
   conditions: []
 ```
 
-- **metadata.name**: This name must be constructed by the following:
-  - The candidate name is the `status.namespace`, followed by a dot, followed by
-    the compose project name (i.e. `status.name`).
-  - If the candidate name is a valid Kubernetes name (that is, runs of
-    lower-case alphanumeric characters or dash, but does not start or end with
-    dash; each run is joined by a dot), then use it as `metadata.name`.
-  - Otherwise, this is `cmp-` followed by the lower-case SHA-256 hash of the
-    candidate name.
+- **metadata.name**: This is encoded using the [algorithm above](#name-encoding),
+  using the prefix `cmp-`, and the name is the namespace (i.e.
+  `status.namespace`) followed by a dot (`.`) followed by the project name (i.e.
+  `status.name`).
 - **status.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.
 - **status.name**: The compose project name.
