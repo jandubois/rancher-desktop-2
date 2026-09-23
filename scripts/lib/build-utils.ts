@@ -468,6 +468,14 @@ export default {
   },
 
   /**
+   * The architecture suffix electron-builder appends to the names it chooses,
+   * which is empty for x64: it leaves the default architecture unmarked.
+   */
+  get archSuffix(): string {
+    return this.arch === 'x64' ? '' : `-${ this.arch }`;
+  },
+
+  /**
    * Throw unless a packaged application was built for `arch`, so that signing
    * never names its files after another architecture.
    * @param artifactName The `artifactName` in the application's electron-builder.yml.

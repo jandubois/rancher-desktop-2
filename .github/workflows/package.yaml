@@ -39,6 +39,7 @@ jobs:
     needs: check-paths
     if: needs.check-paths.outputs.should-run == 'true'
     strategy:
+      fail-fast: false
       matrix:
         include:
         - platform: darwin
@@ -50,9 +51,15 @@ jobs:
         - platform: windows
           arch: x86_64
           runs-on: windows-latest
+        - platform: windows
+          arch: aarch64
+          runs-on: windows-11-arm
         - platform: linux
           arch: x86_64
           runs-on: ubuntu-22.04
+        - platform: linux
+          arch: aarch64
+          runs-on: ubuntu-22.04-arm
     runs-on: ${{ matrix.runs-on }}
     env:
       # This build ships, so it compresses the embedded distro with the
