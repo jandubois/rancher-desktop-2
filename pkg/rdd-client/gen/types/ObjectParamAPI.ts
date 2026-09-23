@@ -27,6 +27,14 @@ import { IoRancherdesktopAppV1alpha1Demo } from '../models/IoRancherdesktopAppV1
 import { IoRancherdesktopAppV1alpha1DemoList } from '../models/IoRancherdesktopAppV1alpha1DemoList';
 import { IoRancherdesktopAppV1alpha1DemoSpec } from '../models/IoRancherdesktopAppV1alpha1DemoSpec';
 import { IoRancherdesktopAppV1alpha1DemoStatus } from '../models/IoRancherdesktopAppV1alpha1DemoStatus';
+import { IoRancherdesktopContainersV1alpha1ComposeProject } from '../models/IoRancherdesktopContainersV1alpha1ComposeProject';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectList } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectList';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectStatus } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatus';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequest } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequest';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestList } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestList';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus';
 import { IoRancherdesktopContainersV1alpha1Container } from '../models/IoRancherdesktopContainersV1alpha1Container';
 import { IoRancherdesktopContainersV1alpha1ContainerCreateRequest } from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequest';
 import { IoRancherdesktopContainersV1alpha1ContainerCreateRequestList } from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestList';
@@ -6670,6 +6678,94 @@ export class ObjectAuthorizationV1Api {
 import { ObservableContainersRancherdesktopIoV1alpha1Api } from "./ObservableAPI";
 import { ContainersRancherdesktopIoV1alpha1ApiRequestFactory, ContainersRancherdesktopIoV1alpha1ApiResponseProcessor} from "../apis/ContainersRancherdesktopIoV1alpha1Api";
 
+export interface ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedComposeProjectRequest {
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ComposeProject
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeProject
+     */
+    body: IoRancherdesktopContainersV1alpha1ComposeProject
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeProject
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeProject
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeProject
+     */
+    fieldValidation?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedComposeUpRequestRequest {
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ComposeUpRequest
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeUpRequest
+     */
+    body: IoRancherdesktopContainersV1alpha1ComposeUpRequest
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeUpRequest
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeUpRequest
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedComposeUpRequest
+     */
+    fieldValidation?: string
+}
+
 export interface ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedContainerRequest {
     /**
      * object name and auth scope, such as for teams and projects
@@ -7064,6 +7160,166 @@ export interface ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedVolumeCrea
      * @memberof ContainersRancherdesktopIoV1alpha1ApicreateNamespacedVolumeCreateRequest
      */
     fieldValidation?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedComposeProjectRequest {
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    _continue?: string
+    /**
+     * A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    fieldSelector?: string
+    /**
+     * A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    labelSelector?: string
+    /**
+     * limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    limit?: number
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    resourceVersion?: string
+    /**
+     * resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    resourceVersionMatch?: string
+    /**
+     * &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    sendInitialEvents?: boolean
+    /**
+     * shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    shardSelector?: string
+    /**
+     * Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeProject
+     */
+    timeoutSeconds?: number
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedComposeUpRequestRequest {
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    _continue?: string
+    /**
+     * A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    fieldSelector?: string
+    /**
+     * A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    labelSelector?: string
+    /**
+     * limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    limit?: number
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    resourceVersion?: string
+    /**
+     * resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    resourceVersionMatch?: string
+    /**
+     * &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    sendInitialEvents?: boolean
+    /**
+     * shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    shardSelector?: string
+    /**
+     * Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteCollectionNamespacedComposeUpRequest
+     */
+    timeoutSeconds?: number
 }
 
 export interface ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedContainerRequest {
@@ -7786,6 +8042,136 @@ export interface ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespaced
     timeoutSeconds?: number
 }
 
+export interface ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedComposeProjectRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    dryRun?: string
+    /**
+     * The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    gracePeriodSeconds?: number
+    /**
+     * if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    ignoreStoreReadErrorWithClusterBreakingPotential?: boolean
+    /**
+     * Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \&quot;orphan\&quot; finalizer will be added to/removed from the object\&#39;s finalizers list. Either this field or PropagationPolicy may be set, but not both.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    orphanDependents?: boolean
+    /**
+     * Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: \&#39;Orphan\&#39; - orphan the dependents; \&#39;Background\&#39; - allow the garbage collector to delete the dependents in the background; \&#39;Foreground\&#39; - a cascading policy that deletes all dependents in the foreground.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    propagationPolicy?: string
+    /**
+     * 
+     * @type V1DeleteOptions
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeProject
+     */
+    body?: V1DeleteOptions
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedComposeUpRequestRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    dryRun?: string
+    /**
+     * The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    gracePeriodSeconds?: number
+    /**
+     * if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    ignoreStoreReadErrorWithClusterBreakingPotential?: boolean
+    /**
+     * Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \&quot;orphan\&quot; finalizer will be added to/removed from the object\&#39;s finalizers list. Either this field or PropagationPolicy may be set, but not both.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    orphanDependents?: boolean
+    /**
+     * Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: \&#39;Orphan\&#39; - orphan the dependents; \&#39;Background\&#39; - allow the garbage collector to delete the dependents in the background; \&#39;Foreground\&#39; - a cascading policy that deletes all dependents in the foreground.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    propagationPolicy?: string
+    /**
+     * 
+     * @type V1DeleteOptions
+     * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedComposeUpRequest
+     */
+    body?: V1DeleteOptions
+}
+
 export interface ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedContainerRequest {
     /**
      * name of the Container
@@ -8369,6 +8755,180 @@ export interface ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedVolumeCrea
      * @memberof ContainersRancherdesktopIoV1alpha1ApideleteNamespacedVolumeCreateRequest
      */
     body?: V1DeleteOptions
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiListComposeProjectForAllNamespacesRequest {
+    /**
+     * allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    allowWatchBookmarks?: boolean
+    /**
+     * The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    _continue?: string
+    /**
+     * A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    fieldSelector?: string
+    /**
+     * A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    labelSelector?: string
+    /**
+     * limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    limit?: number
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    resourceVersion?: string
+    /**
+     * resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    resourceVersionMatch?: string
+    /**
+     * &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    sendInitialEvents?: boolean
+    /**
+     * shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    shardSelector?: string
+    /**
+     * Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    timeoutSeconds?: number
+    /**
+     * Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeProjectForAllNamespaces
+     */
+    watch?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiListComposeUpRequestForAllNamespacesRequest {
+    /**
+     * allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    allowWatchBookmarks?: boolean
+    /**
+     * The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    _continue?: string
+    /**
+     * A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    fieldSelector?: string
+    /**
+     * A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    labelSelector?: string
+    /**
+     * limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    limit?: number
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    resourceVersion?: string
+    /**
+     * resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    resourceVersionMatch?: string
+    /**
+     * &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    sendInitialEvents?: boolean
+    /**
+     * shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    shardSelector?: string
+    /**
+     * Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    timeoutSeconds?: number
+    /**
+     * Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistComposeUpRequestForAllNamespaces
+     */
+    watch?: boolean
 }
 
 export interface ContainersRancherdesktopIoV1alpha1ApiListContainerCreateRequestForAllNamespacesRequest {
@@ -8976,6 +9536,194 @@ export interface ContainersRancherdesktopIoV1alpha1ApiListImageScanRequestForAll
      * Defaults to: undefined
      * @type boolean
      * @memberof ContainersRancherdesktopIoV1alpha1ApilistImageScanRequestForAllNamespaces
+     */
+    watch?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiListNamespacedComposeProjectRequest {
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    allowWatchBookmarks?: boolean
+    /**
+     * The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    _continue?: string
+    /**
+     * A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    fieldSelector?: string
+    /**
+     * A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    labelSelector?: string
+    /**
+     * limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    limit?: number
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    resourceVersion?: string
+    /**
+     * resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    resourceVersionMatch?: string
+    /**
+     * &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    sendInitialEvents?: boolean
+    /**
+     * shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    shardSelector?: string
+    /**
+     * Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    timeoutSeconds?: number
+    /**
+     * Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeProject
+     */
+    watch?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiListNamespacedComposeUpRequestRequest {
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    allowWatchBookmarks?: boolean
+    /**
+     * The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    _continue?: string
+    /**
+     * A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    fieldSelector?: string
+    /**
+     * A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    labelSelector?: string
+    /**
+     * limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    limit?: number
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    resourceVersion?: string
+    /**
+     * resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    resourceVersionMatch?: string
+    /**
+     * &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    sendInitialEvents?: boolean
+    /**
+     * shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    shardSelector?: string
+    /**
+     * Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * Defaults to: undefined
+     * @type number
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
+     */
+    timeoutSeconds?: number
+    /**
+     * Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApilistNamespacedComposeUpRequest
      */
     watch?: boolean
 }
@@ -9998,6 +10746,238 @@ export interface ContainersRancherdesktopIoV1alpha1ApiListVolumeForAllNamespaces
      * @memberof ContainersRancherdesktopIoV1alpha1ApilistVolumeForAllNamespaces
      */
     watch?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeProjectRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * 
+     * @type any
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    body: any
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    fieldValidation?: string
+    /**
+     * Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProject
+     */
+    force?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeProjectStatusRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    namespace: string
+    /**
+     * 
+     * @type any
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    body: any
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    fieldValidation?: string
+    /**
+     * Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeProjectStatus
+     */
+    force?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeUpRequestRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * 
+     * @type any
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    body: any
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    fieldValidation?: string
+    /**
+     * Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequest
+     */
+    force?: boolean
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeUpRequestStatusRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    namespace: string
+    /**
+     * 
+     * @type any
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    body: any
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    fieldValidation?: string
+    /**
+     * Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof ContainersRancherdesktopIoV1alpha1ApipatchNamespacedComposeUpRequestStatus
+     */
+    force?: boolean
 }
 
 export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedContainerRequest {
@@ -11044,6 +12024,130 @@ export interface ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedVolumeStatu
     force?: boolean
 }
 
+export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeProjectRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProject
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProject
+     */
+    resourceVersion?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeProjectStatusRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProjectStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProjectStatus
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProjectStatus
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeProjectStatus
+     */
+    resourceVersion?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeUpRequestRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequest
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequest
+     */
+    resourceVersion?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeUpRequestStatusRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequestStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequestStatus
+     */
+    namespace: string
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequestStatus
+     */
+    pretty?: string
+    /**
+     * resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedComposeUpRequestStatus
+     */
+    resourceVersion?: string
+}
+
 export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedContainerRequest {
     /**
      * name of the Container
@@ -11600,6 +12704,210 @@ export interface ContainersRancherdesktopIoV1alpha1ApiReadNamespacedVolumeStatus
      * @memberof ContainersRancherdesktopIoV1alpha1ApireadNamespacedVolumeStatus
      */
     resourceVersion?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeProjectRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ComposeProject
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    body: IoRancherdesktopContainersV1alpha1ComposeProject
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProject
+     */
+    fieldValidation?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeProjectStatusRequest {
+    /**
+     * name of the ComposeProject
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ComposeProject
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    body: IoRancherdesktopContainersV1alpha1ComposeProject
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeProjectStatus
+     */
+    fieldValidation?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeUpRequestRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ComposeUpRequest
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    body: IoRancherdesktopContainersV1alpha1ComposeUpRequest
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequest
+     */
+    fieldValidation?: string
+}
+
+export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeUpRequestStatusRequest {
+    /**
+     * name of the ComposeUpRequest
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    name: string
+    /**
+     * object name and auth scope, such as for teams and projects
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    namespace: string
+    /**
+     * 
+     * @type IoRancherdesktopContainersV1alpha1ComposeUpRequest
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    body: IoRancherdesktopContainersV1alpha1ComposeUpRequest
+    /**
+     * If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    pretty?: string
+    /**
+     * When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    dryRun?: string
+    /**
+     * fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    fieldManager?: string
+    /**
+     * fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * Defaults to: undefined
+     * @type string
+     * @memberof ContainersRancherdesktopIoV1alpha1ApireplaceNamespacedComposeUpRequestStatus
+     */
+    fieldValidation?: string
 }
 
 export interface ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedContainerRequest {
@@ -12528,6 +13836,38 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * create a ComposeProject
+     * @param param the request object
+     */
+    public createNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.createNamespacedComposeProjectWithHttpInfo(param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * create a ComposeProject
+     * @param param the request object
+     */
+    public createNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.createNamespacedComposeProject(param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * create a ComposeUpRequest
+     * @param param the request object
+     */
+    public createNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.createNamespacedComposeUpRequestWithHttpInfo(param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * create a ComposeUpRequest
+     * @param param the request object
+     */
+    public createNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.createNamespacedComposeUpRequest(param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
      * create a Container
      * @param param the request object
      */
@@ -12669,6 +14009,38 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
      */
     public createNamespacedVolumeCreateRequest(param: ContainersRancherdesktopIoV1alpha1ApiCreateNamespacedVolumeCreateRequestRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1VolumeCreateRequest> {
         return this.api.createNamespacedVolumeCreateRequest(param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * delete collection of ComposeProject
+     * @param param the request object
+     */
+    public deleteCollectionNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<V1Status>> {
+        return this.api.deleteCollectionNamespacedComposeProjectWithHttpInfo(param.namespace, param.pretty, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds,  options).toPromise();
+    }
+
+    /**
+     * delete collection of ComposeProject
+     * @param param the request object
+     */
+    public deleteCollectionNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<V1Status> {
+        return this.api.deleteCollectionNamespacedComposeProject(param.namespace, param.pretty, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds,  options).toPromise();
+    }
+
+    /**
+     * delete collection of ComposeUpRequest
+     * @param param the request object
+     */
+    public deleteCollectionNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<V1Status>> {
+        return this.api.deleteCollectionNamespacedComposeUpRequestWithHttpInfo(param.namespace, param.pretty, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds,  options).toPromise();
+    }
+
+    /**
+     * delete collection of ComposeUpRequest
+     * @param param the request object
+     */
+    public deleteCollectionNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiDeleteCollectionNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<V1Status> {
+        return this.api.deleteCollectionNamespacedComposeUpRequest(param.namespace, param.pretty, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds,  options).toPromise();
     }
 
     /**
@@ -12816,6 +14188,38 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * delete a ComposeProject
+     * @param param the request object
+     */
+    public deleteNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<V1Status>> {
+        return this.api.deleteNamespacedComposeProjectWithHttpInfo(param.name, param.namespace, param.pretty, param.dryRun, param.gracePeriodSeconds, param.ignoreStoreReadErrorWithClusterBreakingPotential, param.orphanDependents, param.propagationPolicy, param.body,  options).toPromise();
+    }
+
+    /**
+     * delete a ComposeProject
+     * @param param the request object
+     */
+    public deleteNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<V1Status> {
+        return this.api.deleteNamespacedComposeProject(param.name, param.namespace, param.pretty, param.dryRun, param.gracePeriodSeconds, param.ignoreStoreReadErrorWithClusterBreakingPotential, param.orphanDependents, param.propagationPolicy, param.body,  options).toPromise();
+    }
+
+    /**
+     * delete a ComposeUpRequest
+     * @param param the request object
+     */
+    public deleteNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<V1Status>> {
+        return this.api.deleteNamespacedComposeUpRequestWithHttpInfo(param.name, param.namespace, param.pretty, param.dryRun, param.gracePeriodSeconds, param.ignoreStoreReadErrorWithClusterBreakingPotential, param.orphanDependents, param.propagationPolicy, param.body,  options).toPromise();
+    }
+
+    /**
+     * delete a ComposeUpRequest
+     * @param param the request object
+     */
+    public deleteNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiDeleteNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<V1Status> {
+        return this.api.deleteNamespacedComposeUpRequest(param.name, param.namespace, param.pretty, param.dryRun, param.gracePeriodSeconds, param.ignoreStoreReadErrorWithClusterBreakingPotential, param.orphanDependents, param.propagationPolicy, param.body,  options).toPromise();
+    }
+
+    /**
      * delete a Container
      * @param param the request object
      */
@@ -12960,6 +14364,38 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * list objects of kind ComposeProject
+     * @param param the request object
+     */
+    public listComposeProjectForAllNamespacesWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiListComposeProjectForAllNamespacesRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProjectList>> {
+        return this.api.listComposeProjectForAllNamespacesWithHttpInfo(param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.pretty, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeProject
+     * @param param the request object
+     */
+    public listComposeProjectForAllNamespaces(param: ContainersRancherdesktopIoV1alpha1ApiListComposeProjectForAllNamespacesRequest = {}, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProjectList> {
+        return this.api.listComposeProjectForAllNamespaces(param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.pretty, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param param the request object
+     */
+    public listComposeUpRequestForAllNamespacesWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiListComposeUpRequestForAllNamespacesRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequestList>> {
+        return this.api.listComposeUpRequestForAllNamespacesWithHttpInfo(param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.pretty, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param param the request object
+     */
+    public listComposeUpRequestForAllNamespaces(param: ContainersRancherdesktopIoV1alpha1ApiListComposeUpRequestForAllNamespacesRequest = {}, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequestList> {
+        return this.api.listComposeUpRequestForAllNamespaces(param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.pretty, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
      * list objects of kind ContainerCreateRequest
      * @param param the request object
      */
@@ -13069,6 +14505,38 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
      */
     public listImageScanRequestForAllNamespaces(param: ContainersRancherdesktopIoV1alpha1ApiListImageScanRequestForAllNamespacesRequest = {}, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ImageScanRequestList> {
         return this.api.listImageScanRequestForAllNamespaces(param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.pretty, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeProject
+     * @param param the request object
+     */
+    public listNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiListNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProjectList>> {
+        return this.api.listNamespacedComposeProjectWithHttpInfo(param.namespace, param.pretty, param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeProject
+     * @param param the request object
+     */
+    public listNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiListNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProjectList> {
+        return this.api.listNamespacedComposeProject(param.namespace, param.pretty, param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param param the request object
+     */
+    public listNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiListNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequestList>> {
+        return this.api.listNamespacedComposeUpRequestWithHttpInfo(param.namespace, param.pretty, param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param param the request object
+     */
+    public listNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiListNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequestList> {
+        return this.api.listNamespacedComposeUpRequest(param.namespace, param.pretty, param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
     }
 
     /**
@@ -13245,6 +14713,70 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
      */
     public listVolumeForAllNamespaces(param: ContainersRancherdesktopIoV1alpha1ApiListVolumeForAllNamespacesRequest = {}, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1VolumeList> {
         return this.api.listVolumeForAllNamespaces(param.allowWatchBookmarks, param._continue, param.fieldSelector, param.labelSelector, param.limit, param.pretty, param.resourceVersion, param.resourceVersionMatch, param.sendInitialEvents, param.shardSelector, param.timeoutSeconds, param.watch,  options).toPromise();
+    }
+
+    /**
+     * partially update the specified ComposeProject
+     * @param param the request object
+     */
+    public patchNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.patchNamespacedComposeProjectWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update the specified ComposeProject
+     * @param param the request object
+     */
+    public patchNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.patchNamespacedComposeProject(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update status of the specified ComposeProject
+     * @param param the request object
+     */
+    public patchNamespacedComposeProjectStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeProjectStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.patchNamespacedComposeProjectStatusWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update status of the specified ComposeProject
+     * @param param the request object
+     */
+    public patchNamespacedComposeProjectStatus(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeProjectStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.patchNamespacedComposeProjectStatus(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public patchNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.patchNamespacedComposeUpRequestWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public patchNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.patchNamespacedComposeUpRequest(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update status of the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public patchNamespacedComposeUpRequestStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeUpRequestStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.patchNamespacedComposeUpRequestStatusWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
+    }
+
+    /**
+     * partially update status of the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public patchNamespacedComposeUpRequestStatus(param: ContainersRancherdesktopIoV1alpha1ApiPatchNamespacedComposeUpRequestStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.patchNamespacedComposeUpRequestStatus(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation, param.force,  options).toPromise();
     }
 
     /**
@@ -13536,6 +15068,70 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * read the specified ComposeProject
+     * @param param the request object
+     */
+    public readNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.readNamespacedComposeProjectWithHttpInfo(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read the specified ComposeProject
+     * @param param the request object
+     */
+    public readNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.readNamespacedComposeProject(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read status of the specified ComposeProject
+     * @param param the request object
+     */
+    public readNamespacedComposeProjectStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeProjectStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.readNamespacedComposeProjectStatusWithHttpInfo(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read status of the specified ComposeProject
+     * @param param the request object
+     */
+    public readNamespacedComposeProjectStatus(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeProjectStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.readNamespacedComposeProjectStatus(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public readNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.readNamespacedComposeUpRequestWithHttpInfo(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public readNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.readNamespacedComposeUpRequest(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read status of the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public readNamespacedComposeUpRequestStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeUpRequestStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.readNamespacedComposeUpRequestStatusWithHttpInfo(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * read status of the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public readNamespacedComposeUpRequestStatus(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedComposeUpRequestStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.readNamespacedComposeUpRequestStatus(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
      * read the specified Container
      * @param param the request object
      */
@@ -13821,6 +15417,70 @@ export class ObjectContainersRancherdesktopIoV1alpha1Api {
      */
     public readNamespacedVolumeStatus(param: ContainersRancherdesktopIoV1alpha1ApiReadNamespacedVolumeStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1Volume> {
         return this.api.readNamespacedVolumeStatus(param.name, param.namespace, param.pretty, param.resourceVersion,  options).toPromise();
+    }
+
+    /**
+     * replace the specified ComposeProject
+     * @param param the request object
+     */
+    public replaceNamespacedComposeProjectWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.replaceNamespacedComposeProjectWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace the specified ComposeProject
+     * @param param the request object
+     */
+    public replaceNamespacedComposeProject(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeProjectRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.replaceNamespacedComposeProject(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace status of the specified ComposeProject
+     * @param param the request object
+     */
+    public replaceNamespacedComposeProjectStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeProjectStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        return this.api.replaceNamespacedComposeProjectStatusWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace status of the specified ComposeProject
+     * @param param the request object
+     */
+    public replaceNamespacedComposeProjectStatus(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeProjectStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.api.replaceNamespacedComposeProjectStatus(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public replaceNamespacedComposeUpRequestWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.replaceNamespacedComposeUpRequestWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public replaceNamespacedComposeUpRequest(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeUpRequestRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.replaceNamespacedComposeUpRequest(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace status of the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public replaceNamespacedComposeUpRequestStatusWithHttpInfo(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeUpRequestStatusRequest, options?: ConfigurationOptions): Promise<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        return this.api.replaceNamespacedComposeUpRequestStatusWithHttpInfo(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
+    }
+
+    /**
+     * replace status of the specified ComposeUpRequest
+     * @param param the request object
+     */
+    public replaceNamespacedComposeUpRequestStatus(param: ContainersRancherdesktopIoV1alpha1ApiReplaceNamespacedComposeUpRequestStatusRequest, options?: ConfigurationOptions): Promise<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.api.replaceNamespacedComposeUpRequestStatus(param.name, param.namespace, param.body, param.pretty, param.dryRun, param.fieldManager, param.fieldValidation,  options).toPromise();
     }
 
     /**

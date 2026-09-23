@@ -44,6 +44,10 @@ export class IoRancherdesktopContainersV1alpha1ContainerStatus {
     */
     'finishedAt'?: Date;
     /**
+    * ID is the unique identifier of the container; should be the same as [Container.Name], unless that is encoded.
+    */
+    'id': string;
+    /**
     * Image is the image the container was created with.
     */
     'image': string;
@@ -121,6 +125,12 @@ export class IoRancherdesktopContainersV1alpha1ContainerStatus {
             "baseName": "finishedAt",
             "type": "Date",
             "format": "date-time"
+        },
+        {
+            "name": "id",
+            "baseName": "id",
+            "type": "string",
+            "format": ""
         },
         {
             "name": "image",
