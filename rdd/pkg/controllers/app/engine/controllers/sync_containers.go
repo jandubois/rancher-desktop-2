@@ -129,6 +129,7 @@ func (w *dockerWatcher) applyContainer(ctx context.Context, inspect mobycontaine
 
 	// Build status.
 	statusApply := containersv1alpha1apply.ContainerStatus().
+		WithID(inspect.ID).
 		WithName(name).
 		WithNamespace(namespace).
 		WithPath(inspect.Path).

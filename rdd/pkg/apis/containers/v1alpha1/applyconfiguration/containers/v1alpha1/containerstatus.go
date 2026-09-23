@@ -13,6 +13,10 @@ import (
 //
 // ContainerStatus defines the observed state of the container.
 type ContainerStatusApplyConfiguration struct {
+	// ID is the unique identifier of the container; should be the same as
+	// [Container.Name], unless that is encoded.
+	//
+	ID *string `json:"id,omitempty"`
 	// Name of the container; this is distinct from the container ID.
 	//
 	Name *string `json:"name,omitempty"`
@@ -82,6 +86,14 @@ type ContainerStatusApplyConfiguration struct {
 // apply.
 func ContainerStatus() *ContainerStatusApplyConfiguration {
 	return &ContainerStatusApplyConfiguration{}
+}
+
+// WithID sets the ID field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the ID field is set to the value of the last call.
+func (b *ContainerStatusApplyConfiguration) WithID(value string) *ContainerStatusApplyConfiguration {
+	b.ID = &value
+	return b
 }
 
 // WithName sets the Name field in the declarative configuration to the given value

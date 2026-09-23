@@ -138,6 +138,7 @@ func (w *containerdWatcher) applyContainer(nsCtx context.Context, ns string, ctr
 	}
 
 	statusApply := containersv1alpha1apply.ContainerStatus().
+		WithID(info.ID).
 		WithName(name).
 		WithNamespace(ns).
 		WithImage(image).

@@ -29,7 +29,6 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
-	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
 // processContainerAction handles a container carrying the AnnotationAction
@@ -101,11 +100,11 @@ func (w *containerdWatcher) dispatchContainerAction(ctx context.Context, log log
 		return errors.New("container mirror has no namespace")
 	}
 
-	ctr, err := w.resolveContainer(ctx, ns, c.Name)
+	nsCtx := namespaces.WithNamespace(ctx, ns)
+	ctr, err := w.cli.LoadContainer(nsCtx, c.Status.ID)
 	if err != nil {
 		return err
 	}
-	nsCtx := namespaces.WithNamespace(ctx, ns)
 
 	switch action {
 	case containersv1alpha1.ContainerActionStart:
@@ -125,32 +124,6 @@ func (w *containerdWatcher) dispatchContainerAction(ctx context.Context, log log
 		return w.restartContainer(nsCtx, log, ctr)
 	}
 	return fmt.Errorf("unknown container action %q", action)
-}
-
-// resolveContainer maps a Container mirror name back to its containerd
-// container. The mirror name normally IS the container ID, so LoadContainer
-// hits directly. IDs that are not valid K8s names get hashed mirror names
-// (see [api.MirrorName]), which only a scan of the namespace can map back.
-func (w *containerdWatcher) resolveContainer(ctx context.Context, ns, mirrorName string) (containerdclient.Container, error) {
-	nsCtx := namespaces.WithNamespace(ctx, ns)
-	ctr, err := w.cli.LoadContainer(nsCtx, mirrorName)
-	if err == nil {
-		return ctr, nil
-	}
-	if !errdefs.IsNotFound(err) {
-		return nil, fmt.Errorf("failed to load container %s: %w", mirrorName, err)
-	}
-
-	ctrs, listErr := w.cli.Containers(nsCtx)
-	if listErr != nil {
-		return nil, fmt.Errorf("failed to list containers in namespace %s: %w", ns, listErr)
-	}
-	for _, candidate := range ctrs {
-		if api.MirrorName(containerMirrorPrefix, candidate.ID(), ns) == mirrorName {
-			return candidate, nil
-		}
-	}
-	return nil, err
 }
 
 // startContainer starts the container's task, matching Docker's no-op
@@ -530,14 +503,14 @@ func (w *containerdWatcher) deleteContainer(ctx context.Context, c *containersv1
 		return nil
 	}
 
-	ctr, err := w.resolveContainer(ctx, ns, c.Name)
+	nsCtx := namespaces.WithNamespace(ctx, ns)
+	ctr, err := w.cli.LoadContainer(nsCtx, c.Status.ID)
 	if errdefs.IsNotFound(err) {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	nsCtx := namespaces.WithNamespace(ctx, ns)
 
 	if task, err := ctr.Task(nsCtx, nil); err == nil {
 		if _, err := task.Delete(nsCtx, containerdclient.WithProcessKill); err != nil && !errdefs.IsNotFound(err) {

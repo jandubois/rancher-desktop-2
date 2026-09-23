@@ -73,6 +73,7 @@ func (r *containerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		}
 
 		applyStatus := containersv1alpha1apply.ContainerStatus().
+			WithID(inspect.ID).
 			WithName(name).
 			WithNamespace(namespace).
 			WithPath(inspect.Path).

@@ -226,6 +226,8 @@ status:
   issue of the same container ID in different namespaces.
 - **metadata.annotations[containers.rancherdesktop.io/action]**: request a
   one-shot action; see [Container Actions](#container-actions) below.
+- **status.id**: The container id; this should be the same as `metadata.name`,
+  unless that is encoded.
 - **status.name**: The container name.
 - **status.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.

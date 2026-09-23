@@ -304,6 +304,7 @@ test.describe('Containers', () => {
         namespace,
         body:      {
           status: {
+            id:        containerId,
             name:      'test_container',
             namespace: 'k8s.io',
             image:     `sha256:${ randomBytes(32).toString('hex') }`,
