@@ -5,6 +5,8 @@ import semver from 'semver';
 
 import buildUtils from '../build-utils';
 
+import { EXT_MACRO } from '@pkg/utils/releaseArtifacts';
+
 import type webpack from 'webpack';
 
 describe('build-utils', () => {
@@ -128,6 +130,31 @@ describe('build-utils', () => {
       jest.spyOn(semver, 'valid').mockReturnValue(null);
       const version = await buildUtils.computeVersion(rejectGit);
       expect(version).toBe('0.0.0-fallback');
+    });
+  });
+
+  describe('checkArchiveArch', () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    const artifactName = (arch: string) => `rancher-desktop-2.0.0.windows.${ arch }.${ EXT_MACRO }`;
+
+    it('accepts an archive built for the selected architecture', () => {
+      jest.spyOn(buildUtils, 'arch', 'get').mockReturnValue('arm64');
+      expect(() => buildUtils.checkArchiveArch(artifactName('aarch64'), '2.0.0', 'win32')).not.toThrow();
+    });
+
+    it.each([
+      ['x86_64', 'arm64', 'amd64'],
+      ['aarch64', 'x64', 'arm64'],
+    ] as const)('refuses an %s archive when signing for %s, naming GOARCH=%s', (archiveArch, arch, goarch) => {
+      jest.spyOn(buildUtils, 'arch', 'get').mockReturnValue(arch);
+      expect(() => buildUtils.checkArchiveArch(artifactName(archiveArch), '2.0.0', 'win32')).toThrow(`set GOARCH=${ goarch }`);
+    });
+
+    it('refuses an archive without a release artifact name', () => {
+      expect(() => buildUtils.checkArchiveArch(undefined, '2.0.0', 'win32')).toThrow(`Cannot tell the archive's architecture`);
     });
   });
 });
