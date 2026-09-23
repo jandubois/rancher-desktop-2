@@ -326,7 +326,7 @@ $(BATS_TARGETS): bin/rdd$(EXE)
 	@$(MAKE) -C bats $@
 .PHONY: $(BATS_TARGETS)
 
-check: test lint check-ltag
+check: test lint check-ltag verify-generate
 .PHONY: check
 
 clean:
