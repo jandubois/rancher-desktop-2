@@ -6,7 +6,6 @@ package controllers
 
 import (
 	"context"
-	"crypto/sha256"
 	"errors"
 	"fmt"
 
@@ -22,16 +21,15 @@ import (
 
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
 // containerdImageMirrorName returns the deterministic Image mirror name for a
-// containerd image record. Image references contain '/' and ':', so they are
-// never valid K8s object names; the reference is always hashed with an "img-"
-// prefix matching the moby scheme. The namespace is part of the hash because
-// the same reference commonly exists in several containerd namespaces (default
-// and k8s.io both hold busybox after a pull in each).
+// containerd image record.  The mirror name is always encoded with an `img-`
+// prefix, and incorporates the namespace and the image reference within the
+// hash inputs.
 func containerdImageMirrorName(ns, name string) string {
-	return fmt.Sprintf("img-%x", sha256.Sum256([]byte(ns+"\x00"+name)))
+	return api.MirrorName(imageMirrorPrefix, fmt.Sprintf("%s\x00%s", ns, name))
 }
 
 // containerdImageRefs splits a containerd image record name into the mirror

@@ -28,6 +28,14 @@ import { IoRancherdesktopAppV1alpha1Demo } from '../models/IoRancherdesktopAppV1
 import { IoRancherdesktopAppV1alpha1DemoList } from '../models/IoRancherdesktopAppV1alpha1DemoList';
 import { IoRancherdesktopAppV1alpha1DemoSpec } from '../models/IoRancherdesktopAppV1alpha1DemoSpec';
 import { IoRancherdesktopAppV1alpha1DemoStatus } from '../models/IoRancherdesktopAppV1alpha1DemoStatus';
+import { IoRancherdesktopContainersV1alpha1ComposeProject } from '../models/IoRancherdesktopContainersV1alpha1ComposeProject';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectList } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectList';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectStatus } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatus';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequest } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequest';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestList } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestList';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus';
 import { IoRancherdesktopContainersV1alpha1Container } from '../models/IoRancherdesktopContainersV1alpha1Container';
 import { IoRancherdesktopContainersV1alpha1ContainerCreateRequest } from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequest';
 import { IoRancherdesktopContainersV1alpha1ContainerCreateRequestList } from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestList';
@@ -4645,6 +4653,90 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * create a ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public createNamespacedComposeProjectWithHttpInfo(namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeProject, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.createNamespacedComposeProject(namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.createNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * create a ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public createNamespacedComposeProject(namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeProject, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.createNamespacedComposeProjectWithHttpInfo(namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * create a ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public createNamespacedComposeUpRequestWithHttpInfo(namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeUpRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.createNamespacedComposeUpRequest(namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.createNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * create a ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public createNamespacedComposeUpRequest(namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeUpRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.createNamespacedComposeUpRequestWithHttpInfo(namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
+    }
+
+    /**
      * create a Container
      * @param namespace object name and auth scope, such as for teams and projects
      * @param body
@@ -5020,6 +5112,110 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
      */
     public createNamespacedVolumeCreateRequest(namespace: string, body: IoRancherdesktopContainersV1alpha1VolumeCreateRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1VolumeCreateRequest> {
         return this.createNamespacedVolumeCreateRequestWithHttpInfo(namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1VolumeCreateRequest>) => apiResponse.data));
+    }
+
+    /**
+     * delete collection of ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     */
+    public deleteCollectionNamespacedComposeProjectWithHttpInfo(namespace: string, pretty?: string, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, _options?: ConfigurationOptions): Observable<HttpInfo<V1Status>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.deleteCollectionNamespacedComposeProject(namespace, pretty, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.deleteCollectionNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * delete collection of ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     */
+    public deleteCollectionNamespacedComposeProject(namespace: string, pretty?: string, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, _options?: ConfigurationOptions): Observable<V1Status> {
+        return this.deleteCollectionNamespacedComposeProjectWithHttpInfo(namespace, pretty, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, _options).pipe(map((apiResponse: HttpInfo<V1Status>) => apiResponse.data));
+    }
+
+    /**
+     * delete collection of ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     */
+    public deleteCollectionNamespacedComposeUpRequestWithHttpInfo(namespace: string, pretty?: string, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, _options?: ConfigurationOptions): Observable<HttpInfo<V1Status>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.deleteCollectionNamespacedComposeUpRequest(namespace, pretty, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.deleteCollectionNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * delete collection of ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     */
+    public deleteCollectionNamespacedComposeUpRequest(namespace: string, pretty?: string, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, _options?: ConfigurationOptions): Observable<V1Status> {
+        return this.deleteCollectionNamespacedComposeUpRequestWithHttpInfo(namespace, pretty, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, _options).pipe(map((apiResponse: HttpInfo<V1Status>) => apiResponse.data));
     }
 
     /**
@@ -5491,6 +5687,102 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * delete a ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [gracePeriodSeconds] The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+     * @param [ignoreStoreReadErrorWithClusterBreakingPotential] if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+     * @param [orphanDependents] Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \&quot;orphan\&quot; finalizer will be added to/removed from the object\&#39;s finalizers list. Either this field or PropagationPolicy may be set, but not both.
+     * @param [propagationPolicy] Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: \&#39;Orphan\&#39; - orphan the dependents; \&#39;Background\&#39; - allow the garbage collector to delete the dependents in the background; \&#39;Foreground\&#39; - a cascading policy that deletes all dependents in the foreground.
+     * @param [body]
+     */
+    public deleteNamespacedComposeProjectWithHttpInfo(name: string, namespace: string, pretty?: string, dryRun?: string, gracePeriodSeconds?: number, ignoreStoreReadErrorWithClusterBreakingPotential?: boolean, orphanDependents?: boolean, propagationPolicy?: string, body?: V1DeleteOptions, _options?: ConfigurationOptions): Observable<HttpInfo<V1Status>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.deleteNamespacedComposeProject(name, namespace, pretty, dryRun, gracePeriodSeconds, ignoreStoreReadErrorWithClusterBreakingPotential, orphanDependents, propagationPolicy, body, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.deleteNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * delete a ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [gracePeriodSeconds] The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+     * @param [ignoreStoreReadErrorWithClusterBreakingPotential] if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+     * @param [orphanDependents] Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \&quot;orphan\&quot; finalizer will be added to/removed from the object\&#39;s finalizers list. Either this field or PropagationPolicy may be set, but not both.
+     * @param [propagationPolicy] Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: \&#39;Orphan\&#39; - orphan the dependents; \&#39;Background\&#39; - allow the garbage collector to delete the dependents in the background; \&#39;Foreground\&#39; - a cascading policy that deletes all dependents in the foreground.
+     * @param [body]
+     */
+    public deleteNamespacedComposeProject(name: string, namespace: string, pretty?: string, dryRun?: string, gracePeriodSeconds?: number, ignoreStoreReadErrorWithClusterBreakingPotential?: boolean, orphanDependents?: boolean, propagationPolicy?: string, body?: V1DeleteOptions, _options?: ConfigurationOptions): Observable<V1Status> {
+        return this.deleteNamespacedComposeProjectWithHttpInfo(name, namespace, pretty, dryRun, gracePeriodSeconds, ignoreStoreReadErrorWithClusterBreakingPotential, orphanDependents, propagationPolicy, body, _options).pipe(map((apiResponse: HttpInfo<V1Status>) => apiResponse.data));
+    }
+
+    /**
+     * delete a ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [gracePeriodSeconds] The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+     * @param [ignoreStoreReadErrorWithClusterBreakingPotential] if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+     * @param [orphanDependents] Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \&quot;orphan\&quot; finalizer will be added to/removed from the object\&#39;s finalizers list. Either this field or PropagationPolicy may be set, but not both.
+     * @param [propagationPolicy] Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: \&#39;Orphan\&#39; - orphan the dependents; \&#39;Background\&#39; - allow the garbage collector to delete the dependents in the background; \&#39;Foreground\&#39; - a cascading policy that deletes all dependents in the foreground.
+     * @param [body]
+     */
+    public deleteNamespacedComposeUpRequestWithHttpInfo(name: string, namespace: string, pretty?: string, dryRun?: string, gracePeriodSeconds?: number, ignoreStoreReadErrorWithClusterBreakingPotential?: boolean, orphanDependents?: boolean, propagationPolicy?: string, body?: V1DeleteOptions, _options?: ConfigurationOptions): Observable<HttpInfo<V1Status>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.deleteNamespacedComposeUpRequest(name, namespace, pretty, dryRun, gracePeriodSeconds, ignoreStoreReadErrorWithClusterBreakingPotential, orphanDependents, propagationPolicy, body, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.deleteNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * delete a ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [gracePeriodSeconds] The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
+     * @param [ignoreStoreReadErrorWithClusterBreakingPotential] if set to true, it will trigger an unsafe deletion of the resource in case the normal deletion flow fails with a corrupt object error. A resource is considered corrupt if it can not be retrieved from the underlying storage successfully because of a) its data can not be transformed e.g. decryption failure, or b) it fails to decode into an object. NOTE: unsafe deletion ignores finalizer constraints, skips precondition checks, and removes the object from the storage. WARNING: This may potentially break the cluster if the workload associated with the resource being unsafe-deleted relies on normal deletion flow. Use only if you REALLY know what you are doing. The default value is false, and the user must opt in to enable it
+     * @param [orphanDependents] Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \&quot;orphan\&quot; finalizer will be added to/removed from the object\&#39;s finalizers list. Either this field or PropagationPolicy may be set, but not both.
+     * @param [propagationPolicy] Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: \&#39;Orphan\&#39; - orphan the dependents; \&#39;Background\&#39; - allow the garbage collector to delete the dependents in the background; \&#39;Foreground\&#39; - a cascading policy that deletes all dependents in the foreground.
+     * @param [body]
+     */
+    public deleteNamespacedComposeUpRequest(name: string, namespace: string, pretty?: string, dryRun?: string, gracePeriodSeconds?: number, ignoreStoreReadErrorWithClusterBreakingPotential?: boolean, orphanDependents?: boolean, propagationPolicy?: string, body?: V1DeleteOptions, _options?: ConfigurationOptions): Observable<V1Status> {
+        return this.deleteNamespacedComposeUpRequestWithHttpInfo(name, namespace, pretty, dryRun, gracePeriodSeconds, ignoreStoreReadErrorWithClusterBreakingPotential, orphanDependents, propagationPolicy, body, _options).pipe(map((apiResponse: HttpInfo<V1Status>) => apiResponse.data));
+    }
+
+    /**
      * delete a Container
      * @param name name of the Container
      * @param namespace object name and auth scope, such as for teams and projects
@@ -5923,6 +6215,114 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * list objects of kind ComposeProject
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listComposeProjectForAllNamespacesWithHttpInfo(allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, pretty?: string, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProjectList>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.listComposeProjectForAllNamespaces(allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, pretty, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listComposeProjectForAllNamespacesWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * list objects of kind ComposeProject
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listComposeProjectForAllNamespaces(allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, pretty?: string, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProjectList> {
+        return this.listComposeProjectForAllNamespacesWithHttpInfo(allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, pretty, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProjectList>) => apiResponse.data));
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listComposeUpRequestForAllNamespacesWithHttpInfo(allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, pretty?: string, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequestList>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.listComposeUpRequestForAllNamespaces(allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, pretty, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listComposeUpRequestForAllNamespacesWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listComposeUpRequestForAllNamespaces(allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, pretty?: string, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequestList> {
+        return this.listComposeUpRequestForAllNamespacesWithHttpInfo(allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, pretty, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequestList>) => apiResponse.data));
+    }
+
+    /**
      * list objects of kind ContainerCreateRequest
      * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
      * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
@@ -6298,6 +6698,118 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
      */
     public listImageScanRequestForAllNamespaces(allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, pretty?: string, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ImageScanRequestList> {
         return this.listImageScanRequestForAllNamespacesWithHttpInfo(allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, pretty, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ImageScanRequestList>) => apiResponse.data));
+    }
+
+    /**
+     * list objects of kind ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listNamespacedComposeProjectWithHttpInfo(namespace: string, pretty?: string, allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProjectList>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.listNamespacedComposeProject(namespace, pretty, allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * list objects of kind ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listNamespacedComposeProject(namespace: string, pretty?: string, allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProjectList> {
+        return this.listNamespacedComposeProjectWithHttpInfo(namespace, pretty, allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProjectList>) => apiResponse.data));
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listNamespacedComposeUpRequestWithHttpInfo(namespace: string, pretty?: string, allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequestList>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.listNamespacedComposeUpRequest(namespace, pretty, allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.listNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * list objects of kind ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [allowWatchBookmarks] allowWatchBookmarks requests watch events with type \&quot;BOOKMARK\&quot;. Servers that do not implement bookmarks may ignore this flag and bookmarks are sent at the server\&#39;s discretion. Clients should not assume bookmarks are returned at any specific interval, nor may they assume the server will send any BOOKMARK event during a session. If this is not a watch, this field is ignored.
+     * @param [_continue] The continue option should be set when retrieving more results from the server. Since this value is server defined, clients may only use the continue value from a previous query result with identical query parameters (except for the value of continue) and the server may reject a continue value it does not recognize. If the specified continue value is no longer valid whether due to expiration (generally five to fifteen minutes) or a configuration change on the server, the server will respond with a 410 ResourceExpired error together with a continue token. If the client needs a consistent list, it must restart their list without the continue field. Otherwise, the client may send another list request with the token received with the 410 error, the server will respond with a list starting from the next key, but from the latest snapshot, which is inconsistent from the previous list results - objects that are created, modified, or deleted after the first list request will be included in the response, as long as their keys are after the \&quot;next key\&quot;.  This field is not supported when watch is true. Clients may start a watch from the last resourceVersion value returned by the server and not miss any modifications.
+     * @param [fieldSelector] A selector to restrict the list of returned objects by their fields. Defaults to everything.
+     * @param [labelSelector] A selector to restrict the list of returned objects by their labels. Defaults to everything.
+     * @param [limit] limit is a maximum number of responses to return for a list call. If more items exist, the server will set the &#x60;continue&#x60; field on the list metadata to a value that can be used with the same initial query to retrieve the next set of results. Setting a limit may return fewer than the requested amount of items (up to zero items) in the event all requested objects are filtered out and clients should only use the presence of the continue field to determine whether more results are available. Servers may choose not to support the limit argument and will return all of the available results. If limit is specified and the continue field is empty, clients may assume that no more results are available. This field is not supported if watch is true.  The server guarantees that the objects returned when using continue will be identical to issuing a single list call without a limit - that is, no objects created, modified, or deleted after the first request is issued will be included in any subsequent continued requests. This is sometimes referred to as a consistent snapshot, and ensures that a client that is using limit to receive smaller chunks of a very large result can ensure they see all possible objects. If objects are updated during a chunked list the version of the object that was present at the time the first list result was calculated is returned.
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [resourceVersionMatch] resourceVersionMatch determines how resourceVersion is applied to list calls. It is highly recommended that resourceVersionMatch be set for list calls where resourceVersion is set See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     * @param [sendInitialEvents] &#x60;sendInitialEvents&#x3D;true&#x60; may be set together with &#x60;watch&#x3D;true&#x60;. In that case, the watch stream will begin with synthetic events to produce the current state of objects in the collection. Once all such events have been sent, a synthetic \&quot;Bookmark\&quot; event  will be sent. The bookmark will report the ResourceVersion (RV) corresponding to the set of objects, and be marked with &#x60;\&quot;k8s.io/initial-events-end\&quot;: \&quot;true\&quot;&#x60; annotation. Afterwards, the watch stream will proceed as usual, sending watch events corresponding to changes (subsequent to the RV) to objects watched.  When &#x60;sendInitialEvents&#x60; option is set, we require &#x60;resourceVersionMatch&#x60; option to also be set. The semantic of the watch request is as following: - &#x60;resourceVersionMatch&#x60; &#x3D; NotOlderThan   is interpreted as \&quot;data at least as new as the provided &#x60;resourceVersion&#x60;\&quot;   and the bookmark event is send when the state is synced   to a &#x60;resourceVersion&#x60; at least as fresh as the one provided by the ListOptions.   If &#x60;resourceVersion&#x60; is unset, this is interpreted as \&quot;consistent read\&quot; and the   bookmark event is send when the state is synced at least to the moment   when request started being processed. - &#x60;resourceVersionMatch&#x60; set to any other value or unset   Invalid error is returned.  Defaults to true if &#x60;resourceVersion&#x3D;\&quot;\&quot;&#x60; or &#x60;resourceVersion&#x3D;\&quot;0\&quot;&#x60; (for backward compatibility reasons) and to false otherwise.
+     * @param [shardSelector] shardSelector restricts the list of returned objects using a CEL-based shard selector expression. The format uses the shardRange() function combined with || (logical OR) to specify one or more hash ranges:    shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;)   shardRange(object.metadata.uid, \&#39;0x0\&#39;, \&#39;0x8000000000000000\&#39;) || shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  Field paths use CEL-style object-rooted syntax (e.g. \&quot;object.metadata.uid\&quot;), NOT the fieldSelector format (\&quot;metadata.uid\&quot;). Currently supported paths:   - object.metadata.uid   - object.metadata.namespace  hexStart and hexEnd are single-quoted CEL string literals with a \&#39;0x\&#39; prefix, defining the inclusive lower and exclusive upper bounds over the 64-bit FNV-1a hash space. The full range is [0x0, 0x10000000000000000), where the exclusive upper bound equals 2^64.  Examples:   2-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)   4-shard split:     shard 0: shardRange(object.metadata.uid, \&#39;0x0000000000000000\&#39;, \&#39;0x4000000000000000\&#39;)     shard 1: shardRange(object.metadata.uid, \&#39;0x4000000000000000\&#39;, \&#39;0x8000000000000000\&#39;)     shard 2: shardRange(object.metadata.uid, \&#39;0x8000000000000000\&#39;, \&#39;0xc000000000000000\&#39;)     shard 3: shardRange(object.metadata.uid, \&#39;0xc000000000000000\&#39;, \&#39;0x10000000000000000\&#39;)  This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+     * @param [timeoutSeconds] Timeout for the list/watch call. This limits the duration of the call, regardless of any activity or inactivity.
+     * @param [watch] Watch for changes to the described resources and return them as a stream of add, update, and remove notifications. Specify resourceVersion.
+     */
+    public listNamespacedComposeUpRequest(namespace: string, pretty?: string, allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequestList> {
+        return this.listNamespacedComposeUpRequestWithHttpInfo(namespace, pretty, allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequestList>) => apiResponse.data));
     }
 
     /**
@@ -6910,6 +7422,190 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
      */
     public listVolumeForAllNamespaces(allowWatchBookmarks?: boolean, _continue?: string, fieldSelector?: string, labelSelector?: string, limit?: number, pretty?: string, resourceVersion?: string, resourceVersionMatch?: string, sendInitialEvents?: boolean, shardSelector?: string, timeoutSeconds?: number, watch?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1VolumeList> {
         return this.listVolumeForAllNamespacesWithHttpInfo(allowWatchBookmarks, _continue, fieldSelector, labelSelector, limit, pretty, resourceVersion, resourceVersionMatch, sendInitialEvents, shardSelector, timeoutSeconds, watch, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1VolumeList>) => apiResponse.data));
+    }
+
+    /**
+     * partially update the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeProjectWithHttpInfo(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.patchNamespacedComposeProject(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.patchNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * partially update the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeProject(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.patchNamespacedComposeProjectWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * partially update status of the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeProjectStatusWithHttpInfo(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.patchNamespacedComposeProjectStatus(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.patchNamespacedComposeProjectStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * partially update status of the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeProjectStatus(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.patchNamespacedComposeProjectStatusWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * partially update the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeUpRequestWithHttpInfo(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.patchNamespacedComposeUpRequest(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.patchNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * partially update the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeUpRequest(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.patchNamespacedComposeUpRequestWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
+    }
+
+    /**
+     * partially update status of the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeUpRequestStatusWithHttpInfo(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.patchNamespacedComposeUpRequestStatus(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.patchNamespacedComposeUpRequestStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * partially update status of the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint. This field is required for apply requests (application/apply-patch) but optional for non-apply patch types (JsonPatch, MergePatch, StrategicMergePatch).
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     * @param [force] Force is going to \&quot;force\&quot; Apply requests. It means user will re-acquire conflicting fields owned by other people. Force flag must be unset for non-apply patch requests.
+     */
+    public patchNamespacedComposeUpRequestStatus(name: string, namespace: string, body: any, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, force?: boolean, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.patchNamespacedComposeUpRequestStatusWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, force, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
     }
 
     /**
@@ -7741,6 +8437,158 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
     }
 
     /**
+     * read the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeProjectWithHttpInfo(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.readNamespacedComposeProject(name, namespace, pretty, resourceVersion, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.readNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * read the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeProject(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.readNamespacedComposeProjectWithHttpInfo(name, namespace, pretty, resourceVersion, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * read status of the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeProjectStatusWithHttpInfo(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.readNamespacedComposeProjectStatus(name, namespace, pretty, resourceVersion, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.readNamespacedComposeProjectStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * read status of the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeProjectStatus(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.readNamespacedComposeProjectStatusWithHttpInfo(name, namespace, pretty, resourceVersion, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * read the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeUpRequestWithHttpInfo(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.readNamespacedComposeUpRequest(name, namespace, pretty, resourceVersion, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.readNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * read the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeUpRequest(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.readNamespacedComposeUpRequestWithHttpInfo(name, namespace, pretty, resourceVersion, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
+    }
+
+    /**
+     * read status of the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeUpRequestStatusWithHttpInfo(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.readNamespacedComposeUpRequestStatus(name, namespace, pretty, resourceVersion, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.readNamespacedComposeUpRequestStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * read status of the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [resourceVersion] resourceVersion sets a constraint on what resource versions a request may be served from. See https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-versions for details.  Defaults to unset
+     */
+    public readNamespacedComposeUpRequestStatus(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.readNamespacedComposeUpRequestStatusWithHttpInfo(name, namespace, pretty, resourceVersion, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
+    }
+
+    /**
      * read the specified Container
      * @param name name of the Container
      * @param namespace object name and auth scope, such as for teams and projects
@@ -8422,6 +9270,182 @@ export class ObservableContainersRancherdesktopIoV1alpha1Api {
      */
     public readNamespacedVolumeStatus(name: string, namespace: string, pretty?: string, resourceVersion?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1Volume> {
         return this.readNamespacedVolumeStatusWithHttpInfo(name, namespace, pretty, resourceVersion, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1Volume>) => apiResponse.data));
+    }
+
+    /**
+     * replace the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeProjectWithHttpInfo(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeProject, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.replaceNamespacedComposeProject(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.replaceNamespacedComposeProjectWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * replace the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeProject(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeProject, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.replaceNamespacedComposeProjectWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * replace status of the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeProjectStatusWithHttpInfo(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeProject, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.replaceNamespacedComposeProjectStatus(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.replaceNamespacedComposeProjectStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * replace status of the specified ComposeProject
+     * @param name name of the ComposeProject
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeProjectStatus(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeProject, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeProject> {
+        return this.replaceNamespacedComposeProjectStatusWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeProject>) => apiResponse.data));
+    }
+
+    /**
+     * replace the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeUpRequestWithHttpInfo(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeUpRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.replaceNamespacedComposeUpRequest(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.replaceNamespacedComposeUpRequestWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * replace the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeUpRequest(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeUpRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.replaceNamespacedComposeUpRequestWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
+    }
+
+    /**
+     * replace status of the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeUpRequestStatusWithHttpInfo(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeUpRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.replaceNamespacedComposeUpRequestStatus(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.replaceNamespacedComposeUpRequestStatusWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * replace status of the specified ComposeUpRequest
+     * @param name name of the ComposeUpRequest
+     * @param namespace object name and auth scope, such as for teams and projects
+     * @param body
+     * @param [pretty] If \&#39;true\&#39;, then the output is pretty printed. Defaults to \&#39;false\&#39; unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).
+     * @param [dryRun] When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed
+     * @param [fieldManager] fieldManager is a name associated with the actor or entity that is making these changes. The value must be less than or 128 characters long, and only contain printable characters, as defined by https://golang.org/pkg/unicode/#IsPrint.
+     * @param [fieldValidation] fieldValidation instructs the server on how to handle objects in the request (POST/PUT/PATCH) containing unknown or duplicate fields. Valid values are: - Ignore: This will ignore any unknown fields that are silently dropped from the object, and will ignore all but the last duplicate field that the decoder encounters. This is the default behavior prior to v1.23. - Warn: This will send a warning via the standard warning response header for each unknown field that is dropped from the object, and for each duplicate field that is encountered. The request will still succeed if there are no other errors, and will only persist the last of any duplicate fields. This is the default in v1.23+ - Strict: This will fail the request with a BadRequest error if any unknown fields would be dropped from the object, or if any duplicate fields are present. The error returned from the server will contain all unknown and duplicate fields encountered.
+     */
+    public replaceNamespacedComposeUpRequestStatus(name: string, namespace: string, body: IoRancherdesktopContainersV1alpha1ComposeUpRequest, pretty?: string, dryRun?: string, fieldManager?: string, fieldValidation?: string, _options?: ConfigurationOptions): Observable<IoRancherdesktopContainersV1alpha1ComposeUpRequest> {
+        return this.replaceNamespacedComposeUpRequestStatusWithHttpInfo(name, namespace, body, pretty, dryRun, fieldManager, fieldValidation, _options).pipe(map((apiResponse: HttpInfo<IoRancherdesktopContainersV1alpha1ComposeUpRequest>) => apiResponse.data));
     }
 
     /**

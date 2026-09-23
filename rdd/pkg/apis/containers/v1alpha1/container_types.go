@@ -133,6 +133,11 @@ type ContainerSpec struct{}
 
 // ContainerStatus defines the observed state of the container.
 type ContainerStatus struct {
+	// ID is the unique identifier of the container; should be the same as
+	// [Container.Name], unless that is encoded.
+	//
+	// +required
+	ID string `json:"id"`
 	// Name of the container; this is distinct from the container ID.
 	//
 	// +required

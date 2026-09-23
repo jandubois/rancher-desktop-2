@@ -23,6 +23,14 @@ export * from '../models/IoRancherdesktopAppV1alpha1Demo';
 export * from '../models/IoRancherdesktopAppV1alpha1DemoList';
 export * from '../models/IoRancherdesktopAppV1alpha1DemoSpec';
 export * from '../models/IoRancherdesktopAppV1alpha1DemoStatus';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeProject';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectList';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatus';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequest';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestList';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec';
+export * from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus';
 export * from '../models/IoRancherdesktopContainersV1alpha1Container';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequest';
 export * from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestList';
@@ -232,6 +240,14 @@ import { IoRancherdesktopAppV1alpha1Demo } from '../models/IoRancherdesktopAppV1
 import { IoRancherdesktopAppV1alpha1DemoList } from '../models/IoRancherdesktopAppV1alpha1DemoList';
 import { IoRancherdesktopAppV1alpha1DemoSpec } from '../models/IoRancherdesktopAppV1alpha1DemoSpec';
 import { IoRancherdesktopAppV1alpha1DemoStatus } from '../models/IoRancherdesktopAppV1alpha1DemoStatus';
+import { IoRancherdesktopContainersV1alpha1ComposeProject } from '../models/IoRancherdesktopContainersV1alpha1ComposeProject';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectList } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectList';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectStatus } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatus';
+import { IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner } from '../models/IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequest } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequest';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestList } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestList';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec';
+import { IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus } from '../models/IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus';
 import { IoRancherdesktopContainersV1alpha1Container } from '../models/IoRancherdesktopContainersV1alpha1Container';
 import { IoRancherdesktopContainersV1alpha1ContainerCreateRequest } from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequest';
 import { IoRancherdesktopContainersV1alpha1ContainerCreateRequestList } from '../models/IoRancherdesktopContainersV1alpha1ContainerCreateRequestList';
@@ -241,7 +257,7 @@ import { IoRancherdesktopContainersV1alpha1ContainerList } from '../models/IoRan
 import { IoRancherdesktopContainersV1alpha1ContainerNamespace } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespace';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespaceList } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceList';
 import { IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus } from '../models/IoRancherdesktopContainersV1alpha1ContainerNamespaceStatus';
-import { IoRancherdesktopContainersV1alpha1ContainerStatus               , IoRancherdesktopContainersV1alpha1ContainerStatusStatusEnum   } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus';
+import { IoRancherdesktopContainersV1alpha1ContainerStatus                , IoRancherdesktopContainersV1alpha1ContainerStatusStatusEnum   } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatus';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusLastAction, IoRancherdesktopContainersV1alpha1ContainerStatusLastActionActionEnum     , IoRancherdesktopContainersV1alpha1ContainerStatusLastActionStateEnum   } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusLastAction';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInner';
 import { IoRancherdesktopContainersV1alpha1ContainerStatusPortsInnerBindingsInner } from '../models/IoRancherdesktopContainersV1alpha1ContainerStatusPortsInnerBindingsInner';
@@ -485,6 +501,14 @@ let typeMap: {[index: string]: any} = {
     "IoRancherdesktopAppV1alpha1DemoList": IoRancherdesktopAppV1alpha1DemoList,
     "IoRancherdesktopAppV1alpha1DemoSpec": IoRancherdesktopAppV1alpha1DemoSpec,
     "IoRancherdesktopAppV1alpha1DemoStatus": IoRancherdesktopAppV1alpha1DemoStatus,
+    "IoRancherdesktopContainersV1alpha1ComposeProject": IoRancherdesktopContainersV1alpha1ComposeProject,
+    "IoRancherdesktopContainersV1alpha1ComposeProjectList": IoRancherdesktopContainersV1alpha1ComposeProjectList,
+    "IoRancherdesktopContainersV1alpha1ComposeProjectStatus": IoRancherdesktopContainersV1alpha1ComposeProjectStatus,
+    "IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner": IoRancherdesktopContainersV1alpha1ComposeProjectStatusContainersInner,
+    "IoRancherdesktopContainersV1alpha1ComposeUpRequest": IoRancherdesktopContainersV1alpha1ComposeUpRequest,
+    "IoRancherdesktopContainersV1alpha1ComposeUpRequestList": IoRancherdesktopContainersV1alpha1ComposeUpRequestList,
+    "IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec": IoRancherdesktopContainersV1alpha1ComposeUpRequestSpec,
+    "IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus": IoRancherdesktopContainersV1alpha1ComposeUpRequestStatus,
     "IoRancherdesktopContainersV1alpha1Container": IoRancherdesktopContainersV1alpha1Container,
     "IoRancherdesktopContainersV1alpha1ContainerCreateRequest": IoRancherdesktopContainersV1alpha1ContainerCreateRequest,
     "IoRancherdesktopContainersV1alpha1ContainerCreateRequestList": IoRancherdesktopContainersV1alpha1ContainerCreateRequestList,

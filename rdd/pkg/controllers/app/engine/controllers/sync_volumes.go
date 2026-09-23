@@ -23,6 +23,8 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
+// volumeMirrorPrefix is the prefix used for volume names when the
+// volume name is not a valid Kubernetes object name.
 const volumeMirrorPrefix = "vol"
 
 // syncAllVolumes lists all Docker volumes, creates or updates their
