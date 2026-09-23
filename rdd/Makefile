@@ -83,7 +83,9 @@ OVERLAY_TOOL_SOURCES := $(filter-out %_test.go, \
 	$(wildcard cmd/distro-overlay/*.go pkg/overlay/*.go pkg/sparse/*.go))
 
 # One timestamp for every entry the overlay writes, so the same commit always
-# produces the same image.
+# produces the same tarball. The raw image still differs on every build,
+# because go-diskfs sets the ctime of each inode it creates to the current time
+# and its Chtimes leaves ctime alone.
 OVERLAY_MTIME := $(shell git$(EXE) log -1 --format=%ct 2>/dev/null || echo 0)
 
 # Compressing the overlaid image dominates this build, and the image size
