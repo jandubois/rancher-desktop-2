@@ -613,6 +613,29 @@ func TestImageRefusesSymlinkOverExistingPath(t *testing.T) {
 	assert.ErrorContains(t, Apply(img, m, t.TempDir(), testMtime), "cannot replace it with a symlink")
 }
 
+// TestImageSkipsIdenticalSymlink checks the image backend treats a symlink entry
+// that matches a link the image already has as a no-op, so re-overlaying a distro
+// that still ships the link (before the paired distro release drops it) succeeds.
+func TestImageSkipsIdenticalSymlink(t *testing.T) {
+	img := newImage(t, filepath.Join(t.TempDir(), "distro.raw"))
+	assert.NilError(t, img.fs.Mkdir("etc"))
+	assert.NilError(t, img.fs.Symlink("/usr/local/lib/systemd/system/lima-init.service", "etc/link"))
+
+	m := &Manifest{Entries: []Entry{{Path: "/etc/link", Type: TypeSymlink, Target: "/usr/local/lib/systemd/system/lima-init.service"}}}
+	assert.NilError(t, Apply(img, m, t.TempDir(), testMtime))
+}
+
+// TestImageRefusesConflictingSymlink checks the image backend still refuses a
+// symlink entry where the image has a link to a different target.
+func TestImageRefusesConflictingSymlink(t *testing.T) {
+	img := newImage(t, filepath.Join(t.TempDir(), "distro.raw"))
+	assert.NilError(t, img.fs.Mkdir("etc"))
+	assert.NilError(t, img.fs.Symlink("/usr/lib/os-release", "etc/link"))
+
+	m := &Manifest{Entries: []Entry{{Path: "/etc/link", Type: TypeSymlink, Target: "/usr/local/other"}}}
+	assert.ErrorContains(t, Apply(img, m, t.TempDir(), testMtime), "pointing to")
+}
+
 // TestApplyTarRefusesHardLinks checks the tarball backend refuses to replace
 // either end of a base hard link, which would leave the other end naming an
 // entry the overlay dropped.

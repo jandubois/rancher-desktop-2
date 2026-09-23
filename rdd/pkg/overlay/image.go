@@ -243,6 +243,17 @@ func (i *imageDistro) WriteFile(file string, contents io.Reader, uid, gid int, m
 
 func (i *imageDistro) Symlink(link, target string, mtime time.Time) error {
 	r := rel(link)
+	// A distro built before the paired change dropped these files still ships
+	// some of the overlay's symlinks (config.sh's `systemctl enable` bakes the
+	// .wants links in). go-diskfs cannot replace a path with a symlink, but an
+	// identical link already in the image is the state we want, so treat it as a
+	// no-op rather than failing the overlay until that distro release lands.
+	if existing, err := i.fs.ReadLink(r); err == nil {
+		if existing == target {
+			return nil
+		}
+		return fmt.Errorf("the image already has a symlink at that path pointing to %s, not %s", existing, target)
+	}
 	if _, _, err := i.stat(r); err == nil {
 		return errors.New("the image already has that path, and go-diskfs cannot replace it with a symlink")
 	}

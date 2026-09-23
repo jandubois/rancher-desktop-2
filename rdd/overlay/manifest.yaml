@@ -23,3 +23,168 @@ entries:
 - path: /usr/local/bin/mkcert
   source: build/mkcert
   mode: "0755"
+
+# ---------------------------------------------------------------------------
+# openSUSE guest assets, moved out of the distro's `root/` tree and `config.sh`
+# (rancher-desktop-2#805). The overlay is now the only source of these files, so
+# the coverage check in manifest_coverage_test.go asserts every path here.
+#
+# Modes and per-profile scoping transcribe what config.sh used to do at build:
+# its chmod block set the modes below; its lima branch deleted every
+# `*/network-namespace.conf` (so those are wsl-only) and its wsl branch deleted
+# lima-init.service.d/requires-{cidata,rd-init}.conf (so those are lima-only).
+# ---------------------------------------------------------------------------
+
+# /etc/sudoers.d must be 0750 (config.sh chmod'd it); its files default to 0644.
+- path: /etc/sudoers.d
+  type: dir
+  mode: "0750"
+
+# Systemd units
+- path: /usr/local/lib/systemd/system/buildkitd.service
+  source: root/usr/local/lib/systemd/system/buildkitd.service
+- path: /usr/local/lib/systemd/system/buildkitd.socket
+  source: root/usr/local/lib/systemd/system/buildkitd.socket
+- path: /usr/local/lib/systemd/system/journal-to-console.service
+  source: root/usr/local/lib/systemd/system/journal-to-console.service
+- path: /usr/local/lib/systemd/system/lima-init.service
+  source: root/usr/local/lib/systemd/system/lima-init.service
+- path: '/usr/local/lib/systemd/system/mnt-lima\x2dcidata.mount'
+  source: root/usr/local/lib/systemd/system/mnt-lima-cidata.mount
+- path: /usr/local/lib/systemd/system/network-namespace.service
+  source: root/usr/local/lib/systemd/system/network-namespace.service
+- path: /usr/local/lib/systemd/system/network-setup.service
+  source: root/usr/local/lib/systemd/system/network-setup.service
+- path: /usr/local/lib/systemd/system/rancher-desktop-guest-agent.service
+  source: root/usr/local/lib/systemd/system/rancher-desktop-guest-agent.service
+- path: /usr/local/lib/systemd/system/rancher-desktop.target
+  source: root/usr/local/lib/systemd/system/rancher-desktop.target
+- path: /usr/local/lib/systemd/system/rd-init.service
+  source: root/usr/local/lib/systemd/system/rd-init.service
+- path: /usr/local/lib/systemd/system/rdd-guest.service
+  source: root/usr/local/lib/systemd/system/rdd-guest.service
+- path: /usr/local/lib/systemd/system/wsl-proxy.service
+  source: root/usr/local/lib/systemd/system/wsl-proxy.service
+
+# Systemd drop-ins
+- path: /usr/local/lib/systemd/system/buildkitd.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/buildkitd.service.d/network-namespace.conf
+  profiles: [wsl]
+- path: /usr/local/lib/systemd/system/console-getty.service.d/exclude-containers.conf
+  source: root/usr/local/lib/systemd/system/console-getty.service.d/exclude-containers.conf
+- path: /usr/local/lib/systemd/system/containerd.service.d/allowed-images.conf
+  source: root/usr/local/lib/systemd/system/containerd.service.d/allowed-images.conf
+- path: /usr/local/lib/systemd/system/containerd.service.d/conditional.conf
+  source: root/usr/local/lib/systemd/system/containerd.service.d/conditional.conf
+- path: /usr/local/lib/systemd/system/containerd.service.d/environment.conf
+  source: root/usr/local/lib/systemd/system/containerd.service.d/environment.conf
+- path: /usr/local/lib/systemd/system/containerd.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/containerd.service.d/network-namespace.conf
+  profiles: [wsl]
+- path: /usr/local/lib/systemd/system/containerd.service.d/target.conf
+  source: root/usr/local/lib/systemd/system/containerd.service.d/target.conf
+- path: /usr/local/lib/systemd/system/docker.service.d/allowed-images.conf
+  source: root/usr/local/lib/systemd/system/docker.service.d/allowed-images.conf
+- path: /usr/local/lib/systemd/system/docker.service.d/conditional.conf
+  source: root/usr/local/lib/systemd/system/docker.service.d/conditional.conf
+- path: /usr/local/lib/systemd/system/docker.service.d/environment.conf
+  source: root/usr/local/lib/systemd/system/docker.service.d/environment.conf
+- path: /usr/local/lib/systemd/system/docker.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/docker.service.d/network-namespace.conf
+  profiles: [wsl]
+- path: /usr/local/lib/systemd/system/docker.service.d/permissions.conf
+  source: root/usr/local/lib/systemd/system/docker.service.d/permissions.conf
+- path: /usr/local/lib/systemd/system/docker.service.d/target.conf
+  source: root/usr/local/lib/systemd/system/docker.service.d/target.conf
+- path: /usr/local/lib/systemd/system/docker.socket.d/target.conf
+  source: root/usr/local/lib/systemd/system/docker.socket.d/target.conf
+- path: /usr/local/lib/systemd/system/getty@.service.d/disable-on-wsl.conf
+  source: root/usr/local/lib/systemd/system/getty@.service.d/disable-on-wsl.conf
+- path: /usr/local/lib/systemd/system/k3s.service.d/command-override.conf
+  source: root/usr/local/lib/systemd/system/k3s.service.d/command-override.conf
+- path: /usr/local/lib/systemd/system/k3s.service.d/conditional.conf
+  source: root/usr/local/lib/systemd/system/k3s.service.d/conditional.conf
+- path: /usr/local/lib/systemd/system/k3s.service.d/environment.conf
+  source: root/usr/local/lib/systemd/system/k3s.service.d/environment.conf
+- path: /usr/local/lib/systemd/system/k3s.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/k3s.service.d/network-namespace.conf
+  profiles: [wsl]
+- path: /usr/local/lib/systemd/system/k3s.service.d/target.conf
+  source: root/usr/local/lib/systemd/system/k3s.service.d/target.conf
+- path: /usr/local/lib/systemd/system/lima-init.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/lima-init.service.d/network-namespace.conf
+  profiles: [wsl]
+- path: /usr/local/lib/systemd/system/lima-init.service.d/requires-cidata.conf
+  source: root/usr/local/lib/systemd/system/lima-init.service.d/requires-cidata.conf
+  profiles: [lima]
+- path: /usr/local/lib/systemd/system/lima-init.service.d/requires-rd-init.conf
+  source: root/usr/local/lib/systemd/system/lima-init.service.d/requires-rd-init.conf
+  profiles: [lima]
+- path: /usr/local/lib/systemd/system/openresty.service.d/ca-certs.conf
+  source: root/usr/local/lib/systemd/system/openresty.service.d/ca-certs.conf
+- path: /usr/local/lib/systemd/system/openresty.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/openresty.service.d/network-namespace.conf
+  profiles: [wsl]
+- path: /usr/local/lib/systemd/system/openresty.service.d/target.conf
+  source: root/usr/local/lib/systemd/system/openresty.service.d/target.conf
+
+# Config files and scripts
+- path: /etc/cni/net.d/10-flannel.conflist
+  source: root/etc/cni/net.d/10-flannel.conflist
+- path: /etc/containerd/config.toml
+  source: root/etc/containerd/config.toml
+- path: /etc/sudoers.d/10-path-local
+  source: root/etc/sudoers.d/10-path-local
+- path: /etc/sudoers.d/20-wsl-everyone
+  source: root/etc/sudoers.d/20-wsl-everyone
+- path: /etc/wsl.conf
+  source: root/etc/wsl.conf
+- path: /usr/local/bin/wsl-exec
+  source: root/usr/local/bin/wsl-exec
+  mode: "0755"
+- path: /usr/local/libexec/rancher-desktop/setup-namespace.sh
+  source: root/usr/local/libexec/rancher-desktop/setup-namespace.sh
+  mode: "0755"
+- path: /usr/local/libexec/udhcpc/rancher-desktop.script
+  source: root/usr/local/libexec/udhcpc/rancher-desktop.script
+  mode: "0755"
+
+# WSL manages /tmp itself, so it needs an empty tmpfiles.d stub to
+# suppress the distro default; a zero-byte file at build time.
+- path: /usr/local/lib/tmpfiles.d/fs-tmp.conf
+  source: root/usr/local/lib/tmpfiles.d/fs-tmp.conf
+  profiles: [wsl]
+
+# systemctl-enable .wants symlinks, moved out of config.sh's `systemctl enable`
+# lines. config.sh enabled ten RD units; the Lima template re-enables
+# buildkitd/containerd/docker per container engine at provision, so only the
+# other seven need a static symlink here. Each points at its unit and lands in
+# the same <target>.wants directory `systemctl enable` would use, so it stays
+# runtime-disableable.
+- path: /etc/systemd/system/multi-user.target.wants/lima-init.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/lima-init.service
+- path: /etc/systemd/system/multi-user.target.wants/rd-init.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/rd-init.service
+  profiles: [lima]
+- path: /etc/systemd/system/sysinit.target.wants/journal-to-console.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/journal-to-console.service
+  profiles: [lima]
+- path: /etc/systemd/system/rancher-desktop.target.wants/network-setup.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/network-setup.service
+  profiles: [wsl]
+- path: /etc/systemd/system/rancher-desktop.target.wants/rancher-desktop-guest-agent.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/rancher-desktop-guest-agent.service
+  profiles: [wsl]
+- path: /etc/systemd/system/rancher-desktop.target.wants/wsl-proxy.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/wsl-proxy.service
+  profiles: [wsl]
+- path: /etc/systemd/system/rancher-desktop.target.wants/rdd-guest.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/rdd-guest.service
+  profiles: [wsl]
