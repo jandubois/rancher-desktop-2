@@ -277,6 +277,15 @@ jobs:
         RDD_TRACE: true
         RDD_LOG_LEVEL: trace
 
+    - name: "macOS: Keep the distro image out of the Go cache"
+      if: needs.check-paths.outputs.should-run && matrix.runs-on == 'macos-15-intel'
+      shell: bash
+      # The compiled pkg/embedded includes the whole distro image, and the
+      # image differs on every build, so no job reuses the cached copy. Each
+      # cache generation would otherwise save one more. No other file in the
+      # cache comes near 100 MB.
+      run: find "$(go env GOCACHE)" -type f -size +100M -delete
+
     - name: "Windows: stop typeperf sampler"
       if: always() && needs.check-paths.outputs.should-run && runner.os == 'Windows'
       uses: $/.github/actions/windows-typeperf-sampler
