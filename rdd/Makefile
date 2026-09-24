@@ -78,7 +78,8 @@ MKCERT := $(OVERLAY_BUILD)/mkcert
 NERDCTL_TARBALL := $(OVERLAY_BUILD)/nerdctl-full.tar.gz
 NERDCTL_DIR := $(OVERLAY_BUILD)/nerdctl
 NERDCTL_BINARIES := $(addprefix $(NERDCTL_DIR)/bin/,buildctl buildkitd nerdctl)
-OVERLAY_SOURCES := overlay/manifest.yaml overlay/nerdctl $(MKCERT) $(NERDCTL_BINARIES)
+OVERLAY_SOURCES := overlay/manifest.yaml overlay/nerdctl $(MKCERT) $(NERDCTL_BINARIES) \
+	$(shell find overlay/root -type f 2>/dev/null)
 OVERLAY_TOOL_SOURCES := $(filter-out %_test.go, \
 	$(wildcard cmd/distro-overlay/*.go pkg/overlay/*.go pkg/sparse/*.go))
 

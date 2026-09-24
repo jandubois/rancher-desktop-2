@@ -66,7 +66,10 @@ from the pristine image. So the tool modifies a distro only when you pass
 - **Replacing a symlink.** go-diskfs writes through a symlink to its target, so
   the tool refuses a file entry where the image has a symlink.
 - **Replacing anything with a symlink.** go-diskfs refuses a name that already
-  exists, so a symlink entry must name a free path.
+  exists, so a symlink entry must name a free path. The one exception is a
+  symlink the image already has that points where the entry does: re-overlaying
+  a distro that still ships one of the overlay's own symlinks is a no-op, not a
+  failure, which bridges the release that drops it from the distro.
 - **Hard-linked files.** The tool writes into the file's inode, which every
   other name on it shares. `/usr/bin` and `/usr/sbin` are full of busybox
   links, so replacing one there would replace them all.
