@@ -13,7 +13,8 @@ BATS_CORE := ./lib/bats-core/bin/bats
 # bats-app on macos-15-intel is the run this value has to cover. Raising it is
 # a stopgap; splitting the suite and cutting VM restarts is the real fix.
 BATS_TIMEOUT ?= 4500
-BATS = $(if $(filter-out 0,$(BATS_TIMEOUT)),../scripts/bats-with-timeout.sh $(BATS_TIMEOUT)) $(BATS_CORE)
+# --timing puts each test's duration in the TAP stream.
+BATS = $(if $(filter-out 0,$(BATS_TIMEOUT)),../scripts/bats-with-timeout.sh $(BATS_TIMEOUT) $@) $(BATS_CORE) --timing
 
 default: bats-all
 .PHONY: default

@@ -355,7 +355,16 @@ func (r *LimaVMReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	// Prepare the instance: download images and create disks.
 	// The guestAgent path is a placeholder during Prepare (only stored for later);
 	// limactl start will look up the real path when called.
-	if _, err := limainstance.Prepare(ctx, inst, "placeholder"); err != nil {
+	//
+	// Prepare converts the image into the disk and deletes the image, so a
+	// create writes the distro twice. Timing it compares a build that decodes
+	// the image here against one that decodes it earlier.
+	prepareStart := time.Now()
+	_, prepareErr := limainstance.Prepare(ctx, inst, "placeholder")
+	logger.Info("Prepared Lima instance",
+		"duration", time.Since(prepareStart).Round(time.Millisecond))
+	logFileLayout(ctx, "disk", filepath.Join(inst.Dir, filenames.Disk))
+	if err := prepareErr; err != nil {
 		logger.Error(err, "Failed to prepare Lima instance")
 		// Clean up the partially created instance so the next reconcile doesn't
 		// see it as existing and skip creation.
@@ -411,8 +420,24 @@ func extractEmbeddedImage(ctx context.Context, inst *limatype.Instance) error {
 		if err := decompressEmbeddedImage(ctx, imagePath); err != nil {
 			return err
 		}
+		logFileLayout(ctx, "image", imagePath)
 	}
 	return linkWSL2BaseDisk(inst, imagePath)
+}
+
+// logFileLayout records what a written image occupies on disk. The runner's
+// filesystem decides that, so it cannot be read off a developer machine.
+func logFileLayout(ctx context.Context, label, path string) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return
+	}
+	allocated, err := allocatedBytes(info, path)
+	if err != nil {
+		return
+	}
+	log.FromContext(ctx).Info("Wrote file",
+		"file", label, "size", info.Size(), "allocated", allocated)
 }
 
 // usesEmbeddedImage reports whether the first image for the instance's arch
