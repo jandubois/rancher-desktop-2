@@ -93,6 +93,11 @@ type Image struct {
 	Status ImageStatus `json:"status"`
 }
 
+// MirrorPrefix implements [api.MirrorNameType].
+func (*Image) MirrorPrefix() string {
+	return "img"
+}
+
 // +kubebuilder:object:root=true
 
 // ImageList contains a list of Image.

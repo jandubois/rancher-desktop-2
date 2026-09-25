@@ -25,9 +25,6 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
-// imageMirrorPrefix is the prefix used for deterministic Image mirror names.
-const imageMirrorPrefix = "img"
-
 // imageMirrorNames returns the deterministic Image mirror names for a
 // Docker image ID and its RepoTags, as determined using [api.MirrorName].
 //
@@ -36,11 +33,11 @@ const imageMirrorPrefix = "img"
 // existing mirrors as stale.
 func imageMirrorNames(id string, repoTags []string) []string {
 	if len(repoTags) == 0 {
-		return []string{api.MirrorName(imageMirrorPrefix, id)}
+		return []string{api.MirrorName[*containersv1alpha1.Image](id)}
 	}
 	names := make([]string, 0, len(repoTags))
 	for _, tag := range repoTags {
-		names = append(names, api.MirrorName(imageMirrorPrefix, id, tag))
+		names = append(names, api.MirrorName[*containersv1alpha1.Image](id, tag))
 	}
 	return names
 }

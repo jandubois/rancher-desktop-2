@@ -73,6 +73,11 @@ type Volume struct {
 	Status VolumeStatus `json:"status"`
 }
 
+// MirrorPrefix implements [api.MirrorNameType].
+func (*Volume) MirrorPrefix() string {
+	return "vol"
+}
+
 // +kubebuilder:object:root=true
 
 // VolumeList contains a list of Volume.

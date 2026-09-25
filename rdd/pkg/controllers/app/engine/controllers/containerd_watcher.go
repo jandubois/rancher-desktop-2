@@ -205,7 +205,7 @@ func (w *containerdWatcher) handleEvent(ctx context.Context, e *events.Envelope)
 		return w.syncContainer(ctx, e.Namespace, ev.ID)
 	case *apievents.ContainerDelete:
 		log.V(1).Info("Container deleted", "namespace", e.Namespace, "id", ev.ID)
-		mirrorName := api.MirrorName(containerMirrorPrefix, ev.ID, e.Namespace)
+		mirrorName := api.MirrorName[*containersv1alpha1.Container](ev.ID, e.Namespace)
 		w.forgetTaskStart(mirrorName)
 		return w.removeMirrorResource(ctx, &containersv1alpha1.Container{}, mirrorName)
 	case *apievents.TaskCreate:
@@ -213,7 +213,7 @@ func (w *containerdWatcher) handleEvent(ctx context.Context, e *events.Envelope)
 		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
 	case *apievents.TaskStart:
 		log.V(1).Info("Task started", "namespace", e.Namespace, "id", ev.ContainerID)
-		w.recordTaskStart(api.MirrorName(containerMirrorPrefix, ev.ContainerID, e.Namespace), e.Timestamp)
+		w.recordTaskStart(api.MirrorName[*containersv1alpha1.Container](ev.ContainerID, e.Namespace), e.Timestamp)
 		return w.syncContainer(ctx, e.Namespace, ev.ContainerID)
 	case *apievents.TaskExit:
 		log.V(1).Info("Task exited", "namespace", e.Namespace, "id", ev.ContainerID)

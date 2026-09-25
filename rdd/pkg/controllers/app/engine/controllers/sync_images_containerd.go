@@ -29,7 +29,7 @@ import (
 // prefix, and incorporates the namespace and the image reference within the
 // hash inputs.
 func containerdImageMirrorName(ns, name string) string {
-	return api.MirrorName(imageMirrorPrefix, fmt.Sprintf("%s\x00%s", ns, name))
+	return api.MirrorName[*containersv1alpha1.Image](fmt.Sprintf("%s\x00%s", ns, name))
 }
 
 // containerdImageRefs splits a containerd image record name into the mirror

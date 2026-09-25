@@ -19,10 +19,6 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
-// namespaceMirrorPrefix is the prefix used for deterministic ContainerNamespace
-// mirror names.
-const namespaceMirrorPrefix = "cns"
-
 // syncNamespaces lists containerd namespaces, creates or updates their
 // ContainerNamespace mirrors, and prunes stale ones. Unlike Docker's static
 // "moby" namespace, containerd namespaces come and go.
@@ -45,7 +41,7 @@ func (w *containerdWatcher) syncNamespaces(ctx context.Context) error {
 		if err := w.applyNamespace(ctx, ns); err != nil {
 			log.Error(err, "Skipping namespace during full sync", "namespace", ns)
 		}
-		activeNames[api.MirrorName(namespaceMirrorPrefix, ns)] = true
+		activeNames[api.MirrorName[*containersv1alpha1.ContainerNamespace](ns)] = true
 	}
 
 	// Remove stale ContainerNamespace mirrors.
@@ -78,7 +74,7 @@ func (w *containerdWatcher) syncNamespaces(ctx context.Context) error {
 // restarts.
 func (w *containerdWatcher) applyNamespace(ctx context.Context, ns string) error {
 	applyConfig := containersv1alpha1apply.ContainerNamespace(
-		api.MirrorName(namespaceMirrorPrefix, ns),
+		api.MirrorName[*containersv1alpha1.ContainerNamespace](ns),
 		w.apiNamespace)
 
 	err := w.k8s.Apply(ctx, applyConfig,
@@ -120,5 +116,5 @@ func (w *containerdWatcher) removeNamespace(ctx context.Context, ns string) erro
 	return w.removeMirrorResource(
 		ctx,
 		&containersv1alpha1.ContainerNamespace{},
-		api.MirrorName(namespaceMirrorPrefix, ns))
+		api.MirrorName[*containersv1alpha1.ContainerNamespace](ns))
 }

@@ -23,10 +23,6 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
 
-// volumeMirrorPrefix is the prefix used for volume names when the
-// volume name is not a valid Kubernetes object name.
-const volumeMirrorPrefix = "vol"
-
 // syncAllVolumes lists all Docker volumes, creates or updates their
 // Volume mirrors, and prunes stale ones.
 func (w *dockerWatcher) syncAllVolumes(ctx context.Context) error {
@@ -46,7 +42,7 @@ func (w *dockerWatcher) syncAllVolumes(ctx context.Context) error {
 	// errors below are still fatal.
 	var errs []error
 	for _, v := range volumeList.Items {
-		mirrorName := api.MirrorName(volumeMirrorPrefix, v.Name)
+		mirrorName := api.MirrorName[*containersv1alpha1.Volume](v.Name)
 		activeNames[mirrorName] = true
 		if err := w.applyVolume(ctx, v); err != nil {
 			log.Error(err, "Skipping volume during full sync", "name", v.Name)
@@ -89,7 +85,7 @@ func (w *dockerWatcher) syncVolume(ctx context.Context, name string) error {
 // applyVolume creates or updates a `Volume` mirror from a Docker volume.
 func (w *dockerWatcher) applyVolume(ctx context.Context, vol mobyvolume.Volume) error {
 	log := logf.FromContext(ctx).WithName("docker-watcher")
-	mirrorName := api.MirrorName(volumeMirrorPrefix, vol.Name)
+	mirrorName := api.MirrorName[*containersv1alpha1.Volume](vol.Name)
 
 	applyConfig := containersv1alpha1apply.Volume(mirrorName, w.apiNamespace).
 		WithFinalizers(mirrorFinalizer)

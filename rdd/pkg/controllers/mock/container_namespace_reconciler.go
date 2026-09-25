@@ -54,7 +54,7 @@ func (r *containerNamespaceReconciler) Reconcile(ctx context.Context, req ctrl.R
 
 	var errs []error
 	for namespace := range namespaces {
-		applyConfig := containersv1alpha1apply.ContainerNamespace(api.MirrorName("cns", namespace), apiNamespace).
+		applyConfig := containersv1alpha1apply.ContainerNamespace(api.MirrorName[*containersv1alpha1.ContainerNamespace](namespace), apiNamespace).
 			WithOwnerReferences(metav1apply.OwnerReference().
 				WithAPIVersion(gvk.GroupVersion().String()).
 				WithKind(gvk.Kind).

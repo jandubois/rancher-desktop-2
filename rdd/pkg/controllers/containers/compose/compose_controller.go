@@ -24,8 +24,6 @@ const ControllerName = "compose"
 // APIGroup is the API group this controller belongs to.
 const APIGroup = "containers"
 
-const composeMirrorName = "cmp"
-
 //go:embed crd.yaml
 var controllerCRD string
 

@@ -290,7 +290,7 @@ func (w *dockerWatcher) handleVolumeEvent(ctx context.Context, msg events.Messag
 	case events.ActionDestroy:
 		log.V(1).Info("Volume destroyed", "name", msg.Actor.ID)
 		return w.removeMirrorResource(ctx, &containersv1alpha1.Volume{},
-			api.MirrorName(volumeMirrorPrefix, msg.Actor.ID))
+			api.MirrorName[*containersv1alpha1.Volume](msg.Actor.ID))
 
 	default:
 		return nil

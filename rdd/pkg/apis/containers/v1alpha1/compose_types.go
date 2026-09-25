@@ -158,6 +158,11 @@ type ComposeProject struct {
 	Status ComposeProjectStatus `json:"status,omitempty,omitzero"`
 }
 
+// MirrorPrefix implements [api.MirrorNameType].
+func (*ComposeProject) MirrorPrefix() string {
+	return "cmp"
+}
+
 // +kubebuilder:object:root=true
 
 // ComposeProjectList contains a list of ComposeProject.
@@ -245,6 +250,11 @@ type ComposeUpRequest struct {
 	//
 	// +optional
 	Status ComposeUpRequestStatus `json:"status,omitempty,omitzero"`
+}
+
+// MirrorPrefix implements [api.MirrorNameType].
+func (*ComposeUpRequest) MirrorPrefix() string {
+	return "cmp"
 }
 
 // +kubebuilder:object:root=true
