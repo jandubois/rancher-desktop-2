@@ -37,7 +37,7 @@ func (v *imagePullRequestValidator) ValidateCreate(ctx context.Context, imagePul
 		// Note that the namespace name may be encoded.
 		key := types.NamespacedName{
 			Namespace: imagePullRequest.Namespace,
-			Name:      api.MirrorName("cns", imagePullRequest.Spec.Namespace),
+			Name:      api.MirrorName[*v1alpha1.ContainerNamespace](imagePullRequest.Spec.Namespace),
 		}
 		var containerNamespace v1alpha1.ContainerNamespace
 		err := v.reader.Get(ctx, key, &containerNamespace)

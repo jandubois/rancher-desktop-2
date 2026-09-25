@@ -253,6 +253,11 @@ type Container struct {
 	Status ContainerStatus `json:"status,omitempty,omitzero"`
 }
 
+// MirrorPrefix implements [api.MirrorNameType].
+func (*Container) MirrorPrefix() string {
+	return "ctr"
+}
+
 // +kubebuilder:object:root=true
 
 // ContainerList contains a list of Container.

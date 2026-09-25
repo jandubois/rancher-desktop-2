@@ -46,7 +46,7 @@ func (v *composeUpRequestValidator) ValidateCreate(ctx context.Context, request 
 		var namespace v1alpha1.ContainerNamespace
 		key := client.ObjectKey{
 			Namespace: request.ObjectMeta.Namespace,
-			Name:      api.MirrorName("cns", request.Spec.Namespace),
+			Name:      api.MirrorName[*v1alpha1.ContainerNamespace](request.Spec.Namespace),
 		}
 		err := v.Reader.Get(ctx, key, &namespace)
 		if apierrors.IsNotFound(err) {
@@ -59,7 +59,7 @@ func (v *composeUpRequestValidator) ValidateCreate(ctx context.Context, request 
 	errs = append(errs, v.validateSpec(ctx, request)...)
 
 	// Check that the name is correct.
-	expectedName := api.MirrorName(composeMirrorName,
+	expectedName := api.MirrorName[*v1alpha1.ComposeProject](
 		fmt.Sprintf("%s.%s", request.Spec.Namespace, request.Spec.Name))
 	if request.ObjectMeta.Name != expectedName {
 		errs = append(errs, fmt.Errorf(

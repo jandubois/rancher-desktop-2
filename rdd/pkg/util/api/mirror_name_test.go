@@ -9,14 +9,25 @@ import (
 
 	"gotest.tools/v3/assert"
 
+	corev1 "k8s.io/api/core/v1"
+
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
 )
+
+type mockMirrorName struct {
+	// We need to pull in something that implements client.Object
+	corev1.ConfigMap
+}
+
+func (*mockMirrorName) MirrorPrefix() string {
+	return "zz"
+}
 
 func TestMirrorName(t *testing.T) {
 	runTest := func(name, input, expected string) {
 		t.Helper()
 		t.Run(name, func(t *testing.T) {
-			actual := api.MirrorName("zz", input)
+			actual := api.MirrorName[*mockMirrorName](input)
 			assert.Equal(t, actual, expected)
 		})
 	}
@@ -35,14 +46,14 @@ func TestMirrorName(t *testing.T) {
 		"zz-0000000000000000000000000000000000000000000000000000000000000000-suffix")
 
 	t.Run("extra arguments are incorporated", func(t *testing.T) {
-		withoutExtra := api.MirrorName("zz", "invalid_name")
-		withExtra := api.MirrorName("zz", "invalid_name", "extra1", "extra2")
+		withoutExtra := api.MirrorName[*mockMirrorName]("invalid_name")
+		withExtra := api.MirrorName[*mockMirrorName]("invalid_name", "extra1", "extra2")
 		assert.Assert(t, withoutExtra != withExtra)
 	})
 
 	t.Run("extra arguments are separated", func(t *testing.T) {
-		one := api.MirrorName("zz", "aaabbb", "ccc")
-		two := api.MirrorName("zz", "aaa", "bbbccc")
+		one := api.MirrorName[*mockMirrorName]("aaabbb", "ccc")
+		two := api.MirrorName[*mockMirrorName]("aaa", "bbbccc")
 		assert.Assert(t, one != two, "%s <-> %s", one, two)
 	})
 }

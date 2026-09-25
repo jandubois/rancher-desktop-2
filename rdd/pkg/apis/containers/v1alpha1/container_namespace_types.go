@@ -45,6 +45,11 @@ type ContainerNamespace struct {
 	Status ContainerNamespaceStatus `json:"status,omitempty"`
 }
 
+// MirrorPrefix implements [api.MirrorNameType].
+func (*ContainerNamespace) MirrorPrefix() string {
+	return "cns"
+}
+
 // +kubebuilder:object:root=true
 // +kubebuilder:object:generate=true
 
