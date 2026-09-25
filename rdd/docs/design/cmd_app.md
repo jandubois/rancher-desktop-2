@@ -48,7 +48,7 @@ Start Rancher Desktop by setting `running=true` on the App singleton, creating t
 
 ## `rdd stop`
 
-Stop Rancher Desktop by setting `running=false` on the App singleton. If the App does not exist, `rdd stop` returns successfully without creating it. Otherwise it behaves like `rdd set running=false`, sharing the same `--wait` and `--timeout` flags.
+Stop Rancher Desktop by setting `running=false` on the App singleton. `rdd stop` returns successfully without creating or starting anything when the instance or the App does not exist, or when the control plane is stopped. On a stopped control plane the App keeps its `running` value, so the next control-plane start resumes it. Otherwise it behaves like `rdd set running=false`, sharing the same `--wait` and `--timeout` flags.
 
 
 ## `rdd delete`
