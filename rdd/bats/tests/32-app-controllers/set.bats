@@ -53,6 +53,10 @@ local_setup_file() {
         Established --timeout=10s
 }
 
+@test "ctl wait-condition resolves a resource short name" {
+    rdd ctl wait-condition crd/apps.app.rancherdesktop.io Established --timeout=10s
+}
+
 # --- Error cases (no App mutation, validated before API call) ---
 
 @test "rdd set rejects invalid arguments" {

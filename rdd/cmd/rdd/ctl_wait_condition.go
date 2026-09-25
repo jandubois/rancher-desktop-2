@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
@@ -78,12 +79,18 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 		}
 	}
 
-	// Resolve resource type to a GVR and scope using the discovery API.
+	// Resolve the resource type, or a short name such as `crd`, to a GVR
+	// and scope using the discovery API.
 	discoveryClient, err := discovery.NewDiscoveryClientForConfig(restConfig)
 	if err != nil {
 		return fmt.Errorf("failed to create discovery client: %w", err)
 	}
-	mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(discoveryClient))
+	cachedDiscovery := memory.NewMemCacheClient(discoveryClient)
+	mapper := restmapper.NewShortcutExpander(
+		restmapper.NewDeferredDiscoveryRESTMapper(cachedDiscovery),
+		cachedDiscovery,
+		func(msg string) { logrus.Warn(msg) },
+	)
 	typeName, group, _ := strings.Cut(resourceType, ".")
 	gvk, err := mapper.KindFor(schema.GroupVersionResource{Resource: typeName, Group: group})
 	if err != nil {

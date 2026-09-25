@@ -217,6 +217,8 @@ Waits for a resource condition to reach a specific state. Unlike `kubectl wait`,
 rdd ctl wait-condition TYPE[.GROUP]/NAME CONDITION[=STATUS] [flags]
 ```
 
+`TYPE` accepts the same short names as `rdd ctl get`, such as `crd`.
+
 The `CONDITION[=STATUS]` positional argument names the condition type to match; `STATUS` defaults to `True`.
 
 Flags:
