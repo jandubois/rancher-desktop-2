@@ -224,7 +224,7 @@ Flags:
 - `--reason=REASON`: require the condition's `.reason` field to match
 - `--since=TIMESTAMP|startup`: require `lastTransitionTime` after this value; `startup` reads the controller manager's start time from the discovery ConfigMap
 - `--timeout=DURATION`: how long to wait (default `30s`); if it expires, `rdd` exits with [code `4`](cmd_app.md#exit-codes)
-- `--namespace`, `-n`: resource namespace (default `default`)
+- `--namespace`, `-n`: resource namespace (default `default`); ignored for cluster-scoped resources
 
 Examples:
 
