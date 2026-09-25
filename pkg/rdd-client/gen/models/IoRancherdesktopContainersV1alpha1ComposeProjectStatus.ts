@@ -39,7 +39,7 @@ export class IoRancherdesktopContainersV1alpha1ComposeProjectStatus {
     */
     'namespace': string;
     /**
-    * WorkingDir is the absolute path to the compose project directory on the host (i.e. relative to where the RDD process runs). May be unset.
+    * WorkingDir is the absolute path to the compose project directory on the host (i.e. where the RDD process runs). May be unset.
     */
     'workingDir'?: string;
 

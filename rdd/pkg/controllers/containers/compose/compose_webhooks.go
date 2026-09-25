@@ -12,11 +12,9 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/compose-spec/compose-go/v2/loader"
 	"github.com/containerd/containerd/v2/pkg/identifiers"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	ctrlwebhookadmission "sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
@@ -32,8 +30,6 @@ import (
 // spec.namespace and spec.name are immutable, enforced via CEL.  The other
 // parts of the spec are mutable, and do require validation.
 type composeUpRequestValidator struct {
-	// Client is the cached API client; this is preferred.
-	client.Client
 	// Reader is an uncached API reader; this is needed to validate things before
 	// the cache is ready.
 	client.Reader
@@ -46,31 +42,25 @@ func (v *composeUpRequestValidator) ValidateCreate(ctx context.Context, request 
 	if err := identifiers.Validate(request.Spec.Namespace); err != nil {
 		errs = append(errs, fmt.Errorf("invalid namespace %q: %w", request.Spec.Namespace, err))
 	} else {
-		// Check that the namespace exists.
+		// Check that the namespace exists; it may not be mirrored yet.
 		var namespace v1alpha1.ContainerNamespace
 		key := client.ObjectKey{
 			Namespace: request.ObjectMeta.Namespace,
 			Name:      api.MirrorName("cns", request.Spec.Namespace),
 		}
-		err := v.Client.Get(ctx, key, &namespace)
-		if _, isErrCacheNotStarted := errors.AsType[*cache.ErrCacheNotStarted](err); isErrCacheNotStarted {
-			err = v.Reader.Get(ctx, key, &namespace)
-		}
+		err := v.Reader.Get(ctx, key, &namespace)
 		if apierrors.IsNotFound(err) {
-			errs = append(errs, fmt.Errorf("namespace %q does not exist", request.Spec.Namespace))
+			errs = append(errs, fmt.Errorf("namespace %q does not exist yet", request.Spec.Namespace))
 		} else if err != nil {
 			errs = append(errs, fmt.Errorf("failed to get namespace %q: %w", request.Spec.Namespace, err))
 		}
 	}
 
-	if request.Spec.Name == "" || loader.NormalizeProjectName(request.Spec.Name) != request.Spec.Name {
-		errs = append(errs, loader.InvalidProjectNameErr(request.Spec.Name))
-	}
-
 	errs = append(errs, v.validateSpec(ctx, request)...)
 
 	// Check that the name is correct.
-	expectedName := composeMirrorName(request.Spec.Namespace, request.Spec.Name)
+	expectedName := api.MirrorName(composeMirrorName,
+		fmt.Sprintf("%s.%s", request.Spec.Namespace, request.Spec.Name))
 	if request.ObjectMeta.Name != expectedName {
 		errs = append(errs, fmt.Errorf(
 			"metadata.name must be %q (derived from spec.namespace and spec.name), got %q",
@@ -111,6 +101,10 @@ func (v *composeUpRequestValidator) validateSpec(_ context.Context, request *v1a
 		errs = append(errs, errors.New("spec.workingDir must not be empty"))
 	} else if !filepath.IsAbs(request.Spec.WorkingDir) {
 		errs = append(errs, fmt.Errorf("spec.workingDir %q must be an absolute path", request.Spec.WorkingDir))
+	} else if stat, err := os.Stat(request.Spec.WorkingDir); err != nil {
+		errs = append(errs, fmt.Errorf("spec.workingDir %q cannot be accessed: %w", request.Spec.WorkingDir, err))
+	} else if !stat.IsDir() {
+		errs = append(errs, fmt.Errorf("spec.workingDir %q is not a directory", request.Spec.WorkingDir))
 	} else if root, err := os.OpenRoot(request.Spec.WorkingDir); err != nil {
 		errs = append(errs, fmt.Errorf("spec.workingDir %q cannot be opened: %w", request.Spec.WorkingDir, err))
 	} else {

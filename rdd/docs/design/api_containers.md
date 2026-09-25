@@ -786,8 +786,8 @@ a `ComposeProject`.
 - **spec.namespace**: The containerd namespace; same as the `status.name` of a
   [`ContainerNamespace`](#namespaces) object.
 - **spec.name**: The compose project name.
-- **spec.workingDir**: The compose project directory on the host (i.e. relative
-  to where the RDD process runs).  Used to look up any files needed.
+- **spec.workingDir**: The compose project directory on the host (i.e. where the
+  RDD process runs).  Used to look up any files needed.
 - **spec.configs**: Optional; the list of compose files used to create the
   project.  Relative to `spec.workingDir`, which means it's also a path on the
   host.  Must be inside `spec.workingDir` if given.  Defaults to the

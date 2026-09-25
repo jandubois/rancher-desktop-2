@@ -52,7 +52,7 @@ func TestComposeUpRequestValidator_ValidateCreate(t *testing.T) {
 		}).
 		Build()
 
-	v := &composeUpRequestValidator{Client: cl}
+	v := &composeUpRequestValidator{Reader: cl}
 
 	t.Run("accepts a correctly-named request", func(t *testing.T) {
 		t.Parallel()
@@ -90,13 +90,22 @@ func TestComposeUpRequestValidator_ValidateUpdate(t *testing.T) {
 			Namespace: "rancher-desktop",
 		},
 	}).Build()
-	v := &composeUpRequestValidator{Client: cl}
+	v := &composeUpRequestValidator{Reader: cl}
 
 	t.Run("accepts a valid update", func(t *testing.T) {
 		t.Parallel()
 		oldReq := newValidComposeUpRequest("moby", "myproject", "moby.myproject", t.TempDir())
 		newReq := newValidComposeUpRequest("moby", "myproject", "moby.myproject", t.TempDir())
 		_, err := v.ValidateUpdate(t.Context(), oldReq, newReq)
+		assert.NilError(t, err)
+	})
+
+	t.Run("ignores unchanged spec", func(t *testing.T) {
+		t.Parallel()
+		req := newValidComposeUpRequest("moby", "myproject", "moby.myproject", t.TempDir())
+		// Check that we don't validate the workingDir if the spec hasn't changed.
+		assert.NilError(t, os.RemoveAll(req.Spec.WorkingDir))
+		_, err := v.ValidateUpdate(t.Context(), req, req)
 		assert.NilError(t, err)
 	})
 
