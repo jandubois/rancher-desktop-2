@@ -87,11 +87,11 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 	typeName, group, _ := strings.Cut(resourceType, ".")
 	gvk, err := mapper.KindFor(schema.GroupVersionResource{Resource: typeName, Group: group})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to resolve resource type %q: %w", resourceType, err)
 	}
 	mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to resolve resource type %q: %w", resourceType, err)
 	}
 
 	dynClient, err := dynamic.NewForConfig(restConfig)
@@ -112,9 +112,10 @@ func ctlWaitConditionAction(cmd *cobra.Command, rawArgs []string) error {
 	// Watch the single named resource for condition changes.
 	// UntilWithSync handles the initial List, Watch setup, and 410 Gone
 	// recovery (re-list on compacted resource versions).
-	var resource dynamic.ResourceInterface = dynClient.Resource(mapping.Resource)
+	namespaceable := dynClient.Resource(mapping.Resource)
+	var resource dynamic.ResourceInterface = namespaceable
 	if mapping.Scope.Name() == meta.RESTScopeNameNamespace {
-		resource = dynClient.Resource(mapping.Resource).Namespace(*namespace)
+		resource = namespaceable.Namespace(*namespace)
 	}
 	fieldSelector := "metadata.name=" + resourceName
 	lw := &cache.ListWatch{
