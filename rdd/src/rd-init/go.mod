@@ -1,4 +1,4 @@
-module github.com/rancher-sandbox/rancher-desktop-opensuse/src/rd-init
+module github.com/rancher-sandbox/rancher-desktop-daemon/src/rd-init
 
 go 1.26.0
 

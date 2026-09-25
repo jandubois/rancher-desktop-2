@@ -1,4 +1,4 @@
-module github.com/rancher-sandbox/rancher-desktop-opensuse/src/rdd-guest
+module github.com/rancher-sandbox/rancher-desktop-daemon/src/rdd-guest
 
 go 1.23.0
 

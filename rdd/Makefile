@@ -78,8 +78,20 @@ MKCERT := $(OVERLAY_BUILD)/mkcert
 NERDCTL_TARBALL := $(OVERLAY_BUILD)/nerdctl-full.tar.gz
 NERDCTL_DIR := $(OVERLAY_BUILD)/nerdctl
 NERDCTL_BINARIES := $(addprefix $(NERDCTL_DIR)/bin/,buildctl buildkitd nerdctl)
+
+# The guest binaries the overlay ships, built from the sources under src/ that
+# used to live in rancher-desktop-opensuse. Their names match the units under
+# overlay/root and the paths the distro's Dockerfile installed them at.
+GUEST_BIN := $(OVERLAY_BUILD)/guest
+GUEST_BINARIES := $(addprefix $(GUEST_BIN)/, \
+	rancher-desktop-guest-agent network-setup vm-switch wsl-proxy rd-init rdd-guest)
+GUESTAGENT_SRC := $(shell find src/go/guestagent -name '*.go') src/go/guestagent/go.mod src/go/guestagent/go.sum
+NETWORKING_SRC := $(shell find src/go/networking -name '*.go') src/go/networking/go.mod src/go/networking/go.sum
+RD_INIT_SRC := $(shell find src/rd-init -name '*.go') src/rd-init/go.mod src/rd-init/go.sum
+RDD_GUEST_SRC := $(shell find src/rdd-guest -name '*.go') src/rdd-guest/go.mod src/rdd-guest/go.sum
+
 OVERLAY_SOURCES := overlay/manifest.yaml overlay/nerdctl $(MKCERT) $(NERDCTL_BINARIES) \
-	$(shell find overlay/root -type f 2>/dev/null)
+	$(shell find overlay/root -type f 2>/dev/null) $(GUEST_BINARIES)
 OVERLAY_TOOL_SOURCES := $(filter-out %_test.go, \
 	$(wildcard cmd/distro-overlay/*.go pkg/overlay/*.go pkg/sparse/*.go))
 
@@ -173,6 +185,37 @@ $(NERDCTL_DIR)/bin/nerdctl: $(NERDCTL_TARBALL)
 	touch $(NERDCTL_BINARIES)
 
 $(NERDCTL_DIR)/bin/buildctl $(NERDCTL_DIR)/bin/buildkitd: $(NERDCTL_DIR)/bin/nerdctl ;
+
+# The guest binaries run inside the distro, so they cross-compile for its
+# architecture. CGO is off, so the static build needs no cross toolchain. go -C
+# builds each module in place; -o takes an absolute path because -C has changed
+# the working directory.
+define build-guest
+	WSLENV=$${WSLENV}:CGO_ENABLED:GOOS:GOARCH \
+	CGO_ENABLED=0 GOOS=linux GOARCH=$(TARGET_ARCH) \
+	go$(EXE) -C $(1) build -ldflags="-s -w" -o $(abspath $@) $(2)
+endef
+
+$(GUEST_BIN):
+	mkdir -p $@
+
+$(GUEST_BIN)/rancher-desktop-guest-agent: $(GUESTAGENT_SRC) | $(GUEST_BIN)
+	$(call build-guest,src/go/guestagent,.)
+
+$(GUEST_BIN)/network-setup: $(NETWORKING_SRC) | $(GUEST_BIN)
+	$(call build-guest,src/go/networking,./cmd/network)
+
+$(GUEST_BIN)/vm-switch: $(NETWORKING_SRC) | $(GUEST_BIN)
+	$(call build-guest,src/go/networking,./cmd/vm)
+
+$(GUEST_BIN)/wsl-proxy: $(NETWORKING_SRC) | $(GUEST_BIN)
+	$(call build-guest,src/go/networking,./cmd/proxy)
+
+$(GUEST_BIN)/rd-init: $(RD_INIT_SRC) | $(GUEST_BIN)
+	$(call build-guest,src/rd-init,.)
+
+$(GUEST_BIN)/rdd-guest: $(RDD_GUEST_SRC) | $(GUEST_BIN)
+	$(call build-guest,src/rdd-guest,.)
 
 # distro-overlay works on the uncompressed distro, so the build unpacks the
 # pristine artifact and overlays that copy in place. The copy is over a
@@ -316,6 +359,7 @@ format:
 LTAG_EXCLUDES := \
 	bats/lib \
 	pkg/util/nxadmtail \
+	src \
 	$(GUESTAGENT_BINARY) \
 	${NULL}
 ltag:
