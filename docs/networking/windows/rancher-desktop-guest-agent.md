@@ -53,14 +53,14 @@ end
 
 ## PortMapping
 
-Is a struct object that represents an exposed container or a service. [Portmapping](../../../src/go/guestagent/pkg/types/portmapping.go#L23) objects consist of the following fields:
+Is a struct object that represents an exposed container or a service. [Portmapping](../../../rdd/src/wslproxy/portmapping.go#L21) objects consist of the following fields:
 
 ```
 type PortMapping struct {
 	// Remove indicates whether to remove or add the entry
 	Remove bool `json:"remove"`
 	// Ports are the port mappings for both IPV4 and IPV6
-	Ports nat.PortMap `json:"ports"`
+	Ports PortMap `json:"ports"`
 	// ConnectAddrs are the backend addresses to connect to
 	ConnectAddrs []ConnectAddrs `json:"connectAddrs"`
 }
