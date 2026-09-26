@@ -17,6 +17,8 @@ import (
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/help"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
+	service "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/cmd"
 )
 
 func newStartCommand() *cobra.Command {
@@ -75,9 +77,19 @@ func newStopCommand() *cobra.Command {
 	return command
 }
 
-// stopAction short-circuits when the App does not exist; otherwise it
+// stopAction never creates an instance or starts its control plane,
+// since starting a stopped one would resume the App it was asked to
+// stop. It also short-circuits when the App does not exist; otherwise it
 // delegates to setAction so the wait semantics match `rdd set`.
 func stopAction(ctx context.Context, wait bool, timeout time.Duration) error {
+	if !service.Exists() {
+		logrus.Infof("%q control plane does not exist; nothing to stop", instance.Name())
+		return nil
+	}
+	if !service.Running() {
+		logrus.Infof("%q control plane is not running", instance.Name())
+		return nil
+	}
 	c, _, err := getAppKubeClient(ctx)
 	if err != nil {
 		return err

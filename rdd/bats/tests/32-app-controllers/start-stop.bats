@@ -5,11 +5,12 @@
 load '../../helpers/load'
 
 # Tests for `rdd start` and `rdd stop`. Both are thin wrappers around
-# `rdd set running=true|false`, so this suite focuses on what is unique
-# to them: rdd stop short-circuits when the App is absent rather than
-# creating it. Like set.bats, this runs with only the app controller
-# (no lima, no engine), and uses --wait=false so the patches return
-# without waiting on a Settled condition that never fires.
+# `rdd set running=true|false`, so this suite covers what is unique to
+# them. rdd stop short-circuits instead of creating the App or the
+# instance, or starting a stopped control plane. Like set.bats, this runs
+# with only the app controller (no lima, no engine), and uses --wait=false
+# so the patches return without waiting on a Settled condition that never
+# fires.
 
 APP_NAME="app"
 
@@ -71,4 +72,28 @@ local_setup_file() {
 
     run -0 rdd ctl get app "${APP_NAME}" -o jsonpath='{.spec.running}'
     assert_output "false"
+}
+
+# --- Short-circuit: rdd stop never starts the control plane ---
+
+@test "rdd stop leaves a stopped control plane stopped" {
+    rdd svc stop
+
+    run -0 rdd stop --wait=false
+    assert_output --partial "control plane is not running"
+
+    run -0 rdd svc status
+    run -0 extract_msg
+    assert_line "\"rancher-desktop-${RDD_INSTANCE}\" control plane has been started: false"
+}
+
+@test "rdd stop does not create a missing instance" {
+    rdd svc delete
+
+    run -0 rdd stop --wait=false
+    assert_output --partial "control plane does not exist"
+
+    run -0 rdd svc status
+    run -0 extract_msg
+    assert_line "\"rancher-desktop-${RDD_INSTANCE}\" control plane has been created: false"
 }
