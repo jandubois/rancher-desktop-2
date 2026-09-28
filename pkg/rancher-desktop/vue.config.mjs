@@ -42,11 +42,6 @@ export default {
       .loader('js-yaml-loader')
       .options({ name: '[path][name].[ext]' });
 
-    config.module.rule('raw')
-      .test(/(?:^|[/\\])assets[/\\]scripts[/\\]/)
-      .use('raw-loader')
-      .loader('raw-loader');
-
     config.plugin('define-plugin').use(webpack.DefinePlugin, [{
       'process.client':          JSON.stringify(true),
       'process.env.NODE_ENV':    JSON.stringify(process.env.NODE_ENV || 'development'),
