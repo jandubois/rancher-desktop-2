@@ -32,6 +32,7 @@ import (
 	"github.com/Masterminds/log-go"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/rancher-sandbox/rancher-desktop/src/ports"
 	"github.com/rancher-sandbox/rancher-desktop/src/wsl-guestagent/pkg/containerd"
 	"github.com/rancher-sandbox/rancher-desktop/src/wsl-guestagent/pkg/docker"
 	"github.com/rancher-sandbox/rancher-desktop/src/wsl-guestagent/pkg/forwarder"
@@ -39,7 +40,6 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop/src/wsl-guestagent/pkg/kube"
 	"github.com/rancher-sandbox/rancher-desktop/src/wsl-guestagent/pkg/procnet"
 	"github.com/rancher-sandbox/rancher-desktop/src/wsl-guestagent/pkg/tracker"
-	"github.com/rancher-sandbox/rancher-desktop/src/wslproxy"
 )
 
 const (
@@ -137,12 +137,12 @@ func runAgent(
 	// forwarding), so the k8s API is reachable from the Windows host and
 	// from other WSL2 distros when kubernetes is enabled.
 	if enableKubernetes {
-		port, err := wslproxy.NewPort("tcp", k8sAPIPort)
+		port, err := ports.NewPort("tcp", k8sAPIPort)
 		if err != nil {
 			return fmt.Errorf("failed to parse port for k8s API: %w", err)
 		}
-		if err := portTracker.Add("kubernetes", wslproxy.PortMap{
-			port: []wslproxy.PortBinding{
+		if err := portTracker.Add("kubernetes", ports.PortMap{
+			port: []ports.PortBinding{
 				{
 					HostIP:   "127.0.0.1",
 					HostPort: k8sAPIPort,

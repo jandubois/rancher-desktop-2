@@ -53,7 +53,7 @@ end
 
 ## PortMapping
 
-Is a struct object that represents an exposed container or a service. [Portmapping](../../../rdd/src/wslproxy/portmapping.go#L21) objects consist of the following fields:
+Is a struct object that represents an exposed container or a service. [Portmapping](../../../rdd/src/ports/portmapping.go#L21) objects consist of the following fields:
 
 ```
 type PortMapping struct {

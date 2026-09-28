@@ -8,7 +8,7 @@ require (
 	github.com/coreos/go-systemd/v22 v22.7.0
 	github.com/google/gopacket v1.1.19
 	github.com/linuxkit/virtsock v0.0.0-20220523201153-1a23e78aa7a2
-	github.com/rancher-sandbox/rancher-desktop/src/wslproxy v0.0.0-00010101000000-000000000000
+	github.com/rancher-sandbox/rancher-desktop/src/ports v0.0.0-00010101000000-000000000000
 	github.com/sirupsen/logrus v1.9.4
 	github.com/songgao/packets v0.0.0-20160404182456-549a10cd4091
 	github.com/songgao/water v0.0.0-20200317203138-2b4b6d7c09d8
@@ -33,4 +33,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/rancher-sandbox/rancher-desktop/src/wslproxy => ../wslproxy
+replace github.com/rancher-sandbox/rancher-desktop/src/ports => ../ports
