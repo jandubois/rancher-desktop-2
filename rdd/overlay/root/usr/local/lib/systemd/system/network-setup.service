@@ -8,10 +8,15 @@ After=network-namespace.service
 Environment=VM_SWITCH_PATH=/usr/local/bin/vm-switch
 Environment=VM_SWITCH_LOG=/var/log/vm-switch.log
 Environment=NETWORK_SETUP_LOG=/dev/stdout
-# A systemd drop-in can set this to add network-setup flags without
-# replacing the ExecStart below. Empty by default; the unquoted
+# Extra network-setup flags, empty by default. The unquoted
 # $NETWORK_SETUP_EXTRA_ARGS splits on whitespace into separate arguments.
 Environment=NETWORK_SETUP_EXTRA_ARGS=
+# Rancher Desktop writes VM_SWITCH_LOG and NETWORK_SETUP_EXTRA_ARGS to this
+# file per instance. systemd applies EnvironmentFile= after every
+# Environment=, drop-ins included, so a drop-in can override these values
+# only with a later EnvironmentFile=. The `-` lets the unit start before
+# the file exists.
+EnvironmentFile=-/etc/sysconfig/rancher-desktop
 ExecStart=/usr/local/bin/network-setup \
   --debug \
   --logfile ${NETWORK_SETUP_LOG} \
