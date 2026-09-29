@@ -467,7 +467,7 @@ index 5ee8b03a3..ad13d1b4c 100644
 
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/app/lima-template.yaml">
       <div class="finding-title" id="S1">
-        <span class="finding-num">S1.</span> The template no longer says why vm-switch logs to the host <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S1" class="pilcrow">&#182;</a>
+        <span class="finding-num">S1.</span> The template no longer says why vm-switch logs to the host <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
       </div>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7272698705cd883f99099372ad3453c7f6736840/rdd/pkg/controllers/app/app/lima-template.yaml#L48-L58">rdd/pkg/controllers/app/app/lima-template.yaml</a></div>
       <pre data-start="48" data-line="53"><code class="language-yaml">    HOST_DOCKER_SOCKET={{printf &quot;%q&quot; .Param.HOST_DOCKER_SOCKET}}
@@ -564,6 +564,8 @@ func networkSetupExtraArgs() string {
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><strong>The moved permissions drop-in matches the removed one</strong> (in-scope) <span class="pill pill-codex">Codex GPT 6 Astra</span>. Both <code>ExecStartPost=-chmod</code> lines and their <code>-</code> prefixes are unchanged, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7272698705cd883f99099372ad3453c7f6736840/rdd/overlay/manifest.yaml#L107-L108"><code>manifest.yaml:107-108</code></a> ships the file to both guest profiles, as the template did.</li>
+      <li><strong>The file avoids systemd&#39;s specifier expansion</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>. Carried from Round 1. The old <code>Environment=&quot;VM_SWITCH_LOG=…&quot;</code> line went through <code>%</code> specifier expansion (<code>config_parse_environ</code> calls <code>unit_env_printf</code> in systemd v255), so a Windows user name containing <code>%</code> would have mangled the path. I2&#39;s probe case 3 shows the new form keeps a path with a space as one argument while the extra flags split.</li>
+      <li><em></em><code>permissions.conf</code> now loads at boot<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. Carried from Round 1. The image ships it beside its docker sibling, so it no longer depends on the provision script&#39;s reload, and <code>engine-containerd.bats</code> still asserts the socket mode.</li>
     </ul>
     </div>
     <hr>
@@ -609,20 +611,20 @@ func networkSetupExtraArgs() string {
       <thead><tr><th></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th></tr></thead>
       <tbody>
         <tr><td>Duration</td><td>5m 14s</td></tr>
-        <tr><td>Findings</td><td>2I 2S</td></tr>
+        <tr><td>Findings</td><td>2I 1S</td></tr>
         <tr><td>Tool calls</td><td>11 (shell 10, stdin 1)</td></tr>
         <tr><td>Design observations</td><td>3</td></tr>
         <tr><td>False positives</td><td>0</td></tr>
         <tr><td>Unique insights</td><td>3</td></tr>
         <tr><td>Files reviewed</td><td>5</td></tr>
         <tr><td>Coverage misses</td><td>0</td></tr>
-        <tr><td><strong>Totals</strong></td><td><strong>2I 2S</strong></td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 1S</strong></td></tr>
         <tr><td>Downgraded</td><td>0</td></tr>
         <tr><td>Dropped</td><td>0</td></tr>
       </tbody>
     </table>
     <p>Codex earned its run on an unchanged commit. Its three corrections changed I2&#39;s fix, S1&#39;s scope, and two repo-context rules Round 1 proposed.</p>
-    <p>Reconciliation: Codex S1 (<code>network-setup.service</code> override comment), suggestion → I2 important.</p>
+    <p>Reconciliation: Codex S1 (<code>network-setup.service</code> override comment), suggestion → I2 important. S1 keeps Claude&#39;s Round 1 byline, because Codex narrowed it in its documentation table without raising it as a finding.</p>
     </div>
     <hr>
     <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
