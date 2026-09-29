@@ -346,17 +346,12 @@ export default {
             },
             {
               test:    /\.ya?ml$/,
-              exclude: [/(?:^|[/\\])assets[/\\]scripts[/\\]/, this.distDir],
+              exclude: [this.distDir],
               use:     { loader: 'js-yaml-loader' },
             },
             {
               test: /\.node$/,
               use:  { loader: 'node-loader' },
-            },
-            {
-              test: /(?:^|[/\\])assets[/\\]scripts[/\\]/,
-              type: 'javascript/auto',
-              use:  { loader: 'raw-loader' },
             },
           ],
         },

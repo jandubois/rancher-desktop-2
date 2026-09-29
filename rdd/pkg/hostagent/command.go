@@ -42,7 +42,6 @@ func NewCommand() *cobra.Command {
 	hostagentCommand.Flags().StringP("pidfile", "p", "", "Write PID to file")
 	hostagentCommand.Flags().String("socket", "", "Path of hostagent socket")
 	hostagentCommand.Flags().Bool("run-gui", false, "Run GUI synchronously within hostagent")
-	hostagentCommand.Flags().String("nerdctl-archive", "", "Local file path of nerdctl archive")
 	hostagentCommand.Flags().Bool("progress", false, "Show provision script progress")
 	hostagentCommand.Flags().Bool("debug", false, "Enable debug logging")
 	return hostagentCommand
@@ -122,13 +121,6 @@ func hostagentAction(cmd *cobra.Command, args []string) error {
 
 	var opts []hostagent.Opt
 	opts = append(opts, hostagent.WithGuestAgentBinary(gaPath))
-	nerdctlArchive, err := cmd.Flags().GetString("nerdctl-archive")
-	if err != nil {
-		return err
-	}
-	if nerdctlArchive != "" {
-		opts = append(opts, hostagent.WithNerdctlArchive(nerdctlArchive))
-	}
 	showProgress, err := cmd.Flags().GetBool("progress")
 	if err != nil {
 		return err
