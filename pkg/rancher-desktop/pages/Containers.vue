@@ -119,7 +119,7 @@
                 }"
                 @click.stop="toggleExpand(group.ref)"
               />
-              {{ group.ref }}
+              {{ groupLabel(group.ref) }}
               <span v-if="!!collapsed[group.ref]"> ({{ group.rows.length }})</span>
             </div>
           </td>
@@ -166,6 +166,13 @@ type RowItem = Container & {
   viewInfo:          (this: Container) => void;
   portList:          (readonly [number, number])[];
 };
+
+/**
+ * The projectGroup of containers outside any compose project or Kubernetes pod.
+ * It doubles as the grouping and sort key, so it stays untranslated;
+ * groupLabel() shows a translated label in its place.
+ */
+const STANDALONE_CONTAINERS_GROUP = 'Standalone Containers';
 
 export default defineComponent({
   name:       'Containers',
@@ -245,7 +252,7 @@ export default defineComponent({
               } else if (composeProject) {
                 return composeProject;
               }
-              return 'Standalone Containers';
+              return STANDALONE_CONTAINERS_GROUP;
             })(),
             availableActions: this.getContainerActions(container),
             startContainer:   () => this.containerRequestAction({ container, state: 'start' }),
@@ -451,6 +458,16 @@ export default defineComponent({
 
     toggleExpand(group: string) {
       this.collapsed[group] = !this.collapsed[group];
+    },
+
+    /**
+     * @param group The group key (a container's projectGroup).
+     * @returns The text shown in the group's header row.
+     */
+    groupLabel(group: string): string {
+      // Compose project and pod names are user data; only the standalone group
+      // has a fixed English key that needs a translated label.
+      return group === STANDALONE_CONTAINERS_GROUP ? this.t('containers.manage.table.group.standalone') : group;
     },
 
     clearError() {
