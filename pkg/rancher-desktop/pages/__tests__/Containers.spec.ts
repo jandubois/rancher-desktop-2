@@ -58,6 +58,35 @@ mockModules({
 const { default: Containers } = await import('@pkg/pages/Containers.vue');
 
 describe('Containers methods', () => {
+  const { methods } = Containers as any;
+
+  function container(name: string, labels: Record<string, string> = {}): Container {
+    return {
+      metadata: { name: `${ name }-id`, namespace: 'default' },
+      status:   {
+        image:     'scratch',
+        namespace: 'default',
+        name,
+        path:      '/bin/false',
+        status:    ContainerStatus.Exited,
+        labels,
+      },
+    };
+  }
+
+  /** Build the row SortableTable would render for a single container. */
+  function rowFor(item: Container, context: any) {
+    const self = {
+      containers:          [item],
+      supportsNamespaces:  true,
+      getContainerActions: () => [],
+      getPortList:         () => [],
+      ...context,
+    };
+
+    return (Containers as any).computed.rows.call(self)[0];
+  }
+
   it('adds restart actions for running containers', () => {
     const wrapper = mount(Containers, {
       global: {
@@ -121,35 +150,33 @@ describe('Containers methods', () => {
     ]));
   });
 
+  describe('grouping', () => {
+    it.each([
+      ['no grouping labels', {}, 'Standalone Containers'],
+      ['a compose project label', { 'com.docker.compose.project': 'shop' }, 'shop'],
+      ['kubernetes pod labels', {
+        'io.kubernetes.pod.name':      'web-0',
+        'io.kubernetes.pod.namespace': 'default',
+      }, 'default/web-0'],
+    ])('groups a container with %s', (_, labels, expectedGroup) => {
+      expect(rowFor(container('web', labels), {}).projectGroup).toBe(expectedGroup);
+    });
+  });
+
+  describe('group labels', () => {
+    // Wrap the English text so a translated label is told apart from a raw group key.
+    const marked = { t: (key: string) => `[${ t(key) }]` };
+
+    it('translates the standalone group', () => {
+      expect(methods.groupLabel.call(marked, 'Standalone Containers')).toBe('[Standalone Containers]');
+    });
+
+    it.each(['shop', 'default/web-0'])('shows the %s group name as is', (group) => {
+      expect(methods.groupLabel.call(marked, group)).toBe(group);
+    });
+  });
+
   describe('deletion', () => {
-    const { methods } = Containers as any;
-
-    function container(name: string): Container {
-      return {
-        metadata: { name: `${ name }-id`, namespace: 'default' },
-        status:   {
-          image:     'scratch',
-          namespace: 'default',
-          name,
-          path:      '/bin/false',
-          status:    ContainerStatus.Exited,
-        },
-      };
-    }
-
-    /** Build the row SortableTable would render for a single container. */
-    function rowFor(item: Container, context: any) {
-      const self = {
-        containers:          [item],
-        supportsNamespaces:  true,
-        getContainerActions: () => [],
-        getPortList:         () => [],
-        ...context,
-      };
-
-      return (Containers as any).computed.rows.call(self)[0];
-    }
-
     beforeEach(() => {
       showMessageBox.mockReset();
     });
