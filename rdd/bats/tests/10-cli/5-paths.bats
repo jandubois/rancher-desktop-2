@@ -1,6 +1,6 @@
 load '../../helpers/load'
 
-ALL_KEYS="args_file config dir lima_home log_dir pid_file short_dir tls_dir"
+ALL_KEYS="args_file bin_dir config dir lima_home log_dir pid_file short_dir tls_dir"
 
 @test 'rdd svc paths prints all keys in table format' {
     run -0 rdd svc paths
