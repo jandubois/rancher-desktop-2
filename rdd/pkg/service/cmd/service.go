@@ -346,14 +346,14 @@ func checkReadiness(ctx context.Context, onPhase func(startupPhase)) error {
 		// Discovery ConfigMap doesn't exist yet; the serve subprocess hasn't
 		// finished initializing. Keep polling.
 		onPhase(phaseControllers)
-		klog.V(2).Info("Discovery configmap not found yet - waiting for control plane initialization")
+		klog.V(2).InfoS("Discovery configmap not found yet - waiting for control plane initialization")
 		return errors.New("waiting for controller manager registration")
 	}
 
 	onPhase(phaseCRDs)
 	if len(runtimeControllers) == 0 {
 		// ConfigMap exists but no controllers are registered.
-		klog.V(2).Info("No controllers registered - checking API server readiness")
+		klog.V(2).InfoS("No controllers registered - checking API server readiness")
 		return readiness.WaitForReadyWithCRDs(ctx, config, []base.Controller{}, false)
 	}
 
@@ -859,7 +859,7 @@ func Run(ctx context.Context, opts options.CompletedOptions) error {
 		}
 	}()
 
-	klog.Info("Waiting for control plane to be ready")
+	klog.InfoS("Waiting for control plane to be ready")
 
 	restConfig, err := GetKubeRestConfig()
 	if err != nil {
@@ -955,7 +955,7 @@ func Run(ctx context.Context, opts options.CompletedOptions) error {
 	select {
 	case <-mgrDone:
 	case <-time.After(45 * time.Second):
-		klog.Warning("Controller manager did not shut down within 45s, exiting anyway")
+		klog.Warningf("Controller manager did not shut down within 45s, exiting anyway")
 	}
 
 	return nil
