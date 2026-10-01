@@ -63,7 +63,7 @@ func (cm *SharedWebhookCertificateManager) GenerateWebhookCertificates() error {
 		if block != nil && block.Type == "RSA PRIVATE KEY" {
 			caKey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
 			if err != nil {
-				klog.V(2).Info("Failed to parse existing CA private key, will regenerate", "error", err)
+				klog.V(2).InfoS("Failed to parse existing CA private key, will regenerate", "error", err)
 				caKey = nil
 			}
 		}
@@ -73,7 +73,7 @@ func (cm *SharedWebhookCertificateManager) GenerateWebhookCertificates() error {
 		if block != nil && block.Type == "CERTIFICATE" {
 			caCert, err = x509.ParseCertificate(block.Bytes)
 			if err != nil {
-				klog.V(2).Info("Failed to parse existing CA certificate, will regenerate", "error", err)
+				klog.V(2).InfoS("Failed to parse existing CA certificate, will regenerate", "error", err)
 				caCert = nil
 			}
 		}

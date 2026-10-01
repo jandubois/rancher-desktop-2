@@ -855,7 +855,7 @@ func Run(ctx context.Context, opts options.CompletedOptions) error {
 	// Run the server and wait for readiness
 	go func() {
 		if err := prepared.Run(ctx); err != nil {
-			klog.Fatal(err, "Failed to run server")
+			klog.Fatalf("Failed to run server: %v", err)
 		}
 	}()
 
@@ -922,21 +922,21 @@ func Run(ctx context.Context, opts options.CompletedOptions) error {
 				healthPort,
 			)
 			if err != nil {
-				klog.Error(err, "Failed to create shared controller manager")
+				klog.ErrorS(err, "Failed to create shared controller manager")
 				return
 			}
 
 			// Register all enabled controllers
 			for _, controller := range enabledControllers {
 				if err := sharedManager.RegisterController(controller); err != nil {
-					klog.Error(err, "Failed to register controller", "controller", controller.GetName())
+					klog.ErrorS(err, "Failed to register controller", "controller", controller.GetName())
 					return
 				}
 			}
 
 			// Start the shared manager (this blocks until context is cancelled)
 			if err := sharedManager.Start(ctx); err != nil {
-				klog.Error(err, "Failed to start shared controller manager")
+				klog.ErrorS(err, "Failed to start shared controller manager")
 			}
 		})
 	}
