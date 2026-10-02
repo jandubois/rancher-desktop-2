@@ -638,7 +638,7 @@ func newLimaVMLogsCommand() *cobra.Command {
 			if ok, _ := cmd.Flags().GetBool("stdout"); ok {
 				name = "ha.stdout.log"
 			}
-			logPath := filepath.Join(instance.LimaHome(), args[0], name)
+			logPath := filepath.Join(instance.LimaVMDir(args[0]), name)
 			follow, _ := cmd.Flags().GetBool("follow")
 
 			return tail.File(cmd.Context(), cmd.OutOrStdout(), logPath, follow)
