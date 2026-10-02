@@ -22,6 +22,7 @@ import (
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/retry"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -372,23 +373,9 @@ func (r *KubernetesReconciler) probeK3sAPI(ctx context.Context) (probeResult, er
 		return probeUnreachable, fmt.Errorf("parse instance kubeconfig: %w", err)
 	}
 
-	// Build a TLS-aware HTTP client from the REST config.
-	tlsCfg := &tls.Config{ServerName: cfg.ServerName}
-	if len(cfg.CAData) > 0 {
-		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(cfg.CAData)
-		tlsCfg.RootCAs = pool
-	}
-	// Load client cert for mTLS auth (k3s kubeconfig uses client cert, not bearer token).
-	if len(cfg.CertData) > 0 && len(cfg.KeyData) > 0 {
-		cert, err := tls.X509KeyPair(cfg.CertData, cfg.KeyData)
-		if err != nil {
-			return probeUnreachable, fmt.Errorf("load client cert: %w", err)
-		}
-		tlsCfg.Certificates = []tls.Certificate{cert}
-	}
-	httpClient := &http.Client{
-		Transport: &http.Transport{TLSClientConfig: tlsCfg},
+	httpClient, err := newProbeHTTPClient(cfg)
+	if err != nil {
+		return probeUnreachable, err
 	}
 
 	probeCtx, cancel := context.WithTimeout(ctx, kubeProbeTimeout)
@@ -416,6 +403,28 @@ func (r *KubernetesReconciler) probeK3sAPI(ctx context.Context) (probeResult, er
 		return probeUnhealthy, nil
 	}
 	return probeHealthy, nil
+}
+
+// newProbeHTTPClient builds the TLS-aware HTTP client for a one-shot healthz
+// probe; keep-alives are off so each probe closes its connection when done.
+func newProbeHTTPClient(cfg *rest.Config) (*http.Client, error) {
+	tlsCfg := &tls.Config{ServerName: cfg.ServerName}
+	if len(cfg.CAData) > 0 {
+		pool := x509.NewCertPool()
+		pool.AppendCertsFromPEM(cfg.CAData)
+		tlsCfg.RootCAs = pool
+	}
+	// Load client cert for mTLS auth (k3s kubeconfig uses client cert, not bearer token).
+	if len(cfg.CertData) > 0 && len(cfg.KeyData) > 0 {
+		cert, err := tls.X509KeyPair(cfg.CertData, cfg.KeyData)
+		if err != nil {
+			return nil, fmt.Errorf("load client cert: %w", err)
+		}
+		tlsCfg.Certificates = []tls.Certificate{cert}
+	}
+	return &http.Client{
+		Transport: &http.Transport{TLSClientConfig: tlsCfg, DisableKeepAlives: true},
+	}, nil
 }
 
 // classifyProbeError maps a transport-level failure from the healthz probe
@@ -534,25 +543,10 @@ func probeCurrentKubeContext(ctx context.Context, current string) bool {
 		return true
 	}
 
-	tlsCfg := &tls.Config{
-		ServerName: restCfg.ServerName,
-	}
-	if len(restCfg.CAData) > 0 {
-		pool := x509.NewCertPool()
-		pool.AppendCertsFromPEM(restCfg.CAData)
-		tlsCfg.RootCAs = pool
-	}
-	// Load client cert for mTLS auth (k3s kubeconfig uses client cert, not bearer token).
-	if len(restCfg.CertData) > 0 && len(restCfg.KeyData) > 0 {
-		cert, err := tls.X509KeyPair(restCfg.CertData, restCfg.KeyData)
-		if err != nil {
-			log.Error(err, "Failed to load client cert")
-			return true
-		}
-		tlsCfg.Certificates = []tls.Certificate{cert}
-	}
-	httpClient := &http.Client{
-		Transport: &http.Transport{TLSClientConfig: tlsCfg},
+	httpClient, err := newProbeHTTPClient(restCfg)
+	if err != nil {
+		log.Error(err, "Failed to build probe HTTP client")
+		return true
 	}
 	probeCtx, cancel := context.WithTimeout(ctx, kubeProbeTimeout)
 	defer cancel()

@@ -10,16 +10,19 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"testing"
 	"time"
 
 	"gotest.tools/v3/assert"
+	"gotest.tools/v3/poll"
 
 	corev1 "k8s.io/api/core/v1"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
@@ -51,7 +54,14 @@ func fakeK3sServer(t *testing.T, srcPath string, healthzStatus int) string {
 		w.WriteHeader(http.StatusNotFound)
 	}))
 	t.Cleanup(srv.Close)
+	return writeK3sKubeconfig(t, srv, srcPath)
+}
 
+// writeK3sKubeconfig writes a k3s-shaped kubeconfig for srv to srcPath,
+// trusting the server's certificate and reusing it as the client cert.
+// Returns srcPath.
+func writeK3sKubeconfig(t *testing.T, srv *httptest.Server, srcPath string) string {
+	t.Helper()
 	certPEM := pem.EncodeToMemory(&pem.Block{
 		Type:  "CERTIFICATE",
 		Bytes: srv.Certificate().Raw,
@@ -870,4 +880,58 @@ func Test_RemoveKubeContext_WaitsForProbeWrite(t *testing.T) {
 	assert.Equal(t, cfg.CurrentContext, "", "probe restored a current-context that removeKubeContext cleared")
 	_, found := cfg.Contexts[instance.Name()]
 	assert.Assert(t, !found, "removeKubeContext should have deleted the context")
+}
+
+// Test_Probes_CloseConnections checks that both healthz probes close their
+// connections, because the reconciler repeats them for as long as Kubernetes
+// runs.
+func Test_Probes_CloseConnections(t *testing.T) {
+	probes := map[string]func(t *testing.T, srcPath string){
+		"probeK3sAPI": func(t *testing.T, srcPath string) {
+			r := &KubernetesReconciler{K3sConfigPath: srcPath}
+			result, err := r.probeK3sAPI(t.Context())
+			assert.NilError(t, err)
+			assert.Equal(t, result, probeHealthy)
+		},
+		"probeCurrentKubeContext": func(t *testing.T, srcPath string) {
+			// The probe treats a context named "default" as unhealthy.
+			cfg := loadDest(t, srcPath)
+			cfg.Contexts["k3s"] = cfg.Contexts["default"]
+			delete(cfg.Contexts, "default")
+			cfg.CurrentContext = "k3s"
+			destPath := filepath.Join(filepath.Dir(srcPath), "config")
+			assert.NilError(t, clientcmd.WriteToFile(*cfg, destPath))
+			t.Setenv("KUBECONFIG", destPath)
+			assert.Assert(t, probeCurrentKubeContext(t.Context(), "k3s"))
+		},
+	}
+	for name, probe := range probes {
+		t.Run(name, func(t *testing.T) {
+			var open atomic.Int64
+			srv := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			}))
+			srv.Config.ConnState = func(_ net.Conn, state http.ConnState) {
+				switch state {
+				case http.StateNew:
+					open.Add(1)
+				case http.StateClosed, http.StateHijacked:
+					open.Add(-1)
+				}
+			}
+			srv.StartTLS()
+			t.Cleanup(srv.Close)
+			srcPath := writeK3sKubeconfig(t, srv, filepath.Join(t.TempDir(), "k3s.yaml"))
+
+			for range 3 {
+				probe(t, srcPath)
+			}
+			poll.WaitOn(t, func(poll.LogT) poll.Result {
+				if n := open.Load(); n != 0 {
+					return poll.Continue("%d connections still open", n)
+				}
+				return poll.Success()
+			}, poll.WithTimeout(2*time.Second))
+		})
+	}
 }
