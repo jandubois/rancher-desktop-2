@@ -573,7 +573,7 @@ func preserveAllInstanceLogs() {
 		if !entry.IsDir() {
 			continue
 		}
-		instDir := filepath.Join(instance.LimaHome(), entry.Name())
+		instDir := instance.LimaVMDir(entry.Name())
 		count, err := instance.PreserveLogs(instDir, entry.Name())
 		if err != nil {
 			logrus.WithError(err).WithField("instance", entry.Name()).Warn("Failed to preserve instance logs")
