@@ -131,6 +131,12 @@ var LimaHome = sync.OnceValue(func() string {
 	return filepath.Join(ShortDir(), "lima")
 })
 
+// LimaVMDir returns the directory Lima keeps for the named LimaVM
+// (e.g., ~/.rd2/lima/rd).
+func LimaVMDir(name string) string {
+	return filepath.Join(LimaHome(), name)
+}
+
 // BinDir returns the directory holding this instance's user-facing executables
 // (e.g., ~/.rd2/bin). This is the directory the path-management controller adds
 // to the user's PATH.
