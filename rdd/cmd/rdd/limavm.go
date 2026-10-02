@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lima-vm/lima/v2/pkg/limatype/filenames"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
@@ -634,9 +635,9 @@ func newLimaVMLogsCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logrus.SetLevel(logrus.InfoLevel)
 
-			name := "ha.stderr.log"
+			name := filenames.HostAgentStderrLog
 			if ok, _ := cmd.Flags().GetBool("stdout"); ok {
-				name = "ha.stdout.log"
+				name = filenames.HostAgentStdoutLog
 			}
 			logPath := filepath.Join(instance.LimaVMDir(args[0]), name)
 			follow, _ := cmd.Flags().GetBool("follow")

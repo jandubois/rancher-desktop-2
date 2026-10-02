@@ -95,6 +95,16 @@ var LogDir = sync.OnceValue(func() string {
 	}
 })
 
+// StdoutLog returns the path of the control plane's stdout log.
+var StdoutLog = sync.OnceValue(func() string {
+	return filepath.Join(LogDir(), "rdd.stdout.log")
+})
+
+// StderrLog returns the path of the control plane's stderr log.
+var StderrLog = sync.OnceValue(func() string {
+	return filepath.Join(LogDir(), "rdd.stderr.log")
+})
+
 // ArgsFile returns the path to the saved service arguments file.
 var ArgsFile = sync.OnceValue(func() string {
 	return filepath.Join(Dir(), "args.json")

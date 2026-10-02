@@ -23,6 +23,8 @@ func instancePaths() map[string]string {
 	return map[string]string{
 		"dir":               instance.Dir(),
 		"log_dir":           instance.LogDir(),
+		"stdout_log":        instance.StdoutLog(),
+		"stderr_log":        instance.StderrLog(),
 		"short_dir":         instance.ShortDir(),
 		"bin_dir":           instance.BinDir(),
 		"lima_home":         instance.LimaHome(),
