@@ -43,22 +43,33 @@ var Name = sync.OnceValue(func() string {
 	return "rancher-desktop-" + Suffix()
 })
 
-// Dir returns the OS-specific data directory for this instance.
-var Dir = sync.OnceValue(func() string {
+// SharedDataDir returns the OS-specific data directory that holds every
+// instance's Dir(). It looks up the home directory on every call, so tests
+// can point it at a temporary home.
+func SharedDataDir() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		panic(fmt.Errorf("could not get home directory: %w", err))
+		return "", fmt.Errorf("could not get home directory: %w", err)
 	}
 	switch runtime.GOOS {
 	case "windows":
-		return filepath.Join(home, "AppData", "Local", Name())
+		return filepath.Join(home, "AppData", "Local"), nil
 	case "linux":
-		return filepath.Join(home, ".local", "share", Name())
+		return filepath.Join(home, ".local", "share"), nil
 	case "darwin":
-		return filepath.Join(home, "Library", "Application Support", Name())
+		return filepath.Join(home, "Library", "Application Support"), nil
 	default:
-		panic(fmt.Sprintf("platform %s not supported", runtime.GOOS))
+		return "", fmt.Errorf("platform %s not supported", runtime.GOOS)
 	}
+}
+
+// Dir returns the OS-specific data directory for this instance.
+var Dir = sync.OnceValue(func() string {
+	dir, err := SharedDataDir()
+	if err != nil {
+		panic(err)
+	}
+	return filepath.Join(dir, Name())
 })
 
 // LogDir returns the OS-specific log directory for this instance.
