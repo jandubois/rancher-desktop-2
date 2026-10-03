@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR builds instance paths in one place: accessors in the instance package, three new <code>rdd svc paths</code> keys for bats and the app, and Lima&#39;s <code>filenames</code> constants for the hostagent and serial logs. The Go changes keep every path the same, and their tests pass. One gap needs a fix. No test covers the rewritten guard that stops the app from deleting rdd&#39;s live logs. A bats test also still builds the bin directory by hand.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since This Review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings below cite the code at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7e242eb"><code>af7e242eb</code></a>. Addressing them rewrote the branch, so every commit has a new SHA, the <code>paths.bash</code> half of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7e242eb"><code>af7e242eb</code></a> now comes before the log-names commit, and the cited lines have moved. Each finding ends with what happened to it.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -345,6 +351,7 @@ index 000000000..a3a708ab7
 +  });
 +});</code></pre>
       </details>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9ed8ff49f"><code>9ed8ff49f</code></a>. The spec is this patch plus a check that the <code>paths</code> mock applied, so it cannot clear a real log directory; it fails with the guard disabled.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -390,6 +397,7 @@ win_to_posix_exports() {
 host_path() { # &lt;path&gt;
     if is_windows; then</code></pre>
     <p>Fix: compare the first <code>PATH</code> entry with <code>${RDD_BIN_DIR}</code> and delete the conversion block at lines 147-157.</p>
+    <p><strong>Outcome:</strong> fixed as proposed, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1be901713"><code>1be901713</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/environment.md">
       <div class="finding-title" id="S2">
@@ -431,6 +439,7 @@ Output formats (`--output`, `-o`):
 *   `table` (default): aligned key-value table for human readability.
 </code></pre>
     <p>Fix: add a row for each key to both tables, and the new keys to the example output.</p>
+    <p><strong>Outcome:</strong> documentation updated in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/386f8609c"><code>386f8609c</code></a>. Both tables list all 14 keys, the example is real <code>rdd svc paths</code> output, and the <code>config</code>, <code>bin_dir</code> and short-directory <code>bin</code> rows now match the code. The stale <code>config.json</code> and <code>rdd.sqlite3</code> prose elsewhere in <code>cmd_service.md</code> predates the PR and is tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/rdd/service_paths.go">
       <div class="finding-title" id="S3">
@@ -497,6 +506,7 @@ func instancePaths() map[string]string {
 +// several places use must come from one place, even where a copy would come
 +// out right. Go code calls the instance package&#39;s accessors; bats tests and the
 +// app read these keys. A package may name a file that no other code uses.</code></pre>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1be901713"><code>1be901713</code></a>, narrower than proposed. A scoped rule still left &quot;component&quot; undefined and had no answer for bats&#39;s <code>${RDD_LIMA_HOME}/&lt;vm&gt;</code> paths, so the comment now says only that bats tests and the app read these paths from rdd. The repo-wide rule and its exceptions go to the review context.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/helpers/paths.bash">
       <div class="finding-title" id="S4">
@@ -557,6 +567,7 @@ host_path() { # &lt;path&gt;
 +    if is_msys; then
 +        RDD_LOG_DIR=$(host_path &quot;${RDD_LOG_DIR}&quot;)
 +    fi</code></pre>
+    <p><strong>Outcome:</strong> fixed as proposed, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/464350b67"><code>464350b67</code></a>. The other WSL-only breakages (<code>host_path</code> itself, <code>engine-docker.bats</code>) predate the PR and are tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/utils/logging.ts">
       <div class="finding-title" id="S5">
@@ -600,6 +611,7 @@ const ipcMainProxy = getIpcMainProxy(console);
 let gone = false; // when true indicates app is shutting down
 const noModalDialogs = false;</code></pre>
     <p>Fix: accept the loud failure, or read both values before the loop and skip the comparison when the read throws.</p>
+    <p><strong>Outcome:</strong> declined. The failure is dev-only and loud, and the fallback <code>log_dir</code> is classic RD&#39;s <code>~/Library/Logs/rancher-desktop</code>, so the throw keeps such a build from deleting classic RD&#39;s logs; the second fix would bring the deletion back. The fallbacks that name classic RD&#39;s directories are tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/10-cli/5-paths.bats">
       <div class="finding-title" id="S6">
@@ -616,6 +628,7 @@ ALL_KEYS=&quot;args_file bin_dir config dir lima_home log_dir pid_file short_dir
         assert_line --regexp &quot;^${key} &quot;</code></pre>
     <p><code>docker_socket</code>, <code>containerd_socket</code> and <code>k3s_config</code> predate this PR and are missing from the list, so the test would not notice one of them disappearing. The PR already edits this line.</p>
     <p>Fix: add the three keys.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9ed8ff49f"><code>9ed8ff49f</code></a>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -625,6 +638,7 @@ ALL_KEYS=&quot;args_file bin_dir config dir lima_home log_dir pid_file short_dir
     <ul>
       <li><strong>The app deletes rdd&#39;s rotated log backups on every start</strong> (future) <span class="pill pill-gemini">Gemini 3.5 Flash</span>. <code>clearLoggingDirectory</code> spares only the two active rdd logs, so <code>rdd.stdout.1.log</code> and the other backups <code>logfile</code> keeps go too; a run of I1&#39;s spec with <code>rdd.stdout.1.log</code> added confirmed it. The merge-base guard matched only the exact topics <code>rdd.stdout</code> and <code>rdd.stderr</code>, so the bug predates this PR, and the project&#39;s pending-work list already tracks it.</li>
     </ul>
+    <p>  <strong>Outcome:</strong> declined; it predates this PR and is tracked in pending-work.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><em></em><code>logfile</code> takes the log&#39;s full path<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. <code>Create</code> and <code>Rotate</code> reject a path without <code>.log</code> before touching the disk, <code>TestPathWithoutLogSuffix</code> pins that, and callers can pass Lima&#39;s own constants.</li>
@@ -655,6 +669,7 @@ ALL_KEYS=&quot;args_file bin_dir config dir lima_home log_dir pid_file short_dir
 
     <div class="card card-neutral">
     <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/89f01cbf7"><code>89f01cbf7</code></a> points the bats test markers at <code>RDD_STDERR_LOG</code>. On Windows that value comes from an rdd.exe that inherited the POSIX-form <code>RDD_LOG_DIR</code>, and per <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7e242eb"><code>af7e242eb</code></a>&#39;s message <code>cygpath</code> turns it into a network path. The markers are lost until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7e242eb"><code>af7e242eb</code></a>, and since <code>load.bash</code> writes them with <code>|| true</code>, no test fails in between. Moving the <code>paths.bash</code> half of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7e242eb"><code>af7e242eb</code></a> ahead of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/89f01cbf7"><code>89f01cbf7</code></a> keeps each commit&#39;s markers intact <span class="pill pill-claude">Claude Opus 5.5</span>. Squashing the two, as also proposed <span class="pill pill-gemini">Gemini 3.5 Flash</span>, would bury a fix for a bug older than the PR. Optional.</p>
+    <p><strong>Outcome:</strong> applied. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/464350b67"><code>464350b67</code></a> carries the <code>paths.bash</code> fix ahead of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9ed8ff49f"><code>9ed8ff49f</code></a>, which now also holds the <code>2-create.bats</code> test.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
