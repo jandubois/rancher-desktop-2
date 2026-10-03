@@ -696,6 +696,7 @@ ALL_KEYS=&quot;args_file bin_dir config dir lima_home log_dir pid_file short_dir
     </table>
     <p>Reconciliation: Claude, pass 1, the <code>service_paths.go</code> comment: important → suggestion S3 (a comment-accuracy issue; the cited sites are single-owner files). Codex, pass 1, WSL <code>host_path</code>: important → suggestion S4 (latent, since CI runs the Windows bats suite under MSYS2 only). Gemini 3.5 Flash, pass 1, the same WSL finding: important → suggestion S4. Dropped: Claude S2 and Gemini 3.1 Pro S1 (<code>bin_dir</code> in <code>RDDPaths</code>, ruled out by design); Gemini 3.5 Flash S3 (an empty base name in <code>splitLogPath</code>, which no caller can produce) and S4 (accessor unit tests, covered by existing bats tests).</p>
     <p>Claude gave the most value: the only Important and two suggestions nobody else found. Flash&#39;s S1 is the suggestion most squarely within the PR&#39;s goal. Codex wrote the best probe but spent it on a latent defect, and Gemini Pro added one small suggestion.</p>
+    <p>Claude and Gemini 3.5 Flash each ran <code>go test</code> on <code>rdd/pkg/controllers/base</code>, whose envtest starts a local etcd and kube-apiserver with data under the OS temp directory, outside the worktree the prompt confines them to. Neither noted it. No agent ran an rdd, docker or Lima command, and no agent changed a tracked file.</p>
     </div>
     <hr>
     <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
