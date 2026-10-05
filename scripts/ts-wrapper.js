@@ -15,6 +15,13 @@ function main(args) {
     '--stack-size=16384',
   ];
 
+  /// Use `--use-env-proxy` if supported.
+  if (process.allowedNodeEnvironmentFlags.has('use-env-proxy')) {
+    childArgs.push('--use-env-proxy');
+  } else if (['http_proxy', 'HTTP_PROXY'].some((key) => process.env[key])) {
+    console.warn('NodeJS does not support HTTP proxies.');
+  }
+
   const finalArgs = [...childArgs, ...args];
 
   console.log(process.argv0, ...finalArgs);
