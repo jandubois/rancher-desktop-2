@@ -6,34 +6,36 @@ class RDSlider {
 
   constructor(public container: Locator) {
     this.value = container.locator('input.slider-input');
-    this.marks = container.locator('.vue-slider-mark');
+    this.marks = container.locator('.vue-slider-mark-label');
   }
 }
 
 export class VirtualMachineNav {
-  readonly page:            Page;
-  readonly nav:             Locator;
-  readonly memory:          RDSlider;
-  readonly cpus:            RDSlider;
-  readonly mountType:       Locator;
-  readonly reverseSshFs:    Locator;
-  readonly ninep:           Locator;
-  readonly virtiofs:        Locator;
-  readonly cacheMode:       Locator;
-  readonly msizeInKib:      Locator;
-  readonly protocolVersion: Locator;
-  readonly securityModel:   Locator;
-  readonly vmType:          Locator;
-  readonly qemu:            Locator;
-  readonly vz:              Locator;
-  readonly useRosetta:      Locator;
-  readonly tabHardware:     Locator;
-  readonly tabVolumes:      Locator;
-  readonly tabEmulation:    Locator;
+  readonly page:              Page;
+  readonly nav:               Locator;
+  readonly systemPreferences: Locator;
+  readonly memory:            RDSlider;
+  readonly cpus:              RDSlider;
+  readonly mountType:         Locator;
+  readonly reverseSshFs:      Locator;
+  readonly ninep:             Locator;
+  readonly virtiofs:          Locator;
+  readonly cacheMode:         Locator;
+  readonly msizeInKib:        Locator;
+  readonly protocolVersion:   Locator;
+  readonly securityModel:     Locator;
+  readonly vmType:            Locator;
+  readonly qemu:              Locator;
+  readonly vz:                Locator;
+  readonly useRosetta:        Locator;
+  readonly tabHardware:       Locator;
+  readonly tabVolumes:        Locator;
+  readonly tabEmulation:      Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.nav = page.getByTestId('nav-virtual-machine');
+    this.systemPreferences = page.getByTestId('system-preferences');
     this.memory = new RDSlider(page.locator('#memoryInGBWrapper'));
     this.cpus = new RDSlider(page.locator('#numCPUWrapper'));
     this.mountType = page.locator('[data-test="mountType"]');

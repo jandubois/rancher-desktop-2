@@ -115,13 +115,22 @@ test.describe('Preferences Dialog', () => {
 
       // The max values are from `mock/hostinfo_reconciler.go`.
 
+      await expect(prefPage.alert).toHaveText('');
       await expect(virtualMachine.memory.container).toBeVisible();
       await expect(virtualMachine.memory.marks.first()).toHaveText('2');
       await expect(virtualMachine.memory.marks.last()).toHaveText('12');
+      await expect(prefPage.alert).toHaveText('');
       await virtualMachine.memory.marks.getByText('8').click();
       await expect(virtualMachine.memory.value).toHaveValue('8');
+      await expect(virtualMachine.systemPreferences).toHaveAttribute('data-memory-value', '8');
+      await expect(prefPage.alert).toHaveText('');
       await virtualMachine.memory.value.press('ArrowDown');
-      await expect(virtualMachine.memory.value).toHaveValue('7');
+      await expect(virtualMachine.systemPreferences).toHaveAttribute('data-memory-value', '7');
+      await expect(prefPage.alert).toHaveText('');
+      await virtualMachine.memory.value.fill('');
+      await virtualMachine.cpus.value.focus();
+      await expect(prefPage.alert).toHaveText('');
+      await expect(virtualMachine.systemPreferences).toHaveAttribute('data-memory-value', '7');
 
       await expect(virtualMachine.cpus.container).toBeVisible();
       await expect(virtualMachine.cpus.marks.first()).toHaveText('2');

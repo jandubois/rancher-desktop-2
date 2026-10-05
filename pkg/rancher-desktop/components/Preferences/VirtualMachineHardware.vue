@@ -16,6 +16,7 @@ const memoryInGB = computed(() => {
   const memoryInBytes = parseQuantity(preferences.value?.virtualMachine?.memory ?? '2Gi');
   return Math.floor(memoryInBytes / gigaScale);
 });
+const cpus = computed(() => preferences.value?.virtualMachine?.cpus ?? 1);
 const hostInfo = computed(() => store.state.rdd.hostInfos?.[0]);
 const availMemoryInGB = computed(() => {
   const memoryInBytes = parseQuantity(hostInfo.value?.status?.memory) || 2 * gigaScale;
@@ -45,8 +46,11 @@ onBeforeUnmount(() => {
 <template>
   <div class="virtual-machine-hardware">
     <system-preferences
+      data-testid="system-preferences"
+      :data-memory-value="memoryInGB"
+      :data-cpu-value="cpus"
       :memory-in-g-b="memoryInGB"
-      :number-c-p-us="preferences?.virtualMachine?.cpus ?? 1"
+      :number-c-p-us="cpus"
       :avail-memory-in-g-b="availMemoryInGB"
       :avail-num-c-p-us="availNumCPUs"
       :reserved-memory-in-g-b="6"
