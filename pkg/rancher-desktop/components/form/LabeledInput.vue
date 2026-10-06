@@ -1,13 +1,14 @@
 <script lang="ts">
-import TextAreaAutoGrow from '@components/Form/TextArea/TextAreaAutoGrow.vue';
-import LabeledTooltip from '@components/LabeledTooltip/LabeledTooltip.vue';
-import { useCompactInput } from '@shell/composables/useCompactInput';
-import { useLabeledFormElement, labeledFormElementProps } from '@shell/composables/useLabeledFormElement';
-import { escapeHtml } from '@shell/utils/string';
 import { isValidCron } from 'cron-validator';
 import cronstrue from 'cronstrue';
 import { debounce } from 'lodash';
 import { defineComponent } from 'vue';
+
+import LabeledTooltip from '@pkg/components/form/LabeledTooltip.vue';
+import TextAreaAutoGrow from '@pkg/components/form/TextAreaAutoGrow.vue';
+import { useCompactInput } from '@pkg/composables/useCompactInput';
+import { useLabeledFormElement, labeledFormElementProps } from '@pkg/composables/useLabeledFormElement';
+import { escapeHtml } from '@pkg/utils/string';
 
 declare module 'vue/types/vue' {
   interface Vue {

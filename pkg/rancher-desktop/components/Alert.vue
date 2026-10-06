@@ -1,6 +1,7 @@
 <script lang="ts">
-import { Banner } from '@rancher/components';
 import { defineComponent } from 'vue';
+
+import Banner from '@pkg/components/Banner.vue';
 
 export default defineComponent({
   name:       'alert',

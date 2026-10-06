@@ -99,10 +99,11 @@
 </template>
 
 <script lang="ts">
-import { Banner, Checkbox } from '@rancher/components';
 import { defineComponent } from 'vue';
 
+import Banner from '@pkg/components/Banner.vue';
 import SortableTable from '@pkg/components/SortableTable/index.vue';
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 
 import type { PropType } from 'vue';
 

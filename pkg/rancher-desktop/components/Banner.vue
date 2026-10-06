@@ -1,7 +1,8 @@
 <script lang="ts">
-import { stringify } from '@shell/utils/error';
-import { nlToBr } from '@shell/utils/string';
 import { defineComponent } from 'vue';
+
+import { stringify } from '@pkg/utils/error';
+import { nlToBr } from '@pkg/utils/string';
 
 export default defineComponent({
   props: {

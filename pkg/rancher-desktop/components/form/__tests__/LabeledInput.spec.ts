@@ -1,6 +1,7 @@
+import { jest } from '@jest/globals';
 import { mount } from '@vue/test-utils';
 
-import { LabeledInput } from './index';
+import LabeledInput from '../LabeledInput.vue';
 
 describe('component: LabeledInput', () => {
   it('should emit input only once', () => {

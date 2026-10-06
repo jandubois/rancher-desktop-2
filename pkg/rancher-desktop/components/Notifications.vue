@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { Banner } from '@rancher/components';
+import Banner from '@pkg/components/Banner.vue';
 
 export default {
   components: { Banner },

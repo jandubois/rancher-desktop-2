@@ -1,7 +1,8 @@
 <script lang="ts">
-import { _VIEW } from '@shell/config/query-params';
-import { randomStr } from '@shell/utils/string';
 import { defineComponent } from 'vue';
+
+import { _VIEW } from '@pkg/config/query-params';
+import { randomStr } from '@pkg/utils/string';
 
 export default defineComponent({
   props: {

@@ -1,7 +1,8 @@
 <script lang="ts">
-import RadioButton from '@components/Form/Radio/RadioButton.vue';
-import { _VIEW } from '@shell/config/query-params';
 import { PropType, defineComponent } from 'vue';
+
+import RadioButton from '@pkg/components/form/RadioButton.vue';
+import { _VIEW } from '@pkg/config/query-params';
 
 interface Option {
   value:        unknown,

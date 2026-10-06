@@ -1,7 +1,7 @@
 <script lang="ts">
-import { Banner } from '@rancher/components';
 import { PropType, defineComponent } from 'vue';
 
+import Banner from '@pkg/components/Banner.vue';
 import { mapTypedActions } from '@pkg/entry/store';
 import type { preferencesNavItem as NavItem } from '@pkg/window/preferenceConstants';
 

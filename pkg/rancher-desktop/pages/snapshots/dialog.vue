@@ -1,10 +1,10 @@
 <script lang="ts">
 import os from 'os';
 
-import { Banner } from '@rancher/components';
 import { defineComponent } from 'vue';
 
 import BackendProgress from '@pkg/components/BackendProgress.vue';
+import Banner from '@pkg/components/Banner.vue';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
 export default defineComponent({

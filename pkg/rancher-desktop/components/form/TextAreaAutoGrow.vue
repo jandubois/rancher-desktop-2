@@ -1,7 +1,8 @@
 <script lang="ts">
-import { _EDIT, _VIEW } from '@shell/config/query-params';
 import debounce from 'lodash/debounce';
 import { defineComponent } from 'vue';
+
+import { _EDIT, _VIEW } from '@pkg/config/query-params';
 
 declare module 'vue/types/vue' {
 

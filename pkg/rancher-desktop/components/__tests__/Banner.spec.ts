@@ -1,13 +1,17 @@
 import { mount } from '@vue/test-utils';
 
-import { Banner } from './index';
+import Banner from '../Banner.vue';
+
+import cleanHtmlDirective from '@pkg/plugins/clean-html-directive';
+
+const global = { plugins: [cleanHtmlDirective], stubs: { t: true } };
 
 describe('component: Banner', () => {
   it('should display text based on label', () => {
     const label = 'test';
     const wrapper = mount(
       Banner,
-      { propsData: { label } });
+      { propsData: { label }, global });
 
     const element = wrapper.find('span').element;
 
@@ -16,7 +20,7 @@ describe('component: Banner', () => {
 
   it('should display an icon', () => {
     const icon = 'my-icon';
-    const wrapper = mount(Banner, { propsData: { icon } });
+    const wrapper = mount(Banner, { propsData: { icon }, global });
 
     const element = wrapper.find(`.${ icon }`).element;
 
@@ -24,7 +28,7 @@ describe('component: Banner', () => {
   });
 
   it('should not display an icon', () => {
-    const wrapper = mount(Banner);
+    const wrapper = mount(Banner, { global });
 
     const iconElement = wrapper.find('[data-testid="banner-icon"]');
 
@@ -32,7 +36,7 @@ describe('component: Banner', () => {
   });
 
   it('should emit close event', () => {
-    const wrapper = mount(Banner, { propsData: { closable: true } });
+    const wrapper = mount(Banner, { propsData: { closable: true }, global });
     const element = wrapper.find(`[data-testid="banner-close"]`).element;
 
     element.click();
@@ -42,7 +46,7 @@ describe('component: Banner', () => {
 
   it('should add the right color', () => {
     const color = 'red';
-    const wrapper = mount(Banner, { propsData: { color } });
+    const wrapper = mount(Banner, { propsData: { color }, global });
 
     const element = wrapper.element;
 
@@ -51,7 +55,7 @@ describe('component: Banner', () => {
 
   it('should stack the banner messages', () => {
     const stacked = true;
-    const wrapper = mount(Banner, { propsData: { stacked } });
+    const wrapper = mount(Banner, { propsData: { stacked }, global });
 
     const element = wrapper.find(`[data-testid="banner-content"]`).element;
 

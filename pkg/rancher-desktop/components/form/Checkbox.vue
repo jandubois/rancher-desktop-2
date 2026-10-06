@@ -1,8 +1,9 @@
 <script lang="ts">
-import { _EDIT, _VIEW } from '@shell/config/query-params';
-import { addObject, removeObject } from '@shell/utils/array';
 import cloneDeep from 'lodash/cloneDeep';
 import { PropType, defineComponent } from 'vue';
+
+import { _EDIT, _VIEW } from '@pkg/config/query-params';
+import { addObject, removeObject } from '@pkg/utils/array';
 
 export default defineComponent({
   name: 'Checkbox',

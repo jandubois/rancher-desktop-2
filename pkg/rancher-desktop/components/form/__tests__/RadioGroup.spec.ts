@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
 
-import { RadioGroup } from './index';
+import RadioGroup from '../RadioGroup.vue';
 
 describe('component: RadioGroup', () => {
   describe('when disabled', () => {

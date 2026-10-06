@@ -80,8 +80,7 @@
 </template>
 
 <script lang="ts">
-import { Banner } from '@rancher/components';
-
+import Banner from '@pkg/components/Banner.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
 import type { ExtensionState, MarketplaceData } from '@pkg/store/extensions';
 

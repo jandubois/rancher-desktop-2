@@ -1,8 +1,8 @@
 <script lang="ts">
-
-import LabeledInput from '@components/Form/LabeledInput/LabeledInput.vue';
-import { findStringIndex, hasDuplicatedStrings } from '@shell/utils/array';
 import { PropType, defineComponent } from 'vue';
+
+import LabeledInput from '@pkg/components/form/LabeledInput.vue';
+import { findStringIndex, hasDuplicatedStrings } from '@pkg/utils/array';
 
 type Error = 'duplicate';
 type ErrorMessages = Record<Error, string>;

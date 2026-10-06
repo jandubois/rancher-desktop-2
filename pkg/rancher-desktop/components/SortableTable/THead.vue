@@ -1,8 +1,7 @@
 <script>
-import { Checkbox } from '@rancher/components';
-
 import { SOME, NONE } from './selection';
 
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 import LabeledSelect from '@pkg/components/form/LabeledSelect';
 import { AUTO, CENTER, fitOnScreen } from '@pkg/utils/position';
 

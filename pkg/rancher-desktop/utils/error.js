@@ -1,4 +1,4 @@
-import { isArray } from '@shell/utils/array';
+import { isArray } from '@pkg/utils/array';
 
 export class ClusterNotFoundError extends Error {
   static NAME = 'ClusterNotFoundError';

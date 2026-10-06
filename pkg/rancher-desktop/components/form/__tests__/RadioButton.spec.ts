@@ -1,10 +1,14 @@
 import { shallowMount } from '@vue/test-utils';
 
-import { RadioButton } from './index';
+import RadioButton from '../RadioButton.vue';
+
+import cleanHtmlDirective from '@pkg/plugins/clean-html-directive';
+
+const global = { plugins: [cleanHtmlDirective], stubs: { t: true } };
 
 describe('radioButton.vue', () => {
   it('renders label slot contents', () => {
-    const wrapper = shallowMount(RadioButton, { slots: { label: 'Test Label' }, propsData: { val: {}, value: {} } });
+    const wrapper = shallowMount(RadioButton, { slots: { label: 'Test Label' }, propsData: { val: {}, value: {} }, global });
 
     expect(wrapper.find('.radio-label').text()).toBe('Test Label');
   });
@@ -16,6 +20,7 @@ describe('radioButton.vue', () => {
         propsData: {
           label: 'Test Label', val: {}, value: {},
         },
+        global,
       });
 
     expect(wrapper.find('.radio-label').text()).toBe('Test Label');
@@ -27,6 +32,7 @@ describe('radioButton.vue', () => {
       propsData: {
         label: 'Test Label - Props', val: {}, value: {},
       },
+      global,
     });
 
     expect(wrapper.find('.radio-label').text()).toBe('Test Label - Slot');

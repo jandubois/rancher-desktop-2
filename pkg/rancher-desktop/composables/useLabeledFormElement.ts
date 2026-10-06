@@ -1,5 +1,6 @@
-import { _VIEW, _EDIT } from '@shell/config/query-params';
 import { ref, computed, ComputedRef, Ref } from 'vue';
+
+import { _VIEW, _EDIT } from '@pkg/config/query-params';
 
 interface LabeledFormElementProps {
   mode:          string;

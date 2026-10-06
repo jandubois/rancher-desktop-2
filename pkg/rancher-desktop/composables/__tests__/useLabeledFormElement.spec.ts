@@ -1,6 +1,7 @@
+import { jest } from '@jest/globals';
 import { ref } from 'vue';
 
-import { useLabeledFormElement } from './useLabeledFormElement';
+import { useLabeledFormElement } from '../useLabeledFormElement';
 
 describe('useLabeledFormElement', () => {
   it('should set raised to true when focused', () => {

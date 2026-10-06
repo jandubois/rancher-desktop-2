@@ -1,9 +1,10 @@
 <script lang="ts">
 
-import { RadioButton, RadioGroup } from '@rancher/components';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
+import RadioButton from '@pkg/components/form/RadioButton.vue';
+import RadioGroup from '@pkg/components/form/RadioGroup.vue';
 import RdCheckbox from '@pkg/components/form/RdCheckbox.vue';
 import RdFieldset from '@pkg/components/form/RdFieldset.vue';
 import { Settings, Theme } from '@pkg/config/settings';

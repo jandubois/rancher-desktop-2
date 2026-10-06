@@ -1,6 +1,6 @@
 import { shallowMount, VueWrapper } from '@vue/test-utils';
 
-import { ToggleSwitch } from './index';
+import ToggleSwitch from '../ToggleSwitch.vue';
 
 describe('toggleSwitch.vue', () => {
   it('renders falsy by default', () => {

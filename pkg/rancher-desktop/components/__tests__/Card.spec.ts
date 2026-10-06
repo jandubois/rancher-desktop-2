@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 
-import { Card } from './index';
+import Card from '../Card.vue';
 
 describe('component: Card', () => {
   const title = 'Card title';

@@ -21,8 +21,9 @@
 </template>
 
 <script lang="ts">
-import { Checkbox } from '@rancher/components';
 import { defineComponent } from 'vue';
+
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 
 import type { PropType } from 'vue';
 

@@ -1,6 +1,6 @@
 import { mount, VueWrapper } from '@vue/test-utils';
 
-import { StringList } from './index';
+import StringList from '../StringList.vue';
 
 describe('stringList.vue', () => {
   let wrapper: VueWrapper<InstanceType<typeof StringList>>;

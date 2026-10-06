@@ -1,9 +1,9 @@
 <script lang="ts">
 
-import { Banner } from '@rancher/components';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
+import Banner from '@pkg/components/Banner.vue';
 import EngineSelector from '@pkg/components/EngineSelector.vue';
 import RdCheckbox from '@pkg/components/form/RdCheckbox.vue';
 import RdFieldset from '@pkg/components/form/RdFieldset.vue';

@@ -1,11 +1,10 @@
 <script lang="ts">
 
-import * as Components from '@rancher/components';
 import { defineComponent } from 'vue';
 
-import type { PropType } from 'vue';
+import BadgeState from '@pkg/components/BadgeState.vue';
 
-const { BadgeState } = (Components as any).default ?? Components;
+import type { PropType } from 'vue';
 
 export default defineComponent({
   name:       'labeled-badge',

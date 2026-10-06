@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-import { useCompactInput } from './useCompactInput';
+import { useCompactInput } from '../useCompactInput';
 
 describe('useCompactInput', () => {
   it('should compute isCompact correctly when compact is explicitly set', () => {

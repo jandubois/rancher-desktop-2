@@ -1,6 +1,5 @@
 <script>
-import { LabeledTooltip } from '@rancher/components';
-
+import LabeledTooltip from '@pkg/components/form/LabeledTooltip.vue';
 import LabeledSelectPagination from '@pkg/components/form/labeled-select-utils/labeled-select-pagination';
 import CompactInput from '@pkg/mixins/compact-input';
 import LabeledFormElement from '@pkg/mixins/labeled-form-element';

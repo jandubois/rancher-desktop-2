@@ -1,6 +1,6 @@
 import { shallowMount } from '@vue/test-utils';
 
-import { BadgeState } from './index';
+import BadgeState from '../BadgeState.vue';
 
 describe('badgeState.vue', () => {
   it('renders props.msg when passed', () => {

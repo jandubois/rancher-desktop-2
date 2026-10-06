@@ -12,9 +12,9 @@
 </template>
 
 <script lang="ts">
-import { BadgeState } from '@rancher/components';
 import { defineComponent, PropType } from 'vue';
 
+import BadgeState from '@pkg/components/BadgeState.vue';
 import { mapTypedGetters } from '@pkg/entry/store';
 
 import type { IoRancherdesktopContainersV1alpha1Container } from '@rdd-client';

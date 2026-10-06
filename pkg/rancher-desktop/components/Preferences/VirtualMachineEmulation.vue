@@ -1,11 +1,12 @@
 <script lang="ts">
 
-import { RadioButton, RadioGroup } from '@rancher/components';
 import semver from 'semver';
 import { defineComponent } from 'vue';
 import { mapGetters, mapState } from 'vuex';
 
 import IncompatiblePreferencesAlert, { CompatiblePrefs } from '@pkg/components/IncompatiblePreferencesAlert.vue';
+import RadioButton from '@pkg/components/form/RadioButton.vue';
+import RadioGroup from '@pkg/components/form/RadioGroup.vue';
 import RdCheckbox from '@pkg/components/form/RdCheckbox.vue';
 import RdFieldset from '@pkg/components/form/RdFieldset.vue';
 import { MountType, Settings, VMType } from '@pkg/config/settings';

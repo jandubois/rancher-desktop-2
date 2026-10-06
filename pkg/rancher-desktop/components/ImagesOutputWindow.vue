@@ -1,8 +1,8 @@
 <script lang="ts">
 
-import { Banner } from '@rancher/components';
 import { defineComponent, PropType } from 'vue';
 
+import Banner from '@pkg/components/Banner.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
 import { ImageOutputCuller } from '@pkg/utils/imageOutputCuller';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';

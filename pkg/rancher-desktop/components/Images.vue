@@ -105,11 +105,12 @@
 </template>
 
 <script lang="ts">
-import { Card, Checkbox } from '@rancher/components';
 import { defineComponent, PropType } from 'vue';
 
+import Card from '@pkg/components/Card.vue';
 import ImagesOutputWindow from '@pkg/components/ImagesOutputWindow.vue';
 import SortableTable from '@pkg/components/SortableTable';
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 import { mapTypedActions, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import getImageOutputCuller, { ImageOutputCuller } from '@pkg/utils/imageOutputCuller';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';

@@ -1,6 +1,6 @@
 import { shallowMount, Wrapper } from '@vue/test-utils';
 
-import { Checkbox } from './index';
+import Checkbox from '../Checkbox.vue';
 
 describe('checkbox.vue', () => {
   const event = {

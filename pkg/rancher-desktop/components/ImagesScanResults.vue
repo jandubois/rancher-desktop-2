@@ -1,6 +1,5 @@
 <script>
-import { BadgeState } from '@rancher/components';
-
+import BadgeState from '@pkg/components/BadgeState.vue';
 import SortableTable from '@pkg/components/SortableTable';
 
 const SEVERITY_MAP = {
