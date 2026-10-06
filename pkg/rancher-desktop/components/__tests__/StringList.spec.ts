@@ -1,5 +1,5 @@
-/* eslint-disable jest/no-hooks */
 import { mount, VueWrapper } from '@vue/test-utils';
+
 import { StringList } from './index';
 
 describe('stringList.vue', () => {
@@ -255,7 +255,7 @@ describe('stringList.vue', () => {
 
         await removeButton.trigger('mousedown');
 
-        const inputField = await wrapper.find('[data-testid="item-create"]');
+        const inputField = wrapper.find('[data-testid="item-create"]');
 
         expect(inputField.exists()).toBe(false);
       });
@@ -410,7 +410,7 @@ describe('stringList.vue', () => {
             items,
             bulkAdditionDelimiter: delimiter,
             errorMessages:         { duplicate: 'error, item is duplicate.' },
-          }
+          },
         });
       });
 
@@ -538,7 +538,7 @@ describe('stringList.vue', () => {
             items,
             bulkAdditionDelimiter: delimiter,
             errorMessages:         { duplicate: 'error, item is duplicate.' },
-          }
+          },
         });
       });
 

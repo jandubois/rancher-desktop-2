@@ -1,11 +1,11 @@
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
-import { _VIEW } from '@shell/config/query-params';
 import RadioButton from '@components/Form/Radio/RadioButton.vue';
+import { _VIEW } from '@shell/config/query-params';
+import { PropType, defineComponent } from 'vue';
 
 interface Option {
-  value: unknown,
-  label: string,
+  value:        unknown,
+  label:        string,
   description?: string,
 }
 
@@ -17,7 +17,7 @@ export default defineComponent({
      */
     name: {
       type:     String,
-      required: true
+      required: true,
     },
 
     /**
@@ -25,7 +25,7 @@ export default defineComponent({
      */
     options: {
       type:     Array as PropType<Option[] | string[]>,
-      required: true
+      required: true,
     },
 
     /**
@@ -34,7 +34,7 @@ export default defineComponent({
      */
     labels: {
       type:    Array as PropType<string[]>,
-      default: null
+      default: null,
     },
 
     /**
@@ -42,7 +42,7 @@ export default defineComponent({
      */
     value: {
       type:    [Boolean, String, Object],
-      default: null
+      default: null,
     },
 
     /**
@@ -50,7 +50,7 @@ export default defineComponent({
      */
     disabled: {
       type:    Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -59,7 +59,7 @@ export default defineComponent({
      */
     mode: {
       type:    String,
-      default: 'edit'
+      default: 'edit',
     },
 
     /**
@@ -67,7 +67,7 @@ export default defineComponent({
      */
     label: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -75,7 +75,7 @@ export default defineComponent({
      */
     labelKey: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -83,7 +83,7 @@ export default defineComponent({
      */
     tooltip: {
       type:    [String, Object],
-      default: null
+      default: null,
     },
 
     /**
@@ -91,7 +91,7 @@ export default defineComponent({
      */
     tooltipKey: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -99,8 +99,8 @@ export default defineComponent({
      */
     row: {
       type:    Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   computed: {
@@ -118,12 +118,12 @@ export default defineComponent({
         } else if (this.labels) {
           out.push({
             label: this.labels[i],
-            value: opt
+            value: opt,
           });
         } else {
           out.push({
             label: opt,
-            value: opt
+            value: opt,
           });
         }
       }
@@ -143,7 +143,7 @@ export default defineComponent({
      */
     isDisabled(): boolean {
       return (this.disabled || this.isView);
-    }
+    },
   },
 
   methods: {
@@ -163,8 +163,8 @@ export default defineComponent({
       }
 
       this.$emit('update:value', opts[newIndex].value);
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -201,7 +201,7 @@ export default defineComponent({
     <!-- Group -->
     <div
       class="radio-group"
-      :class="{'row':row}"
+      :class="{ row }"
       tabindex="0"
       @keyup.down.stop="clickNext(1)"
       @keyup.up.stop="clickNext(-1)"

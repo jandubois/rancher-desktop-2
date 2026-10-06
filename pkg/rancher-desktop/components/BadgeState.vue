@@ -3,7 +3,7 @@ import { PropType, defineComponent } from 'vue';
 
 interface Badge {
   stateBackground: string;
-  stateDisplay: string;
+  stateDisplay:    string;
 }
 
 /**
@@ -18,7 +18,7 @@ export default defineComponent({
      */
     value: {
       type:    Object as PropType<Badge>,
-      default: null
+      default: null,
     },
 
     /**
@@ -26,7 +26,7 @@ export default defineComponent({
      */
     color: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -34,7 +34,7 @@ export default defineComponent({
      */
     icon: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -42,8 +42,8 @@ export default defineComponent({
      */
     label: {
       type:    String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   computed: {
@@ -53,8 +53,8 @@ export default defineComponent({
 
     msg(): string | null {
       return this.value?.stateDisplay || this.label;
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -63,7 +63,7 @@ export default defineComponent({
     <i
       v-if="icon"
       class="icon"
-      :class="{[icon]: true, 'mr-5': !!msg}"
+      :class="{ [icon]: true, 'mr-5': !!msg }"
     />{{ msg }}
   </span>
 </template>

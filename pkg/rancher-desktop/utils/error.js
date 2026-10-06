@@ -1,7 +1,7 @@
 import { isArray } from '@shell/utils/array';
 
 export class ClusterNotFoundError extends Error {
-  static NAME = 'ClusterNotFoundError'
+  static NAME = 'ClusterNotFoundError';
 
   constructor(message) {
     super(message);
@@ -13,7 +13,7 @@ export class ClusterNotFoundError extends Error {
  * An error occurred and the user should be redirected to a certain location (where this is handled)
  */
 export class RedirectToError extends Error {
-  static NAME = 'RedirectToError'
+  static NAME = 'RedirectToError';
 
   constructor(message, url) {
     super(message);
@@ -126,6 +126,6 @@ export const normalizeError = (err) => {
   return {
     ...err,
     message,
-    statusCode: (err.statusCode || err.status || (err.response && err.response.status) || 500)
+    statusCode: (err.statusCode || err.status || (err.response && err.response.status) || 500),
   };
 };

@@ -1,5 +1,6 @@
-import { h } from 'vue';
 import { mount } from '@vue/test-utils';
+import { h } from 'vue';
+
 import { RadioGroup } from './index';
 
 describe('component: RadioGroup', () => {
@@ -9,14 +10,14 @@ describe('component: RadioGroup', () => {
         propsData: {
           name:    'whatever',
           options: [{ label: 'whatever', value: 'whatever' }],
-          disabled
+          disabled,
         },
         slots: {
-          0: (props: {isDisabled: boolean}) => h('input', {
+          0: (props: { isDisabled: boolean }) => h('input', {
             id:       'test',
-            disabled: props.isDisabled
-          })
-        }
+            disabled: props.isDisabled,
+          }),
+        },
       });
 
       const slot = wrapper.find('#test').element as HTMLInputElement;

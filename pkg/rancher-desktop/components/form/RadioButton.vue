@@ -1,8 +1,7 @@
 <script lang="ts">
-// @ts-nocheck
-import { defineComponent } from 'vue';
 import { _VIEW } from '@shell/config/query-params';
 import { randomStr } from '@shell/utils/string';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -11,7 +10,7 @@ export default defineComponent({
      */
     name: {
       type:    String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -19,7 +18,7 @@ export default defineComponent({
      */
     val: {
       required:  true,
-      validator: () => true
+      validator: () => true,
     },
 
     /**
@@ -27,7 +26,7 @@ export default defineComponent({
      */
     value: {
       required:  true,
-      validator: () => true
+      validator: () => true,
     },
 
     /**
@@ -35,7 +34,7 @@ export default defineComponent({
      */
     label: {
       type:    String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -43,7 +42,7 @@ export default defineComponent({
      */
     disabled: {
       type:    Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -52,7 +51,7 @@ export default defineComponent({
      */
     mode: {
       type:    String,
-      default: 'edit'
+      default: 'edit',
     },
 
     /**
@@ -60,7 +59,7 @@ export default defineComponent({
      */
     descriptionKey: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -68,8 +67,8 @@ export default defineComponent({
      */
     description: {
       type:    String,
-      default: null
-    }
+      default: null,
+    },
   },
 
   data() {
@@ -104,7 +103,7 @@ export default defineComponent({
 
     hasLabelSlot(): boolean {
       return !!this.$slots.label;
-    }
+    },
   },
 
   watch: {
@@ -113,7 +112,7 @@ export default defineComponent({
       if (this.isChecked) {
         (this.$refs.custom as HTMLElement).focus();
       }
-    }
+    },
   },
 
   methods: {
@@ -129,13 +128,13 @@ export default defineComponent({
 
       this.$emit('update:value', this.val);
     },
-  }
+  },
 });
 </script>
 
 <template>
   <label
-    :class="{'disabled': isDisabled, 'radio-container': true}"
+    :class="{ disabled: isDisabled, 'radio-container': true }"
     @keydown.enter="clicked($event)"
     @keydown.space="clicked($event)"
     @click.stop="clicked($event)"
@@ -144,7 +143,7 @@ export default defineComponent({
       :id="randomString"
       :disabled="isDisabled"
       :name="name"
-      :value="''+val"
+      :value="'' + val"
       :checked="isChecked"
       type="radio"
       :tabindex="-1"
@@ -152,7 +151,7 @@ export default defineComponent({
     >
     <span
       ref="custom"
-      :class="[ isDisabled ? 'text-muted' : '', 'radio-custom']"
+      :class="[isDisabled ? 'text-muted' : '', 'radio-custom']"
       :tabindex="isDisabled ? -1 : 0"
       :aria-label="label"
       :aria-checked="isChecked"
@@ -160,7 +159,7 @@ export default defineComponent({
     />
     <div class="labeling">
       <label
-        :class="[ muteLabel ? 'text-muted' : '', 'radio-label', 'm-0']"
+        :class="[muteLabel ? 'text-muted' : '', 'radio-label', 'm-0']"
         :for="name"
       >
         <slot

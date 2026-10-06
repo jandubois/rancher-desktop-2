@@ -1,4 +1,5 @@
 import { shallowMount, VueWrapper } from '@vue/test-utils';
+
 import { ToggleSwitch } from './index';
 
 describe('toggleSwitch.vue', () => {
@@ -46,7 +47,7 @@ describe('toggleSwitch.vue', () => {
   it('emits an input event with a false value', async() => {
     const wrapper: VueWrapper<InstanceType<typeof ToggleSwitch>> = shallowMount(
       ToggleSwitch,
-      { propsData: { value: true } }
+      { propsData: { value: true } },
     );
 
     wrapper.vm.toggle(false);
@@ -81,7 +82,7 @@ describe('toggleSwitch.vue', () => {
         propsData: {
           value: true,
           offValue,
-        }
+        },
       });
 
     wrapper.vm.toggle(false);

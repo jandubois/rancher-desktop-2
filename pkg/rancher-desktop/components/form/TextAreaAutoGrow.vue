@@ -1,11 +1,10 @@
 <script lang="ts">
-// @ts-nocheck
-import { defineComponent } from 'vue';
-import debounce from 'lodash/debounce';
 import { _EDIT, _VIEW } from '@shell/config/query-params';
+import debounce from 'lodash/debounce';
+import { defineComponent } from 'vue';
 
 declare module 'vue/types/vue' {
-  /* eslint-disable no-unused-vars */
+
   interface Vue {
     queueResize(): void;
   }
@@ -17,12 +16,12 @@ export default defineComponent({
   props: {
     value: {
       type:     String,
-      required: true
+      required: true,
     },
 
     class: {
       type:    String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -31,7 +30,7 @@ export default defineComponent({
      */
     mode: {
       type:    String,
-      default: _EDIT
+      default: _EDIT,
     },
 
     /**
@@ -40,7 +39,7 @@ export default defineComponent({
      */
     minHeight: {
       type:    Number,
-      default: 25
+      default: 25,
     },
 
     /**
@@ -49,7 +48,7 @@ export default defineComponent({
      */
     maxHeight: {
       type:    Number,
-      default: 200
+      default: 200,
     },
 
     /**
@@ -57,7 +56,7 @@ export default defineComponent({
      */
     placeholder: {
       type:    String,
-      default: ''
+      default: '',
     },
 
     /**
@@ -66,7 +65,7 @@ export default defineComponent({
      */
     spellcheck: {
       type:    Boolean,
-      default: true
+      default: true,
     },
 
     /**
@@ -74,14 +73,14 @@ export default defineComponent({
      */
     disabled: {
       type:    Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data() {
     return {
       curHeight: this.minHeight,
-      overflow:  'hidden'
+      overflow:  'hidden',
     };
   },
 
@@ -103,7 +102,7 @@ export default defineComponent({
 
     className(): string {
       return this.class;
-    }
+    },
   },
 
   watch: {
@@ -111,8 +110,8 @@ export default defineComponent({
       deep: true,
       handler() {
         this.queueResize();
-      }
-    }
+      },
+    },
   },
 
   created() {
@@ -164,8 +163,8 @@ export default defineComponent({
       el.style.height = `${ neu }px`;
 
       this.curHeight = neu;
-    }
-  }
+    },
+  },
 });
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { nlToBr } from '@shell/utils/string';
 import { stringify } from '@shell/utils/error';
+import { nlToBr } from '@shell/utils/string';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -11,43 +11,43 @@ export default defineComponent({
      */
     color: {
       type:    String,
-      default: 'secondary'
+      default: 'secondary',
     },
     /**
      * The label to display as the banner's default content.
      */
     label: {
       type:    [String, Error, Object],
-      default: null
+      default: null,
     },
     /**
      * The i18n key for the label to display as the banner's default content.
      */
     labelKey: {
       type:    String,
-      default: null
+      default: null,
     },
     /**
      * Add icon for the banner
      */
     icon: {
       type:    String,
-      default: null
+      default: null,
     },
     /**
      * Toggles the banner's close button.
      */
     closable: {
       type:    Boolean,
-      default: false
+      default: false,
     },
     /**
      * Toggles the stacked class for the banner.
      */
     stacked: {
       type:    Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     /**
@@ -55,9 +55,9 @@ export default defineComponent({
      */
     messageLabel(): string | void {
       return !(typeof this.label === 'string') ? stringify(this.label) : undefined;
-    }
+    },
   },
-  methods: { nlToBr }
+  methods: { nlToBr },
 });
 </script>
 <template>
@@ -83,7 +83,7 @@ export default defineComponent({
       :class="{
         closable,
         stacked,
-        icon
+        icon,
       }"
     >
       <slot>

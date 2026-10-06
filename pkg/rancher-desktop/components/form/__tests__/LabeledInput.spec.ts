@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils';
+
 import { LabeledInput } from './index';
 
 describe('component: LabeledInput', () => {
@@ -7,7 +8,7 @@ describe('component: LabeledInput', () => {
     const delay = 1;
     const wrapper = mount(LabeledInput, {
       propsData: { delay },
-      mocks:     { $store: { getters: { 'i18n/t': jest.fn() } } }
+      mocks:     { $store: { getters: { 'i18n/t': jest.fn() } } },
     });
 
     jest.useFakeTimers();
@@ -25,7 +26,7 @@ describe('component: LabeledInput', () => {
     const delay = 1;
     const wrapper = mount(LabeledInput, {
       propsData: { delay, multiline: true },
-      mocks:     { $store: { getters: { 'i18n/t': jest.fn() } } }
+      mocks:     { $store: { getters: { 'i18n/t': jest.fn() } } },
     });
 
     jest.useFakeTimers();

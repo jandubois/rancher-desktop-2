@@ -1,8 +1,8 @@
 import { computed, ComputedRef } from 'vue';
 
 interface CompactInputProps {
-  compact?: boolean | null;
-  label?: string;
+  compact?:  boolean | null;
+  label?:    string;
   labelKey?: string;
 }
 

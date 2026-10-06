@@ -1,11 +1,12 @@
 import { shallowMount, Wrapper } from '@vue/test-utils';
+
 import { Checkbox } from './index';
 
 describe('checkbox.vue', () => {
   const event = {
     target:          { tagName: 'input', href: null },
     stopPropagation: () => { },
-    preventDefault:  () => { }
+    preventDefault:  () => { },
   } as unknown as MouseEvent;
 
   it('is unchecked by default', () => {

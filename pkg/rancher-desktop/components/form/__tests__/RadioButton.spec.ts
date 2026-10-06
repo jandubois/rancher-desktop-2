@@ -1,4 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
+
 import { RadioButton } from './index';
 
 describe('radioButton.vue', () => {
@@ -13,8 +14,8 @@ describe('radioButton.vue', () => {
       RadioButton,
       {
         propsData: {
-          label: 'Test Label', val: {}, value: {}
-        }
+          label: 'Test Label', val: {}, value: {},
+        },
       });
 
     expect(wrapper.find('.radio-label').text()).toBe('Test Label');
@@ -24,7 +25,7 @@ describe('radioButton.vue', () => {
     const wrapper = shallowMount(RadioButton, {
       slots:     { label: 'Test Label - Slot' },
       propsData: {
-        label: 'Test Label - Props', val: {}, value: {}
+        label: 'Test Label - Props', val: {}, value: {},
       },
     });
 

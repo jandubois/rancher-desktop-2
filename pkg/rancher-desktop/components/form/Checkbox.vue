@@ -1,8 +1,8 @@
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
 import { _EDIT, _VIEW } from '@shell/config/query-params';
 import { addObject, removeObject } from '@shell/utils/array';
 import cloneDeep from 'lodash/cloneDeep';
+import { PropType, defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Checkbox',
@@ -13,7 +13,7 @@ export default defineComponent({
      */
     value: {
       type:    [Boolean, Array, String] as PropType<boolean | boolean[] | string>,
-      default: false
+      default: false,
     },
 
     /**
@@ -21,7 +21,7 @@ export default defineComponent({
      */
     label: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -29,7 +29,7 @@ export default defineComponent({
      */
     labelKey: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -37,7 +37,7 @@ export default defineComponent({
      */
     id: {
       type:    String,
-      default: String(Math.random() * 1000)
+      default: String(Math.random() * 1000),
     },
 
     /**
@@ -45,7 +45,7 @@ export default defineComponent({
      */
     disabled: {
       type:    Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -55,7 +55,7 @@ export default defineComponent({
      */
     indeterminate: {
       type:    Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -64,7 +64,7 @@ export default defineComponent({
      */
     mode: {
       type:    String,
-      default: _EDIT
+      default: _EDIT,
     },
 
     /**
@@ -72,7 +72,7 @@ export default defineComponent({
      */
     tooltip: {
       type:    [String, Object],
-      default: null
+      default: null,
     },
 
     /**
@@ -80,7 +80,7 @@ export default defineComponent({
      */
     tooltipKey: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -88,7 +88,7 @@ export default defineComponent({
      */
     valueWhenTrue: {
       type:    [Boolean, String, Number],
-      default: true
+      default: true,
     },
 
     /**
@@ -96,7 +96,7 @@ export default defineComponent({
      */
     descriptionKey: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -104,7 +104,7 @@ export default defineComponent({
      */
     description: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -112,7 +112,7 @@ export default defineComponent({
      */
     primary: {
       type:    Boolean,
-      default: false
+      default: false,
     },
   },
 
@@ -133,7 +133,7 @@ export default defineComponent({
      */
     isChecked(): boolean {
       return this.isMulti(this.value) ? this.findTrueValues(this.value) : this.value === this.valueWhenTrue;
-    }
+    },
   },
 
   methods: {
@@ -159,7 +159,7 @@ export default defineComponent({
         shiftKey:   event.shiftKey,
         altKey:     event.altKey,
         ctrlKey:    event.ctrlKey,
-        metaKey:    event.metaKey
+        metaKey:    event.metaKey,
       };
 
       const click = new CustomEvent('click', customEvent);
@@ -203,8 +203,8 @@ export default defineComponent({
      */
     findTrueValues(value: boolean[]): boolean {
       return value.find((v) => v === this.valueWhenTrue) || false;
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -215,7 +215,7 @@ export default defineComponent({
   >
     <label
       class="checkbox-container"
-      :class="{ 'disabled': isDisabled}"
+      :class="{ disabled: isDisabled }"
       :for="id"
       @keydown.enter.prevent="clicked($event)"
       @keydown.space.prevent="clicked($event)"
@@ -231,7 +231,7 @@ export default defineComponent({
       >
       <span
         class="checkbox-custom"
-        :class="{indeterminate: indeterminate}"
+        :class="{ indeterminate }"
         :tabindex="isDisabled ? -1 : 0"
         :aria-label="label"
         :aria-checked="!!value"

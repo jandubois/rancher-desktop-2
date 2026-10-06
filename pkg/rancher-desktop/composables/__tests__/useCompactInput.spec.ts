@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+
 import { useCompactInput } from './useCompactInput';
 
 describe('useCompactInput', () => {

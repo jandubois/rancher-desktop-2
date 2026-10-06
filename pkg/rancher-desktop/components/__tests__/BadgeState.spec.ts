@@ -1,4 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
+
 import { BadgeState } from './index';
 
 describe('badgeState.vue', () => {

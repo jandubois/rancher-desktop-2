@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils';
+
 import { Banner } from './index';
 
 describe('component: Banner', () => {

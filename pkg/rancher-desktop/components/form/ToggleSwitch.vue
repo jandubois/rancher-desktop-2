@@ -7,7 +7,7 @@ export default defineComponent({
   props: {
     value: {
       type:    [Boolean, String, Number],
-      default: false
+      default: false,
     },
 
     offValue: {
@@ -30,8 +30,8 @@ export default defineComponent({
       default: '',
     },
   },
-  data() {
-    return { state: false as StateType };
+  data(): { state: StateType } {
+    return { state: false };
   },
 
   watch: {
@@ -39,16 +39,16 @@ export default defineComponent({
       handler() {
         this.state = this.value === this.onValue;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
 
   methods: {
     toggle(neu: StateType | null) {
       this.state = neu === null ? !this.state : neu;
       this.$emit('update:value', this.state ? this.onValue : this.offValue);
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -56,7 +56,7 @@ export default defineComponent({
   <span class="toggle-container">
     <span
       class="label no-select hand"
-      :class="{ active: !state}"
+      :class="{ active: !state }"
       @click="toggle(false)"
     >{{ offLabel }}</span>
     <label class="switch hand">
@@ -69,7 +69,7 @@ export default defineComponent({
     </label>
     <span
       class="label no-select hand"
-      :class="{ active: state}"
+      :class="{ active: state }"
       @click="toggle(true)"
     >{{ onLabel }}</span>
   </span>

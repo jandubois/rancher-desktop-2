@@ -1,60 +1,60 @@
-import { ref, computed, ComputedRef, Ref } from 'vue';
 import { _VIEW, _EDIT } from '@shell/config/query-params';
+import { ref, computed, ComputedRef, Ref } from 'vue';
 
 interface LabeledFormElementProps {
-  mode: string;
-  value: string | number | Record<string, any>
-  required: boolean;
-  disabled: boolean;
-  rules: Array<any>;
+  mode:          string;
+  value:         string | number | Record<string, any>
+  required:      boolean;
+  disabled:      boolean;
+  rules:         any[];
   requireDirty?: boolean;
 }
 
 interface UseLabeledFormElement {
-  raised: Ref<boolean>;
-  focused: Ref<boolean>;
-  blurred: Ref<number | null>;
-  requiredField: ComputedRef<any>;
-  isDisabled: ComputedRef<any>;
+  raised:            Ref<boolean>;
+  focused:           Ref<boolean>;
+  blurred:           Ref<number | null>;
+  requiredField:     ComputedRef<any>;
+  isDisabled:        ComputedRef<any>;
   validationMessage: ComputedRef<any>;
-  onFocusLabeled: () => void;
-  onBlurLabeled: () => void;
+  onFocusLabeled:    () => void;
+  onBlurLabeled:     () => void;
 }
 
 export const labeledFormElementProps = {
   tooltipKey: {
     type:    String,
-    default: null
+    default: null,
   },
   placeholder: {
     type:    [String, Number],
-    default: ''
+    default: '',
   },
   placeholderKey: {
     type:    String,
-    default: null
+    default: null,
   },
   label: {
     type:    String,
-    default: null
+    default: null,
   },
   labelKey: {
     type:    String,
-    default: null
+    default: null,
   },
   value: {
     type:    [String, Number, Object],
-    default: ''
+    default: '',
   },
   mode: {
     type:    String,
     default: _EDIT,
   },
   rules: {
-    default:   (): Array<unknown> => [],
+    default:   (): unknown[] => [],
     type:      Array,
     // we only want functions in the rules array
-    validator: (rules: Array<unknown>): boolean => rules.every((rule: unknown) => ['function'].includes(typeof rule))
+    validator: (rules: unknown[]): boolean => rules.every((rule: unknown) => ['function'].includes(typeof rule)),
   },
   required: {
     type:    Boolean,
@@ -66,8 +66,8 @@ export const labeledFormElementProps = {
   },
   requireDirty: {
     default: true,
-    type:    Boolean
-  }
+    type:    Boolean,
+  },
 };
 
 export const useLabeledFormElement = (props: LabeledFormElementProps, emit: (event: string, ...args: any[]) => void): UseLabeledFormElement => {
@@ -95,7 +95,7 @@ export const useLabeledFormElement = (props: LabeledFormElementProps, emit: (eve
     if (requiredRule && blurred.value && !focused.value) {
       const message = requiredRule(value);
 
-      if (!!message) {
+      if (message) {
         emit('update:validation', false);
 
         return message;
@@ -144,6 +144,6 @@ export const useLabeledFormElement = (props: LabeledFormElementProps, emit: (eve
     onBlurLabeled,
     isDisabled,
     validationMessage,
-    requiredField
+    requiredField,
   };
 };

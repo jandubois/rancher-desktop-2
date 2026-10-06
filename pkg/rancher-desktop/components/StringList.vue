@@ -1,9 +1,8 @@
 <script lang="ts">
-// @ts-nocheck
-import { PropType, defineComponent } from 'vue';
 
 import LabeledInput from '@components/Form/LabeledInput/LabeledInput.vue';
 import { findStringIndex, hasDuplicatedStrings } from '@shell/utils/array';
+import { PropType, defineComponent } from 'vue';
 
 type Error = 'duplicate';
 type ErrorMessages = Record<Error, string>;
@@ -89,7 +88,7 @@ export default defineComponent({
     bulkAdditionDelimiter: {
       type:    RegExp,
       default: null,
-    }
+    },
   },
   data() {
     return {
@@ -97,7 +96,7 @@ export default defineComponent({
       selected:     null as string | null,
       editedItem:   undefined as string | undefined,
       isCreateItem: false,
-      errors:       { duplicate: false } as Record<Error, boolean>
+      errors:       { duplicate: false },
     };
   },
 
@@ -128,8 +127,8 @@ export default defineComponent({
       handler(val) {
         this.$emit('errors', val);
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
 
   methods: {
@@ -140,7 +139,7 @@ export default defineComponent({
       this.toggleError(
         'duplicate',
         hasDuplicatedStrings(items, this.caseSensitive),
-        this.isCreateItem ? INPUT.create : INPUT.edit
+        this.isCreateItem ? INPUT.create : INPUT.edit,
       );
     },
 
@@ -154,7 +153,7 @@ export default defineComponent({
     onSelectNext(arrow: Arrow) {
       const index = findStringIndex(
         this.items,
-        this.selected as string,
+        this.selected!,
       );
 
       if (index !== -1) {
@@ -162,7 +161,7 @@ export default defineComponent({
          * Select next item in the arrow's direction if it exists,
          * else select again this.selected (do nothing)
          */
-        const item = (this.items[index + DIRECTION[arrow]] || this.selected) as string;
+        const item = (this.items[index + DIRECTION[arrow]] || this.selected)!;
 
         this.onSelect(item);
         this.moveScrollbar(arrow);
@@ -230,7 +229,7 @@ export default defineComponent({
       const box = this.getElemByRef(BOX) as HTMLElement;
       const item = this.getElemByRef(this.selected || '') as HTMLElement;
 
-      if (box && item && item.className.includes(CLASS.item)) {
+      if (box && item?.className.includes(CLASS.item)) {
         const boxRect = box.getClientRects()[0];
         const itemRect = item.getClientRects()[0];
 
@@ -438,7 +437,7 @@ export default defineComponent({
         :ref="item"
         :class="{
           selected: selected === item,
-          readonly
+          readonly,
         }"
         :data-testid="`div-item-${item}`"
         class="item static"
@@ -486,7 +485,7 @@ export default defineComponent({
     <div
       v-if="!readonly"
       class="string-list-footer"
-      :class="{[actionsPosition]: true }"
+      :class="{ [actionsPosition]: true }"
     >
       <div
         data-testid="div-action-buttons"

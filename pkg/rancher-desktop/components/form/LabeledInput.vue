@@ -1,14 +1,13 @@
 <script lang="ts">
-// @ts-nocheck
-import { defineComponent } from 'vue';
 import TextAreaAutoGrow from '@components/Form/TextArea/TextAreaAutoGrow.vue';
 import LabeledTooltip from '@components/LabeledTooltip/LabeledTooltip.vue';
-import { escapeHtml } from '@shell/utils/string';
-import cronstrue from 'cronstrue';
-import { isValidCron } from 'cron-validator';
-import { debounce } from 'lodash';
-import { useLabeledFormElement, labeledFormElementProps } from '@shell/composables/useLabeledFormElement';
 import { useCompactInput } from '@shell/composables/useCompactInput';
+import { useLabeledFormElement, labeledFormElementProps } from '@shell/composables/useLabeledFormElement';
+import { escapeHtml } from '@shell/utils/string';
+import { isValidCron } from 'cron-validator';
+import cronstrue from 'cronstrue';
+import { debounce } from 'lodash';
+import { defineComponent } from 'vue';
 
 declare module 'vue/types/vue' {
   interface Vue {
@@ -29,7 +28,7 @@ export default defineComponent({
      */
     type: {
       type:    String,
-      default: 'text'
+      default: 'text',
     },
 
     /**
@@ -38,7 +37,7 @@ export default defineComponent({
      */
     status: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -46,7 +45,7 @@ export default defineComponent({
      */
     subLabel: {
       type:    String,
-      default: null
+      default: null,
     },
 
     /**
@@ -54,7 +53,7 @@ export default defineComponent({
      */
     tooltip: {
       default: null,
-      type:    [String, Object]
+      type:    [String, Object],
     },
 
     /**
@@ -62,7 +61,7 @@ export default defineComponent({
      */
     hoverTooltip: {
       type:    Boolean,
-      default: true
+      default: true,
     },
 
     /**
@@ -71,7 +70,7 @@ export default defineComponent({
      */
     ignorePasswordManagers: {
       default: false,
-      type:    Boolean
+      type:    Boolean,
     },
 
     /**
@@ -79,7 +78,7 @@ export default defineComponent({
      */
     maxlength: {
       type:    Number,
-      default: null
+      default: null,
     },
 
     /**
@@ -88,7 +87,7 @@ export default defineComponent({
      */
     hideArrows: {
       type:    Boolean,
-      default: false
+      default: false,
     },
 
     /**
@@ -96,13 +95,13 @@ export default defineComponent({
      */
     delay: {
       type:    Number,
-      default: 0
+      default: 0,
     },
 
     class: {
       type:    String,
-      default: ''
-    }
+      default: '',
+    },
   },
 
   setup(props, { emit }) {
@@ -112,7 +111,7 @@ export default defineComponent({
       onBlurLabeled,
       isDisabled,
       validationMessage,
-      requiredField
+      requiredField,
     } = useLabeledFormElement(props, emit);
     const { isCompact } = useCompactInput(props);
 
@@ -210,7 +209,7 @@ export default defineComponent({
 
     className() {
       return this.class;
-    }
+    },
   },
 
   created() {
@@ -282,8 +281,8 @@ export default defineComponent({
       this.onBlurLabeled();
     },
 
-    escapeHtml
-  }
+    escapeHtml,
+  },
 });
 </script>
 
@@ -299,7 +298,7 @@ export default defineComponent({
       'v-popper--has-tooltip': hasTooltip,
       'compact-input': isCompact,
       hideArrows,
-      [className]: true
+      [className]: true,
     }"
   >
     <slot name="label">

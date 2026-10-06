@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils';
+
 import { Card } from './index';
 
 describe('component: Card', () => {
@@ -8,7 +9,7 @@ describe('component: Card', () => {
   it('should have a card title', () => {
     const wrapper = mount(Card, {
       propsData: { title },
-      slots:     { title: '<div>Card title</div>' }
+      slots:     { title: '<div>Card title</div>' },
     });
 
     const element = wrapper.find('[data-testid="card-title-slot"]');
@@ -20,7 +21,7 @@ describe('component: Card', () => {
   it('should have a card body', () => {
     const wrapper = mount(Card, {
       propsData: { body },
-      slots:     { body: '<div>Card body</div>' }
+      slots:     { body: '<div>Card body</div>' },
     });
     const element = wrapper.find('[data-testid="card-body-slot"]');
 

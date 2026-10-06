@@ -9,55 +9,55 @@ export default defineComponent({
      */
     title: {
       type:    String,
-      default: ''
+      default: '',
     },
     /**
      * The text content for the card's body.
      */
     content: {
       type:    String,
-      default: ''
+      default: '',
     },
     /**
      * The function to invoke when the default action button is clicked.
      */
     buttonAction: {
       type:    Function as PropType<(event: MouseEvent) => void>,
-      default: (): void => { }
+      default: (): void => { },
     },
     /**
      * The text for the default action button.
      */
     buttonText: {
       type:    String,
-      default: 'go'
+      default: 'go',
     },
     /**
      * Toggles the card's highlight-border class.
      */
     showHighlightBorder: {
       type:    Boolean,
-      default: true
+      default: true,
     },
     /**
      * Toggles the card's Actions section.
      */
     showActions: {
       type:    Boolean,
-      default: true
+      default: true,
     },
     sticky: {
       type:    Boolean,
       default: false,
     },
-  }
+  },
 });
 </script>
 
 <template>
   <div
     class="card-container"
-    :class="{'highlight-border': showHighlightBorder, 'card-sticky': sticky}"
+    :class="{ 'highlight-border': showHighlightBorder, 'card-sticky': sticky }"
     data-testid="card"
   >
     <div class="card-wrap">

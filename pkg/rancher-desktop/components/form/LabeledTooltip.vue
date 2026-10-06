@@ -8,7 +8,7 @@ export default defineComponent({
      */
     value: {
       type:    [String, Object],
-      default: null
+      default: null,
     },
 
     /**
@@ -17,7 +17,7 @@ export default defineComponent({
      */
     status: {
       type:    String,
-      default: 'error'
+      default: 'error',
     },
 
     /**
@@ -25,19 +25,19 @@ export default defineComponent({
      */
     hover: {
       type:    Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   computed: {
     iconClass(): string {
       return this.status === 'error' ? 'icon-warning' : 'icon-info';
-    }
+    },
   },
   methods: {
     isObject(value: string | Record<string, unknown>): value is Record<string, unknown> {
       return typeof value === 'object' && value !== null && !!value.content;
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -45,18 +45,18 @@ export default defineComponent({
   <div
     ref="container"
     class="labeled-tooltip"
-    :class="{[status]: true, hoverable: hover}"
+    :class="{ [status]: true, hoverable: hover }"
   >
     <template v-if="hover">
       <i
-        v-clean-tooltip="isObject(value) ? { ...{content: value.content, classes: [`tooltip-${status}`]}, ...value } : value"
-        :class="{'hover':!value, [iconClass]: true}"
+        v-clean-tooltip="isObject(value) ? { ...{ content: value.content, classes: [`tooltip-${status}`] }, ...value } : value"
+        :class="{ hover: !value, [iconClass]: true }"
         class="icon status-icon"
       />
     </template>
     <template v-else>
       <i
-        :class="{'hover':!value}"
+        :class="{ hover: !value }"
         class="icon status-icon"
       />
       <div
