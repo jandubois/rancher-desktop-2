@@ -6,23 +6,16 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"os/exec"
-	"runtime"
-	"strconv"
 	"strings"
 
 	"al.essio.dev/pkg/shellescape"
-	"github.com/coreos/go-semver/semver"
-	"github.com/lima-vm/lima/v2/pkg/limatype"
-	"github.com/lima-vm/lima/v2/pkg/sshutil"
-	"github.com/lima-vm/lima/v2/pkg/store"
 	"github.com/mattn/go-isatty"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 )
 
@@ -63,21 +56,9 @@ func limaVMShellAction(cmd *cobra.Command, args []string) error {
 	}
 
 	// Get the Lima instance from the store
-	inst, err := store.Inspect(ctx, args[0])
+	inst, err := guestexec.Inspect(ctx, args[0])
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("instance %q does not exist on disk", args[0])
-		}
 		return err
-	}
-	if len(inst.Errors) > 0 {
-		return fmt.Errorf("instance %q has configuration errors: %w", args[0], errors.Join(inst.Errors...))
-	}
-	if inst.Config == nil {
-		return fmt.Errorf("instance %q has no configuration", args[0])
-	}
-	if inst.Status != limatype.StatusRunning {
-		return fmt.Errorf("instance %q is not running (status: %s), use 'rdd lima start %s' first", args[0], inst.Status, args[0])
 	}
 
 	// Build working directory change command
@@ -133,61 +114,16 @@ func limaVMShellAction(cmd *cobra.Command, args []string) error {
 	}
 
 	// Build SSH command
-	sshExe, err := sshutil.NewSSHExe()
-	if err != nil {
-		return err
-	}
-
-	sshOpts, err := sshutil.SSHOpts(
-		ctx,
-		sshExe,
-		inst.Dir,
-		*inst.Config.User.Name,
-		*inst.Config.SSH.LoadDotSSHPubKeys,
-		*inst.Config.SSH.ForwardAgent,
-		*inst.Config.SSH.ForwardX11,
-		*inst.Config.SSH.ForwardX11Trusted)
-	if err != nil {
-		return err
-	}
-
-	if runtime.GOOS == "windows" {
-		sshOpts = sshutil.SSHOptsRemovingControlPath(sshOpts)
-	}
-
-	sshArgs := append([]string{}, sshExe.Args...)
-	sshArgs = append(sshArgs, sshutil.SSHArgsFromOpts(sshOpts)...)
-
-	if isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsCygwinTerminal(os.Stdout.Fd()) {
-		sshArgs = append(sshArgs, "-t")
-	}
-
+	var opts guestexec.Options
+	opts.TTY = isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsCygwinTerminal(os.Stdout.Fd())
 	if _, present := os.LookupEnv("COLORTERM"); present {
-		sshArgs = append(sshArgs, "-o", "SendEnv=COLORTERM")
+		opts.SendEnv = []string{"COLORTERM"}
 	}
 
-	logLevel := "ERROR"
-	olderSSH := sshutil.DetectOpenSSHVersion(ctx, sshExe).LessThan(*semver.New("8.9.0"))
-	if olderSSH {
-		logLevel = "QUIET"
+	sshCmd, err := guestexec.Command(ctx, inst, script, opts)
+	if err != nil {
+		return err
 	}
-
-	// ConnectTimeout caps the TCP handshake at 30s. ServerAliveInterval=30
-	// with ServerAliveCountMax=3 closes a wedged session after ~90s of
-	// unanswered keep-alives. Interactive shells and long-running commands
-	// ack the keep-alives and stay connected.
-	sshArgs = append(sshArgs, []string{
-		"-o", fmt.Sprintf("LogLevel=%s", logLevel),
-		"-o", "ConnectTimeout=30",
-		"-o", "ServerAliveInterval=30",
-		"-o", "ServerAliveCountMax=3",
-		"-p", strconv.Itoa(inst.SSHLocalPort),
-		inst.SSHAddress,
-		"--",
-		script,
-	}...)
-
-	sshCmd := exec.CommandContext(ctx, sshExe.Exe, sshArgs...)
 	sshCmd.Stdin = os.Stdin
 	sshCmd.Stdout = os.Stdout
 	sshCmd.Stderr = os.Stderr
