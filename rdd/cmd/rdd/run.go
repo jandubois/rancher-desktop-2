@@ -169,11 +169,10 @@ func execCommand(ctx context.Context, args []string) error {
 	console.Repair()
 
 	err := command.Run()
-	if exitErr, ok := errors.AsType[*exec.ExitError](err); ok {
-		// A signal-killed child has no exit code: ExitCode() returns -1, which
-		// os.Exit maps to 255 rather than the shell's 128+signal. Wiring up
-		// signal handling (see above) would let us propagate 128+signal.
-		return &cliexit.Error{Code: exitErr.ExitCode()}
+	// Wiring up signal handling (see above) would let rdd exit with
+	// 128+signal for a signal-killed child, instead of 255.
+	if exitErr := cliexit.ChildExit(err); exitErr != nil {
+		return exitErr
 	}
 	if err != nil {
 		return fmt.Errorf("run %s: %w", args[0], err)

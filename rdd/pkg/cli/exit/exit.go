@@ -9,6 +9,7 @@ package exit
 import (
 	"context"
 	"errors"
+	"os/exec"
 )
 
 // Predefined exit codes. 0 and 1 are the defaults handled by main; 2 is
@@ -65,4 +66,17 @@ func Classify(err error) error {
 		return Timeout(err)
 	}
 	return err
+}
+
+// ChildExit returns an *Error that makes main exit with the exit code of a
+// child process that failed, or nil when err does not wrap an [exec.ExitError].
+// The *Error has no message, because the child has reported its own failure.
+func ChildExit(err error) *Error {
+	exitErr, ok := errors.AsType[*exec.ExitError](err)
+	if !ok {
+		return nil
+	}
+	// A signal-killed child has no exit code. ExitCode() returns -1, which
+	// os.Exit maps to 255 rather than the shell's 128+signal.
+	return &Error{Code: exitErr.ExitCode()}
 }

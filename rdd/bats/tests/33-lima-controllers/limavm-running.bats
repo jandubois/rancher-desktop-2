@@ -171,6 +171,10 @@ delete_test_vm() {
     assert_line "Linux"
 }
 
+@test "shell propagates the remote exit code" {
+    run -42 rdd lima shell "${VM_NAME}" sh -c 'exit 42'
+}
+
 @test "shell fails when VM is not running" {
     # Create a stopped VM to test shell error
     rdd ctl apply -f - <<EOF

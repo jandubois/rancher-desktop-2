@@ -15,6 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	cliexit "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/exit"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 )
@@ -130,5 +131,11 @@ func limaVMShellAction(cmd *cobra.Command, args []string) error {
 
 	logrus.Debugf("executing ssh: %+v", sshCmd.Args)
 
-	return sshCmd.Run()
+	err = sshCmd.Run()
+	// ssh exits with the remote command's exit code, or 255 when ssh itself
+	// fails.
+	if exitErr := cliexit.ChildExit(err); exitErr != nil {
+		return exitErr
+	}
+	return err
 }
