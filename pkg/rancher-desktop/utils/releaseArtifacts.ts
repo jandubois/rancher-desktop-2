@@ -1,7 +1,12 @@
 /**
  * Names of release artifacts: `rancher-desktop-<version>.<platform>.<arch>.<ext>`
  * for the application, `rdd.<version>.<platform>.<arch>[.exe]` for the daemon.
- * The build writes these names and the updater looks them up.
+ * The build writes these names and the updater looks them up. The app also
+ * finds rdd in a resources directory named by artifactPlatform.
+ *
+ * Build scripts load this module in plain Node, so do not import anything here
+ * that works only in Electron's main process, such as a native module built
+ * for Electron.
  */
 
 export type ArtifactPlatform = 'darwin' | 'linux' | 'windows';
