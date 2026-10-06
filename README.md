@@ -144,7 +144,7 @@ you'll need to `source` that file.
 Currently we build Rancher Desktop with Node 22. To install it, run:
 
 ```
-nvm install 22.14
+nvm install 22
 ```
 
 Next, you'll need to install the yarn package manager:
@@ -165,7 +165,7 @@ yarn
 Ensure you have the following installed:
 
 - [Node.js][Node.js] v22. **Make sure you have any development packages
-  installed.** For example, on openSUSE Leap 15.6 you would need to install
+  installed.** For example, on openSUSE Leap 16.0 you would need to install
   `nodejs22` and `nodejs22-devel`.
 
 - [yarn classic][yarn-classic]
