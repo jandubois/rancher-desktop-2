@@ -175,6 +175,15 @@ delete_test_vm() {
     run -42 rdd lima shell "${VM_NAME}" sh -c 'exit 42'
 }
 
+@test "shell starts in the translated host working directory" {
+    skip_on_unix "only the WSL2 guest translates the working directory"
+    run -0 host_path "${PWD}"
+    drive=${output:0:1}
+    expected="/mnt/${drive,,}${output:2}"
+    run -0 rdd lima shell "${VM_NAME}" pwd
+    assert_line "${expected}"
+}
+
 @test "shell fails when VM is not running" {
     # Create a stopped VM to test shell error
     rdd ctl apply -f - <<EOF

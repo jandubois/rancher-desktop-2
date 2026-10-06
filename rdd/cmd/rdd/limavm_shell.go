@@ -8,6 +8,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"al.essio.dev/pkg/shellescape"
@@ -70,8 +71,13 @@ func limaVMShellAction(cmd *cobra.Command, args []string) error {
 	}
 	if workDir != "" {
 		changeDirCmd = fmt.Sprintf("cd %s || exit 1", shellescape.Quote(workDir))
-	} else if len(inst.Config.Mounts) > 0 {
+	} else if len(inst.Config.Mounts) > 0 || runtime.GOOS == "windows" {
+		// The WSL2 guest sees every host drive under /mnt, whatever the
+		// template's mounts say.
 		hostCurrentDir, err := os.Getwd()
+		if err == nil {
+			hostCurrentDir, err = guestDir(hostCurrentDir)
+		}
 		if err == nil {
 			changeDirCmd = fmt.Sprintf("cd %s", shellescape.Quote(hostCurrentDir))
 		} else {
@@ -79,6 +85,9 @@ func limaVMShellAction(cmd *cobra.Command, args []string) error {
 			logrus.WithError(err).Warn("failed to get the current directory")
 		}
 		hostHomeDir, err := os.UserHomeDir()
+		if err == nil {
+			hostHomeDir, err = guestDir(hostHomeDir)
+		}
 		if err == nil {
 			changeDirCmd = fmt.Sprintf("%s || cd %s", changeDirCmd, shellescape.Quote(hostHomeDir))
 		} else {
@@ -138,4 +147,13 @@ func limaVMShellAction(cmd *cobra.Command, args []string) error {
 		return exitErr
 	}
 	return err
+}
+
+// guestDir returns the path at which the guest sees the host directory dir.
+// Only the WSL2 guest on Windows needs a translation.
+func guestDir(dir string) (string, error) {
+	if runtime.GOOS != "windows" {
+		return dir, nil
+	}
+	return guestexec.TranslateHostPath(dir)
 }
