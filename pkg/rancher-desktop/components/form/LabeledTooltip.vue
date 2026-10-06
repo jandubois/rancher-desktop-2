@@ -1,41 +1,63 @@
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   props: {
+    /**
+     * The Labeled Tooltip value.
+     */
     value: {
       type:    [String, Object],
-      default: null,
+      default: null
     },
 
+    /**
+     * The status for the Labeled Tooltip. Controls the Labeled Tooltip class.
+     * @values info, success, warning, error
+     */
     status: {
       type:    String,
-      default: 'error',
+      default: 'error'
     },
 
+    /**
+     * Displays the Labeled Tooltip on mouse hover.
+     */
     hover: {
       type:    Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
-};
+  computed: {
+    iconClass(): string {
+      return this.status === 'error' ? 'icon-warning' : 'icon-info';
+    }
+  },
+  methods: {
+    isObject(value: string | Record<string, unknown>): value is Record<string, unknown> {
+      return typeof value === 'object' && value !== null && !!value.content;
+    }
+  }
+});
 </script>
 
 <template>
   <div
     ref="container"
     class="labeled-tooltip"
-    :class="{ [status]: true, hoverable: hover }"
+    :class="{[status]: true, hoverable: hover}"
   >
     <template v-if="hover">
       <i
-        v-tooltip="value.content ? { ...{ content: value.content, classes: [`tooltip-${status}`] }, ...value } : value"
-        :class="{ hover: !value }"
-        class="icon icon-info-circle status-icon"
+        v-clean-tooltip="isObject(value) ? { ...{content: value.content, classes: [`tooltip-${status}`]}, ...value } : value"
+        :class="{'hover':!value, [iconClass]: true}"
+        class="icon status-icon"
       />
     </template>
     <template v-else>
       <i
-        :class="{ hover: !value }"
-        class="icon icon-info-circle status-icon"
+        :class="{'hover':!value}"
+        class="icon status-icon"
       />
       <div
         v-if="value"
@@ -64,12 +86,10 @@ export default {
     }
 
      .status-icon {
-         position:  absolute;
-         right: 30px;
-         top: $input-padding-lg;
-         font-size: 20px;
-         z-index: z-index(hoverOverContent);
-
+        position:  absolute;
+        right: 30px;
+        top: $input-padding-lg;
+        z-index: z-index(hoverOverContent);
      }
 
     .tooltip {
@@ -108,6 +128,11 @@ export default {
 
     &.error {
         @include tooltipColors(var(--error));
+
+        .status-icon {
+          top: 7px;
+          right: 5px;
+        }
     }
 
     &.warning {
@@ -117,5 +142,15 @@ export default {
     &.success {
         @include tooltipColors(var(--success));
     }
+}
+
+// Ensure code blocks inside tootips don't look awful
+.tooltip {
+  .tooltip-inner {
+    > pre {
+      padding: 2px;
+      vertical-align: middle;
+    }
+  }
 }
 </style>
