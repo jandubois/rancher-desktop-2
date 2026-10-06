@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261006-141458-pr-931</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261006-141458-pr-931</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-06 14:14</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/Nino-K">@Nino-K</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/931" class="gh-ref" data-title="Add Windows forwarder scheme to binlinks" data-state="open" data-type="pr">#931</a> — Add Windows forwarder scheme to binlinks</td></tr>
+      <tr><td>Branch</td><td><code>windows-binlinks-forwarders</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/80df05ba5"><code>80df05ba5</code></a> Add Windows forwarder scheme to binlinks</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/80df05ba5d8916efeb07522bd7569ebd8d211a72"><code>80df05ba5d8916efeb07522bd7569ebd8d211a72</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the forwarder must ship with this change (C1), and the doc comments need updating (I1)</td></tr>
+      <tr><td>Wall-clock time</td><td><code>36 min 54 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR publishes each Windows tool as a forwarder, a hardlink to one user-owned forwarder copy in <code>~/.rd&lt;n&gt;/bin</code> beside a <code>.shim</code> file naming the real binary, and reconciles the directory in place on each bundle start. The Go side follows the issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/448" class="gh-ref" data-title="Create links for bundled utilities on Windows" data-state="open" data-type="issue">#448</a> proposal, but nothing builds or packages <code>rdd-forwarder.exe</code>. So a Windows bundle no longer publishes any tool, and the required Windows <code>bats-others</code> check fails. Three doc comments still describe the old behaviour.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="C1">
+        <span class="finding-num">C1.</span> A Windows bundle publishes nothing until the forwarder ships <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#C1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L52-L64">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="52" data-line="57-59"><code class="language-go">// each .shim, point each tool name at the current forwarder copy, and drop
+// forwarders for tools the bundle no longer ships.
+func linkForwarders(execPath, binDir string) error {
+	srcDir := filepath.Dir(execPath)
+	forwarderSrc := filepath.Join(srcDir, forwarderName)
+	if _, err := os.Stat(forwarderSrc); err != nil {
+		return fmt.Errorf(&quot;locate forwarder %q: %w&quot;, forwarderSrc, err)
+	}
+
+	entries, err := os.ReadDir(srcDir)
+	if err != nil {
+		return fmt.Errorf(&quot;read bundle directory %q: %w&quot;, srcDir, err)
+	}</code></pre>
+    <p><code>rdd svc serve</code> only logs an error from <code>LinkBundledBinaries</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/service/cmd/service.go#L720"><code>rdd/pkg/service/cmd/service.go:720</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/service/cmd/service.go#L715-L725">rdd/pkg/service/cmd/service.go</a></div>
+      <pre data-start="715" data-line="720"><code class="language-go">			}
+			cliflag.PrintFlags(fs)
+
+			// Publish the application&#39;s bundled binaries to the instance bin
+			// directory. Best-effort: a failure must not block the control plane.
+			if err := binlinks.LinkBundledBinaries(); err != nil {
+				klog.Warningf(&quot;Failed to link bundled binaries: %v&quot;, err)
+			}
+
+			completedOptions, err := s.Complete(cmd.Context())
+			if err != nil {</code></pre>
+    <p>On Windows the bundle path now always calls <code>linkForwarders</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L49-L50"><code>rdd/pkg/binlinks/binlinks.go:49-50</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L44-L55">rdd/pkg/binlinks/binlinks.go</a></div>
+      <pre data-start="44" data-line="49-50"><code class="language-go">	exe := exeSuffix(runtime.GOOS)
+	// RDD_NO_SYMLINKS forces hardlinks, so tests can exercise the fallback that
+	// real systems hit when symlinks need absent privileges.
+	useSymlink := os.Getenv(&quot;RDD_NO_SYMLINKS&quot;) == &quot;&quot;
+	if inAppBundle(execPath, runtime.GOOS) {
+		if runtime.GOOS == &quot;windows&quot; {
+			return linkForwarders(execPath, binDir)
+		}
+		return linkBinaries(execPath, binDir, exe, useSymlink)
+	}
+	return ensureSelfLinks(execPath, binDir, exe, useSymlink)
+}</code></pre>
+    <p>Nothing in <code>scripts/</code>, <code>packaging/</code>, <code>build/wix/</code> or <code>.github/workflows/</code> builds or stages <code>rdd-forwarder.exe</code>. So the stat above fails, and no tool reaches the bin directory, <code>kubectl.exe</code> included. At the merge-base, <code>linkBinaries</code> linked them for developer-mode and user-owned installs.</p>
+    <p>The required <code>BATS (windows-latest, bats-others)</code> check fails on this PR. All six tests in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/bats/tests/20-service/7-binlinks.bats#L53"><code>rdd/bats/tests/20-service/7-binlinks.bats:53</code></a>, whose fake bundle lacks a forwarder, fail (job 112504096783) and are the job&#39;s only failures; they passed on main at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e17e7625f"><code>e17e7625f</code></a>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/bats/tests/20-service/7-binlinks.bats#L48-L58">rdd/bats/tests/20-service/7-binlinks.bats</a></div>
+      <pre data-start="48" data-line="53"><code class="language-bash">    assert_file_exist &quot;$2&quot;
+    refute [ -L &quot;$2&quot; ]
+    assert [ &quot;$2&quot; -ef &quot;$1&quot; ]
+}
+
+@test &#39;publishes bundled binaries when started from the app bundle&#39; {
+    load_var FAKE_BIN DEST_DIR
+    fake_rdd svc start
+    assert_symlink_to &quot;${FAKE_BIN}/rdd${EXE}&quot; &quot;${DEST_DIR}/rdd${EXE}&quot;
+    assert_symlink_to &quot;${FAKE_BIN}/docker${EXE}&quot; &quot;${DEST_DIR}/docker${EXE}&quot;
+    assert_symlink_to &quot;${FAKE_BIN}/helm${EXE}&quot; &quot;${DEST_DIR}/helm${EXE}&quot;</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/binlinks/probe_bundle_test.go; run from rdd:
+// go test -run TestProbeBundleWithoutForwarder -v ./pkg/binlinks/
+package binlinks
+
+import (
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+)
+
+// A Windows-shaped bundle as packaging ships it today: rdd.exe and docker.exe,
+// and no rdd-forwarder.exe. The merge-base Windows path (linkBinaries) publishes
+// kubectl.exe; the PR&#39;s path (linkForwarders) publishes nothing. The last case
+// adds a forwarder to show the PR&#39;s path works once one ships.
+func TestProbeBundleWithoutForwarder(t *testing.T) {
+	for _, mode := range []string{&quot;merge-base linkBinaries&quot;, &quot;PR linkForwarders&quot;, &quot;PR linkForwarders + forwarder&quot;} {
+		t.Run(mode, func(t *testing.T) {
+			src := t.TempDir()
+			for _, n := range []string{&quot;rdd.exe&quot;, &quot;docker.exe&quot;} {
+				if err := os.WriteFile(filepath.Join(src, n), []byte(n), 0o755); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if mode == &quot;PR linkForwarders + forwarder&quot; {
+				if err := os.WriteFile(filepath.Join(src, forwarderName), []byte(&quot;fwd&quot;), 0o755); err != nil {
+					t.Fatal(err)
+				}
+			}
+			execPath := filepath.Join(src, &quot;rdd.exe&quot;)
+			binDir := filepath.Join(t.TempDir(), &quot;bin&quot;)
+			var err error
+			if mode == &quot;merge-base linkBinaries&quot; {
+				err = linkBinaries(execPath, binDir, &quot;.exe&quot;, false)
+			} else {
+				err = linkForwarders(execPath, binDir)
+			}
+			_, statErr := os.Stat(filepath.Join(binDir, &quot;kubectl.exe&quot;))
+			t.Logf(&quot;err=%v; kubectl.exe published=%v&quot;, err, statErr == nil)
+			if statErr != nil {
+				t.Error(&quot;kubectl.exe not published&quot;)
+			}
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -run TestProbeBundleWithoutForwarder -v ./pkg/binlinks/
+=== RUN   TestProbeBundleWithoutForwarder
+=== RUN   TestProbeBundleWithoutForwarder/merge-base_linkBinaries
+    probe_bundle_test.go:38: err=&lt;nil&gt;; kubectl.exe published=true
+=== RUN   TestProbeBundleWithoutForwarder/PR_linkForwarders
+    probe_bundle_test.go:38: err=locate forwarder &quot;$TMPDIR/TestProbeBundleWithoutForwarderPR_linkForwarders2426752035/001/rdd-forwarder.exe&quot;: stat $TMPDIR/TestProbeBundleWithoutForwarderPR_linkForwarders2426752035/001/rdd-forwarder.exe: no such file or directory; kubectl.exe published=false
+    probe_bundle_test.go:40: kubectl.exe not published
+=== RUN   TestProbeBundleWithoutForwarder/PR_linkForwarders_+_forwarder
+    probe_bundle_test.go:38: err=&lt;nil&gt;; kubectl.exe published=true
+--- FAIL: TestProbeBundleWithoutForwarder (0.01s)
+    --- PASS: TestProbeBundleWithoutForwarder/merge-base_linkBinaries (0.01s)
+    --- FAIL: TestProbeBundleWithoutForwarder/PR_linkForwarders (0.00s)
+    --- PASS: TestProbeBundleWithoutForwarder/PR_linkForwarders_+_forwarder (0.00s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/binlinks	0.384s
+FAIL</code></pre>
+      </details>
+    <p>Fix: build and package the forked forwarder in this PR, or hold the PR until that lands, and give <code>7-binlinks.bats</code> a stand-in <code>rdd-forwarder.exe</code>, assertions on the hardlinks and <code>.shim</code> files, and a new header comment (lines 7-8). A fallback to <code>linkBinaries</code> without a forwarder would also restore publishing, but keeps the second Windows path the proposal rejects.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/binlinks/binlinks.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The doc comments still describe the merge-base behaviour <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L26-L42">rdd/pkg/binlinks/binlinks.go</a></div>
+      <pre data-start="26" data-line="31-37"><code class="language-go">	&quot;k8s.io/klog/v2&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance&quot;
+)
+
+// LinkBundledBinaries publishes rdd&#39;s binaries into the instance bin directory.
+// Inside the application bundle it recreates the directory to mirror every
+// bundled binary; standalone it repairs only its own rdd and kubectl links.
+// Publishing is best-effort and must not block startup. A per-binary link
+// failure is logged and skipped; only a whole-operation failure — an unreadable
+// bundle directory or an unwritable bin directory — is returned for the caller
+// to log.
+func LinkBundledBinaries() error {
+	execPath, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf(&quot;locate executable: %w&quot;, err)
+	}</code></pre>
+    <p><code>LinkBundledBinaries</code> says the bundle path recreates the directory, which the Windows path no longer does. Its list of returned errors also leaves out the two whole-operation errors this PR adds, the missing forwarder from C1 and a failed forwarder copy.</p>
+    <p>The <code>ensureSelfLinks</code> comment (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L142-L145"><code>rdd/pkg/binlinks/binlinks.go:142-145</code></a>) says &quot;non-symlink entries survive&quot;, but line 155 now deletes forwarders, which are regular files. The package doc says the same at lines 15-16.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L10-L21">rdd/pkg/binlinks/binlinks.go</a></div>
+      <pre data-start="10" data-line="15-16"><code class="language-go">// small forwarder per tool beside a &lt;tool&gt;.shim file naming the real binary (see
+// forwarders.go). Inside the application bundle rdd owns the directory and keeps
+// it mirroring the bundled binaries. Standalone, rdd repairs its own rdd and
+// kubectl links and prunes anything an uninstalled application left dangling —
+// symlinks, and forwarders whose target is gone — so a stale entry cannot shadow
+// a tool the user later installs on PATH; working links and non-symlink entries
+// survive.
+package binlinks
+
+import (
+	&quot;fmt&quot;
+	&quot;os&quot;</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L137-L160">rdd/pkg/binlinks/binlinks.go</a></div>
+      <pre data-start="137" data-line="142-155"><code class="language-go">		klog.V(1).Infof(&quot;symlink %q -&gt; %q failed, falling back to a hardlink: %v&quot;, linkPath, target, err)
+	}
+	return os.Link(target, linkPath)
+}
+
+// ensureSelfLinks keeps the instance bin directory usable when no application
+// bundle has published it. It first prunes symlinks left dangling by an
+// uninstalled application, then points the rdd and kubectl links at a standalone
+// rdd. Working links and non-symlink entries survive.
+func ensureSelfLinks(execPath, binDir, exe string, useSymlink bool) error {
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		return fmt.Errorf(&quot;create %q: %w&quot;, binDir, err)
+	}
+	if err := pruneDanglingLinks(binDir); err != nil {
+		return err
+	}
+	// A bundle install publishes Windows forwarders instead of symlinks; prune
+	// any whose target an uninstalled application took with it.
+	pruneDanglingForwarders(binDir)
+	for _, name := range []string{&quot;rdd&quot; + exe, &quot;kubectl&quot; + exe} {
+		if err := ensureSelfLink(filepath.Join(binDir, name), execPath, useSymlink); err != nil {
+			klog.Warningf(&quot;Failed to repair the %q link: %v&quot;, name, err)
+		}
+	}</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/binlinks/probe_doc_test.go; run from rdd:
+// go test -run TestProbeBundleRecreates -v ./pkg/binlinks/
+package binlinks
+
+import (
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+)
+
+// LinkBundledBinaries&#39; doc says the bundle &quot;recreates the directory&quot;. A file
+// rdd did not write survives linkForwarders (the Windows bundle path) but not
+// linkBinaries (the macOS and Linux bundle path).
+func TestProbeBundleRecreates(t *testing.T) {
+	for _, windows := range []bool{false, true} {
+		src := t.TempDir()
+		for _, n := range []string{&quot;rdd.exe&quot;, forwarderName} {
+			if err := os.WriteFile(filepath.Join(src, n), []byte(n), 0o755); err != nil {
+				t.Fatal(err)
+			}
+		}
+		binDir := filepath.Join(t.TempDir(), &quot;bin&quot;)
+		if err := os.MkdirAll(binDir, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		foreign := filepath.Join(binDir, &quot;foreign.txt&quot;)
+		if err := os.WriteFile(foreign, []byte(&quot;x&quot;), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		execPath := filepath.Join(src, &quot;rdd.exe&quot;)
+		if windows {
+			_ = linkForwarders(execPath, binDir)
+		} else {
+			_ = linkBinaries(execPath, binDir, &quot;.exe&quot;, false)
+		}
+		_, err := os.Stat(foreign)
+		t.Logf(&quot;windows=%v: foreign file survived=%v&quot;, windows, err == nil)
+		if err == nil {
+			t.Errorf(&quot;windows=%v: the bundle path did not recreate the directory&quot;, windows)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -run TestProbeBundleRecreates -v ./pkg/binlinks/
+=== RUN   TestProbeBundleRecreates
+    probe_doc_test.go:37: windows=false: foreign file survived=false
+    probe_doc_test.go:37: windows=true: foreign file survived=true
+    probe_doc_test.go:39: windows=true: the bundle path did not recreate the directory
+--- FAIL: TestProbeBundleRecreates (0.02s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/binlinks	0.247s
+FAIL</code></pre>
+      </details>
+    <p>Fix: describe both bundle paths, list the forwarder failures, and count forwarders with a live target among the survivors. The patch passes <code>go vet</code> and the package tests.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/binlinks/binlinks.go b/rdd/pkg/binlinks/binlinks.go
+index c2ba73a1d..12d2c97e3 100644
+--- a/rdd/pkg/binlinks/binlinks.go
++++ b/rdd/pkg/binlinks/binlinks.go
+@@ -12,8 +12,8 @@
+ // it mirroring the bundled binaries. Standalone, rdd repairs its own rdd and
+ // kubectl links and prunes anything an uninstalled application left dangling —
+ // symlinks, and forwarders whose target is gone — so a stale entry cannot shadow
+-// a tool the user later installs on PATH; working links and non-symlink entries
+-// survive.
++// a tool the user later installs on PATH; working links, forwarders with a live
++// target, and other files survive.
+ package binlinks
+ 
+ import (
+@@ -29,12 +29,13 @@ import (
+ )
+ 
+ // LinkBundledBinaries publishes rdd&#39;s binaries into the instance bin directory.
+-// Inside the application bundle it recreates the directory to mirror every
+-// bundled binary; standalone it repairs only its own rdd and kubectl links.
++// Inside the application bundle it mirrors every bundled binary, recreating the
++// directory on macOS and Linux and reconciling forwarders in place on Windows;
++// standalone it repairs only its own rdd and kubectl links.
+ // Publishing is best-effort and must not block startup. A per-binary link
+-// failure is logged and skipped; only a whole-operation failure — an unreadable
+-// bundle directory or an unwritable bin directory — is returned for the caller
+-// to log.
++// failure is logged and skipped. Only a whole-operation failure is returned for
++// the caller to log, such as an unreadable bundle directory, an unwritable bin
++// directory, or a forwarder the bundle lacks or rdd cannot copy.
+ func LinkBundledBinaries() error {
+ 	execPath, err := os.Executable()
+ 	if err != nil {
+@@ -140,9 +141,10 @@ func link(target, linkPath string, useSymlink bool) error {
+ }
+ 
+ // ensureSelfLinks keeps the instance bin directory usable when no application
+-// bundle has published it. It first prunes symlinks left dangling by an
+-// uninstalled application, then points the rdd and kubectl links at a standalone
+-// rdd. Working links and non-symlink entries survive.
++// bundle has published it. It first prunes symlinks and forwarders left dangling
++// by an uninstalled application, then points the rdd and kubectl links at a
++// standalone rdd. Working links, forwarders with a live target, and other files
++// survive.
+ func ensureSelfLinks(execPath, binDir, exe string, useSymlink bool) error {
+ 	if err := os.MkdirAll(binDir, 0o755); err != nil {
+ 		return fmt.Errorf(&quot;create %q: %w&quot;, binDir, err)</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The standalone prune deletes a forwarder on any stat error <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L169-L182">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="169" data-line="174-177"><code class="language-go">		}
+		target := shimTarget(filepath.Join(binDir, name))
+		if target == &quot;&quot; {
+			continue
+		}
+		if _, err := os.Stat(target); err == nil {
+			continue
+		}
+		dropForwarder(binDir, strings.TrimSuffix(name, shimSuffix)+&quot;.exe&quot;)
+	}
+}
+
+// shimTarget returns the path named by a .shim file, or &quot;&quot; if it cannot be read
+// or parsed.</code></pre>
+    <p>On a permission error, an unready drive or an offline share, rdd deletes the forwarder and its shim although the target still exists. A probe with an unreadable target directory lost both files.</p>
+    <p>The sibling <code>pruneDanglingLinks</code> keeps such an entry and warns (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L183-L188"><code>rdd/pkg/binlinks/binlinks.go:183-188</code></a>). Codex and Gemini 3.5 Flash rated this Important. It stays a Suggestion because only a standalone start reaches it, and the next bundle start recreates every forwarder.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L178-L193">rdd/pkg/binlinks/binlinks.go</a></div>
+      <pre data-start="178" data-line="183-188"><code class="language-go">	for _, entry := range entries {
+		if entry.Type()&amp;os.ModeSymlink == 0 {
+			continue
+		}
+		linkPath := filepath.Join(binDir, entry.Name())
+		if _, err := os.Stat(linkPath); err == nil {
+			continue
+		} else if !os.IsNotExist(err) {
+			klog.Warningf(&quot;Cannot stat %q while pruning dangling links, skipping: %v&quot;, linkPath, err)
+			continue
+		}
+		if err := os.Remove(linkPath); err != nil {
+			klog.Warningf(&quot;Failed to remove dangling link %q: %v&quot;, linkPath, err)
+		}
+	}
+	return nil</code></pre>
+    <p>Fix: skip and warn unless <code>os.IsNotExist(err)</code>, as <code>pruneDanglingLinks</code> does.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Every start rewrites each shim in place <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L80-L94">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="80" data-line="85-89"><code class="language-go">	master := filepath.Join(binDir, forwarderName)
+	if err := ensureForwarderCopy(forwarderSrc, master); err != nil {
+		return fmt.Errorf(&quot;stage forwarder %q: %w&quot;, master, err)
+	}
+
+	for tool, target := range want {
+		if err := os.WriteFile(shimPath(binDir, tool), shimContent(target), 0o644); err != nil {
+			klog.Warningf(&quot;Failed to write shim for %q, skipping: %v&quot;, tool, err)
+			continue
+		}
+		if err := ensureForwarderLink(master, filepath.Join(binDir, tool)); err != nil {
+			klog.Warningf(&quot;Failed to link forwarder %q, skipping: %v&quot;, tool, err)
+		}
+	}
+</code></pre>
+    <p><code>os.WriteFile</code> truncates before it writes, so a forwarder starting during a service start can read an empty shim. The upstream shim opens its <code>.shim</code> with <code>GENERIC_READ, FILE_SHARE_READ</code> only (ScoopInstaller/Shim <code>cpp/shim.cpp:523</code>). So on Windows a forwarder can also fail to open the file while rdd writes it, and a forwarder holding it open makes rdd&#39;s write fail, which skips relinking that tool as well. Unverified on Windows.</p>
+    <p>Fix: write through <code>atomicfile.Write</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/util/atomicfile/atomicfile.go#L70"><code>rdd/pkg/util/atomicfile/atomicfile.go:70</code></a>), which skips identical content, so a start with an unchanged bundle writes nothing.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> A fixed <code>.old</code> name can block the forwarder refresh <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L212-L224">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="212" data-line="217-219"><code class="language-go">// a no-op.
+func renameAside(path string) error {
+	if _, err := os.Lstat(path); os.IsNotExist(err) {
+		return nil
+	}
+	aside := path + &quot;.old&quot;
+	_ = os.Remove(aside)
+	return os.Rename(path, aside)
+}
+
+// sweepAside deletes leftover .old files from earlier renames, skipping any that
+// are still in use.
+func sweepAside(binDir string) {</code></pre>
+    <p>While a process started from an earlier forwarder copy still runs, its <code>.old</code> name cannot be removed or replaced, because Go&#39;s <code>os.Rename</code> is <code>MoveFileEx(MOVEFILE_REPLACE_EXISTING)</code> and Windows refuses to replace a running image. For the master copy, <code>ensureForwarderCopy</code> then fails and <code>linkForwarders</code> returns before it writes any shim (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L81-L82"><code>rdd/pkg/binlinks/forwarders.go:81-82</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L76-L87">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="76" data-line="81-82"><code class="language-go">	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		return fmt.Errorf(&quot;create %q: %w&quot;, binDir, err)
+	}
+
+	master := filepath.Join(binDir, forwarderName)
+	if err := ensureForwarderCopy(forwarderSrc, master); err != nil {
+		return fmt.Errorf(&quot;stage forwarder %q: %w&quot;, master, err)
+	}
+
+	for tool, target := range want {
+		if err := os.WriteFile(shimPath(binDir, tool), shimContent(target), 0o644); err != nil {
+			klog.Warningf(&quot;Failed to write shim for %q, skipping: %v&quot;, tool, err)</code></pre>
+    <p>Reaching this takes a long-lived process, such as a <code>kubectl port-forward</code>, still running across two forwarder updates, and it clears once that process exits. So the Important both Geminis gave it drops to a Suggestion. Unverified on Windows.</p>
+    <p>Fix: give each aside file a unique name and match the new names in <code>sweepAside</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> A bundled file without a lower-case <code>.exe</code> gets a forwarder but loses its shim <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L142-L152">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="142" data-line="147"><code class="language-go">	for _, entry := range entries {
+		name := entry.Name()
+		if !strings.HasSuffix(name, shimSuffix) {
+			continue
+		}
+		tool := strings.TrimSuffix(name, shimSuffix) + &quot;.exe&quot;
+		if _, ok := want[tool]; ok {
+			continue
+		}
+		dropForwarder(binDir, tool)
+	}</code></pre>
+    <p><code>shimPath</code> strips only <code>.exe</code>, but this line appends <code>.exe</code> to every shim name. A probe bundling <code>helper.ps1</code> ended with a <code>helper.ps1</code> forwarder and no <code>helper.ps1.shim</code>, because <code>removeStaleForwarders</code> deletes the shim line 86 just wrote. An upper-case <code>.EXE</code> also misses the upstream shim, which replaces the last three characters of its own name with <code>shim</code> (<code>cpp/shim.cpp:517</code>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L81-L91">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="81" data-line="86"><code class="language-go">	if err := ensureForwarderCopy(forwarderSrc, master); err != nil {
+		return fmt.Errorf(&quot;stage forwarder %q: %w&quot;, master, err)
+	}
+
+	for tool, target := range want {
+		if err := os.WriteFile(shimPath(binDir, tool), shimContent(target), 0o644); err != nil {
+			klog.Warningf(&quot;Failed to write shim for %q, skipping: %v&quot;, tool, err)
+			continue
+		}
+		if err := ensureForwarderLink(master, filepath.Join(binDir, tool)); err != nil {
+			klog.Warningf(&quot;Failed to link forwarder %q, skipping: %v&quot;, tool, err)</code></pre>
+    <p>This is latent. <code>packaging/electron-builder.yml</code> filters archives and <code>.unsigned</code> files out of <code>resources/</code>, so a shipped bundle&#39;s bin directory holds only <code>.exe</code> files, and development builds run <code>rdd/bin/rdd.exe</code>, which takes the standalone path.</p>
+    <p>Fix: skip bundle entries whose extension is not <code>.exe</code>, compared case-insensitively.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> An upgrade from the link layout keeps tools the bundle dropped <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L142-L156">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="142" data-line="147-151"><code class="language-go">	for _, entry := range entries {
+		name := entry.Name()
+		if !strings.HasSuffix(name, shimSuffix) {
+			continue
+		}
+		tool := strings.TrimSuffix(name, shimSuffix) + &quot;.exe&quot;
+		if _, ok := want[tool]; ok {
+			continue
+		}
+		dropForwarder(binDir, tool)
+	}
+}
+
+// pruneDanglingForwarders drops any forwarder whose shim names a target that no
+// longer exists, so a forwarder left by an uninstalled application cannot shadow</code></pre>
+    <p><code>removeStaleForwarders</code> walks only <code>.shim</code> files, and the links the merge-base layout wrote have none. A probe that published the merge-base layout, dropped <code>helm.exe</code> from the bundle and ran <code>linkForwarders</code> kept the old <code>helm.exe</code> hardlink, which still shadows PATH. The merge-base <code>RemoveAll</code> cleared it, and the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/448" class="gh-ref" data-title="Create links for bundled utilities on Windows" data-state="open" data-type="issue">#448</a> proposal asks to delete every tool the bundle no longer ships.</p>
+    <p>Fix: in bundle mode rdd owns the directory, so drop any entry that is not a wanted tool, the master copy, or a wanted tool&#39;s shim.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The master copy is on PATH and outlives an uninstall <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L75-L88">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="75" data-line="80-83"><code class="language-go">
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		return fmt.Errorf(&quot;create %q: %w&quot;, binDir, err)
+	}
+
+	master := filepath.Join(binDir, forwarderName)
+	if err := ensureForwarderCopy(forwarderSrc, master); err != nil {
+		return fmt.Errorf(&quot;stage forwarder %q: %w&quot;, master, err)
+	}
+
+	for tool, target := range want {
+		if err := os.WriteFile(shimPath(binDir, tool), shimContent(target), 0o644); err != nil {
+			klog.Warningf(&quot;Failed to write shim for %q, skipping: %v&quot;, tool, err)
+			continue</code></pre>
+    <p><code>rdd-forwarder.exe</code> is in the bin directory, so typing <code>rdd-forwarder</code> runs a forwarder without a shim. <code>pruneDanglingForwarders</code> walks only <code>.shim</code> files, so after an uninstall the standalone prune keeps the master. That path also never calls <code>sweepAside</code>, so a forwarder it renamed aside stays behind as <code>.old</code>.</p>
+    <p>Fix: keep the master in <code>instance.ShortDir()</code>, one level above the bin directory and off PATH; a hardlink needs only the same volume, and <code>rdd svc delete</code> removes that directory. Sweep <code>.old</code> files in <code>ensureSelfLinks</code> too.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/binlinks/forwarders.go">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> <code>dropForwarder</code> logs the wrong error <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L198-L211">rdd/pkg/binlinks/forwarders.go</a></div>
+      <pre data-start="198" data-line="203-206"><code class="language-go">func dropForwarder(binDir, tool string) {
+	if err := os.Remove(shimPath(binDir, tool)); err != nil &amp;&amp; !os.IsNotExist(err) {
+		klog.Warningf(&quot;Failed to remove shim for %q: %v&quot;, tool, err)
+	}
+	forwarder := filepath.Join(binDir, tool)
+	if err := os.Remove(forwarder); err != nil &amp;&amp; !os.IsNotExist(err) {
+		if asideErr := renameAside(forwarder); asideErr != nil {
+			klog.Warningf(&quot;Failed to remove forwarder %q: %v&quot;, tool, err)
+		}
+	}
+}
+
+// renameAside moves path to a sibling .old name so a running executable can be
+// replaced, then is cleaned up by sweepAside on a later start. A missing path is</code></pre>
+    <p>When both the removal and the rename aside fail, the warning prints the removal error and discards <code>asideErr</code>, the one that says why the forwarder is still on PATH.</p>
+    <p>Fix: log <code>asideErr</code>, or both errors.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The MSI still puts the bundle&#39;s bin directory on PATH</strong> (future) <span class="pill pill-codex">Codex GPT 6 Astra</span>: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/build/wix/main.wxs#L91"><code>build/wix/main.wxs:91</code></a> and <code>:116</code> add <code>resources\windows\bin</code> to the user and system PATH. The <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/448" class="gh-ref" data-title="Create links for bundled utilities on Windows" data-state="open" data-type="issue">#448</a> proposal removes both, so the bundled tools reach PATH only through <code>~/.rd2/bin</code> and the <code>addPath</code> position applies to them. That is a later part of the issue&#39;s plan.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The contract with the forwarder is written down</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span>: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/forwarders.go#L23-L31"><code>forwarders.go:23-31</code></a> names the three invariants the fork must keep, including the <code>argv[0]</code> passthrough that rdd&#39;s multicall dispatch reads (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/cmd/rdd/multicall.go#L24"><code>rdd/cmd/rdd/multicall.go:24</code></a>).</li>
+      <li><strong>Reconciling in place keeps working hardlinks</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: the byte comparison and the <code>os.SameFile</code> check skip unchanged entries, and the PR&#39;s <code>RDD Unit tests (windows-latest)</code> job passed, so the hardlink identity checks hold on NTFS.</li>
+      <li><strong>The Go side matches the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/448" class="gh-ref" data-title="Create links for bundled utilities on Windows" data-state="open" data-type="issue">#448</a> proposal</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span>: the <code>.shim</code> format, <code>kubectl.shim</code> naming <code>rdd.exe</code>, forwarders whether or not symlinks work, one master copy with a hardlink per tool, no <code>RemoveAll</code>, busy forwarders renamed aside, dangling forwarders pruned, and a standalone rdd linking only <code>rdd</code> and <code>kubectl</code>. S5 is the one divergence.</li>
+      <li><em></em>The daemon outlives the <code>rdd.exe</code> forwarder<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span>: the upstream shim&#39;s job object sets <code>JOB_OBJECT_LIMIT_SILENT_BREAKAWAY_OK</code> (<code>cpp/shim.cpp:812</code>), so the <code>rdd svc serve</code> that <code>rdd svc start</code> spawns leaves the job and keeps running after the forwarder exits.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>Executed by the consolidator.</strong> <code>go test -race ./pkg/binlinks/</code> passes on go1.27.1 darwin/arm64, and <code>GOOS=windows go vet</code> and a Windows test build of the package are clean. The PR&#39;s <code>RDD Unit tests (windows-latest)</code> job passed. Its Windows <code>bats-others</code> job failed as C1 describes. Five probes ran against the unmodified tree, the two inlined in C1 and I1, and the three behind S1, S4 and S5.</p>
+    <p><strong>Required.</strong> The Windows branch of <code>7-binlinks.bats</code> needs the forwarder layout (C1). A user would see the failure as <code>kubectl</code> missing, with only a warning in the daemon log, which decided the rating.</p>
+    <p><strong>Optional.</strong> No unit test reaches <code>pruneDanglingForwarders</code> through <code>ensureSelfLinks</code>. Deleting that call (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L155"><code>binlinks.go:155</code></a>) keeps the suite green. A user would see the forwarder report its missing target, an error naming the cause, so the test stays optional. S1&#39;s fix would want a stat-error case beside it.</p>
+    <p><strong>Dropped.</strong> The rename-aside paths behind S3 need a running forwarder and Windows fault injection.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I1 covers the Go doc comments. The header of <code>rdd/bats/tests/20-service/7-binlinks.bats</code> (lines 7-8) says the daemon falls back to hardlinks on Windows, which no longer holds for the bundle path; C1&#39;s fix updates it.</p>
+    <p>The comment above <code>link</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/80df05ba5d8916efeb07522bd7569ebd8d211a72/rdd/pkg/binlinks/binlinks.go#L123-L128"><code>rdd/pkg/binlinks/binlinks.go:123-128</code></a>) still defers a cross-volume copy fallback to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/448" class="gh-ref" data-title="Create links for bundled utilities on Windows" data-state="open" data-type="issue">#448</a>, which this PR answers with forwarders instead. It also leaves out that a hardlink needs write-attributes access on its target, the reason a standard user cannot hardlink binaries under Program Files.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><code>.old</code> files can outlive a start.<em></em> <code>sweepAside</code> skips aside files that are still in use, and the next start removes them.</li>
+      <li><strong>rdd owns the bin directory.</strong> One reviewer asked the standalone prune to protect a standalone <code>rdd.exe</code> a user copied into <code>~/.rd&lt;n&gt;/bin</code>. rdd rewrites that directory on every bundle start, so a future reviewer should not re-suggest guarding user-placed binaries there.</li>
+      <li><em></em><code>shimTarget</code> reads only what rdd writes.<em></em> Every <code>.shim</code> in the bin directory comes from <code>shimContent</code>, which writes a single <code>path = </code> line, so a key such as <code>path_args</code> never reaches the parser. Do not re-suggest a general key-value parser unless the shims gain more keys.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude alone tied the change to the existing Windows BATS suite. It read main&#39;s Windows log as the baseline and predicted failures before the PR&#39;s job finished; all six tests failed, not the three it named. It also found S5, the only finding about upgrading from the link layout, and the master-on-PATH half of S6. It fetched the upstream <code>shim.cpp</code> to ground S2&#39;s share-mode claim and the job-object strength. Only its I1 changed severity, rising to Critical.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex ran probes for C1, S1 and S2&#39;s empty-shim read, and my own probes of C1 and S1 agreed. It rated the stat-error prune Important; S1 gives the reason for the downgrade. It missed the BATS breakage, and its note that <code>LinkBundledBinaries</code> still says &quot;recreates the directory&quot; went into its Documentation Assessment instead of a finding. It was the only reviewer to point out that the MSI still puts the bundle&#39;s bin directory on PATH.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro rated the missing forwarder Critical from the start, before the CI result confirmed that severity. It rated the <code>.old</code> collision and the non-<code>.exe</code> case Important; both became Suggestions. Its I3 needed a user to copy a standalone <code>rdd.exe</code> into the rdd-managed bin directory and was dropped. It marked <code>binlinks.go</code> reviewed with no issues and the documentation correct, missing I1.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash raised six Important findings, and five of them ended as Suggestions or were dropped. Its <code>shimTarget</code> finding was dropped for the reason under Acknowledged Limitations, and its <code>TestShimTarget</code> suggestion did not describe a defect. Both its unique catches hold up, the wrong error in <code>dropForwarder</code>&#39;s warning (S7) and the missing <code>.old</code> sweep on the standalone path (S6). It tried to read Go&#39;s Windows <code>os</code> sources outside its worktree and hit the sandbox. The two Geminis converged on the <code>.old</code> and non-<code>.exe</code> findings, which counts as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>8m 39s</td><td>4m 23s</td><td>5m 55s</td><td>9m 52s</td></tr>
+        <tr><td>Findings</td><td>1C 1I 6S</td><td>1C 1I 2S</td><td>1C 3S</td><td>1C 5S</td></tr>
+        <tr><td>Tool calls</td><td>52 (Bash 46, Read 6)</td><td>11 (shell 10, stdin 1)</td><td>17 (run<em>shell</em>command 17)</td><td>53 (run<em>shell</em>command 19, grep<em>search 17, read</em>file 12)</td></tr>
+        <tr><td>Design observations</td><td>4</td><td>3</td><td>0</td><td>1</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>1</td><td>0</td><td>2</td></tr>
+        <tr><td>Files reviewed</td><td>3</td><td>3</td><td>3</td><td>3</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1C 1I 6S</strong></td><td><strong>1C 1I 2S</strong></td><td><strong>1C 3S</strong></td><td><strong>1C 5S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1</td><td>2</td><td>4</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>1</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Claude gave the most value, with the CI breakage that makes C1 Critical and the only upgrade-path finding. Codex&#39;s probes made C1 and S1 quick to confirm. Apart from Flash&#39;s two catches and the uninstall half of S6, every finding the Geminis kept also came from another reviewer.</p>
+    <p><strong>Reconciliation.</strong> Claude P1 I1 important → C1. Codex P1 I1 important → C1; I2 important → S1. Gemini 3.1 Pro P1 I1 important → S3; I2 important → S4; I3 important → dropped (unsupported setup). Gemini 3.5 Flash P1 I6 important → C1; I1 important → S3; I2 important → S7; I3 important → S1; I5 important → S4; I4 important → dropped (unreachable); S3 → dropped (no defect); S1 merged into S6, its <code>GOOS</code> gate dropped.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a change alters what a code path requires (a file it must find, a precondition, a branch one platform takes), find the tests outside the diff that reach that path on every leg of the CI matrix, and check that their fixtures still meet the new requirement. A test the diff does not touch fails as surely as one it does, and the base branch&#39;s CI log shows which tests reach the path.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><code>rdd/bats/tests/20-service/7-binlinks.bats</code> builds a fake application bundle and is the only test that reaches the bundle path of <code>binlinks.LinkBundledBinaries</code>; the <code>bats-others</code> leg runs it on macOS, Linux and Windows. A change to what the bundle path expects to find must update that fixture.</li>
+      <li>A packaged bundle&#39;s <code>resources/&lt;os&gt;/bin</code> holds executables only, because <code>packaging/electron-builder.yml</code> filters <code>*.tar.gz</code>, <code>*.unsigned</code> and other archives out of <code>resources/</code>; a development tree&#39;s copy keeps them. Development builds run <code>rdd/bin/rdd</code>, which <code>binlinks</code> treats as standalone, so the bundle path sees only packaged layouts.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
