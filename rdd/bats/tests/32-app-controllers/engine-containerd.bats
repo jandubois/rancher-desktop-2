@@ -12,9 +12,6 @@ load '../../helpers/load'
 VM_NAME="rd"
 
 local_setup_file() {
-    if is_windows; then
-        skip "containerd mirroring is not supported on Windows yet"
-    fi
     rdd svc delete
     rdd set containerEngine.name=containerd running=true
     # Mirror resources live in App.spec.namespace. Override RDD_NAMESPACE
@@ -55,6 +52,9 @@ assert_containerd_socket_open() {
 }
 
 @test "containerd socket is forwarded to the host" {
+    if is_windows; then
+        skip "Windows serves a named pipe, which curl cannot open"
+    fi
     # Wait for containerd to create the socket and the drop-in to open it up.
     try --max 10 --delay 3 -- assert_containerd_socket_open
 

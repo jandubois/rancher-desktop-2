@@ -9,9 +9,8 @@
 // `Volume` back to the engine. A `ContainerNamespace` carries no finalizer
 // and forwards nothing.
 //
-// moby works on every platform. containerd mirrors nothing on Windows, where
-// nothing serves its named pipe yet, and it has no volume concept, so that
-// backend creates no `Volume` resources anywhere.
+// containerd has no volume concept, so that backend never creates `Volume`
+// resources.
 package engine
 
 import (
