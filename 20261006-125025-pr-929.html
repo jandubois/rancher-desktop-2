@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR forks the eleven <code>@rancher/components</code> components RD2 uses from the alpha.1 tag and drops the npm package. The imported files match the tag and the shipped sourcemap byte for byte, the helpers they now resolve to behave the same, and jest, lint and production builds pass. One fix remains. Compiling the styles from source changes four production overrides, not the three the last commit lists: the allowed-images banner on Images &gt; Add also loses its 15px vertical margin.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since This Review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings below cite the code at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bf10ebd67"><code>bf10ebd67</code></a>. Addressing them rewrote the branch, so the import, lint and switch-over commits are now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c6a011c1a"><code>c6a011c1a</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/45f5a1ec6"><code>45f5a1ec6</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3cb954131"><code>3cb954131</code></a>, and a fourth commit, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8ac74e14b"><code>8ac74e14b</code></a>, adds a README. Each finding ends with what happened to it.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -333,6 +339,7 @@ merge-base 97eb911cc:
   chunk-vendors.2dbfe723.js byte 802024: .banner[data-v-2f2c6848]{display:flex;margin:15px 0</code></pre>
       </details>
     <p>Fix: name the Alert banner as a fourth change in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bf10ebd67"><code>bf10ebd67</code></a>&#39;s body and correct the PR description&#39;s count; if the 15px margin is the look you want, delete Alert&#39;s <code>margin: 0</code> instead. The first option changes only text, so there is no patch.</p>
+    <p><strong>Outcome:</strong> fixed as proposed, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3cb954131"><code>3cb954131</code></a>, whose message now names the allowed-images banner as a fourth change. The PR description says four as well.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -367,6 +374,7 @@ merge-base 97eb911cc:
           this.update([], toToggle);
         } else {</code></pre>
     <p>Fix: dispatch <code>new MouseEvent(&#39;click&#39;, customEvent)</code>, whose init dictionary takes the modifier keys.</p>
+    <p><strong>Outcome:</strong> declined for this PR, because the bug predates it, and filed as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/932" class="gh-ref" data-title="Shift-clicking a row&#39;s checkbox selects only that row" data-state="open" data-type="issue">#932</a>.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/form/ToggleSwitch.vue">
       <div class="finding-title" id="S2">
@@ -400,6 +408,7 @@ merge-base 97eb911cc:
 });
 &lt;/script&gt;</code></pre>
     <p>Fix: annotate the return type, <code>data(): { state: StateType } {</code>. It compiles under the same check, and Claude ran eslint on it to confirm it passes the rule that removed the cast.</p>
+    <p><strong>Outcome:</strong> fixed as proposed, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/45f5a1ec6"><code>45f5a1ec6</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/composables/useLabeledFormElement.ts">
       <div class="finding-title" id="S3">
@@ -407,6 +416,7 @@ merge-base 97eb911cc:
       </div>
     <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7fe1f3c"><code>af7fe1f3c</code></a> imported each component with its tests but took <code>useCompactInput.ts</code> and <code>useLabeledFormElement.ts</code> without the tag&#39;s <code>useCompactInput.test.ts</code> (36 lines) and <code>useLabeledFormElement.test.ts</code> (135 lines). No RD2 spec exercises <code>validationMessage</code>, <code>requiredField</code> or <code>isCompact</code>. No RD2 caller passes <code>rules</code> or <code>required</code> today, so the untested paths are also unreached.</p>
     <p>Fix: import both as <code>composables/__tests__/*.spec.ts</code>, verbatim first and lint second, as the components were.</p>
+    <p><strong>Outcome:</strong> fixed as proposed. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c6a011c1a"><code>c6a011c1a</code></a> adds both tests verbatim, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/45f5a1ec6"><code>45f5a1ec6</code></a> lints them, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3cb954131"><code>3cb954131</code></a> points their imports at <code>../</code> and gives <code>useLabeledFormElement.spec.ts</code> the <code>jest</code> import from <code>@jest/globals</code> that the component specs have.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -419,6 +429,7 @@ merge-base 97eb911cc:
       <li>(future) <code>cronstrue</code> and <code>cron-validator</code> became direct dependencies only for LabeledInput&#39;s <code>type=&quot;cron&quot;</code> hint, which no RD2 caller uses. Removing cron support from the fork would drop both packages and the Dependabot bumps they will now get. [Consolidator]</li>
       <li>(future) The imported code has defects nothing reaches today. <code>utils/error.js</code> exports six names and only <code>stringify</code> has a caller. <code>form/__tests__/Checkbox.spec.ts</code> imports <code>Wrapper</code>, a test-utils v1 type that 2.5.1 no longer exports. TextAreaAutoGrow&#39;s border sum is always 0, because <code>getPropertyValue(&#39;borderTopWidth&#39;)</code> needs the kebab-case name and returns <code>&#39;&#39;</code>. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
     </ul>
+    <p><strong>Outcome:</strong> all four declined for this PR, which only imports the components; each is tracked in pending-work.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>Keeping <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7fe1f3c"><code>af7fe1f3c</code></a> an unchanged copy made the provenance checkable. All 23 files match the tag byte for byte. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
@@ -432,12 +443,14 @@ merge-base 97eb911cc:
     <p>I ran the full jest suite in the lead worktree at the review SHA: 55 of 56 suites pass (554 tests, 6 skipped), with no Vue warnings in the output. The 56th, <code>config/__tests__/commandLineOptions.spec.ts</code>, lost its run to the known electron first-install race (<code>File exists (os error 17)</code>); rerun alone, it skips on macOS. Production renderer builds of HEAD and the merge-base both succeed, with 467 and 431 warnings; the extra 36 are Sass deprecation warnings in the forked SFCs, the kind every RD2 SFC emits. CI is green on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bf10ebd67"><code>bf10ebd67</code></a>, all six package jobs and e2e included.</p>
     <p>The import, lint and switch-over checks came out clean. RD2&#39;s own <code>string.js</code>, <code>array.ts</code> and <code>query-params.js</code> behave like the copies the bundle compiled in for every function the components call; Codex&#39;s parity script ran 90 comparisons. The <code>cronstrue</code> 1.95.0 and <code>cron-validator</code> 1.2.0 sources the bundle compiled in match the installed packages byte for byte, and all 46 files outside <code>yarn.lock</code> that referenced <code>@rancher/components</code> at the merge-base were rewritten.</p>
     <p>Missing tests, all optional: the composable tests in S3; a regression spec for S1 if its fix goes in, which the S1 probe could become; and a RadioButton spec asserting that <code>data-testid</code> reaches the root, which would catch a future upstream sync that brings back alpha.4&#39;s <code>inheritAttrs: false</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/740" class="gh-ref" data-title="Revert #729: @rancher/components alpha.4 breaks badge colours and drops RadioButton attributes" data-state="closed" data-type="issue">#740</a>). <span class="pill pill-claude">Claude Opus 5.5</span></p>
+    <p><strong>Outcome:</strong> the composable tests were imported (S3). The S1 spec goes with its fix in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/932" class="gh-ref" data-title="Shift-clicking a row&#39;s checkbox selects only that row" data-state="open" data-type="issue">#932</a>. The RadioButton spec was declined, because the regression it guards against would drop only the <code>data-testid</code> test hooks, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/740" class="gh-ref" data-title="Revert #729: @rancher/components alpha.4 breaks badge colours and drops RadioButton attributes" data-state="closed" data-type="issue">#740</a> already documents the trap for whoever ports RadioButton next.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p>Only <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/af7fe1f3c"><code>af7fe1f3c</code></a>&#39;s message records the upstream tag (<code>components-v0.3.0-alpha.1</code>, <code>01c5bb443f</code>) and the path mapping. A one-line note in <code>pkg/rancher-desktop/components/</code> naming both would help whoever ports the next upstream change. <span class="pill pill-claude">Claude Opus 5.5</span> I1 covers the commit body&#39;s miscount.</p>
+    <p><strong>Outcome:</strong> documentation updated in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8ac74e14b"><code>8ac74e14b</code></a>, which adds <code>pkg/rancher-desktop/components/README.md</code> with the tag, the forked files, and the upstream-to-local path map.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
