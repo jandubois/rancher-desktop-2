@@ -26,7 +26,7 @@ export class IoRancherdesktopAppV1alpha1AppStatus {
     */
     'kubernetesPort'?: number;
     /**
-    * supportsNamespaces reports whether the selected container engine scopes containers and images into namespaces: true for containerd, false for moby. The engine controller writes it together with the ContainerEngineReady condition; the field is absent until that first write, so absence means unknown. It is also false whenever that condition\'s reason is NotApplicable, because a backend that mirrors nothing offers no namespaces to choose from.
+    * supportsNamespaces reports whether the selected container engine scopes containers and images into namespaces: true for containerd, false for moby. The engine controller writes it together with the ContainerEngineReady condition; the field is absent until that first write, so absence means unknown.
     */
     'supportsNamespaces'?: boolean;
 
