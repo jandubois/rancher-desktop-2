@@ -22,9 +22,15 @@ const (
 	// and Docker Desktop use to reach dockerd.
 	DockerPipeName = `\\.\pipe\docker_engine`
 
-	// VsockForwardPort is the AF_VSOCK port that rdd-guest listens on inside
-	// the Lima VM.  Must match the constant in cmd/rdd-guest/main.go.
+	// VsockForwardPort is the AF_VSOCK port on which rdd-guest serves the
+	// Docker socket inside the VM. Must match dockerVsockPort in
+	// rdd/src/rdd-guest/main.go.
 	VsockForwardPort uint32 = 6660
+
+	// ContainerdVsockPort is the AF_VSOCK port on which rdd-guest serves the
+	// containerd socket inside the VM. Must match containerdVsockPort in
+	// rdd/src/rdd-guest/main.go.
+	ContainerdVsockPort uint32 = 6661
 )
 
 // HostBridge listens on a Windows named pipe and forwards each accepted
@@ -39,10 +45,16 @@ type HostBridge struct {
 // NewDockerHostBridge creates a HostBridge that forwards the Docker named pipe
 // to the guest vsock agent.
 func NewDockerHostBridge(vmGUID hvsock.GUID, log logr.Logger) *HostBridge {
+	return NewHostBridge(DockerPipeName, VsockForwardPort, vmGUID, log)
+}
+
+// NewHostBridge creates a HostBridge that forwards pipeName to vsockPort in
+// the guest.
+func NewHostBridge(pipeName string, vsockPort uint32, vmGUID hvsock.GUID, log logr.Logger) *HostBridge {
 	return &HostBridge{
-		pipeName:  DockerPipeName,
+		pipeName:  pipeName,
 		vmGUID:    vmGUID,
-		vsockPort: VsockForwardPort,
+		vsockPort: vsockPort,
 		log:       log.WithName("socket-bridge"),
 	}
 }

@@ -158,3 +158,13 @@ func TestDockerEndpoint(t *testing.T) {
 		}
 	})
 }
+
+func TestContainerdSocket(t *testing.T) {
+	runTestProcess(t, func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			assert.Equal(t, `\\.\pipe\containerd-rancher-desktop-test`, ContainerdSocket())
+		} else {
+			assert.Equal(t, filepath.Join(ShortDir(), "containerd.sock"), ContainerdSocket())
+		}
+	}, "RDD_INSTANCE=test")
+}

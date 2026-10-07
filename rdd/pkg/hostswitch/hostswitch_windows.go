@@ -6,9 +6,9 @@
 
 // Package hostswitch runs the WSL2 host-switch virtual network. It provides
 // DNS/DHCP/NAT to the WSL2 guest over a gvisor-tap-vsock network bridged to the
-// Hyper-V VM via AF_VSOCK, plus a Docker socket bridge. It runs inside the
-// per-VM hostagent process so the OS reclaims every host resource (vsock
-// listeners, gvisor host ports, named pipes) when the VM stops.
+// Hyper-V VM via AF_VSOCK, plus Docker and containerd socket bridges. It runs
+// inside the per-VM hostagent process so the OS reclaims every host resource
+// (vsock listeners, gvisor host ports, named pipes) when the VM stops.
 package hostswitch
 
 import (
@@ -33,6 +33,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sys/windows/registry"
 
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/socketbridge"
 )
 
@@ -170,17 +171,20 @@ func runOnce(ctx context.Context, logger logr.Logger, subnet hostSwitchSubnet) e
 	// failure, so the caller reads ctx, not gctx.
 	g, gctx := errgroup.WithContext(ctx)
 
-	// Start the host-side socket bridge now that we have the VM GUID.
-	// It listens on the Docker named pipe and forwards each connection to
-	// rdd-guest inside the VM via vsock port 6660.  rdd-guest is baked into
-	// the VM image (via rancher-desktop-opensuse) and started by systemd.
-	g.Go(func() error {
-		bridge := socketbridge.NewDockerHostBridge(vmGUID, logger)
-		if err := bridge.Run(gctx); err != nil {
-			logger.Error(err, "Socket bridge exited with error")
-		}
-		return nil
-	})
+	// Start the host-side socket bridges now that we have the VM GUID. Each
+	// listens on a named pipe and forwards connections over vsock to rdd-guest,
+	// which the rdd overlay installs in the VM and systemd starts.
+	for _, bridge := range []*socketbridge.HostBridge{
+		socketbridge.NewDockerHostBridge(vmGUID, logger),
+		socketbridge.NewHostBridge(instance.ContainerdSocket(), socketbridge.ContainerdVsockPort, vmGUID, logger),
+	} {
+		g.Go(func() error {
+			if err := bridge.Run(gctx); err != nil {
+				logger.Error(err, "Socket bridge exited with error")
+			}
+			return nil
+		})
+	}
 
 	// Accept vsock connections and feed them into the virtual network.
 	g.Go(func() error {
