@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261006-215936-pr-912</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261006-215936-pr-912</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-06 21:59</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2 (of PR 912)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/912" class="gh-ref" data-title="Compose: Create projects from containers" data-state="open" data-type="pr">#912</a> — Compose: Create projects from containers</td></tr>
+      <tr><td>Branch</td><td><code>compose-from-containers</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1d5d6905a"><code>1d5d6905a</code></a> RDD: containers: ComposeProject / ComposeUpRequest reconciler stub<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b61b7ec3d"><code>b61b7ec3d</code></a> RDD: controllers/base: Support doing field indexes that can&#39;t be in CRDs<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2228b9b93"><code>2228b9b93</code></a> RDD: containers: detect ComposeProject from containers<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/da95c7f16"><code>da95c7f16</code></a> RDD: containers: Test Compose container reconcile<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d4ededadf"><code>d4ededadf</code></a> RDD: Make ready wait for passthrough server</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5"><code>d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the passthrough fix closes its listener before <code>Shutdown</code>, so a clean stop logs a server failure and skips the drain; no test pins the cross-project membership removal</td></tr>
+      <tr><td>Wall-clock time</td><td><code>33 min 37 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 2 fixes both round-1 Important findings. The ready mark now waits for the passthrough server, which binds its port before the manager starts, and the reconciler tests index with the production extractor. But the new listener cleanup closes the port when the manager&#39;s context ends, before <code>Shutdown</code> runs. So nearly every clean stop logs <code>pass through server failed</code>, and the manager stops without draining requests in flight. The cross-project membership removal works, but no test pins it.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/service/controllers/manager.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The passthrough listener closes before <code>Shutdown</code> runs, so a clean stop logs a server failure and skips the drain <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/manager.go#L545-L555">rdd/pkg/service/controllers/manager.go</a></div>
+      <pre data-start="545" data-line="550"><code class="language-go">	if err != nil {
+		listenCancel()
+		markReady()
+		return readyCh, fmt.Errorf(&quot;failed to create listener for pass through server: %w&quot;, err)
+	}
+	context.AfterFunc(listenCtx, func() { listener.Close() })
+
+	err = mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+		defer listenCancel()
+		defer markReady()
+		server := http.Server{</code></pre>
+    <p><code>listenCtx</code> derives from <code>mgrCtx</code> (line 542), so cancelling the manager fires this callback at once. The runnable runs under its runnable group&#39;s context instead, which controller-runtime v0.24.1 derives from <code>context.Background()</code> (rdd does not set <code>BaseContext</code>) and cancels only when <code>StopAndWait</code> reaches the LeaderElection group (<code>pkg/manager/internal.go:578</code>). By then <code>Serve</code> (line 574) has returned <code>use of closed network connection</code>, which is not <code>ErrServerClosed</code>. The runnable returns an error and skips the wait on <code>shutdownComplete</code> (line 577), and the manager finishes stopping while <code>Shutdown</code> drains in the background. At the merge-base only <code>Shutdown</code> closed the listener.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/manager.go#L537-L547">rdd/pkg/service/controllers/manager.go</a></div>
+      <pre data-start="537" data-line="542"><code class="language-go">		return readyCh, nil
+	}
+
+	// Create a listener early; this lets the kernel buffer any incoming
+	// connections before the server is actually started.
+	listenCtx, listenCancel := context.WithCancel(ctx)
+	listenAddr := fmt.Sprintf(&quot;localhost:%d&quot;, scm.passthroughPort)
+	listener, err := (&amp;net.ListenConfig{}).Listen(listenCtx, &quot;tcp&quot;, listenAddr)
+	if err != nil {
+		listenCancel()
+		markReady()</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/manager.go#L569-L582">rdd/pkg/service/controllers/manager.go</a></div>
+      <pre data-start="569" data-line="574-577"><code class="language-go">			}
+		}()
+
+		log.V(2).Info(&quot;Starting pass through server&quot;, &quot;addr&quot;, server.Addr)
+		markReady()
+		if err := server.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf(&quot;pass through server failed: %w&quot;, err)
+		}
+		&lt;-shutdownComplete
+
+		return nil
+	}))
+	if err != nil {
+		listenCancel()</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/service/controllers/passthrough_probe_test.go;
+// run from rdd/: go test -count=1 -run TestProbePassthrough -v ./pkg/service/controllers/
+// Each test starts a real controller-runtime manager (no API server) running
+// one fake passthrough controller, then cancels it the way rdd stops.
+package controllers
+
+import (
+	&quot;context&quot;
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;net&quot;
+	&quot;net/http&quot;
+	&quot;strings&quot;
+	&quot;sync/atomic&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;github.com/go-logr/logr&quot;
+	&quot;github.com/go-logr/logr/funcr&quot;
+	&quot;k8s.io/client-go/rest&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/metrics/server&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base&quot;
+)
+
+type probePassthrough struct{ handler http.Handler }
+
+func (probePassthrough) GetName() string                                         { return &quot;fake&quot; }
+func (probePassthrough) GetAPIGroup() string                                     { return &quot;fake&quot; }
+func (probePassthrough) GetCRDData() string                                      { return &quot;&quot; }
+func (probePassthrough) RegisterWithManager(context.Context, ctrl.Manager) error { return nil }
+func (probePassthrough) GetPassthroughEndpoints() []string                       { return []string{&quot;ep&quot;} }
+func (p probePassthrough) GetPassthroughHandler(string) http.Handler             { return p.handler }
+
+// startProbe starts a manager with the passthrough server and waits for ready.
+func startProbe(t *testing.T, logger logr.Logger, handler http.Handler) (int, context.CancelFunc, &lt;-chan error) {
+	mgr, err := ctrl.NewManager(&amp;rest.Config{Host: &quot;http://127.0.0.1:1&quot;}, ctrl.Options{
+		Metrics:                server.Options{BindAddress: &quot;0&quot;},
+		HealthProbeBindAddress: &quot;0&quot;,
+		Logger:                 logger,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	l, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
+	if err != nil {
+		t.Fatal(err)
+	}
+	port := l.Addr().(*net.TCPAddr).Port
+	_ = l.Close()
+	scm := &amp;SharedControllerManager{registrations: []base.Controller{probePassthrough{handler}}, passthroughPort: port}
+	ctx, cancel := context.WithCancel(t.Context())
+	ready, err := scm.runPassthroughServer(ctx, mgr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result := make(chan error, 1)
+	go func() { result &lt;- mgr.Start(ctx) }()
+	&lt;-ready
+	return port, cancel, result
+}
+
+// TestProbePassthroughShutdownLogs counts clean stops that log a server failure.
+func TestProbePassthroughShutdownLogs(t *testing.T) {
+	const iterations = 50
+	logged := 0
+	for range iterations {
+		var failed atomic.Bool
+		logger := funcr.New(func(_, args string) {
+			if strings.Contains(args, &quot;pass through server failed&quot;) {
+				failed.Store(true)
+			}
+		}, funcr.Options{})
+		port, cancel, result := startProbe(t, logger, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+			_, _ = io.WriteString(w, &quot;ok&quot;)
+		}))
+		resp, err := http.Get(fmt.Sprintf(&quot;http://localhost:%d/fake/ep/x&quot;, port))
+		if err != nil {
+			t.Fatal(err)
+		}
+		_ = resp.Body.Close()
+		cancel()
+		if err := &lt;-result; err != nil {
+			t.Fatalf(&quot;mgr.Start returned %v&quot;, err)
+		}
+		if failed.Load() {
+			logged++
+		}
+	}
+	t.Logf(&quot;%d of %d clean stops logged \&quot;pass through server failed\&quot;&quot;, logged, iterations)
+}
+
+// TestProbePassthroughDrain checks that stopping waits for an in-flight request.
+func TestProbePassthroughDrain(t *testing.T) {
+	entered, release := make(chan struct{}), make(chan struct{})
+	defer close(release)
+	port, cancel, result := startProbe(t, logr.Discard(), http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		close(entered)
+		&lt;-release
+		_, _ = io.WriteString(w, &quot;done&quot;)
+	}))
+	go func() {
+		resp, err := (&amp;http.Client{Timeout: time.Second}).Get(fmt.Sprintf(&quot;http://localhost:%d/fake/ep/x&quot;, port))
+		if err == nil {
+			_ = resp.Body.Close()
+		}
+	}()
+	select {
+	case &lt;-entered:
+	case &lt;-time.After(5 * time.Second):
+		t.Fatal(&quot;handler never entered&quot;)
+	}
+	cancel()
+	select {
+	case err := &lt;-result:
+		t.Errorf(&quot;manager stopped with a request in flight (Start returned %v)&quot;, err)
+	case &lt;-time.After(100 * time.Millisecond):
+		t.Log(&quot;manager still draining the in-flight request after 100ms&quot;)
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestProbePassthrough -v ./pkg/service/controllers/ | grep -E &#39;clean stops|draining|in flight|^(ok|FAIL|--- )&#39;   # PR head
+    passthrough_probe_test.go:91: 48 of 50 clean stops logged &quot;pass through server failed&quot;
+--- PASS: TestProbePassthroughShutdownLogs (0.05s)
+    passthrough_probe_test.go:117: manager stopped with a request in flight (Start returned &lt;nil&gt;)
+--- FAIL: TestProbePassthroughDrain (0.00s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers	0.792s
+FAIL
+
+$ go test -count=1 -run TestProbePassthrough -v ./pkg/service/controllers/ | grep -E &#39;clean stops|draining|in flight|^(ok|FAIL|--- )&#39;   # PR head + fix patch
+    passthrough_probe_test.go:91: 0 of 50 clean stops logged &quot;pass through server failed&quot;
+--- PASS: TestProbePassthroughShutdownLogs (0.05s)
+    passthrough_probe_test.go:119: manager still draining the in-flight request after 100ms
+--- PASS: TestProbePassthroughDrain (0.10s)
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers	0.825s</code></pre>
+      </details>
+    <p>Fix: let the callback close the listener only until the runnable starts, and leave it to <code>Shutdown</code> after that; commit the probe&#39;s two tests with the change. With the patch, <code>go test ./pkg/service/controllers/</code> (envtest included) and <code>golangci-lint</code> on the package pass.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/service/controllers/manager.go b/rdd/pkg/service/controllers/manager.go
+index 2978dcfb9..3e2145d23 100644
+--- a/rdd/pkg/service/controllers/manager.go
++++ b/rdd/pkg/service/controllers/manager.go
+@@ -539,19 +539,21 @@ func (scm *SharedControllerManager) runPassthroughServer(ctx context.Context, mg
+ 
+ 	// Create a listener early; this lets the kernel buffer any incoming
+ 	// connections before the server is actually started.
+-	listenCtx, listenCancel := context.WithCancel(ctx)
+ 	listenAddr := fmt.Sprintf(&quot;localhost:%d&quot;, scm.passthroughPort)
+-	listener, err := (&amp;net.ListenConfig{}).Listen(listenCtx, &quot;tcp&quot;, listenAddr)
++	listener, err := (&amp;net.ListenConfig{}).Listen(ctx, &quot;tcp&quot;, listenAddr)
+ 	if err != nil {
+-		listenCancel()
+ 		markReady()
+ 		return readyCh, fmt.Errorf(&quot;failed to create listener for pass through server: %w&quot;, err)
+ 	}
+-	context.AfterFunc(listenCtx, func() { listener.Close() })
++	// Close the listener if the manager stops before the runnable starts;
++	// once it starts, server.Shutdown owns closing it.
++	stopClose := context.AfterFunc(ctx, func() { listener.Close() })
+ 
+ 	err = mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+-		defer listenCancel()
+ 		defer markReady()
++		if !stopClose() {
++			return nil
++		}
+ 		server := http.Server{
+ 			Addr:     fmt.Sprintf(&quot;localhost:%d&quot;, scm.passthroughPort),
+ 			Handler:  mux,
+@@ -579,7 +581,8 @@ func (scm *SharedControllerManager) runPassthroughServer(ctx context.Context, mg
+ 		return nil
+ 	}))
+ 	if err != nil {
+-		listenCancel()
++		stopClose()
++		listener.Close()
+ 		markReady()
+ 		return readyCh, fmt.Errorf(&quot;failed to add pass through server to manager: %w&quot;, err)
+ 	}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> No test pins the cross-project membership removal <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L124-L138">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="124" data-line="129-133"><code class="language-go">		if err != nil {
+			return fmt.Errorf(
+				&quot;failed to create compose project for container %s: %w&quot;, container.GetName(), err)
+		}
+
+		// Remove the container from any ComposeProject it may currently be a member
+		// of, except for the one it is currently associated with.
+		if err := r.removeComposeMembership(ctx, req, project); err != nil {
+			return err
+		}
+
+		containerID := container.GetName()
+		changed = changed || project.Status.Namespace != container.Status.Namespace
+		project.Status.Namespace = container.Status.Namespace
+		changed = changed || project.Status.Name != projectName</code></pre>
+    <p>This round added the call, which takes a relabelled container out of its old project before it joins the new one. With the call deleted, every existing test still passes while a moved container stays a member of both projects. A regression here gives a silent wrong result, so the test is required. The probe&#39;s test passes on the tree and fails without the call.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-move.sh; run from the repo root: bash probe-move.sh
+# Adds a test that moves a container between projects, then deletes the
+# cross-project removal from reconcileContainer and reruns the tests.
+set -u
+cd rdd/pkg/controllers/containers/compose
+cat &gt; move_probe_test.go &lt;&lt;&#39;EOF&#39;
+package compose
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+	&quot;k8s.io/apimachinery/pkg/types&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api&quot;
+)
+
+func TestProbeMoveBetweenProjects(t *testing.T) {
+	key := func(project string) client.ObjectKey {
+		return types.NamespacedName{
+			Name:      api.MirrorName[*v1alpha1.ComposeProject](fmt.Sprintf(&quot;moby.%s&quot;, project)),
+			Namespace: &quot;rancher-desktop&quot;,
+		}
+	}
+	c := newContainer(&quot;rancher-desktop&quot;, &quot;r1&quot;, &quot;moby&quot;, map[string]string{
+		composeProjectLabel: &quot;a&quot;, composeConfigHashLabel: &quot;h&quot;,
+	})
+	r, _ := newReconciler(t, c)
+	_, err := reconcileKind(r, v1alpha1.ContainerKind, client.ObjectKeyFromObject(c), c.GetUID())
+	assert.NilError(t, err)
+
+	var latest v1alpha1.Container
+	assert.NilError(t, r.Get(t.Context(), client.ObjectKeyFromObject(c), &amp;latest))
+	latest.Status.Labels[composeProjectLabel] = &quot;b&quot;
+	assert.NilError(t, r.Update(t.Context(), &amp;latest))
+	_, err = reconcileKind(r, v1alpha1.ContainerKind, client.ObjectKeyFromObject(c), c.GetUID())
+	assert.NilError(t, err)
+
+	var a, b v1alpha1.ComposeProject
+	assert.NilError(t, r.Get(t.Context(), key(&quot;a&quot;), &amp;a))
+	assert.NilError(t, r.Get(t.Context(), key(&quot;b&quot;), &amp;b))
+	assert.Equal(t, len(a.Status.Containers), 0, &quot;r1 is still a member of project a&quot;)
+	assert.Equal(t, len(b.Status.Containers), 1)
+}
+EOF
+f=compose_reconciler.go
+echo &quot;== tree as reviewed, with the move test&quot;
+go test -count=1 . 2&gt;&amp;1 | grep -E &#39;^(ok|FAIL)&#39;
+sed -i.bak &#39;/Remove the container from any ComposeProject/,/^[[:space:]]*}$/d&#39; &quot;$f&quot;
+echo &quot;== cross-project removal deleted, existing tests only&quot;
+go test -count=1 -run &#39;TestReconcileContainer|TestComposeConfigFiles|TestReconcile_dispatch&#39; . 2&gt;&amp;1 | grep -E &#39;^(ok|FAIL)&#39;
+echo &quot;== cross-project removal deleted, move test&quot;
+go test -count=1 -run TestProbeMoveBetweenProjects . 2&gt;&amp;1 | grep -E &#39;^(ok|FAIL)|still a member&#39;
+mv &quot;$f.bak&quot; &quot;$f&quot;
+rm move_probe_test.go</code></pre>
+      <pre><code class="language-text">$ bash probe-move.sh
+== tree as reviewed, with the move test
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.678s
+== cross-project removal deleted, existing tests only
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.671s
+== cross-project removal deleted, move test
+    move_probe_test.go:39: assertion failed: 1 (int) != 0 (int): r1 is still a member of project a
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/containers/compose	0.653s
+FAIL</code></pre>
+      </details>
+    <p>Fix: add a <code>TestReconcileContainer</code> subtest that relabels a container and checks both projects. It passes on the tree and fails at its <code>oldProject</code> assertion with the call deleted.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go b/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go
+index a14c108cd..ed1efac88 100644
+--- a/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go
++++ b/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go
+@@ -281,6 +281,33 @@ func TestReconcileContainer(t *testing.T) {
+ 		assert.NilError(t, r.Get(t.Context(), keyFromProjectName(&quot;myproject&quot;), &amp;compose))
+ 		assert.Equal(t, len(compose.Status.Containers), 0)
+ 	})
++
++	t.Run(&quot;moves a relabelled container to its new project&quot;, func(t *testing.T) {
++		t.Parallel()
++		resource := newContainer(k8sNamespace, &quot;r1&quot;, dockerNamespace, map[string]string{
++			composeProjectLabel:    &quot;old&quot;,
++			composeConfigHashLabel: &quot;somehash&quot;,
++		})
++		r, _ := newReconciler(t, resource)
++
++		_, err := reconcileKind(r, v1alpha1.ContainerKind, client.ObjectKeyFromObject(resource), resource.GetUID())
++		assert.NilError(t, err)
++
++		var relabelled v1alpha1.Container
++		assert.NilError(t, r.Get(t.Context(), client.ObjectKeyFromObject(resource), &amp;relabelled))
++		relabelled.Status.Labels[composeProjectLabel] = &quot;new&quot;
++		assert.NilError(t, r.Update(t.Context(), &amp;relabelled))
++		_, err = reconcileKind(r, v1alpha1.ContainerKind, client.ObjectKeyFromObject(resource), resource.GetUID())
++		assert.NilError(t, err)
++
++		var oldProject, newProject v1alpha1.ComposeProject
++		assert.NilError(t, r.Get(t.Context(), keyFromProjectName(&quot;old&quot;), &amp;oldProject))
++		assert.NilError(t, r.Get(t.Context(), keyFromProjectName(&quot;new&quot;), &amp;newProject))
++		assert.Equal(t, len(oldProject.Status.Containers), 0)
++		assert.DeepEqual(t, newProject.Status.Containers, []v1alpha1.ComposeProjectContainer{
++			{Name: resource.GetName(), UID: resource.GetUID()},
++		})
++	})
+ }
+ 
+ func TestComposeConfigFiles(t *testing.T) {</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/base/field_indexer.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>FieldExtractor</code> drops its parse error, and its doc says tests only while <code>IndexField</code> calls it <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/base/field_indexer.go#L92-L102">rdd/pkg/controllers/base/field_indexer.go</a></div>
+      <pre data-start="92" data-line="97"><code class="language-go">// given JSONPath from a client.Object.  This should only be used in tests;
+// production code should be using [IndexCRDFields] or [IndexField] instead.
+func FieldExtractor(ctx context.Context, jsonPath string) client.IndexerFunc {
+	log := log.FromContext(ctx)
+	jp := jsonpath.New(jsonPath)
+	_ = jp.Parse(&quot;{&quot; + jsonPath + &quot;}&quot;)
+	return func(rawObj client.Object) []string {
+		results, err := jp.FindResults(rawObj)
+		if err != nil {
+			log.V(3).Info(&quot;failed to extract field value&quot;, &quot;field&quot;, jsonPath, &quot;object&quot;, rawObj, &quot;error&quot;, err)
+			return nil</code></pre>
+    <p><code>IndexField</code> parses the same path first and returns the error (line 81), so production never registers an unparsed extractor. A test that passes a malformed path gets an index that matches nothing, logged only at V(3), and fails far from the cause. The doc at lines 92-93 tells production code to use <code>IndexCRDFields</code> or <code>IndexField</code> instead, yet <code>IndexField</code> is the production caller.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/base/field_indexer.go#L76-L98">rdd/pkg/controllers/base/field_indexer.go</a></div>
+      <pre data-start="76" data-line="81-93"><code class="language-go">//
+// The given JSONPath must be a valid JSONPath expression starting with a dot;
+// for example, `.status.repoTag`.
+func IndexField(ctx context.Context, obj client.Object, mgr ctrl.Manager, jsonPath string) error {
+	jp := jsonpath.New(jsonPath)
+	if err := jp.Parse(&quot;{&quot; + jsonPath + &quot;}&quot;); err != nil {
+		return fmt.Errorf(&quot;failed to parse field path %q for %T: %w&quot;, jsonPath, obj, err)
+	}
+	err := mgr.GetFieldIndexer().IndexField(ctx, obj, jsonPath, FieldExtractor(ctx, jsonPath))
+	if err != nil {
+		return fmt.Errorf(&quot;failed to index field %q for %T: %w&quot;, jsonPath, obj, err)
+	}
+	return nil
+}
+
+// FieldExtractor returns a client.IndexerFunc that extracts the values of the
+// given JSONPath from a client.Object.  This should only be used in tests;
+// production code should be using [IndexCRDFields] or [IndexField] instead.
+func FieldExtractor(ctx context.Context, jsonPath string) client.IndexerFunc {
+	log := log.FromContext(ctx)
+	jp := jsonpath.New(jsonPath)
+	_ = jp.Parse(&quot;{&quot; + jsonPath + &quot;}&quot;)
+	return func(rawObj client.Object) []string {</code></pre>
+    <p>Fix: return <code>(client.IndexerFunc, error)</code> from <code>FieldExtractor</code>, call it once from <code>IndexField</code>, and describe it as the extractor <code>IndexField</code> registers.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/service/controllers/discovery.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The readiness comments overstate or omit what <code>Start</code> waits for <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/discovery.go#L26-L37">rdd/pkg/service/controllers/discovery.go</a></div>
+      <pre data-start="26" data-line="31-32"><code class="language-go">	ControllerManagerConfigMapName = &quot;rdd-controller-manager&quot;
+
+	// RDDSystemNamespace is the namespace where RDD stores its control plane information.
+	RDDSystemNamespace = &quot;rdd-system&quot;
+
+	// ReadyAnnotation is set on the discovery ConfigMap after all of the known
+	// enabled controllers are ready; this includes:
+	//   - every enabled controller has installed its CRDs.
+	//   - every controller manager has registered its data entry.
+	//   - the admission webhooks are configured and answer.
+	//   - the passthrough HTTP server is ready.
+	// Clients must wait for this annotation because the ConfigMap itself exists</code></pre>
+    <p><code>Start</code> waits only for the webhook server and the passthrough runnable. With no passthrough controller, <code>runPassthroughServer</code> closes its channel at once (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/manager.go#L535-L537"><code>manager.go:535-537</code></a>), and the mark fires before any cache syncs or controller starts. The bulleted list under the clause is accurate.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/manager.go#L530-L542">rdd/pkg/service/controllers/manager.go</a></div>
+      <pre data-start="530" data-line="535-537"><code class="language-go">			}
+		}
+	}
+
+	if !hasPassthroughServers {
+		klog.V(2).InfoS(&quot;No pass through controllers registered, skipping pass through server startup&quot;)
+		markReady()
+		return readyCh, nil
+	}
+
+	// Create a listener early; this lets the kernel buffer any incoming
+	// connections before the server is actually started.
+	listenCtx, listenCancel := context.WithCancel(ctx)</code></pre>
+    <p>Two comments in <code>manager.go</code> lag the change. The doc on <code>runPassthroughServer</code> (line 501) says &quot;Run the passthrough server&quot;, but the function registers a runnable and returns the channel. The comment at line 316 says ready follows the webhooks and omits the passthrough wait just above it.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/service/controllers/discovery.go#L311-L321">rdd/pkg/service/controllers/discovery.go</a></div>
+      <pre data-start="311" data-line="316"><code class="language-go">
+		enabledPassthroughs := info.EnabledPassthroughs[controllerName]
+		if !slices.Contains(enabledPassthroughs, endpointName) {
+			continue
+		}
+
+		// Check if the controller manager is actually accessible
+		if d.isControllerManagerHealthy(ctx, &amp;info) {
+			return info.PassthroughEndpoint, nil
+		}
+	}</code></pre>
+    <p>Fix: open the doc with &quot;is set on the discovery ConfigMap once all of the following hold:&quot;, and reword the two <code>manager.go</code> comments.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> Compare the destination project by name, so the test spy&#39;s UIDs stop mattering <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L183-L193">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="183" data-line="188"><code class="language-go">		return fmt.Errorf(&quot;failed to list compose projects with container id %q: %w&quot;, req.Name, err)
+	}
+
+	var errs []error
+	for _, item := range list.Items {
+		if project != nil &amp;&amp; item.GetUID() == project.GetUID() {
+			continue
+		}
+		itemKey := client.ObjectKeyFromObject(&amp;item)
+		err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+			var latest v1alpha1.ComposeProject</code></pre>
+    <p>The <code>List</code> at line 181 is scoped to <code>req.Namespace</code>, the destination project&#39;s namespace, so the name alone identifies the project. The UID check works in tests only because the spy assigns UIDs on <code>Create</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go#L42-L48"><code>compose_reconciler_test.go:42-48</code></a>), and the spy&#39;s comment gives the reason as telling &quot;found&quot; from &quot;not found&quot; objects, which nothing in the package does.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go#L37-L53">rdd/pkg/controllers/containers/compose/compose_reconciler_test.go</a></div>
+      <pre data-start="37" data-line="42-48"><code class="language-go">	statusUpdateCalls int
+}
+
+func (c *spyingClient) Create(ctx context.Context, obj client.Object, opts ...client.CreateOption) error {
+	c.createCalls++
+	if obj.GetUID() == &quot;&quot; {
+		// The fake client (unlike a real API server) does not assign a UID on
+		// creation; do so here so that code relying on GetUID() to detect
+		// &quot;found&quot; vs &quot;not found&quot; objects behaves the same way it would
+		// against a real cluster.
+		obj.SetUID(uuid.NewUUID())
+	}
+	return c.Client.Create(ctx, obj, opts...)
+}
+
+func (c *spyingClient) Update(ctx context.Context, obj client.Object, opts ...client.UpdateOption) error {
+	c.updateCalls++</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L176-L186">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="176" data-line="181"><code class="language-go">// removeComposeMembership removes the object referred to in the given request
+// from the `HasMembers` status of any ComposeProject in the same namespace.
+// If `project` is given, then membership will not be removed for that project.
+func (r *reconciler) removeComposeMembership(ctx context.Context, req composeRequest, project *v1alpha1.ComposeProject) error {
+	var list v1alpha1.ComposeProjectList
+	err := r.List(ctx, &amp;list, client.InNamespace(req.Namespace), client.MatchingFields{containersIndexKey: req.Name})
+	if err != nil {
+		return fmt.Errorf(&quot;failed to list compose projects with container id %q: %w&quot;, req.Name, err)
+	}
+
+	var errs []error</code></pre>
+    <p>Fix: compare <code>item.GetName() == project.GetName()</code>; if the UID check stays, reword the spy&#39;s comment to say project exclusion needs distinct UIDs.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/containers/v1alpha1/compose_types.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>status.configs</code> can hold absolute paths that the type and design doc call relative (round 1 S2 unaddressed) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L94-L106">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="94" data-line="99-101"><code class="language-go">	// WorkingDir is the absolute path to the compose project directory on the
+	// host (i.e. where the RDD process runs). May be unset.
+	//
+	// +optional
+	WorkingDir string `json:&quot;workingDir,omitempty&quot;`
+	// Configs is the list of compose files used to create the project,
+	// relative to WorkingDir. It is not guaranteed that this is sufficient to
+	// recreate the project. May be unset.
+	//
+	// +optional
+	Configs []string `json:&quot;configs,omitempty&quot;`
+	// Containers tracks the containers that are part of the compose project.
+	// The name is the metadata.name of the container object (i.e. the</code></pre>
+    <p><code>composeConfigFiles</code> keeps a path absolute when it lies outside <code>workingDir</code> or the working-dir label is missing (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L241-L249"><code>compose_reconciler.go:241-249</code></a>), and a test pins that. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/docs/design/api_containers.md#L702-L704"><code>rdd/docs/design/api_containers.md:702-704</code></a> makes the same relative-path promise. The helper&#39;s comment (line 225) cites <code>ComposeStatus.Configs</code>; the type is <code>ComposeProjectStatus</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L236-L254">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="236" data-line="241-249"><code class="language-go">	for _, path := range paths {
+		path = strings.TrimSpace(path)
+		if path == &quot;&quot; {
+			continue
+		}
+		if workingDir == &quot;&quot; {
+			configs = append(configs, path)
+			continue
+		}
+		rel, err := filepath.Rel(workingDir, path)
+		if err != nil || rel == &quot;..&quot; || strings.HasPrefix(rel, parentDirPrefix) {
+			configs = append(configs, path)
+			continue
+		}
+		configs = append(configs, rel)
+	}
+
+	return configs
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/docs/design/api_containers.md#L697-L709">rdd/docs/design/api_containers.md</a></div>
+      <pre data-start="697" data-line="702-704"><code class="language-markdown">- **status.namespace**: The containerd namespace; same as the `status.name` of a
+  [`ContainerNamespace`](#namespaces) object.
+- **status.name**: The compose project name.
+- **status.workingDir**: Optional; the compose project directory on the host on
+  which the RDD process runs, as an absolute path.
+- **status.configs**: Optional; the list of compose files used to create the
+  project.  Relative to `status.workingDir`, which means it&#39;s also a path on the
+  host.
+- **status.containers**: A list of containers that are part of this project.  The
+  `name` is the `metadata.name` of the object (i.e. the container ID).  Each
+  `name` must be unique.  The `uid` is the object UID (i.e. `.metadata.uid`),
+  used to track when the object has been recreated.
+- **status.conditions**: The normal status conditions; see [below](#status-conditions)</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/apis/containers/v1alpha1/compose_types.go#L220-L230">rdd/pkg/apis/containers/v1alpha1/compose_types.go</a></div>
+      <pre data-start="220" data-line="225"><code class="language-go">// +kubebuilder:object:root=true
+// +kubebuilder:ac:generate=true
+// +kubebuilder:subresource:status
+// +kubebuilder:selectablefield:JSONPath=.spec.namespace
+// +kubebuilder:selectablefield:JSONPath=.spec.name
+// +kubebuilder:metadata:annotations=rdd.rancherdesktop.io/controller=compose
+
+// ComposeUpRequest is the Schema for the composeuprequests API.  Creating a
+// ComposeUpRequest triggers `docker compose up` for the named project, and
+// causes the corresponding [ComposeProject] object to be created (or updated)
+// to reflect this project.  metadata.name must be constructed the same way as</code></pre>
+    <p>Fix: document the absolute-path exception in both places and correct the type name.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Errors from the typed reconciler log without the object (round 1 S5 unaddressed) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L270-L281">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="270" data-line="275-276"><code class="language-go">	hasLabelFunc := func(obj client.Object) bool {
+		container, ok := obj.(*v1alpha1.Container)
+		return ok &amp;&amp; container.Status.Labels[composeProjectLabel] != &quot;&quot;
+	}
+
+	return builder.TypedControllerManagedBy[composeRequest](mgr).
+		Named(&quot;compose-reconciler&quot;).
+		Watches(&amp;v1alpha1.Container{}, handler.TypedEnqueueRequestsFromMapFunc(func(_ context.Context, obj client.Object) []composeRequest {
+			return []composeRequest{{
+				Kind:           v1alpha1.ContainerKind,
+				NamespacedName: client.ObjectKeyFromObject(obj),
+				UID:            obj.GetUID(),</code></pre>
+    <p>For a request type other than <code>reconcile.Request</code>, controller-runtime&#39;s default log constructor adds only the controller name. The bare errors returned at lines 96 and 169 reach the <code>Reconciler error</code> log with no kind, namespace or name.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L91-L101">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="91" data-line="96"><code class="language-go">			if apierrors.IsNotFound(err) {
+				// The container was deleted, so remove its membership from any
+				// Compose in the same namespace.
+				return r.removeComposeMembership(ctx, req, nil)
+			}
+			return err
+		}
+		projectName := container.Status.Labels[composeProjectLabel]
+		if projectName == &quot;&quot; {
+			return r.removeComposeMembership(ctx, req, nil)
+		}</code></pre>
+    <p>Fix: add <code>.WithLogConstructor</code> that logs <code>req.Kind</code>, <code>req.Namespace</code> and <code>req.Name</code>, or wrap those two errors with <code>req.NamespacedName</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> Names and comments still describe code that does not exist (round 1 S6, partly fixed) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L171-L182">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="171" data-line="176-177"><code class="language-go">		return nil
+	})
+	return ctrl.Result{}, err
+}
+
+// removeComposeMembership removes the object referred to in the given request
+// from the `HasMembers` status of any ComposeProject in the same namespace.
+// If `project` is given, then membership will not be removed for that project.
+func (r *reconciler) removeComposeMembership(ctx context.Context, req composeRequest, project *v1alpha1.ComposeProject) error {
+	var list v1alpha1.ComposeProjectList
+	err := r.List(ctx, &amp;list, client.InNamespace(req.Namespace), client.MatchingFields{containersIndexKey: req.Name})
+	if err != nil {</code></pre>
+    <p>The function edits <code>status.containers</code> and sets the condition as a side effect. Still stale: &quot;any Compose&quot; (lines 93, 104), <code>testReconcileResource</code> (test line 125), &quot;no-ops for ComposeKind&quot; (test line 354), and &quot;map-of-slice&quot; in the <code>TestAppendFieldValues_FlattensSlices</code> doc (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/base/field_indexer_test.go#L13-L14"><code>field_indexer_test.go:13-14</code></a>), which round 1&#39;s S4 fix left behind.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/base/field_indexer_test.go#L8-L19">rdd/pkg/controllers/base/field_indexer_test.go</a></div>
+      <pre data-start="8" data-line="13-14"><code class="language-go">	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+)
+
+// TestAppendFieldValues_FlattensSlices verifies that a JSONPath result matching
+// a slice- or map-of-slice-valued field is expanded into one index value per
+// element, rather than being formatted as a single string representing the
+// whole slice. A regression here silently breaks any `client.MatchingFields`
+// lookup keyed on an individual element, since the indexed value would never
+// match.
+func TestAppendFieldValues_FlattensSlices(t *testing.T) {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L88-L98">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="88" data-line="93"><code class="language-go">		// Find the object (Container) that triggered the reconcile request.
+		var container v1alpha1.Container
+		if err := r.Get(ctx, req.NamespacedName, &amp;container); err != nil {
+			if apierrors.IsNotFound(err) {
+				// The container was deleted, so remove its membership from any
+				// Compose in the same namespace.
+				return r.removeComposeMembership(ctx, req, nil)
+			}
+			return err
+		}
+		projectName := container.Status.Labels[composeProjectLabel]</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L120-L130">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="120" data-line="125"><code class="language-go">			if err = r.Create(ctx, project); apierrors.IsAlreadyExists(err) {
+				err = r.Get(ctx, client.ObjectKeyFromObject(project), project)
+			}
+		}
+		if err != nil {
+			return fmt.Errorf(
+				&quot;failed to create compose project for container %s: %w&quot;, container.GetName(), err)
+		}
+
+		// Remove the container from any ComposeProject it may currently be a member
+		// of, except for the one it is currently associated with.</code></pre>
+    <p>Fix: say the function doc edits <code>status.containers</code>, rename the rest to the <code>ComposeProject</code> terms, and drop &quot;map-of-slice&quot;.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler_test.go">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> <code>reconcileKind</code> uses <code>context.Background()</code> (round 1 S7 unaddressed) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go#L113-L123">rdd/pkg/controllers/containers/compose/compose_reconciler_test.go</a></div>
+      <pre data-start="113" data-line="118"><code class="language-go">}
+
+// reconcileKind runs the reconciler for the given kind/key/uid, mirroring how
+// a watch event would enqueue a composeRequest.
+func reconcileKind(r *reconciler, kind string, key types.NamespacedName, uid types.UID) (ctrl.Result, error) {
+	return r.Reconcile(context.Background(), composeRequest{
+		Kind:           kind,
+		NamespacedName: key,
+		UID:            uid,
+	})
+}</code></pre>
+    <p>The other reconcile calls pass <code>t.Context()</code> (lines 345, 357, 376).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler_test.go#L340-L350">rdd/pkg/controllers/containers/compose/compose_reconciler_test.go</a></div>
+      <pre data-start="340" data-line="345"><code class="language-go">	t.Parallel()
+
+	t.Run(&quot;logs and does not error for an unknown kind&quot;, func(t *testing.T) {
+		t.Parallel()
+		r, _ := newReconciler(t)
+		result, err := r.Reconcile(t.Context(), composeRequest{
+			Kind:      &quot;SomeUnknownKind&quot;,
+			Namespace: &quot;rancher-desktop&quot;,
+			Name:      &quot;whatever&quot;,
+		})
+		assert.NilError(t, err)</code></pre>
+    <p>Fix: take a <code>context.Context</code> and pass <code>t.Context()</code> from each caller.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> The <code>events</code> RBAC marker is unused (round 1 S8 unaddressed) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L58-L68">rdd/pkg/controllers/containers/compose/compose_reconciler.go</a></div>
+      <pre data-start="58" data-line="63"><code class="language-go">
+// +kubebuilder:rbac:groups=containers.rancherdesktop.io,resources=composeprojects,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=containers.rancherdesktop.io,resources=composeprojects/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=containers.rancherdesktop.io,resources=composeprojects/finalizers,verbs=update
+// +kubebuilder:rbac:groups=containers.rancherdesktop.io,resources=containers,verbs=get;list;watch
+// +kubebuilder:rbac:groups=&quot;&quot;,resources=events,verbs=create;patch
+
+// Reconcile dispatches requests by source kind.
+func (r *reconciler) Reconcile(ctx context.Context, req composeRequest) (ctrl.Result, error) {
+	switch req.Kind {
+	case v1alpha1.ComposeProjectKind:</code></pre>
+    <p>The reconciler does not record events. The no-op <code>ComposeUpRequest</code> reconciler matches the PR description, so only the marker remains from round 1&#39;s S8.</p>
+    <p>Fix: drop the marker until the reconciler has an event recorder.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The ready mark now includes a full cache sync, but only when a passthrough controller is registered</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span>. The passthrough runnable starts in the LeaderElection group, after the Caches, Others and Warmup groups (<code>internal.go:446-477</code> in controller-runtime v0.24.1). With the engine, demo or mock controller, ready therefore waits for every informer, including the ComposeProject one that round 1 saw draw a 429 with <code>Retry-After: 1s</code>; a lima-only manager marks ready before any cache syncs. Round 1&#39;s bind-only patch already made <code>passthrough.bats</code> pass 3 of 3, since queued connections wait for <code>Serve</code>. Pick one guarantee and state it in the <code>ReadyAnnotation</code> doc: drop the wait, or wait for cache sync in every configuration.</li>
+      <li><strong>Membership changes only on observed Container events</strong> (future) <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. A Docker full sync narrows round 1&#39;s concern: it deletes mirrors of containers that no longer exist (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/app/engine/controllers/sync_containers.go#L62-L74"><code>sync_containers.go:62-74</code></a>), and those deletes reach this reconciler. What remains is a Container mirror already gone when the reconciler starts, which only the deferred ComposeProject arm can catch by checking stored members against existing Containers. Gemini 3.1 Pro rated it Important; the PR defers that arm, so it stays here.</li>
+      <li><em></em>The <code>com.docker.compose.config-hash</code> gate excludes the guest&#39;s nerdctl<em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. <code>rdd/dependencies.yaml</code> pins nerdctl v2.1.2, which does not set that label; v2.2.0 adds it. State which engines compose detection supports.</li>
+      <li><strong>Engine cleanup leaves ComposeProjects behind</strong> (future) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. <code>cleanupMirrorResources</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go#L449-L465"><code>watch_reconciler.go:449-465</code></a>) deletes the four engine-owned mirror kinds. The reaper belongs in the deferred compose logic, not in engine cleanup.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>Binding the passthrough port before <code>mgr.Start</code> shrinks the window after <code>ResolvePort</code>, queues early connections, and makes a bind failure fail <code>Start</code> before the ready mark. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span></li>
+      <li>The tests index the fake client with <code>base.FieldExtractor</code> and the production key, so breaking the JSONPath now fails the delete subtest. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li>The cross-project removal settles round 1&#39;s label-change concern. Relabelling a container now leaves the old project empty and the new one holding the member. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran these in the lead worktree:</p>
+    <ul>
+      <li><code>go test</code> on <code>./pkg/controllers/base/</code>, <code>./pkg/controllers/containers/...</code>, <code>./pkg/controllers/mock/...</code> and <code>./pkg/service/controllers/</code> (envtest included): all pass.</li>
+      <li>Round 1&#39;s <code>passthrough.bats</code> probe on a control-plane-only instance: 3 of 3 pass, where round 1 saw 3 of 3 fail. CI is green on all three <code>bats-app</code> legs.</li>
+      <li>Round 1&#39;s index probe: breaking the JSONPath now fails <code>TestReconcileContainer</code> at line 278.</li>
+      <li>The probes and patches under I1 and I2, with the results shown there.</li>
+    </ul>
+    <p>Required:</p>
+    <ol>
+      <li>I1: commit the probe&#39;s two tests. Shutdown ordering is timing-dependent, and no Go test starts the passthrough server.</li>
+      <li>I2: the move-between-projects subtest, because a regression gives a silent wrong result.</li>
+    </ol>
+    <p>A test pinning the ready wait apart from the early bind would need to delay the runnable&#39;s start, which is fault injection, and <code>passthrough.bats</code> covers the symptom a user sees. Codex rated that test and the stale-UID one below required. Optional: a stale-UID delete that writes nothing (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/containers/compose/compose_reconciler.go#L203-L205"><code>compose_reconciler.go:203-205</code></a>), the <code>rel == &quot;..&quot;</code> boundary, and <code>IndexCRDFields</code> deduplication across served versions, which fails loudly at registration if it regresses.</p>
+    <table>
+      <thead><tr><th>Round-1 fix</th><th>Test that fails when it is reverted</th></tr></thead>
+      <tbody>
+        <tr><td>I1 (ready waits; early bind)</td><td><code>passthrough.bats</code> in <code>bats-app</code></td></tr>
+        <tr><td>I2 (production extractor)</td><td>None. Reverting the fixture to its hand-written extractor still passes; &quot;removes membership when a labeled container is deleted&quot; fails only if the production JSONPath breaks.</td></tr>
+        <tr><td>S1 (Get first; write only on change)</td><td>&quot;is idempotent&quot; (<code>createCalls</code> and <code>statusUpdateCalls</code> stay at 1)</td></tr>
+        <tr><td>S3 (empty <code>workingDir</code> case)</td><td>None. <code>filepath.Rel(&quot;&quot;, abs)</code> errors and falls back to the same output, so the case passes with or without its branch.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The <code>ReadyAnnotation</code> doc overstates what ready waits for (S2). The <code>Configs</code> doc and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/docs/design/api_containers.md#L702-L704"><code>api_containers.md:702-704</code></a> promise relative paths (S4). The design doc&#39;s <code>HasMembers</code> lifecycle (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/docs/design/api_containers.md#L718"><code>api_containers.md:718</code></a>) depends on the deferred ComposeProject arm; see Acknowledged Limitations.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Two amended commits gained behaviour their messages do not mention: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b61b7ec3d"><code>b61b7ec3d</code></a> renames <code>IndexFields</code> to <code>IndexCRDFields</code> and exports <code>FieldExtractor</code>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2228b9b93"><code>2228b9b93</code></a> now moves a container between projects and skips unchanged writes.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><code>HasMembers</code> stays <code>Unknown/Calculating</code> after any removal.<em></em> Still true. Since round 1&#39;s S1 fix, the <code>changed</code> check ignores the condition, so an event for a remaining member no longer resets it to <code>True</code>: a probe left one member, the condition <code>Unknown</code>, and zero writes. That is no worse than what round 1 accepted, because the deferred ComposeProject arm recomputes the condition from the member count. To keep it right within this PR, add <code>changed = changed || !apimeta.IsStatusConditionTrue(project.Status.Conditions, v1alpha1.ComposeProjectConditionHasMembers)</code>. Do not re-suggest while that arm is pending.</li>
+      <li><em></em>The <code>ComposeUpRequest</code> reconciler is a no-op<em></em>, as the PR description says.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found the shutdown regression with an executed probe and a patch that the consolidator reran unchanged, and its mutation exposed the untested cross-project removal. It traced the ready mark&#39;s dependence on a passthrough controller, though its example was wrong. <code>--controllers=containers</code> includes the engine, a passthrough controller (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d4ededadfe96cd8c8d972c449c0819f2ac0ec6d5/rdd/pkg/controllers/app/engine/controller.go#L39"><code>engine/controller.go:39</code></a>). It rated two points too high, the <code>ReadyAnnotation</code> clause (Important) and the <code>HasMembers</code> gate (a regression). Its I1 reproducer block described the probe instead of including it, and its <code>ReadyAnnotation</code> citation pointed at line 647 of a file whose constant is at line 31.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex framed the shutdown regression as a skipped drain and proved it with a real manager and a handler held open; the probe failed 3 of 3 on the tree and passed 3 of 3 in the consolidator&#39;s run with I1&#39;s patch. It ran the widest set of probes on the partial-failure paths (bind failure, <code>mgr.Add</code> failure, cancellation before start), and it alone qualified round 1&#39;s missed-delete concern with the full-sync pruning. It listed the move-between-projects test as required but did not raise it as a finding, and its fix stayed prose because it read the prompt as forbidding production edits.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro missed the shutdown regression and praised the passthrough fix for handling &quot;all tested failure paths&quot;, but none of its 29 commands ran <code>go</code>. Its one Important re-raised round 1&#39;s missed-delete concern, which the PR defers, with reproducer output citing line 413 of a 386-line test file; that output came from no run. Three of its four Suggestions repeat round-1 carry-overs; the fourth, on <code>FieldExtractor</code>&#39;s parse error, became part of S1.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found the shutdown race on its own, supported by a standalone model of the listener and server that shows the race but does not run the reviewed function. It overstated the impact: controller-runtime logs an error that arrives after the stop begins and does not return it (<code>internal.go:530-533</code>), so external controllers do not exit 1. It alone suggested comparing the destination project by name. It rated the <code>FieldExtractor</code> doc Important, and two of its Suggestions were dropped. Both Gemini models raised the same round-1 carry-overs, so count that agreement as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>8m 56s</td><td>15m 18s</td><td>7m 25s</td><td>9m 42s</td></tr>
+        <tr><td>Findings</td><td>2I 7S</td><td>2I 6S</td><td>4S</td><td>2I 7S</td></tr>
+        <tr><td>Tool calls</td><td>34 (Bash 29, Read 5)</td><td>27 (shell 21, stdin 6)</td><td>32 (run<em>shell</em>command 29, update<em>topic 2, read</em>file 1)</td><td>66 (read<em>file 27, run</em>shell<em>command 22, grep</em>search 11)</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>5</td><td>2</td><td>4</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>2</td><td>0</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>9</td><td>9</td><td>9</td><td>9</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 7S</strong></td><td><strong>2I 6S</strong></td><td><strong>4S</strong></td><td><strong>2I 7S</strong></td></tr>
+        <tr><td>Downgraded</td><td>2</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Codex and Claude gave the most value. Both reproduced I1 against the real manager, Codex&#39;s drain test shows the effect a client sees, and Claude&#39;s mutation found I2. Three of the four reviewers caught the regression this round, where none caught round 1&#39;s.</p>
+    <p><strong>Reconciliation.</strong> Claude I2 (<code>ReadyAnnotation</code> doc): important → S2. Claude I3 (no Go test for the passthrough server): merged into I1. Claude S1 (<code>HasMembers</code> gate): suggestion → Acknowledged Limitations. Claude S3 merged into S2, S5 into S6. Gemini 3.1 Pro I1 (missed deletes): important → design concern. Gemini 3.5 Flash I2 (<code>FieldExtractor</code> doc and parse error): important → S1. Gemini 3.5 Flash S2 (narrow <code>RetryOnConflict</code>, which re-reads the Container on each retry by design) and S8 (slice-branch comment, settled by round 1&#39;s S4 fix): dropped.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>Build the Appendix by concatenating each agent&#39;s review file under its heading, not by retyping the reviews into the report&#39;s Write call. Retyping tens of kilobytes costs output tokens and can alter the text the appendix exists to preserve.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] controller-runtime runs each <code>manager.Runnable</code> under its runnable group&#39;s context, which derives from <code>BaseContext</code> (rdd sets none, so <code>context.Background()</code>) and ends only when the stop sequence reaches that group; the LeaderElection group, where a plain <code>RunnableFunc</code> goes, stops after Warmup and Others. A resource a runnable owns, such as a listener, must not also be closed by a callback on the context passed to <code>mgr.Start</code>, because that context ends first. An error a runnable returns after the stop begins is logged as <code>error received after stop sequence was engaged</code> and not returned from <code>Start</code>.</li>
+      <li>[repo] A Docker full sync deletes every Container mirror whose container no longer exists (<code>sync_containers.go</code>), so a container removed while rdd was down produces a delete event at the next start. Code that tracks membership from Container events misses only mirrors already gone before its watch starts.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
