@@ -66,6 +66,11 @@ jobs:
         save: true
     - run: make lint-rdd
       working-directory: rdd
+    # The Linux and Windows BATS jobs restore the cache entry this job saves,
+    # and they build the guest binaries, so build those here too.
+    - if: runner.os != 'macOS'
+      run: make guest-binaries
+      working-directory: rdd
   test-rdd:
     name: RDD Unit tests
     needs: get-pr-number
