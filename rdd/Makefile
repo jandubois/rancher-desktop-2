@@ -218,6 +218,9 @@ $(GUEST_BIN)/rd-init: $(RD_INIT_SRC) | $(GUEST_BIN)
 $(GUEST_BIN)/rdd-guest: $(RDD_GUEST_SRC) | $(GUEST_BIN)
 	$(call build-guest,src/rdd-guest,.)
 
+guest-binaries: $(GUEST_BINARIES)
+.PHONY: guest-binaries
+
 # distro-overlay works on the uncompressed distro, so the build unpacks the
 # pristine artifact and overlays that copy in place. The copy is over a
 # gigabyte, and make deletes an intermediate after a failed or interrupted
