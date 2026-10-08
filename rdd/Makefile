@@ -253,6 +253,28 @@ bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_I
 build-rdd: bin/rdd$(EXE)
 .PHONY: build-rdd
 
+# The rdd-forwarder is a small Win32 shim (vendored from ScoopInstaller/Shim,
+# see src/rdd-forwarder) that the instance bin directory publishes per tool on
+# Windows, where symlinks and hardlinks to bundled binaries are unavailable to a
+# standard user. It is only built for Windows targets, natively on the Windows
+# runners under MSYS2 bash. The defaults match the C toolchain build-rdd's cgo
+# already uses there — mingw g++ for x86_64, clang++ for arm64 (the mingw gcc
+# only targets x86_64). Override FORWARDER_CXX to cross-build elsewhere.
+FORWARDER_SRC := src/rdd-forwarder/shim.cpp
+ifeq ($(TARGET_ARCH),arm64)
+FORWARDER_CXX ?= clang++
+else
+FORWARDER_CXX ?= g++
+endif
+FORWARDER_CXXFLAGS := -std=c++20 -O2 -municode -static -fno-exceptions -fno-rtti \
+	-ffunction-sections -Wl,--gc-sections -s
+
+bin/rdd-forwarder.exe: $(FORWARDER_SRC)
+	$(FORWARDER_CXX) $(FORWARDER_CXXFLAGS) $< -lshell32 -o $@
+	ls -lh $@
+build-forwarder: bin/rdd-forwarder.exe
+.PHONY: build-forwarder
+
 # API Group Controller management - Auto-discovery of API groups
 CONTROLLERS := $(patsubst cmd/%-controller,%,$(wildcard cmd/*-controller))
 
