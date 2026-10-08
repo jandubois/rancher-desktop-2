@@ -11,6 +11,7 @@ import * as RDDClient from '@rdd-client';
 /** The field manager we set for preferences we modify. */
 const fieldManager = 'rancher-desktop-app';
 
+type App = RDDClient.IoRancherdesktopAppV1alpha1App;
 type AppSpec = RDDClient.IoRancherdesktopAppV1alpha1AppSpec;
 
 /**
@@ -220,7 +221,7 @@ export const actions = {
         status.message = `${ error.body }`;
       }
     }
-    console.error('Failed to patch app:', status);
+    console.error('Failed to patch app:', JSON.stringify(status));
     commit('SET_ERROR_STATUS', status);
   },
 
@@ -237,20 +238,42 @@ export const actions = {
  * @note This is only exported for testing; it should not be used outside of
  * this module.
  */
-export function generatePatch(changes: Changes): JSONPatch {
-  const result: JSONPatch = [];
+export function generatePatch(app: App, changes: Changes): JSONPatch {
+  const result: Record<string, JSONPatch[number]> = {};
+
+  function escape(input: string) {
+    return input.replaceAll('~', '~0').replaceAll('/', '~1');
+  }
+
   for (const [key, value] of Object.entries(changes)) {
-    const pathParts = ['', 'spec', ...key.split('.')]
-      .map(k => k.replaceAll('~', '~0').replaceAll('/', '~1'));
-    const path = pathParts.join('/');
+    const pathParts = ['', 'spec', ...key.split('.')];
+    // We need to handle the case where parent objects are missing.  The index
+    // is the number of elements, so it starts at 1, except we skip the root
+    // because that will always exist.
+    let missing = false;
+    for (let i = 2; i < pathParts.length; ++i) {
+      const subPath = pathParts.slice(0, i);
+      if (_.get(app, subPath.slice(1), null) === null) {
+        missing = true;
+        if (value === undefined) {
+          break;
+        }
+        const path = subPath.map(escape).join('/');
+        result[path] = { op: 'add', path, value: {} };
+      }
+    }
+    const path = pathParts.map(escape).join('/');
     if (value === undefined) {
-      result.push({ op: 'remove', path });
+      if (!missing && !(path in result)) {
+        result[path] = { op: 'remove', path };
+      }
     } else {
       // TODO: Handle array values.
-      result.push({ op: 'add', path, value });
+      result[path] = { op: 'add', path, value };
     }
   }
-  return result;
+
+  return Object.values(result);
 }
 
 enum PatchAppResult {
@@ -316,7 +339,7 @@ async function patchApp(
     const result = await client.patchApp(
       {
         name:            app.metadata.name,
-        body:            generatePatch(changes),
+        body:            generatePatch(app, changes),
         fieldManager,
         fieldValidation: 'Strict',
         dryRun,

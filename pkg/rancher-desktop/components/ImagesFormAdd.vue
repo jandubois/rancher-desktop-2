@@ -30,6 +30,8 @@ export default defineComponent({
 
   components: { LabeledInput },
 
+  emits: ['click'],
+
   props: {
     currentCommand: {
       type:    String,

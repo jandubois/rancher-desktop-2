@@ -154,12 +154,13 @@ describe('actions', () => {
       const context = makeContext();
       const error = new Error('error from unit test');
       rootGetters['rdd/app'] = { metadata: { name: 'test', namespace: 'default' } };
+      const body = expect.arrayContaining(generatePatch(rootGetters['rdd/app'], context.state.changes));
       client.patchApp.mockRejectedValue(error);
 
       await actions.modify(context, { key: 'running', value: true });
 
       expect(client.patchApp).toHaveBeenCalledWith(
-        expect.objectContaining({ body: generatePatch(context.state.changes) }),
+        expect.objectContaining({ body }),
         expect.anything());
       expect(dispatch).toHaveBeenCalledWith('setError', error);
     });
@@ -167,12 +168,13 @@ describe('actions', () => {
     it('should clear error if patch succeeds', async() => {
       const context = makeContext();
       rootGetters['rdd/app'] = { metadata: { name: 'test', namespace: 'default' } };
+      const body = expect.arrayContaining(generatePatch(rootGetters['rdd/app'], context.state.changes));
       client.patchApp.mockResolvedValue(app);
 
       await actions.modify(context, { key: 'running', value: true });
 
       expect(client.patchApp).toHaveBeenCalledWith(
-        expect.objectContaining({ body: generatePatch(context.state.changes) }),
+        expect.objectContaining({ body }),
         expect.anything());
       expect(commit).toHaveBeenCalledWith('SET_ERROR_STATUS', undefined);
     });
@@ -257,7 +259,7 @@ describe('actions', () => {
       const error = new Error('error from unit test');
       client.patchApp.mockRejectedValue(error);
 
-      const body = generatePatch(context.state.changes);
+      const body = generatePatch(app, context.state.changes);
       const result = await actions.commit(context);
 
       expect(result).toBe(false);
@@ -276,7 +278,7 @@ describe('actions', () => {
       client.patchApp.mockResolvedValue(app);
 
       // Save the expected body before `commit` modifies `state.changes`.
-      const body = generatePatch(context.state.changes);
+      const body = expect.arrayContaining(generatePatch(rootGetters['rdd/app'], context.state.changes));
 
       // We use a custom `watch` to call the callback immediately.
       const watch = jest.fn((getter: () => number, callback: (value: number) => void) => {
@@ -389,7 +391,7 @@ describe('actions', () => {
 
       expect(result).toBe(true);
       expect(client.patchApp).toHaveBeenCalledWith(
-        expect.objectContaining({ body: generatePatch({ running: true }) }),
+        expect.objectContaining({ body: generatePatch(rootGetters['rdd/app'], { running: true }) }),
         expect.anything(),
       );
       expect(commit).toHaveBeenCalledWith('SET_ERROR_STATUS', undefined);
@@ -410,7 +412,7 @@ describe('actions', () => {
 
       expect(result).toBe(false);
       expect(client.patchApp).toHaveBeenCalledWith(
-        expect.objectContaining({ body: generatePatch({ running: true }) }),
+        expect.objectContaining({ body: generatePatch(rootGetters['rdd/app'], { running: true }) }),
         expect.anything(),
       );
       expect(dispatch).toHaveBeenCalledWith('setError', error);
@@ -496,15 +498,66 @@ describe('actions', () => {
 });
 
 describe('generatePatch', () => {
-  it('should generate a JSON patch from changes', () => {
-    const changes = { running: true, 'kubernetes.enabled': undefined, 'invalid/name~': 1 };
-    const patch = generatePatch(changes);
-
-    expect(patch).toEqual([
+  it('should set simple values', () => {
+    const changes = { running: true };
+    const patch = generatePatch({ spec: { kubernetes: { enabled: true } } } as App, changes);
+    const expected = [
       { op: 'add', path: '/spec/running', value: true },
+    ];
+
+    expect(patch).toEqual(expected);
+  });
+
+  it('should remove undefined values', () => {
+    const changes = { 'kubernetes.enabled': undefined };
+    const patch = generatePatch({ spec: { kubernetes: { enabled: true } } } as App, changes);
+    const expected = [
       { op: 'remove', path: '/spec/kubernetes/enabled' },
+    ];
+
+    expect(patch).toEqual(expected);
+  });
+
+  it('should escape paths', () => {
+    const changes = { 'invalid/name~': 1 } as any;
+    const patch = generatePatch({ spec: { kubernetes: { enabled: true } } } as App, changes);
+    const expected = [
       { op: 'add', path: '/spec/invalid~1name~0', value: 1 },
-    ]);
+    ];
+
+    expect(patch).toEqual(expected);
+  });
+
+  it('removing with missing parent should be a no-op', () => {
+    const changes = { 'virtualMachine.cpus': undefined };
+    const patch = generatePatch({ spec: {} } as App, changes);
+
+    expect(patch).toEqual([]);
+  });
+
+  it('should recursively create parents', () => {
+    const changes = { 'virtualMachine.cpus': 4 };
+    const patch = generatePatch({}, changes);
+    const expected = [
+      { op: 'add', path: '/spec', value: {} },
+      { op: 'add', path: '/spec/virtualMachine', value: {} },
+      { op: 'add', path: '/spec/virtualMachine/cpus', value: 4 },
+    ];
+
+    expect(patch).toEqual(expected);
+  });
+
+  it('should not create missing parents multiple times', () => {
+    const changes = { 'virtualMachine.cpus': 4, 'virtualMachine.memory': 8 };
+    const patch = generatePatch({}, changes);
+    const expected = [
+      { op: 'add', path: '/spec', value: {} },
+      { op: 'add', path: '/spec/virtualMachine', value: {} },
+      { op: 'add', path: '/spec/virtualMachine/cpus', value: 4 },
+      { op: 'add', path: '/spec/virtualMachine/memory', value: 8 },
+    ];
+
+    expect(patch).toEqual(expected);
   });
 });
 

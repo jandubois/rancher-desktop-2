@@ -9,6 +9,7 @@ import { WslNav } from './wsl';
 export class PreferencesPage {
   readonly page:            Page;
   readonly body:            Locator;
+  readonly alert:           Locator;
   readonly application:     ApplicationNav;
   readonly virtualMachine:  VirtualMachineNav;
   readonly containerEngine: ContainerEngineNav;
@@ -22,6 +23,7 @@ export class PreferencesPage {
     this.virtualMachine = new VirtualMachineNav(page);
     this.containerEngine = new ContainerEngineNav(page);
     this.kubernetes = new KubernetesNav(page);
+    this.alert = page.locator('.preferences-alert');
     this.wsl = new WslNav(page);
   }
 

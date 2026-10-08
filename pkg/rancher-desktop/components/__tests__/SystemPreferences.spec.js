@@ -30,7 +30,7 @@ const baseProps = {
 };
 
 describe('SystemPreferences.vue', () => {
-  it('accepts valid data', () => {
+  it('accepts valid data', async() => {
     const wrapper = createWrappedPage(baseProps);
 
     expect(wrapper.props().memoryInGB).toBe(4);
@@ -53,6 +53,12 @@ describe('SystemPreferences.vue', () => {
     expect(span1.attributes('aria-valuenow')).toEqual('4');
     expect(span1.attributes('aria-valuemax')).toEqual('8');
 
+    // Check min/max actually works
+    await wrapper.setProps({ memoryInGB: 1 });
+    expect(span1.attributes('aria-valuenow')).toEqual('2');
+    await wrapper.setProps({ memoryInGB: 10 });
+    expect(span1.attributes('aria-valuenow')).toEqual('8');
+
     const div2 = wrapper.find('#numCPUWrapper');
     const span2 = div2.find('div.vue-slider div.vue-slider-dot');
 
@@ -60,9 +66,38 @@ describe('SystemPreferences.vue', () => {
     expect(span2.attributes('aria-valuemin')).toEqual('1');
     expect(span2.attributes('aria-valuenow')).toEqual('5');
     expect(span2.attributes('aria-valuemax')).toEqual('6');
-    expect(span2.attributes('aria-valuemin')).toEqual('1');
-    expect(span2.attributes('aria-valuenow')).toEqual('5');
-    expect(span2.attributes('aria-valuemax')).toEqual('6');
+
+    await wrapper.setProps({ numberCPUs: 0 });
+    expect(span2.attributes('aria-valuenow')).toEqual('1');
+    await wrapper.setProps({ numberCPUs: 10 });
+    expect(span2.attributes('aria-valuenow')).toEqual('6');
+  });
+
+  describe('handles spin arrows', () => {
+    it('updates memory', async() => {
+      const wrapper = createWrappedPage(baseProps);
+
+      expect(wrapper.props().memoryInGB).toBe(4);
+      const input = wrapper.getComponent('#memoryInGBWrapper').get('input');
+      expect(input).toBeTruthy();
+      input.element.value = '5';
+      await input.trigger('input');
+      await input.trigger('change');
+
+      expect(wrapper.emitted()['update:memory']).toEqual([[5]]);
+    });
+    it('updates cpus', async() => {
+      const wrapper = createWrappedPage(baseProps);
+
+      expect(wrapper.props().numberCPUs).toBe(5);
+      const input = wrapper.getComponent('#numCPUWrapper').get('input');
+      expect(input).toBeTruthy();
+      input.element.value = '4';
+      await input.trigger('input');
+      await input.trigger('change');
+
+      expect(wrapper.emitted()['update:cpu']).toEqual([[4]]);
+    });
   });
 
   it('sets correct defaults and is enabled', () => {
