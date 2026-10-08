@@ -723,7 +723,6 @@ index 25fbc354e..a9019482f 100644
 				Reason:  v1alpha1.ComposeHasMembersReasonCalculating,
 				Message: fmt.Sprintf(&quot;removing member: %s %s&quot;, req.Kind, req.Name),
 			})</code></pre>
-    <p>Gemini 3.5 Flash&#39;s one-line fix, accepting an empty <code>status.containers</code> alone, breaks two existing <code>TestReconcileCompose_Delete</code> subtests that require <code>down</code> for a project without a HasMembers condition.</p>
       <details class="fold">
         <summary>Reproducer</summary>
       <pre><code class="language-go">// Save as rdd/pkg/controllers/containers/compose/delete_probe_test.go
@@ -2280,7 +2279,7 @@ assert_members_count() { # &lt;name&gt; &lt;expected_count&gt;
     try --until-fail docker inspect &quot;${container_id}&quot; --format &#39;{{.State.Status}}&#39;
     echo &quot;Expected &#39;error: no such object: ${container_id}&#39; on previous line&quot;
 </code></pre>
-    <p><code>rdd ctl wait --for=create</code> returns once the object exists, but <code>reconcileCompose</code> adds the finalizer in a later reconcile. If the delete reaches the apiserver first, the project goes away at once, <code>down</code> never runs, and the <code>try --until-fail docker inspect</code> loop times out. The window is a few milliseconds against the <code>rdd ctl annotate</code> process start, and all three CI platforms passed. Waiting for <code>HasMembers=Found</code>, as Gemini 3.1 Pro proposed, does not close it, because <code>reconcileContainer</code> sets that condition before the finalizer is added.</p>
+    <p><code>rdd ctl wait --for=create</code> returns once the object exists, but <code>reconcileCompose</code> adds the finalizer in a later reconcile. If the delete reaches the apiserver first, the project goes away at once, <code>down</code> never runs, and the <code>try --until-fail docker inspect</code> loop times out. The window is a few milliseconds against the <code>rdd ctl annotate</code> process start, and all three CI platforms passed.</p>
     <p>Fix: before deleting, poll until <code>.metadata.finalizers</code> contains <code>engine.rancherdesktop.io/mirror</code>, for example with <code>try</code> and <code>rdd ctl get -o jsonpath</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/containers/compose/compose_reconciler_test.go">
@@ -2469,7 +2468,7 @@ resources.
     <div class="card card-neutral">
     <ul>
       <li><strong>nerdctl:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d81fbc2527f67be2f6761ff929d30c8f0b0491a8/rdd/pkg/controllers/containers/compose/compose_process.go#L93"><code>compose_process.go:93</code></a> says &quot;TODO: Support nerdctl here.&quot; On the containerd engine, deleting a project therefore runs <code>docker compose down</code>, which fails and, until I2 and S7 are fixed, retries every second.</li>
-      <li><strong>Windows job assignment:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d81fbc2527f67be2f6761ff929d30c8f0b0491a8/rdd/pkg/controllers/containers/compose/command_windows.go#L21-L29"><code>command_windows.go:21-29</code></a> assigns the process to its job only after it starts, until Go supports assignment at creation. A grandchild started in that window escapes <code>KILL_ON_JOB_CLOSE</code>. Gemini 3.1 Pro also reported that assignment fails if the process has already exited; the window is microseconds against the startup of a Go binary, so do not re-suggest it without a measured exit inside it.</li>
+      <li><strong>Windows job assignment:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d81fbc2527f67be2f6761ff929d30c8f0b0491a8/rdd/pkg/controllers/containers/compose/command_windows.go#L21-L29"><code>command_windows.go:21-29</code></a> assigns the process to its job only after it starts, until Go supports assignment at creation. A grandchild started in that window escapes <code>KILL_ON_JOB_CLOSE</code>. Assignment also fails if the process has already exited, but the window is microseconds against the startup of a Go binary, so do not re-suggest it without a measured exit inside it.</li>
       <li><strong>Docker discovery:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d81fbc2527f67be2f6761ff929d30c8f0b0491a8/rdd/bats/tests/34-containers-controllers/compose-docker.bats#L17-L20"><code>compose-docker.bats:17-20</code></a> skips the suite when the compose plugin is missing, pending a reliable way for the reconciler to find it.</li>
       <li><strong>Do not re-suggest:</strong> stripping <code>DOCKER_CONTEXT</code> before appending it (<code>os/exec</code> keeps the last duplicate); making the Linux <code>cleanup</code> idempotent (its only caller runs once); passing the caller&#39;s context to the darwin <code>forceKill</code> (the spawn context is the manager&#39;s, and once it is cancelled <code>exec.CommandContext</code> has already killed the child); fixing I2 by testing <code>len(status.containers) == 0</code> alone (it breaks two existing deletion tests).</li>
     </ul>
