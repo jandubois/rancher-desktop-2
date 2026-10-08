@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"runtime"
 	"runtime/debug"
 	"sync"
 	"time"
@@ -16,7 +17,9 @@ import (
 	apievents "github.com/containerd/containerd/api/events"
 	containerdclient "github.com/containerd/containerd/v2/client"
 	"github.com/containerd/containerd/v2/core/events"
+	"github.com/containerd/platforms"
 	typeurl "github.com/containerd/typeurl/v2"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -54,7 +57,11 @@ type containerdWatcher struct {
 // newContainerdWatcher creates a containerd client, performs a full sync, and
 // starts the event stream watcher goroutine.
 func newContainerdWatcher(ctx context.Context, k8s client.Client, apiNamespace string, enqueue func()) (*containerdWatcher, error) {
-	cli, err := containerdclient.New(instance.ContainerdSocket())
+	// Match images against the guest's platform, Linux on the host's
+	// architecture. On Windows the host's default platform does not match a
+	// Linux manifest, so Image.Spec would fail for every multi-platform image.
+	guest := platforms.Only(ocispec.Platform{OS: "linux", Architecture: runtime.GOARCH})
+	cli, err := containerdclient.New(instance.ContainerdSocket(), containerdclient.WithDefaultPlatform(guest))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create containerd client: %w", err)
 	}
