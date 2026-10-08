@@ -122,9 +122,9 @@ func TestValidateRejectsDuplicatePaths(t *testing.T) {
 func TestForProfileSelectsMatchingEntries(t *testing.T) {
 	m := &Manifest{Entries: []Entry{
 		{Path: "/both", Source: "both"},
-		{Path: "/lima-only", Source: "lima", Profiles: []string{ProfileLima}},
+		{Path: "/raw-only", Source: "raw", Profiles: []string{ProfileRaw}},
 		{Path: "/wsl-only", Source: "wsl", Profiles: []string{ProfileWSL}},
-		{Path: "/either", Source: "either", Profiles: []string{ProfileLima, ProfileWSL}},
+		{Path: "/either", Source: "either", Profiles: []string{ProfileRaw, ProfileWSL}},
 	}}
 
 	paths := func(m *Manifest) []string {
@@ -135,9 +135,9 @@ func TestForProfileSelectsMatchingEntries(t *testing.T) {
 		return got
 	}
 
-	assert.DeepEqual(t, paths(m.ForProfile(ProfileLima)), []string{"/both", "/lima-only", "/either"})
+	assert.DeepEqual(t, paths(m.ForProfile(ProfileRaw)), []string{"/both", "/raw-only", "/either"})
 	assert.DeepEqual(t, paths(m.ForProfile(ProfileWSL)), []string{"/both", "/wsl-only", "/either"})
-	assert.DeepEqual(t, paths(m.ForProfile("")), []string{"/both", "/lima-only", "/wsl-only", "/either"})
+	assert.DeepEqual(t, paths(m.ForProfile("")), []string{"/both", "/raw-only", "/wsl-only", "/either"})
 }
 
 func TestApplyTarOverridesNewFilesDirsAndLinks(t *testing.T) {

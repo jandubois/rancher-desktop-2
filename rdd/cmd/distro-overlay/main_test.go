@@ -265,24 +265,24 @@ func TestRunProfileAppliesOnlyItsEntries(t *testing.T) {
 	dir := t.TempDir()
 	source := filepath.Join(dir, "source")
 	assert.NilError(t, os.MkdirAll(source, 0o755))
-	assert.NilError(t, os.WriteFile(filepath.Join(source, "l"), []byte("L"), 0o644))
+	assert.NilError(t, os.WriteFile(filepath.Join(source, "r"), []byte("R"), 0o644))
 	assert.NilError(t, os.WriteFile(filepath.Join(source, "w"), []byte("W"), 0o644))
 
 	manifest := filepath.Join(dir, "manifest.yaml")
 	assert.NilError(t, os.WriteFile(manifest, []byte(
 		"entries:\n"+
-			"  - path: /lima-only\n    source: l\n    profiles: [lima]\n"+
+			"  - path: /raw-only\n    source: r\n    profiles: [raw]\n"+
 			"  - path: /wsl-only\n    source: w\n    profiles: [wsl]\n"), 0o644))
 
 	tarball := filepath.Join(dir, "distro.tar")
 	writeTar(t, tarball, "etc/os-release", "NAME")
 	output := filepath.Join(dir, "overlaid.tar")
 
-	assert.NilError(t, run(manifest, source, "auto", output, "lima", tarball, testTime, ""))
+	assert.NilError(t, run(manifest, source, "auto", output, "raw", tarball, testTime, ""))
 
 	names := tarNames(t, output)
-	assert.Assert(t, names["lima-only"], "the lima entry is missing")
-	assert.Assert(t, !names["wsl-only"], "the wsl entry leaked into the lima image")
+	assert.Assert(t, names["raw-only"], "the raw entry is missing")
+	assert.Assert(t, !names["wsl-only"], "the wsl entry leaked into the raw image")
 }
 
 func TestRunRejectsAnUnknownProfile(t *testing.T) {

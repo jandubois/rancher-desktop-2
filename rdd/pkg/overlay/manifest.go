@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: The Rancher Desktop Authors
 
 // Package overlay layers Rancher Desktop assets onto a pristine openSUSE distro
-// at build time, writing into both the WSL tarball and the Lima ext4 image from
+// at build time, writing into both the WSL tarball and the raw ext4 image from
 // a single manifest. Ownership and permissions come from the manifest, so the
 // build needs no root and the host's own uids never reach the distro.
 package overlay
@@ -36,8 +36,8 @@ const (
 // Build profiles are a mirror of config.kiwi's
 // profiles= attribute.
 const (
-	ProfileLima = "lima"
-	ProfileWSL  = "wsl"
+	ProfileRaw = "raw"
+	ProfileWSL = "wsl"
 )
 
 // ValidProfile reports whether profile is a build profile the overlay knows.
@@ -45,7 +45,7 @@ const (
 // each entry's profiles field, so a typo fails the build instead of silently
 // dropping the entry.
 func ValidProfile(profile string) bool {
-	return profile == ProfileLima || profile == ProfileWSL
+	return profile == ProfileRaw || profile == ProfileWSL
 }
 
 // Manifest describes the assets to merge into a distro.
@@ -71,7 +71,7 @@ type Entry struct {
 	// 0644 for files and 0755 for directories.
 	Mode string `json:"mode,omitempty"`
 	// Profiles limits the entry to some of the distro's build profiles, each
-	// lima or wsl, mirroring config.kiwi. Empty applies the entry to every one.
+	// raw or wsl, mirroring config.kiwi. Empty applies the entry to every one.
 	Profiles []string `json:"profiles,omitempty"`
 }
 
@@ -162,7 +162,7 @@ func (e *Entry) validate() error {
 	}
 	for _, p := range e.Profiles {
 		if !ValidProfile(p) {
-			return fmt.Errorf("unknown profile %q (want %s or %s)", p, ProfileLima, ProfileWSL)
+			return fmt.Errorf("unknown profile %q (want %s or %s)", p, ProfileRaw, ProfileWSL)
 		}
 	}
 	return nil

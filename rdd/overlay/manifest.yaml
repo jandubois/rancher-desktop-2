@@ -53,9 +53,9 @@ entries:
 # the coverage check in manifest_coverage_test.go asserts every path here.
 #
 # Modes and per-profile scoping transcribe what config.sh used to do at build:
-# its chmod block set the modes below; its lima branch deleted every
+# its chmod block set the modes below; its raw branch deleted every
 # `*/network-namespace.conf` (so those are wsl-only) and its wsl branch deleted
-# lima-init.service.d/requires-{cidata,rd-init}.conf (so those are lima-only).
+# lima-init.service.d/requires-{cidata,rd-init}.conf (so those are raw-only).
 # ---------------------------------------------------------------------------
 
 # /etc/sudoers.d must be 0750 (config.sh chmod'd it); its files default to 0644.
@@ -141,10 +141,10 @@ entries:
   profiles: [wsl]
 - path: /usr/local/lib/systemd/system/lima-init.service.d/requires-cidata.conf
   source: root/usr/local/lib/systemd/system/lima-init.service.d/requires-cidata.conf
-  profiles: [lima]
+  profiles: [raw]
 - path: /usr/local/lib/systemd/system/lima-init.service.d/requires-rd-init.conf
   source: root/usr/local/lib/systemd/system/lima-init.service.d/requires-rd-init.conf
-  profiles: [lima]
+  profiles: [raw]
 - path: /usr/local/lib/systemd/system/openresty.service.d/ca-certs.conf
   source: root/usr/local/lib/systemd/system/openresty.service.d/ca-certs.conf
 - path: /usr/local/lib/systemd/system/openresty.service.d/network-namespace.conf
@@ -192,11 +192,11 @@ entries:
 - path: /etc/systemd/system/multi-user.target.wants/rd-init.service
   type: symlink
   target: /usr/local/lib/systemd/system/rd-init.service
-  profiles: [lima]
+  profiles: [raw]
 - path: /etc/systemd/system/sysinit.target.wants/journal-to-console.service
   type: symlink
   target: /usr/local/lib/systemd/system/journal-to-console.service
-  profiles: [lima]
+  profiles: [raw]
 - path: /etc/systemd/system/rancher-desktop.target.wants/network-setup.service
   type: symlink
   target: /usr/local/lib/systemd/system/network-setup.service
