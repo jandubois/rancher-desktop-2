@@ -157,6 +157,11 @@ INVALID_TEMPLATE='images:
   arch: x86_64
 - location: https://invalid.example.test/nonexistent.iso
   arch: aarch64'
+# Lima defaults vmType to qemu on Windows, but rdd builds its qemu driver only for macOS and Linux.
+if is_windows; then
+    INVALID_TEMPLATE="vmType: wsl2
+${INVALID_TEMPLATE}"
+fi
 
 @test "create ConfigMap with invalid image URL" {
     rdd ctl create configmap "invalid-image" --namespace "${NAMESPACE}" --from-literal="template=${INVALID_TEMPLATE}"
