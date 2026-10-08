@@ -65,28 +65,41 @@ path conversion for arguments that need it.
 
 ## Building against a Lima fork
 
-rdd links Lima from the `github.com/lima-vm/lima/v2` module and builds the
-guest agent it embeds from the same module, so a fork changes both the host and
-the guest. To build against changes upstream has not merged yet, replace the
-module in `go.mod`:
+rdd links Lima from the `github.com/lima-vm/lima/v2` module and builds its
+embedded guest agent from the same module, so a fork changes both the host and
+the guest. When rdd needs Lima changes that upstream has not merged yet, point
+the module at a fork in `go.mod`:
 
 ```bash
 go mod edit -replace=github.com/lima-vm/lima/v2=github.com/rancher-sandbox/lima/v2@<commit>
 go mod tidy
 ```
 
-`go mod tidy` turns the commit into a pseudo-version, and `go list -m -f
-'{{.Dir}}' github.com/lima-vm/lima/v2` prints the source directory the build
-uses. Add a comment above the `replace` naming the upstream pull requests it
-waits for. Once they have all merged, remove the `replace` and require an
-upstream version that contains them; the `require` line still names the version
-from before the fork, and the build goes back to it. The WSL guest agent in
-`src/wsl-guestagent` is a separate module with its own Lima requirement and
-`replace`, so the `replace` in the main `go.mod` does not apply to it.
+`go mod tidy` turns the commit into a pseudo-version. To check which source
+directory the build uses, run `go list -m -f '{{.Dir}}' github.com/lima-vm/lima/v2`.
 
-A fork misses every upstream fix made after its base, security fixes included,
-so rebase it onto upstream whenever you update it, and check
-[Lima's security advisories](https://github.com/lima-vm/lima/security/advisories).
-Lima squashes pull requests and backports fixes to release branches as new
-commits, so `git cherry` and `git merge-base --is-ancestor` miss fork commits
-that did land upstream; compare the code instead.
+Above the `replace`, add a comment that lists the upstream pull requests that
+the fork waits for. `go mod tidy` keeps the comment. Once they have all
+merged, remove the `replace` and update the `require` line to an upstream
+version that contains them. The `require` line still names the version from
+before the fork, so removing only the `replace` would build that version,
+without the fork's changes.
+
+The WSL guest agent in `src/wsl-guestagent` has its own `go.mod`, and `make`
+builds it as a separate main module. Go applies only the main module's
+`replace` directives, so the `replace` in rdd's `go.mod` does not affect the WSL
+guest agent.
+
+A fork gets upstream fixes, security fixes included, only when someone rebases
+it, so rebase the fork onto upstream whenever you update it. Between updates,
+nothing tells you that upstream has fixed a vulnerability. Dependabot does not
+alert on Lima while the `replace` points it at a fork, because GitHub's
+dependency graph leaves the replaced module out. So as long as the `replace` is
+in place, watch [Lima's releases](https://github.com/lima-vm/lima/releases) and
+rebase the fork when a release fixes a vulnerability. The release notes can
+name a security fix weeks before the advisory is published.
+
+To tell whether upstream already has a fork commit, compare the code. Lima
+squashes pull requests and backports fixes to release branches as new commits,
+so `git cherry` and `git merge-base --is-ancestor` report such commits as
+missing even after they have merged.
