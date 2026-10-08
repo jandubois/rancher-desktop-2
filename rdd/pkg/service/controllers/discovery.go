@@ -28,12 +28,14 @@ const (
 	// RDDSystemNamespace is the namespace where RDD stores its control plane information.
 	RDDSystemNamespace = "rdd-system"
 
-	// ReadyAnnotation is set on the discovery ConfigMap after every
-	// enabled controller has installed its CRDs, every controller
-	// manager has registered its data entry, and the admission
-	// webhooks are configured and answer. Clients must wait for this
-	// annotation because the ConfigMap itself exists from the moment
-	// the control plane starts, before any controller is ready.
+	// ReadyAnnotation is set on the discovery ConfigMap after all of the known
+	// enabled controllers are ready; this includes:
+	//   - every enabled controller has installed its CRDs.
+	//   - every controller manager has registered its data entry.
+	//   - the admission webhooks are configured and answer.
+	//   - the passthrough HTTP server is ready.
+	// Clients must wait for this annotation because the ConfigMap itself exists
+	// from the moment the control plane starts, before any controller is ready.
 	ReadyAnnotation = "rdd.rancherdesktop.io/ready"
 )
 

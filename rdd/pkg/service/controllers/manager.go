@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"strconv"
 	"sync"
@@ -204,13 +205,14 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
 		}
 	}()
 
-	// Add pass through server
-	if err := mgr.Add(manager.RunnableFunc(scm.runPassthroughServer)); err != nil {
-		return fmt.Errorf("failed to add pass through server to manager: %w", err)
-	}
-
 	mgrCtx, mgrCancel := context.WithCancel(ctx)
 	defer mgrCancel()
+
+	// Add pass through server
+	passthroughReady, err := scm.runPassthroughServer(mgrCtx, mgr)
+	if err != nil {
+		return fmt.Errorf("failed to run pass through server: %w", err)
+	}
 
 	// Register all controllers before launching webhook goroutines.
 	// RegisterWithManager calls AddToScheme, which writes to the scheme map.
@@ -300,6 +302,15 @@ func (scm *SharedControllerManager) Start(ctx context.Context) error {
 			case <-ticker.C:
 			}
 		}
+	}
+
+	select {
+	case <-passthroughReady:
+	case <-ctx.Done():
+		mgrCancel()
+		return managerResult(<-mgrResult)
+	case err := <-mgrResult:
+		return managerResult(err)
 	}
 
 	// Clients act on the ready annotation, so mark ready only after the
@@ -487,7 +498,14 @@ func (scm *SharedControllerManager) installControllerCRDs(ctx context.Context) e
 	return nil
 }
 
-func (scm *SharedControllerManager) runPassthroughServer(ctx context.Context) error {
+// Run the passthrough server.  The given channel will be closed once the server
+// has completed initialization; this includes the case where there are no
+// passthrough servers to run.  The given context should be canceled when the
+// server should stop.
+func (scm *SharedControllerManager) runPassthroughServer(ctx context.Context, mgr manager.Manager) (<-chan struct{}, error) {
+	readyCh := make(chan struct{})
+	markReady := sync.OnceFunc(func() { close(readyCh) })
+
 	hasPassthroughServers := false
 	log := klog.FromContext(ctx)
 
@@ -515,33 +533,60 @@ func (scm *SharedControllerManager) runPassthroughServer(ctx context.Context) er
 
 	if !hasPassthroughServers {
 		klog.V(2).InfoS("No pass through controllers registered, skipping pass through server startup")
-		return nil
+		markReady()
+		return readyCh, nil
 	}
 
-	server := http.Server{
-		Addr:     fmt.Sprintf("localhost:%d", scm.passthroughPort),
-		Handler:  mux,
-		ErrorLog: slog.NewLogLogger(logr.ToSlogHandler(klog.FromContext(ctx)), slog.LevelError),
+	// Create a listener early; this lets the kernel buffer any incoming
+	// connections before the server is actually started.
+	listenAddr := fmt.Sprintf("localhost:%d", scm.passthroughPort)
+	listener, err := (&net.ListenConfig{}).Listen(ctx, "tcp", listenAddr)
+	if err != nil {
+		markReady()
+		return readyCh, fmt.Errorf("failed to create listener for pass through server: %w", err)
 	}
+	// keepListener is used to mark when the listener is owned by the server.  If
+	// we return without calling this, the listener needs to be closed.
+	keepListener := context.AfterFunc(ctx, func() { _ = listener.Close() })
 
-	shutdownComplete := make(chan struct{})
-	go func() {
-		defer close(shutdownComplete)
-		<-ctx.Done()
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		if err := server.Shutdown(shutdownCtx); err != nil {
-			log.Error(err, "failed to shutdown pass through server")
+	err = mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+		defer markReady()
+		server := http.Server{
+			Addr:     fmt.Sprintf("localhost:%d", scm.passthroughPort),
+			Handler:  mux,
+			ErrorLog: slog.NewLogLogger(logr.ToSlogHandler(klog.FromContext(ctx)), slog.LevelError),
 		}
-	}()
 
-	log.V(2).Info("Starting pass through server", "addr", server.Addr)
-	if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		return fmt.Errorf("pass through server failed: %w", err)
+		shutdownComplete := make(chan struct{})
+		go func() {
+			defer close(shutdownComplete)
+			<-ctx.Done()
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := server.Shutdown(shutdownCtx); err != nil {
+				log.Error(err, "failed to shutdown pass through server")
+			}
+		}()
+
+		log.V(2).Info("Starting pass through server", "addr", server.Addr)
+		markReady()
+		if !keepListener() {
+			return errors.New("pass through listener was already closed")
+		}
+		if err := server.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf("pass through server failed: %w", err)
+		}
+		<-shutdownComplete
+
+		return nil
+	}))
+	if err != nil {
+		markReady()
+		_ = listener.Close()
+		_ = keepListener() // mark listener as manually closed
+		return readyCh, fmt.Errorf("failed to add pass through server to manager: %w", err)
 	}
-	<-shutdownComplete
-
-	return nil
+	return readyCh, nil
 }
 
 // setupSharedWebhookCertificates generates webhook certificates for all controllers that need them.
