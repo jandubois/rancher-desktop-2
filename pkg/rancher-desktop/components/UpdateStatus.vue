@@ -63,19 +63,17 @@
 </template>
 
 <script lang="ts" setup>
-import * as Components from '@rancher/components';
 import DOMPurify from 'dompurify';
 import _ from 'lodash';
 import { marked } from 'marked';
 import { computed, PropType, ref } from 'vue';
 import { useStore } from 'vuex';
 
+import Card from '@pkg/components/Card.vue';
 import { UpdateState } from '@pkg/main/update';
 import type { RecursiveLeafKeysOfType } from '@pkg/utils/typeUtils';
 
 import type { IoRancherdesktopAppV1alpha1AppSpec as AppSpec } from '@rdd-client';
-
-const { Card } = (Components as any).default ?? Components;
 
 defineOptions({
   name: 'update-status',

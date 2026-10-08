@@ -47,13 +47,11 @@ mockModules({
       removeListener: jest.fn(),
     },
   },
-  '@rancher/components': {
-    BadgeState:     componentStub,
-    Banner:         componentStub,
-    Checkbox:       componentStub,
-    LabeledTooltip: componentStub,
-  },
-  electron: { shell: { openExternal: jest.fn() } },
+  '@pkg/components/BadgeState.vue':          componentStub,
+  '@pkg/components/Banner.vue':              componentStub,
+  '@pkg/components/form/Checkbox.vue':       componentStub,
+  '@pkg/components/form/LabeledTooltip.vue': componentStub,
+  electron:                                  { shell: { openExternal: jest.fn() } },
 });
 
 const { default: Containers } = await import('@pkg/pages/Containers.vue');

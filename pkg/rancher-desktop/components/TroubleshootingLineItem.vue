@@ -1,6 +1,7 @@
 <script lang="ts">
-import { Card } from '@rancher/components';
 import { defineComponent } from 'vue';
+
+import Card from '@pkg/components/Card.vue';
 
 export default defineComponent({
   name:       'troubleshooting-line-item',
@@ -32,7 +33,7 @@ export default defineComponent({
     margin-top: 0.5rem;
   }
 
-  // Override card styles from @rancher/components, we can remove this once the component gets refactor.
+  // Override card styles from @pkg/components/Card.vue; we can remove this once the component is refactored.
   .card-container {
     border-radius: 0;
     box-shadow: none;

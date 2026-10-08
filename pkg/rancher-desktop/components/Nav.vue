@@ -62,13 +62,13 @@
 </template>
 
 <script lang="ts">
-import { BadgeState } from '@rancher/components';
 import { PropType, defineComponent } from 'vue';
 import { RouteRecordNormalized } from 'vue-router';
 
 import NavIconExtension from './NavIconExtension.vue';
 import NavItem from './NavItem.vue';
 
+import BadgeState from '@pkg/components/BadgeState.vue';
 import DashboardButton from '@pkg/components/DashboardOpen.vue';
 import PreferencesButton from '@pkg/components/Preferences/ButtonOpen.vue';
 import router from '@pkg/entry/router';

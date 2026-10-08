@@ -28,7 +28,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Banner } from '@rancher/components';
 import { FitAddon } from '@xterm/addon-fit';
 import { SearchAddon } from '@xterm/addon-search';
 import { WebLinksAddon } from '@xterm/addon-web-links';
@@ -37,6 +36,7 @@ import { shell } from 'electron';
 import { ref, onBeforeUnmount, watch, nextTick, useTemplateRef, computed } from 'vue';
 import { useStore } from 'vuex';
 
+import Banner from '@pkg/components/Banner.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
 import { usePassthroughURL } from '@pkg/composables/passthrough';
 

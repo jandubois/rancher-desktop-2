@@ -15,7 +15,7 @@ mockModules({
       send: jest.fn(),
     },
   },
-  '@rancher/components': { Banner: componentStub },
+  '@pkg/components/Banner.vue': componentStub,
 });
 
 const { default: ImageScanDetails } = await import('@pkg/pages/images/scans/_image-name.vue');

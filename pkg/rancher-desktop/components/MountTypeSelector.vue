@@ -1,7 +1,6 @@
 <script lang="ts">
 import os from 'os';
 
-import { RadioButton, RadioGroup } from '@rancher/components';
 import semver from 'semver';
 import { defineComponent } from 'vue';
 import { mapGetters, mapState } from 'vuex';
@@ -9,6 +8,8 @@ import { mapGetters, mapState } from 'vuex';
 import IncompatiblePreferencesAlert, { CompatiblePrefs } from '@pkg/components/IncompatiblePreferencesAlert.vue';
 import RdInput from '@pkg/components/RdInput.vue';
 import RdSelect from '@pkg/components/RdSelect.vue';
+import RadioButton from '@pkg/components/form/RadioButton.vue';
+import RadioGroup from '@pkg/components/form/RadioGroup.vue';
 import RdFieldset from '@pkg/components/form/RdFieldset.vue';
 import TooltipIcon from '@pkg/components/form/TooltipIcon.vue';
 import {

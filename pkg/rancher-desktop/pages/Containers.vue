@@ -130,11 +130,11 @@
 </template>
 
 <script lang="ts">
-import { Banner } from '@rancher/components';
 import dayjs from 'dayjs';
 import { shell } from 'electron';
 import { defineComponent } from 'vue';
 
+import Banner from '@pkg/components/Banner.vue';
 import ContainerStatusBadge from '@pkg/components/ContainerStatusBadge.vue';
 import SortableTable from '@pkg/components/SortableTable';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';

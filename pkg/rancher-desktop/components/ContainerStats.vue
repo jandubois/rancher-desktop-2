@@ -155,7 +155,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Banner } from '@rancher/components';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -171,6 +170,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { Line } from 'vue-chartjs';
 import { useStore } from 'vuex';
 
+import Banner from '@pkg/components/Banner.vue';
 import { ContainerEngine } from '@pkg/config/settings';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 

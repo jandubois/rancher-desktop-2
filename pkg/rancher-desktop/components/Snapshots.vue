@@ -1,9 +1,9 @@
 <script lang="ts">
-import { Banner } from '@rancher/components';
 import isEmpty from 'lodash/isEmpty';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
+import Banner from '@pkg/components/Banner.vue';
 import EmptyState from '@pkg/components/EmptyState.vue';
 import SnapshotCard from '@pkg/components/SnapshotCard.vue';
 import { Snapshot, SnapshotEvent } from '@pkg/main/snapshots/types';

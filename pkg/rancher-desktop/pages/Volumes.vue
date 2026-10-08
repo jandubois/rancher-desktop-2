@@ -72,10 +72,10 @@
 </template>
 
 <script lang="ts">
-import { Banner } from '@rancher/components';
 import merge from 'lodash/merge';
 import { defineComponent } from 'vue';
 
+import Banner from '@pkg/components/Banner.vue';
 import SortableTable from '@pkg/components/SortableTable';
 import type { Settings } from '@pkg/config/settings';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';

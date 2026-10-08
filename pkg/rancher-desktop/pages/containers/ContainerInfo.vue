@@ -152,11 +152,11 @@
 </template>
 
 <script setup lang="ts">
-import { Banner } from '@rancher/components';
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 
+import Banner from '@pkg/components/Banner.vue';
 import ContainerInspect from '@pkg/components/ContainerInspect.vue';
 import ContainerLogs from '@pkg/components/ContainerLogs.vue';
 import ContainerShell from '@pkg/components/ContainerShell.vue';

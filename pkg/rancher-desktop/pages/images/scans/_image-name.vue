@@ -37,8 +37,7 @@
 
 <script>
 
-import { Banner } from '@rancher/components';
-
+import Banner from '@pkg/components/Banner.vue';
 import ImagesOutputWindow from '@pkg/components/ImagesOutputWindow.vue';
 import ImagesScanResults from '@pkg/components/ImagesScanResults.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';

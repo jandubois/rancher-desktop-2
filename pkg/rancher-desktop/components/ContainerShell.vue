@@ -42,11 +42,11 @@
 </template>
 
 <script lang="ts" setup>
-import { Banner } from '@rancher/components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 
+import Banner from '@pkg/components/Banner.vue';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
 defineOptions({ name: 'ContainerShell' });

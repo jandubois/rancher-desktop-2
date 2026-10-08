@@ -1,5 +1,4 @@
 <script>
-import { Checkbox } from '@rancher/components';
 import day from 'dayjs';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -18,6 +17,7 @@ import sorting from './sorting';
 import ActionDropdown from '@pkg/components/ActionDropdown';
 import AsyncButton, { ASYNC_BUTTON_STATES } from '@pkg/components/AsyncButton';
 import { FORMATTERS } from '@pkg/components/SortableTable/sortable-config';
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 import LabeledSelect from '@pkg/components/form/LabeledSelect';
 import { removeObject } from '@pkg/utils/array';
 import { getParent } from '@pkg/utils/dom';

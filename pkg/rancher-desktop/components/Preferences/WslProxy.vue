@@ -1,10 +1,10 @@
 <script lang="ts">
 
-import { StringList } from '@rancher/components';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
 import RdInput from '@pkg/components/RdInput.vue';
+import StringList from '@pkg/components/StringList.vue';
 import RdCheckbox from '@pkg/components/form/RdCheckbox.vue';
 import RdFieldset from '@pkg/components/form/RdFieldset.vue';
 import { Settings } from '@pkg/config/settings';

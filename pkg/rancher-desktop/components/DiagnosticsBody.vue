@@ -1,11 +1,11 @@
 <script lang="ts">
-import { ToggleSwitch } from '@rancher/components';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
 import DiagnosticsButtonRun from '@pkg/components/DiagnosticsButtonRun.vue';
 import EmptyState from '@pkg/components/EmptyState.vue';
 import SortableTable from '@pkg/components/SortableTable/index.vue';
+import ToggleSwitch from '@pkg/components/form/ToggleSwitch.vue';
 import type { DiagnosticsResult } from '@pkg/main/diagnostics/diagnostics';
 import { DiagnosticsCategory } from '@pkg/main/diagnostics/types';
 

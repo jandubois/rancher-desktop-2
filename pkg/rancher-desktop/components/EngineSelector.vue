@@ -1,6 +1,5 @@
 <script>
-import { RadioGroup } from '@rancher/components';
-
+import RadioGroup from '@pkg/components/form/RadioGroup.vue';
 import { ContainerEngine } from '@pkg/config/settings';
 
 export default {

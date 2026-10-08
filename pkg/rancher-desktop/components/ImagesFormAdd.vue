@@ -21,8 +21,9 @@
 </template>
 
 <script lang="ts">
-import { LabeledInput } from '@rancher/components';
 import { defineComponent } from 'vue';
+
+import LabeledInput from '@pkg/components/form/LabeledInput.vue';
 
 export default defineComponent({
   name: 'images-form-add',

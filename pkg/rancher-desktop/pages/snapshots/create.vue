@@ -1,10 +1,12 @@
 <script lang="ts">
 
-import { Banner, LabeledInput, TextAreaAutoGrow } from '@rancher/components';
 import dayjs from 'dayjs';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
+import Banner from '@pkg/components/Banner.vue';
+import LabeledInput from '@pkg/components/form/LabeledInput.vue';
+import TextAreaAutoGrow from '@pkg/components/form/TextAreaAutoGrow.vue';
 import { Snapshot, SnapshotEvent } from '@pkg/main/snapshots/types';
 import { currentTime } from '@pkg/utils/dateUtils';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';

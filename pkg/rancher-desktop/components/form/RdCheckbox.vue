@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Checkbox } from '@rancher/components';
 import _ from 'lodash';
 import { computed, PropType } from 'vue';
 import { useStore } from 'vuex';
 
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 import TooltipIcon from '@pkg/components/form/TooltipIcon.vue';
 import { RecursiveLeafKeysOfType } from '@pkg/utils/typeUtils';
 

@@ -6,27 +6,25 @@ import { createStore } from 'vuex';
 import mockModules from '@pkg/utils/testUtils/mockModules';
 
 mockModules({
-  '@rancher/components': {
-    Checkbox: defineComponent({
-      name:  'Checkbox',
-      props: {
-        value:    { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
-      },
-      emits:    ['update:value'],
-      template: `
-        <label data-test="checkbox">
-          <input
-            type="checkbox"
-            :checked="value"
-            :disabled="disabled"
-            @change="$emit('update:value', $event.target.checked)"
-          >
-          <span><slot name="label" /></span>
-        </label>
-      `,
-    }),
-  },
+  '@pkg/components/form/Checkbox.vue': defineComponent({
+    name:  'Checkbox',
+    props: {
+      value:    { type: Boolean, default: false },
+      disabled: { type: Boolean, default: false },
+    },
+    emits:    ['update:value'],
+    template: `
+      <label data-test="checkbox">
+        <input
+          type="checkbox"
+          :checked="value"
+          :disabled="disabled"
+          @change="$emit('update:value', $event.target.checked)"
+        >
+        <span><slot name="label" /></span>
+      </label>
+    `,
+  }),
 });
 
 const { default: RdCheckbox } = await import('../RdCheckbox.vue');

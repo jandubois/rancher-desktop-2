@@ -1,9 +1,9 @@
 <script lang="ts">
 import os from 'os';
 
-import { Checkbox } from '@rancher/components';
 import { defineComponent } from 'vue';
 
+import Checkbox from '@pkg/components/form/Checkbox.vue';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
 export default defineComponent({

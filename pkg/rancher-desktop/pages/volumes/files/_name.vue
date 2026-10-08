@@ -93,10 +93,11 @@
 
 <script lang="ts">
 import { ExecProcess } from '@docker/extension-api-client-types/dist/v1';
-import { BadgeState, Banner } from '@rancher/components';
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 
+import BadgeState from '@pkg/components/BadgeState.vue';
+import Banner from '@pkg/components/Banner.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
 import SortableTable from '@pkg/components/SortableTable';
 import { ContainerEngine } from '@pkg/config/settings';
