@@ -179,11 +179,10 @@ Without file arguments, it reads from stdin.
 3. Add the new locale's display name to every other locale file,
    translated into that file's language: `merge` a one-entry
    `locale.{code}` translation into each.
-4. Run `yarn postinstall` to regenerate Go CLI code from the API spec.
-5. Run `go tool i18n-report translate --locale={code}` to get keys
+4. Run `go tool i18n-report translate --locale={code}` to get keys
    that need translation; translate them and merge with
    `go tool i18n-report merge --locale={code}`.
-6. Run `go tool i18n-report check --locale=all` to verify the
+5. Run `go tool i18n-report check --locale=all` to verify the
    registration.
 
 Webpack discovers new YAML files automatically — no other code changes are
