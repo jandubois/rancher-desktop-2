@@ -489,6 +489,32 @@ assert_container_pid_changed() { # <container> <previous-pid>
     run_e -1 nerdctl image inspect busybox:delete-me
 }
 
+# --- Host paths ---
+
+@test "nerdctl bind-mounts a host directory" {
+    # The guest sees the host home directory through Lima's mount, or on
+    # Windows through WSL's /mnt/<drive> automount after the stub rewrites
+    # the path.
+    run -0 mktemp -d "${HOME}/rdd-bats-nerdctl.XXXXXX"
+    dir=${output}
+    echo shared >"${dir}/file"
+
+    run -0 host_path "${dir}"
+    src=${output}
+    run_e -0 nerdctl run --rm --volume "${src}:/data" busybox cat /data/file
+    assert_output shared
+
+    rm -rf "${dir}"
+}
+
+@test "nerdctl passes a named volume through" {
+    # A volume name must reach nerdctl unrewritten; rewritten as a path, it
+    # would bind-mount a directory instead of creating the volume.
+    nerdctl run --rm --volume rdd-bats-vol:/data busybox true
+    nerdctl volume inspect rdd-bats-vol
+    nerdctl volume rm rdd-bats-vol
+}
+
 # --- Cleanup on VM stop ---
 # These run last: they stop and restart the VM, which sweeps every mirror.
 
