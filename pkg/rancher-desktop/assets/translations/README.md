@@ -154,15 +154,18 @@ A Go CLI at `src/go/i18n-report/` for translation maintenance. See
 | `drift` | Detect translated keys whose English source changed |
 | `validate` | Structural checks: placeholders, tags, metadata, overrides, deliberate identity |
 
-Run from the repository root:
+Build it, then run it from the repository root:
 
 ```sh
-go tool i18n-report translate --locale=fa
-go tool i18n-report translate --locale=fa --batch=1 --batches=3
-go tool i18n-report merge --locale=fa agent1.output agent2.output
-go tool i18n-report unused --format=json
-go tool i18n-report check --locale=de
+go build -C src/go/i18n-report
+src/go/i18n-report/i18n-report translate --locale=fa
+src/go/i18n-report/i18n-report translate --locale=fa --batch=1 --batches=3
+src/go/i18n-report/i18n-report merge --locale=fa agent1.output agent2.output
+src/go/i18n-report/i18n-report unused --format=json
+src/go/i18n-report/i18n-report check --locale=de
 ```
+
+Elsewhere, this file calls the binary `i18n-report`.
 
 The `merge` subcommand reads flat `key: value` or `key=value` lines, one full
 dotted key per line, from plain text, JSON, or agent JSONL transcripts. A YAML
@@ -179,10 +182,10 @@ Without file arguments, it reads from stdin.
 3. Add the new locale's display name to every other locale file,
    translated into that file's language: `merge` a one-entry
    `locale.{code}` translation into each.
-4. Run `go tool i18n-report translate --locale={code}` to get keys
+4. Run `i18n-report translate --locale={code}` to get keys
    that need translation; translate them and merge with
-   `go tool i18n-report merge --locale={code}`.
-5. Run `go tool i18n-report check --locale=all` to verify the
+   `i18n-report merge --locale={code}`.
+5. Run `i18n-report check --locale=all` to verify the
    registration.
 
 Webpack discovers new YAML files automatically — no other code changes are
@@ -192,11 +195,11 @@ needed.
 
 1. Remove dead keys from all translation files:
    ```sh
-   go tool i18n-report unused | go tool i18n-report remove
+   i18n-report unused | i18n-report remove
    ```
 2. Remove stale keys from locale files (keys not in en-us.yaml):
    ```sh
-   go tool i18n-report remove --stale
+   i18n-report remove --stale
    ```
 3. Run `i18n-report translate --locale=<code>` to find keys that need
    translation, then merge the results with `i18n-report merge`.

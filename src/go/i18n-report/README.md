@@ -6,17 +6,11 @@ hardcoded English strings, and other i18n issues.
 
 ## Quick start
 
-Run from the repository root:
+Build the binary, then run it from the repository root:
 
 ```sh
-go tool i18n-report <subcommand> [flags]
-```
-
-Or build and run the binary:
-
-```sh
-go build -o src/go/i18n-report/i18n-report ./src/go/i18n-report
-./src/go/i18n-report/i18n-report <subcommand> [flags]
+go build -C src/go/i18n-report
+src/go/i18n-report/i18n-report <subcommand> [flags]
 ```
 
 ## Exit codes
