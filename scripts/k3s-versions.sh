@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # This script expects to be called from the root of the repo.
-# It will rebuild resources/k3s-versions.json from both the k3s update
-# channel and the GitHub k3s releases list.
+# It will rebuild the App controller's k3s-versions.json from both the
+# k3s update channel and the GitHub k3s releases list.
 # Creates a pull request if the new version is different.
 
 set -eu
 
-K3S_VERSIONS="resources/k3s-versions.json"
+K3S_VERSIONS="rdd/pkg/controllers/app/k3sversions/controllers/k3s-versions.json"
 BRANCH_NAME="gha-update-k3s-versions"
 NEW_PR="true"
 
@@ -21,7 +21,7 @@ else
     git checkout -b "$BRANCH_NAME"
 fi
 
-go run ./scripts/k3s-versions.go >"$K3S_VERSIONS"
+go -C rdd run ./scripts/k3s-versions >"${K3S_VERSIONS}"
 
 # Exit if there are no changes
 if git diff --exit-code; then

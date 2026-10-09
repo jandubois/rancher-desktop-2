@@ -1,3 +1,10 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-FileCopyrightText: The Rancher Desktop Authors
+
+// Command k3s-versions prints the k3s-versions.json that the App controller
+// embeds, built from the k3s update channels and the k3s GitHub releases.
+// The repository's scripts/k3s-versions.sh runs it to refresh that file.
 package main
 
 import (
@@ -17,8 +24,8 @@ import (
 
 const (
 	// golang.org/x/mod/semver *requires* a leading 'v' on versions, and will add missing minor/patch numbers.
-	minimumVersion = "v1.25.3"
-	// The K3s channels endpoint
+	minimumVersion = "v1.32.0"
+	// The K3s channels endpoint.
 	k3sChannelsEndpoint = "https://update.k3s.io/v1-release/channels"
 )
 
@@ -105,7 +112,6 @@ func getGithubReleasesPage(ctx context.Context, page int) ([]GithubRelease, erro
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		//nolint:revive // error-strings
 		return nil, fmt.Errorf("GitHub API request failed with status: %s", resp.Status)
 	}
 
@@ -186,5 +192,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(versions)
+	fmt.Fprintln(os.Stdout, versions)
 }
