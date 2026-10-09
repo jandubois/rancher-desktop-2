@@ -18,6 +18,8 @@ func TestVolumeArgHandler(t *testing.T) {
 		{`C:\data:/data`, "/mnt/c/data:/data"},
 		{`C:\data:/data:ro`, "/mnt/c/data:/data:ro"},
 		{`C:\data:/data:rw`, "/mnt/c/data:/data:rw"},
+		{`myvol:/data`, "myvol:/data"},
+		{`my-vol_1.0:/data:ro`, "my-vol_1.0:/data:ro"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.arg, func(t *testing.T) {
