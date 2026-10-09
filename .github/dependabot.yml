@@ -81,6 +81,20 @@ updates:
     interval: daily
   cooldown:
     default-days: 7
+  # Go marks the modules behind rdd/go.mod's `tool` directives `// indirect`,
+  # and Dependabot updates only direct requirements by default. This list
+  # replaces that default, so it names `direct` again. Each tool rule needs
+  # `dependency-type: indirect`, because a rule without a type matches direct
+  # requirements only. Keep a rule for the module of each `tool` entry,
+  # except ltag, which rdd replaces with a fork.
+  allow:
+  - dependency-type: direct
+  - dependency-name: github.com/golangci/golangci-lint/v2
+    dependency-type: indirect
+  - dependency-name: mvdan.cc/sh/v3
+    dependency-type: indirect
+  - dependency-name: sigs.k8s.io/controller-tools
+    dependency-type: indirect
   ignore:
   - # etcd 3.7 regenerated its protobuf API, which kine and the embedded k8s
     # apiserver do not yet implement, so the build breaks. Allow 3.6.x patch
