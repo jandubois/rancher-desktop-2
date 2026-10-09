@@ -174,10 +174,8 @@ Without file arguments, it reads from stdin.
 
 1. Create an empty locale file `{code}.yaml` in this directory.
 2. Register the locale code in three places: the `locale.` display names
-   in en-us.yaml, the `application.locale` enum in `command-api.yaml`,
-   and the `Locale` type in `config/settings.ts`. The settings validator
-   builds its enum from the translation files at build time and needs no
-   edit.
+   in en-us.yaml, the `LocaleString` type in `utils/translationLoader.ts`,
+   and the `Locale` type in `config/settings.ts`.
 3. Add the new locale's display name to every other locale file,
    translated into that file's language: `merge` a one-entry
    `locale.{code}` translation into each.
@@ -243,14 +241,6 @@ slots would remove the coupling.
 Callers that register during a lifecycle (e.g., tray show) must call
 the returned function during teardown (e.g., tray hide) to avoid
 leaking callbacks.
-
-### i18n-report tool
-
-- **The `Locale` type in `config/settings.ts` is synced by hand.**
-  `check` cross-validates the `command-api.yaml` enum and the
-  validator's dynamic `...availableLocales` pattern against the
-  translation files, but nothing checks the TypeScript union; a
-  forgotten entry surfaces only where a locale literal meets the type.
 
 ### Scanner gaps
 
