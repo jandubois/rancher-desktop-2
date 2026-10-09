@@ -55,7 +55,7 @@ export enum Theme {
   DARK = 'dark',
 }
 
-/** Locales with a bundled translation file; keep in sync with the enum in command-api.yaml. */
+/** Locales with a bundled translation file; keep in sync with `LocaleString` in utils/translationLoader.ts. */
 export type Locale = 'de' | 'en-us' | 'es' | 'fr' | 'it' | 'ja' | 'ko' | 'pt-br' | 'vi' | 'zh-hans';
 
 export class SettingsError extends Error {
