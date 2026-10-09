@@ -189,22 +189,10 @@ func Test_computeSettledCondition(t *testing.T) {
 			wantMessage:   settledMessageSettled,
 		},
 		{
-			name: "desired stopped + NotApplicable settles (containerd backend)",
-			app: makeApp(2, false,
-				running("Stopped", "VM is stopped", metav1.ConditionFalse, 2),
-				engine(v1alpha1.EngineReasonNotApplicable, "no mirroring for containerd", metav1.ConditionTrue, 2),
-			),
-			engineEnabled: true,
-			wantStatus:    metav1.ConditionTrue,
-			wantReason:    v1alpha1.AppSettledReasonSettled,
-			wantMessage:   settledMessageSettled,
-		},
-		{
 			// The engine reconciler stamps Connected/M+1 on the first reconcile
 			// after spec.running is set to false (while the VM is still stopping).
-			// That must not satisfy the wait: Settled must require a terminal
-			// engine reason (Stopped or NotApplicable), not just any condition at
-			// the current generation.
+			// That must not satisfy the wait: Settled must require reason
+			// Stopped, not just any condition at the current generation.
 			name: "desired stopped but engine still Connected at current generation waits",
 			app: makeApp(2, false,
 				running("Stopped", "VM is stopped", metav1.ConditionFalse, 2),

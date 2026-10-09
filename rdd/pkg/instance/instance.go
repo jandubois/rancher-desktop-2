@@ -170,12 +170,15 @@ var DockerEndpoint = sync.OnceValue(func() string {
 // ContainerdSocket returns the path to the containerd socket for this
 // instance (e.g., ~/.rd2/containerd.sock). This is the host-side socket
 // that Lima port-forwards from the guest's /run/k3s/containerd/containerd.sock.
-// On Windows, returns the named pipe path (\\.\pipe\containerd-containerd),
-// which nothing serves yet: containerd forwarding still needs a socket
-// bridge like the Docker one.
+// On Windows, it returns the named pipe that the hostagent's socket bridge
+// serves, \\.\pipe\containerd-<instance name>. The name is per instance
+// because \\.\pipe\containerd-containerd is native Windows containerd's
+// default address, which a host running its own containerd already uses.
+// The hostagent inherits RDD_INSTANCE from the service, so both sides compute
+// the same name.
 var ContainerdSocket = sync.OnceValue(func() string {
 	if runtime.GOOS == "windows" {
-		return `\\.\pipe\containerd-containerd`
+		return `\\.\pipe\containerd-` + Name()
 	}
 	return filepath.Join(ShortDir(), "containerd.sock")
 })

@@ -1,4 +1,9 @@
 #!/bin/sh
-# The real binary stays in libexec so this wrapper can set nerdctl's
-# environment. It has nothing to set yet.
+# On WSL, containerd runs in the network namespace of
+# network-namespace.service, and only that namespace reaches the DNS server
+# in /etc/resolv.conf. nerdctl resolves registry names itself, so it runs
+# there too. Every guest has wsl-exec, but the unit starts only on WSL.
+if /usr/bin/systemctl --quiet is-active network-namespace.service; then
+  exec /usr/local/bin/wsl-exec /usr/local/libexec/nerdctl/nerdctl "$@"
+fi
 exec /usr/local/libexec/nerdctl/nerdctl "$@"

@@ -756,36 +756,6 @@ EOF
     refute_output
 }
 
-# --- containerd backend on platforms without a socket ---
-
-@test "containerd backend reports NotApplicable where nothing serves its socket" {
-    # Everywhere else the containerd backend mirrors, and
-    # engine-containerd.bats covers it. Windows has no bridge for the
-    # named pipe, so the reconciler forces ContainerEngineReady True with
-    # reason NotApplicable and mirrors nothing, which is what lets
-    # `rdd set` finish waiting on Settled.
-    if ! is_windows; then
-        skip "containerd mirrors on this platform"
-    fi
-    # Stop first so no stale True/Connected from moby satisfies the Settled
-    # wait before the engine reconciler has processed the switch.
-    rdd set running=false
-    rdd set containerEngine.name=containerd running=true
-
-    run -0 rdd ctl get app app \
-        -o jsonpath='{.status.conditions[?(@.type=="ContainerEngineReady")].reason}'
-    assert_output "NotApplicable"
-
-    # A backend that mirrors nothing offers no namespaces to select from.
-    run -0 rdd ctl get app app -o jsonpath='{.status.supportsNamespaces}'
-    assert_output "false"
-
-    for kind in containers images volumes ContainerNamespaces; do
-        run -0 rdd ctl get "${kind}" --namespace="${RDD_NAMESPACE}" --output=name
-        refute_output
-    done
-}
-
 # --- Docker context management ---
 
 # docker_context_dir returns the ~/.docker/contexts/meta/<hash> directory for

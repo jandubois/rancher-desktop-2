@@ -631,8 +631,7 @@ func computeSettledCondition(app *v1alpha1.App, in settledInputs) metav1.Conditi
 		//     has seen this spec change (prevents a Settled=True from a
 		//     prior generation's condition sneaking through).
 		//
-		//  2. The reason is a terminal stopped state ("Stopped" or
-		//     "NotApplicable"): the engine reconciler runs
+		//  2. The reason is "Stopped": the engine reconciler runs
 		//     cleanupMirrorResources and stamps ContainerEngineReady only
 		//     after cleanup succeeds.  Without this check a
 		//     "Connected/M+1" condition — written while the VM was still
@@ -642,7 +641,7 @@ func computeSettledCondition(app *v1alpha1.App, in settledInputs) metav1.Conditi
 		//     resources (Containers, Images, Volumes) are deleted.
 		engineSettled := engineCond != nil &&
 			engineCond.ObservedGeneration >= app.Generation &&
-			(engineCond.Reason == v1alpha1.EngineReasonStopped || engineCond.Reason == v1alpha1.EngineReasonNotApplicable)
+			engineCond.Reason == v1alpha1.EngineReasonStopped
 		if !engineSettled {
 			settled.Status = metav1.ConditionFalse
 			settled.Reason = v1alpha1.AppSettledReasonEngineStale

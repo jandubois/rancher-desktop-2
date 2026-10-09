@@ -1,6 +1,6 @@
 // Package main is the rdd-guest agent that runs inside the Lima/WSL2 VM.
-// It listens on a vsock port and forwards connections to the Docker socket,
-// enabling the Windows host to reach /var/run/docker.sock via Hyper-V vsock.
+// It forwards one vsock port each to the Docker and containerd sockets, so the
+// Windows host can reach them over Hyper-V vsock.
 package main
 
 import (
@@ -19,25 +19,51 @@ import (
 )
 
 const (
-	vsockPort      = 6660
-	dockerSockPath = "/var/run/docker.sock"
+	dockerVsockPort     = 6660
+	dockerSockPath      = "/var/run/docker.sock"
+	containerdVsockPort = 6661
+	containerdSockPath  = "/run/k3s/containerd/containerd.sock"
 )
 
+// forwards maps each vsock port to the guest socket it serves.
+var forwards = []struct {
+	port     uint32
+	sockPath string
+}{
+	{dockerVsockPort, dockerSockPath},
+	{containerdVsockPort, containerdSockPath},
+}
+
 func main() {
+	// Listen on every port before serving any, so a failed listen exits at start.
+	listeners := make([]net.Listener, len(forwards))
+	for i, f := range forwards {
+		l, err := vsock.Listen(f.port, nil)
+		if err != nil {
+			log.Fatalf("vsock listen on port %d: %v", f.port, err)
+		}
+		listeners[i] = l
+		log.Printf("rdd-guest: listening on vsock port %d for %s", f.port, f.sockPath)
+	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	l, err := vsock.Listen(vsockPort, nil)
-	if err != nil {
-		log.Fatalf("vsock listen: %v", err)
+	var wg sync.WaitGroup
+	for i, l := range listeners {
+		sockPath := forwards[i].sockPath
+		wg.Go(func() { serve(ctx, l, sockPath) })
 	}
+	wg.Wait()
+}
 
-	log.Printf("rdd-guest: listening on vsock port %d", vsockPort)
-
+// serve accepts vsock connections on l and forwards each to sockPath until ctx
+// is cancelled.
+func serve(ctx context.Context, l net.Listener, sockPath string) {
 	go func() {
 		<-ctx.Done()
 		if err := l.Close(); err != nil {
-			log.Printf("rdd-guest: close listener: %v", err)
+			log.Printf("rdd-guest: close listener for %s: %v", sockPath, err)
 		}
 	}()
 
@@ -47,7 +73,7 @@ func main() {
 			if ctx.Err() != nil {
 				return
 			}
-			log.Printf("rdd-guest: accept: %v", err)
+			log.Printf("rdd-guest: accept for %s: %v", sockPath, err)
 			if errors.Is(err, syscall.ECONNABORTED) {
 				continue
 			}
@@ -58,7 +84,7 @@ func main() {
 			}
 			continue
 		}
-		go handleConn(ctx, conn)
+		go handleConn(ctx, conn, sockPath)
 	}
 }
 
@@ -72,11 +98,11 @@ type halfCloser interface {
 	CloseWrite() error
 }
 
-// handleConn forwards bytes between the vsock connection and the Docker socket.
+// handleConn forwards bytes between the vsock connection and sockPath.
 // It rejects connections that do not originate from the Windows host (CID 2 /
 // vsock.Host): any process in any WSL2 distro shares the same vsock namespace
-// and could otherwise gain root Docker API access.
-func handleConn(ctx context.Context, vsockConn net.Conn) {
+// and could otherwise gain root access to the engine API.
+func handleConn(ctx context.Context, vsockConn net.Conn, sockPath string) {
 	defer func() {
 		if err := vsockConn.Close(); err != nil {
 			log.Printf("rdd-guest: close vsock conn: %v", err)
@@ -89,14 +115,14 @@ func handleConn(ctx context.Context, vsockConn net.Conn) {
 		return
 	}
 
-	dockerConn, err := (&net.Dialer{}).DialContext(ctx, "unix", dockerSockPath)
+	sockConn, err := (&net.Dialer{}).DialContext(ctx, "unix", sockPath)
 	if err != nil {
-		log.Printf("rdd-guest: dial docker: %v", err)
+		log.Printf("rdd-guest: dial %s: %v", sockPath, err)
 		return
 	}
 	defer func() {
-		if err := dockerConn.Close(); err != nil {
-			log.Printf("rdd-guest: close docker conn: %v", err)
+		if err := sockConn.Close(); err != nil {
+			log.Printf("rdd-guest: close %s conn: %v", sockPath, err)
 		}
 	}()
 
@@ -105,12 +131,12 @@ func handleConn(ctx context.Context, vsockConn net.Conn) {
 		log.Printf("rdd-guest: vsock conn from %v does not support CloseWrite", vsockConn.RemoteAddr())
 		return
 	}
-	dockerHC, ok := dockerConn.(halfCloser)
+	sockHC, ok := sockConn.(halfCloser)
 	if !ok {
-		log.Printf("rdd-guest: docker conn for %v does not support CloseWrite", vsockConn.RemoteAddr())
+		log.Printf("rdd-guest: %s conn for %v does not support CloseWrite", sockPath, vsockConn.RemoteAddr())
 		return
 	}
-	pipe(vsockHC, dockerHC)
+	pipe(vsockHC, sockHC)
 }
 
 // pipe bidirectionally proxies between a and b until both directions are done.

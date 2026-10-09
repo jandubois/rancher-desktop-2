@@ -64,10 +64,6 @@ images.  A namespace whose name is not a valid Kubernetes object name will have
 its name encoded; see [`ContainerNamespace`](#namespaces) for details.
 Since containerd has no volume concept, it never creates any `Volume` mirrors.
 
-Windows is the exception, since nothing serves the containerd named pipe there
-yet; the controller sets `ContainerEngineReady` to `True` with reason
-`NotApplicable` and takes no mirroring action.
-
 The controller sets the `ContainerEngineReady` condition on the `App` resource
 to `True` after the initial sync completes.  Scripts can wait for readiness:
 
