@@ -13,18 +13,23 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec"
 )
 
+// namedVolume matches the volume sources that nerdctl takes for volume names
+// instead of host paths; it copies isNamedVolume in nerdctl's pkg/mountutil.
+var namedVolume = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_.-]+$`)
+
 // volumeArgHandler handles the argument of `nerdctl run --volume=...`.
 func volumeArgHandler(arg string) (string, []cleanupFunc, error) {
 	// Valid arguments are:
-	// <host path>:<container path>
-	// <host path>:<container path>:rw
-	// <host path>:<container path>:ro
+	// <host path or volume name>:<container path>
+	// <host path or volume name>:<container path>:rw
+	// <host path or volume name>:<container path>:ro
 	// Because we only have Linux containers, and this is for Windows, we
 	// need not handle a bare <path> for identical host and container paths.
 	cleanArg := arg
@@ -40,6 +45,9 @@ func volumeArgHandler(arg string) (string, []cleanupFunc, error) {
 	}
 	hostPath := cleanArg[:colonIndex]
 	containerPath := cleanArg[colonIndex+1:]
+	if namedVolume.MatchString(hostPath) {
+		return arg, nil, nil
+	}
 	guestPath, err := guestexec.TranslateHostPath(hostPath)
 	if err != nil {
 		return "", nil, fmt.Errorf("could not get volume host path for %s: %w", arg, err)
