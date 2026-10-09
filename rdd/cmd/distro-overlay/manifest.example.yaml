@@ -1,7 +1,7 @@
 # Example distro-overlay manifest.
 #
 # distro-overlay merges these entries into a pristine openSUSE distro at build
-# time, into both the WSL tarball and the Lima ext4 image. Apply it with:
+# time, into both the WSL tarball and the raw ext4 image. Apply it with:
 #
 #   distro-overlay --manifest manifest.yaml --source ./files [--mtime T] <distro>
 #
@@ -62,13 +62,13 @@ entries:
 
   # --- A profile-specific entry ----------------------------------------------
   # profiles limits an entry to some of the distro's build profiles, mirroring
-  # config.kiwi's profiles= attribute: lima builds the raw ext4 image and wsl
+  # config.kiwi's profiles= attribute; raw builds the ext4 disk image and wsl
   # the rootfs tarball. distro-overlay applies only the entries for the profile
   # it is passed with --profile, plus every entry that names no profile, so one
   # manifest builds either image. An entry with no profiles applies to both.
   - path: /usr/local/lib/systemd/system/lima-init.service.d/requires-network.conf
     source: systemd/requires-network.conf
-    profiles: [lima]   # any of lima, wsl
+    profiles: [raw]    # any of raw, wsl
 
 # Notes:
 #   * Overwrites win: an overlay entry replaces a base path of the same name.
@@ -81,7 +81,7 @@ entries:
 #   * Modes are permission bits only; setuid, setgid, and sticky are rejected.
 #   * Only file, dir, and symlink are supported. Sockets, fifos, device nodes,
 #     and hard links are rejected.
-#   * profiles limits an entry to the lima or wsl build profiles; an entry that
+#   * profiles limits an entry to the raw or wsl build profiles; an entry that
 #     names none applies to both. distro-overlay picks the profile with
 #     --profile.
 #   * Every entry is stamped with the tool's --mtime (default: now). Pass a fixed

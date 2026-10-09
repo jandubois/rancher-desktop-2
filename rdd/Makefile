@@ -65,8 +65,8 @@ DISTRO_VARIANT := $(if $(filter windows,$(TARGET_OS)),tar,raw)
 DISTRO_IMAGE := pkg/embedded/distro.$(DISTRO_VARIANT).xz
 
 # The overlay applies only the entries for the profile it builds. The variant
-# maps one to one onto kiwi's profiles: the wsl tarball and the lima raw image.
-DISTRO_PROFILE := $(if $(filter windows,$(TARGET_OS)),wsl,lima)
+# maps one to one onto kiwi's profiles, the wsl tarball and the raw image.
+DISTRO_PROFILE := $(if $(filter windows,$(TARGET_OS)),wsl,raw)
 
 # The overlay adds the binaries the distro stopped shipping once Rancher
 # Desktop took them over. download-guest-deps stages the pristine distro and

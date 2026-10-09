@@ -6,7 +6,7 @@ lives in this repository and is layered on from a single manifest.
 
 ## Usage
 
-    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--profile lima|wsl] [--mtime T] [--kernel-params P] <distro>
+    distro-overlay --manifest manifest.yaml (--output out.raw | --in-place) [--source ./files] [--profile raw|wsl] [--mtime T] [--kernel-params P] <distro>
 
 | Flag | Meaning |
 |------|---------|
@@ -15,7 +15,7 @@ lives in this repository and is layered on from a single manifest.
 | `--format` | `auto` (default), `raw`, or `tar`; `auto` detects by signature |
 | `--output` | Write the result here, leaving the distro alone; the tool writes through to it, empties it when the run fails, and refuses one naming the distro |
 | `--in-place` | Overlay the distro itself, modifying it; pass this or `--output`, never both |
-| `--profile` | Build profile to overlay for, `lima` or `wsl`; applies only the entries for it, plus the entries naming no profile. Omitted, every entry applies |
+| `--profile` | Build profile to overlay for, `raw` or `wsl`; applies only the entries for it, plus the entries naming no profile. Omitted, every entry applies |
 | `--mtime` | Timestamp for every entry: Unix epoch seconds or RFC3339 (default: now) |
 | `--kernel-params` | Parameters to append to every kernel command line; raw images only |
 
@@ -30,9 +30,9 @@ the shipped image should not carry, such as a clock setting for a CI runner.
 
 The same manifest drives both forms:
 
-- **WSL tarball** — the tool appends each entry to the tar, dropping any base
+- **WSL tarball**: the tool appends each entry to the tar, dropping any base
   path the manifest overrides so the overlay wins.
-- **Lima raw image** — the tool writes each entry into the ext4 root partition
+- **Raw image**: the tool writes each entry into the ext4 root partition
   through go-diskfs, with no `resize2fs` and no root on the build host. The image
   must reserve free space at build time (kiwi `<size additive>` in the
   rancher-desktop-opensuse `config.kiwi`); an overlay that exceeds the reserve

@@ -27,14 +27,14 @@ func main() {
 	format := flag.String("format", "auto", "distro format: auto, raw, or tar")
 	output := flag.String("output", "", "write the overlaid distro here")
 	inPlace := flag.Bool("in-place", false, "overlay the distro itself, modifying it")
-	profile := flag.String("profile", "", "build profile to overlay for: lima or wsl (default: every entry)")
+	profile := flag.String("profile", "", "build profile to overlay for: raw or wsl (default: every entry)")
 	mtimeArg := flag.String("mtime", "", "modification time for every entry, as Unix epoch seconds or RFC3339 (default: now)")
 	kernelParams := flag.String("kernel-params", "", "kernel parameters to append to every boot entry (raw images only)")
 	flag.Parse()
 
 	if *manifest == "" || flag.NArg() != 1 {
 		fmt.Fprintln(os.Stderr, "usage: distro-overlay --manifest M (--output O | --in-place)"+
-			" [--source D] [--format auto|raw|tar] [--profile lima|wsl] [--mtime T] [--kernel-params P] <distro>")
+			" [--source D] [--format auto|raw|tar] [--profile raw|wsl] [--mtime T] [--kernel-params P] <distro>")
 		os.Exit(2)
 	}
 	if err := checkTarget(*output, *inPlace); err != nil {
@@ -84,7 +84,7 @@ func parseMtime(arg string) (time.Time, error) {
 
 func run(manifestPath, sourceDir, format, output, profile, distro string, mtime time.Time, kernelParams string) error {
 	if profile != "" && !overlay.ValidProfile(profile) {
-		return fmt.Errorf("unknown profile %q; want %s or %s", profile, overlay.ProfileLima, overlay.ProfileWSL)
+		return fmt.Errorf("unknown profile %q; want %s or %s", profile, overlay.ProfileRaw, overlay.ProfileWSL)
 	}
 	m, err := overlay.LoadManifest(manifestPath)
 	if err != nil {
