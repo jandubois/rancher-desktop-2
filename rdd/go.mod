@@ -240,7 +240,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-tpm v0.9.8 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
-	github.com/google/renameio/v2 v2.0.0 // indirect
+	github.com/google/renameio/v2 v2.0.2 // indirect
 	github.com/google/yamlfmt v0.21.0 // indirect
 	github.com/gordonklaus/ineffassign v0.2.0 // indirect
 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
@@ -488,7 +488,7 @@ require (
 	k8s.io/streaming v0.37.0 // indirect
 	mvdan.cc/editorconfig v0.3.0 // indirect
 	mvdan.cc/gofumpt v0.11.0 // indirect
-	mvdan.cc/sh/v3 v3.12.0 // indirect
+	mvdan.cc/sh/v3 v3.14.1 // indirect
 	mvdan.cc/unparam v0.0.0-20260823230713-2fa3d841b0c8 // indirect
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.34.0 // indirect
 	sigs.k8s.io/controller-tools v0.19.0 // indirect
