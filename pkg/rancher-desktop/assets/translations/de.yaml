@@ -14,6 +14,10 @@ allowedImages:
   patterns:
     # @source Type the image pattern
     placeholder: Geben Sie das Image-Muster ein
+app:
+  # @reason source is only the productName placeholder, filled in with the product name at runtime
+  # @source {productName}
+  name: '{productName}'
 application:
   behavior:
     autoStart:
@@ -601,8 +605,8 @@ general:
   projectDiscussions: 'Projektdiskussionen: <b>#rancher-desktop</b> in <a href="https://slack.rancher.io/">Rancher Users</a> Slack'
   # @source Project Links:
   projectLinks: 'Projektlinks:'
-  # @source Welcome to Rancher Desktop by SUSE
-  title: Willkommen bei Rancher Desktop von SUSE
+  # @source Welcome to {appName} by SUSE
+  title: Willkommen bei {appName} von SUSE
 generic:
   # @source  and 
   and: ' und '
@@ -617,6 +621,8 @@ generic:
   comma: ', '
   # @source Forward
   forward: Weiterleiten
+  # @source Invalid cron schedule
+  invalidCron: Ungültiger Cron-Zeitplan
   # @source Loading&hellip;
   loading: Wird geladen&hellip;
   # @source Namespace
@@ -829,8 +835,9 @@ kubernetesPrefs:
     legendText: Optionen
     # @source Install Spin Operator
     spinkube: Spin Operator installieren
-    # @source Spin Operator requires <a href="#" data-navigate="Container Engine,general">WebAssembly</a> to be enabled.
-    spinkubeWarning: <a href="#" data-navigate="Container Engine,general">WebAssembly</a> muss aktiviert sein, damit der Spin Operator installiert werden kann.
+    # @reason worded like preferences.containerEngine.webAssembly.warning; the checkbox it sits under reads 'Spin Operator installieren'
+    # @source Spin Operator requires <a href="#" data-navigate="container-engine,general">WebAssembly</a> to be enabled.
+    spinkubeWarning: <a href="#" data-navigate="container-engine,general">WebAssembly</a> muss aktiviert sein, damit der Spin Operator installiert werden kann.
     # @source Enable Traefik
     traefik: Traefik aktivieren
   version:
@@ -1047,8 +1054,8 @@ preferences:
       restart: Kubernetes wird nach dem Übernehmen der Änderungen neu gestartet.
   containerEngine:
     webAssembly:
-      # @source WebAssembly must be enabled for the <a href="#" data-navigate="Kubernetes">Spin Operator</a> to be installed.
-      warning: WebAssembly muss aktiviert sein, damit der <a href="#" data-navigate="Kubernetes">Spin Operator</a> installiert werden kann.
+      # @source WebAssembly must be enabled for the <a href="#" data-navigate="kubernetes">Spin Operator</a> to be installed.
+      warning: WebAssembly muss aktiviert sein, damit der <a href="#" data-navigate="kubernetes">Spin Operator</a> installiert werden kann.
   error:
     # @source Reload Preferences to try again.
     body: Laden Sie die Einstellungen erneut, um es noch einmal zu versuchen.
@@ -1115,6 +1122,11 @@ preferences:
     # @reason Docker volume term; 'das Volume/Volumes' is standard in German container UIs and used throughout de.yaml
     # @source Volumes
     volumes: Volumes
+  validation:
+    containerEngine:
+      name:
+        # @source Container engine {current} is not valid
+        FieldValueNotSupported: Container-Engine {current} ist ungültig
 preferencesWindow:
   close:
     # @source There are preferences with changes that have not been applied. All unsaved preferences will be lost.
@@ -1392,14 +1404,14 @@ tray:
   openMainWindow: Hauptfenster öffnen
   # @source Open preferences dialog
   openPreferences: Einstellungen öffnen
-  # @source Quit Rancher Desktop
-  quitRancherDesktop: Rancher Desktop beenden
+  # @source Quit {appName}
+  quitRancherDesktop: '{appName} beenden'
   state:
     # @source Kubernetes is starting
     starting: Kubernetes wird gestartet
-  # @reason product name
-  # @source Rancher Desktop
-  tooltip: Rancher Desktop
+  # @reason source is only the appName placeholder, filled in with the product name at runtime
+  # @source {appName}
+  tooltip: '{appName}'
 troubleshooting:
   # @source Enable debug mode
   debugMode: Debug-Modus aktivieren
@@ -1469,12 +1481,13 @@ unmetPrerequisites:
 updateStatus:
   # @source Applying update...
   applyingUpdate: Update wird angewendet...
-  # @source An update to version {version} is available
-  available: Ein Update auf Version {version} ist verfügbar
+  # @source An update to version {version} is available.
+  available: Ein Update auf Version {version} ist verfügbar.
   # @source Check for updates automatically
   checkForUpdates: Automatisch nach Updates suchen
-  # @source downloading... ({percent}%, {speed})
-  downloading: Wird heruntergeladen... ({percent}%, {speed})
+  # @reason joined with 'und' instead of the source's semicolon so both clauses share the subject 'Update'
+  # @source An update to version {version} is available; downloading... ({percent}%, {speed})
+  downloading: Ein Update auf Version {version} ist verfügbar und wird heruntergeladen... ({percent}%, {speed})
   # @source There was an error checking for updates.
   errorChecking: Beim Prüfen auf Updates ist ein Fehler aufgetreten.
   # @source Release Notes

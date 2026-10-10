@@ -15,6 +15,10 @@ allowedImages:
   patterns:
     # @source Type the image pattern
     placeholder: Digita il pattern dell'immagine
+app:
+  # @reason The source is only the product-name placeholder.
+  # @source {productName}
+  name: '{productName}'
 application:
   behavior:
     autoStart:
@@ -558,8 +562,8 @@ general:
   # @source Project Links:
   projectLinks: 'Link del progetto:'
   # @reason "Ti diamo il benvenuto" avoids the gendered "Benvenuto".
-  # @source Welcome to Rancher Desktop by SUSE
-  title: Ti diamo il benvenuto in Rancher Desktop di SUSE
+  # @source Welcome to {appName} by SUSE
+  title: Ti diamo il benvenuto in {appName} di SUSE
 generic:
   # @source  and 
   and: ' e '
@@ -575,6 +579,8 @@ generic:
   # @reason Assumed port-forwarding context; would be "Avanti" if used for navigation.
   # @source Forward
   forward: Inoltra
+  # @source Invalid cron schedule
+  invalidCron: Pianificazione cron non valida
   # @source Loading&hellip;
   loading: Caricamento&hellip;
   # @reason Kubernetes/containerd term, untranslated in Italian.
@@ -789,8 +795,8 @@ kubernetesPrefs:
     legendText: Opzioni
     # @source Install Spin Operator
     spinkube: Installa Spin Operator
-    # @source Spin Operator requires <a href="#" data-navigate="Container Engine,general">WebAssembly</a> to be enabled.
-    spinkubeWarning: Spin Operator richiede che <a href="#" data-navigate="Container Engine,general">WebAssembly</a> sia abilitato.
+    # @source Spin Operator requires <a href="#" data-navigate="container-engine,general">WebAssembly</a> to be enabled.
+    spinkubeWarning: Spin Operator richiede che <a href="#" data-navigate="container-engine,general">WebAssembly</a> sia abilitato.
     # @source Enable Traefik
     traefik: Abilita Traefik
   version:
@@ -1016,8 +1022,8 @@ preferences:
       restart: Kubernetes verrà riavviato dopo l'applicazione delle modifiche.
   containerEngine:
     webAssembly:
-      # @source WebAssembly must be enabled for the <a href="#" data-navigate="Kubernetes">Spin Operator</a> to be installed.
-      warning: WebAssembly deve essere abilitato per poter installare lo <a href="#" data-navigate="Kubernetes">Spin Operator</a>.
+      # @source WebAssembly must be enabled for the <a href="#" data-navigate="kubernetes">Spin Operator</a> to be installed.
+      warning: WebAssembly deve essere abilitato per poter installare lo <a href="#" data-navigate="kubernetes">Spin Operator</a>.
   error:
     # @source Reload Preferences to try again.
     body: Ricarica le impostazioni per riprovare.
@@ -1086,6 +1092,12 @@ preferences:
     proxy: Proxy
     # @source Volumes
     volumes: Volumi
+  validation:
+    containerEngine:
+      name:
+        # @reason "motore container" matches containerEngine.label, the legend of the field this error reports.
+        # @source Container engine {current} is not valid
+        FieldValueNotSupported: Il motore container {current} non è valido
 preferencesWindow:
   close:
     # @source There are preferences with changes that have not been applied. All unsaved preferences will be lost.
@@ -1346,14 +1358,14 @@ tray:
   openMainWindow: Apri la finestra principale
   # @source Open preferences dialog
   openPreferences: Apri le Impostazioni
-  # @source Quit Rancher Desktop
-  quitRancherDesktop: Esci da Rancher Desktop
+  # @source Quit {appName}
+  quitRancherDesktop: Esci da {appName}
   state:
     # @source Kubernetes is starting
     starting: Kubernetes è in fase di avvio
-  # @reason Rancher Desktop product name
-  # @source Rancher Desktop
-  tooltip: Rancher Desktop
+  # @reason The source is only the product-name placeholder.
+  # @source {appName}
+  tooltip: '{appName}'
 troubleshooting:
   # @source Enable debug mode
   debugMode: Abilita la modalità di debug
@@ -1425,13 +1437,13 @@ unmetPrerequisites:
 updateStatus:
   # @source Applying update...
   applyingUpdate: Applicazione dell'aggiornamento...
-  # @source An update to version {version} is available
-  available: È disponibile un aggiornamento alla versione {version}
+  # @source An update to version {version} is available.
+  available: È disponibile un aggiornamento alla versione {version}.
   # @source Check for updates automatically
   checkForUpdates: Controlla automaticamente la disponibilità di aggiornamenti
-  # @reason lowercase kept to match the source's inline status style; 'download' is an established loanword
-  # @source downloading... ({percent}%, {speed})
-  downloading: download in corso... ({percent}%, {speed})
+  # @reason "download in corso" over "scaricamento in corso": the common wording for download progress in Italian UIs.
+  # @source An update to version {version} is available; downloading... ({percent}%, {speed})
+  downloading: È disponibile un aggiornamento alla versione {version}; download in corso... ({percent}%, {speed})
   # @source There was an error checking for updates.
   errorChecking: Si è verificato un errore durante il controllo degli aggiornamenti.
   # @source Release Notes
