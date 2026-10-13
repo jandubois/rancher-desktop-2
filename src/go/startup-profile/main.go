@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 // Command startup-profile generates a Chrome devtools profile format.
 // The output can be loaded via https://profiler.firefox.com/ or via Chrome
 // devtools (Performance tab).

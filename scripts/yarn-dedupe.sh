@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 # Deduplicate yarn.lock and optionally push a pull request.
 # Expects to run from the repository root on the main branch.
 #

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 # Download the latest CI build and install it.
 # NOTE On Linux, "user" installs to `~/opt/rancher-desktop`
 
