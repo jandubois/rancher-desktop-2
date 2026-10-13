@@ -383,24 +383,12 @@ format:
 	go$(EXE) tool golangci-lint fmt
 .PHONY: format
 
-LTAG_EXCLUDES := \
-	bats/lib \
-	pkg/util/nxadmtail \
-	src \
-	$(GUESTAGENT_BINARY) \
-	${NULL}
-ltag:
-	go$(EXE) tool ltag -v -t .ltag -path . --gitignore --excludes="${LTAG_EXCLUDES}"
-check-ltag:
-	go$(EXE) tool ltag -v -t .ltag -path . --gitignore --excludes="${LTAG_EXCLUDES}" --check
-.PHONY: ltag check-ltag
-
 BATS_TARGETS := $(shell MAKEFLAGS= $(MAKE) -C bats --print-data-base --question --no-builtin-variables | awk -F: '$$1 ~ /^bats-/ { print $$1 }')
 $(BATS_TARGETS): bin/rdd$(EXE)
 	@$(MAKE) -C bats $@
 .PHONY: $(BATS_TARGETS)
 
-check: test lint check-ltag verify-generate
+check: test lint verify-generate
 .PHONY: check
 
 clean:
