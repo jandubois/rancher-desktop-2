@@ -18,57 +18,28 @@ import (
 // Windows) and re-add it at the chosen end, so the result is idempotent and the
 // entry can move between front and back.
 //
-// manual is more careful. Windows has no fenced block like the Unix startup
-// files, so we can't tell an entry we added from one the user typed by value
-// alone. We therefore only remove a binDir entry that sits at the very front or
-// back of the Path — the two positions front/back would have written. An entry
-// the user placed in the middle is a deliberate choice, so manual leaves it
-// alone. "Middle" means a real, unrelated entry sits on both sides of ours:
-// anchoring on the other entries (not the raw front/back of the Path) makes one
-// pass a fixed point, so a duplicated entry that would otherwise slide to an edge
-// on the next apply is removed now. The consequence, which the docs call out, is
-// that a user who wants binDir at the front or back must use front/back: under
-// manual an entry parked at either end is treated as ours and removed. Empty
+// manual's behaviour depends on removeExisting, which the caller derives from
+// the marker file (see pathmanagement_windows.go). Windows Path has no fenced
+// block like the Unix startup files, so we can't tell an entry we added from one
+// the user typed by value alone; the marker records that rdd added it. When
+// removeExisting is true (the marker is present, or we're force-removing for
+// deletion) every binDir entry is dropped regardless of position. When it is
+// false (no marker) every entry is left alone, wherever the user put it. Empty
 // segments are only tidied up when we're actually adding our entry.
-//
-// forceRemove overrides the manual middle-entry rule and drops every binDir
-// entry regardless of position. Service deletion uses it to fully unwind before
-// removing the bin directory, so a middle entry isn't left pointing at a
-// directory that no longer exists.
-func computeWindowsPath(current, binDir string, strategy appv1alpha1.AddPathStrategy, forceRemove bool) (string, bool) {
+func computeWindowsPath(current, binDir string, strategy appv1alpha1.AddPathStrategy, removeExisting bool) (string, bool) {
 	segments := strings.Split(current, ";")
 	wanted := normalizeWindowsPathEntry(binDir)
 	adding := strategy == appv1alpha1.AddPathFront || strategy == appv1alpha1.AddPathBack
-
-	// First and last non-empty segments that aren't ours anchor the "middle": our
-	// entry is a deliberate placement (kept under manual) only when one of these
-	// sits before it and another after it. Computing this against the other
-	// entries — rather than the raw front/back — means removing one copy can't
-	// promote a second copy to an edge on a later pass.
-	firstOtherIdx, lastOtherIdx := -1, -1
-	for i, seg := range segments {
-		trimmed := strings.TrimSpace(seg)
-		if trimmed == "" || strings.EqualFold(normalizeWindowsPathEntry(trimmed), wanted) {
-			continue
-		}
-		if firstOtherIdx < 0 {
-			firstOtherIdx = i
-		}
-		lastOtherIdx = i
-	}
+	// Drop our entries when adding (front/back re-add one below) or when the
+	// caller says the marker owns them (manual with the marker, or force-remove).
+	removeOurs := adding || removeExisting
 
 	kept := make([]string, 0, len(segments)+1)
-	for i, seg := range segments {
+	for _, seg := range segments {
 		trimmed := strings.TrimSpace(seg)
-		if trimmed != "" && strings.EqualFold(normalizeWindowsPathEntry(trimmed), wanted) {
-			// Our entry. front/back and forceRemove drop every copy; manual keeps
-			// it only when it's genuinely in the middle — a non-ours entry on each
-			// side of it.
-			middle := firstOtherIdx >= 0 && i > firstOtherIdx && i < lastOtherIdx
-			if adding || forceRemove || !middle {
-				continue
-			}
-			// A middle entry under manual: the user's chosen location, kept.
+		isOurs := trimmed != "" && strings.EqualFold(normalizeWindowsPathEntry(trimmed), wanted)
+		if isOurs && removeOurs {
+			continue
 		}
 		if trimmed == "" && adding {
 			// Empty segments just leave stray semicolons; drop them when adding.

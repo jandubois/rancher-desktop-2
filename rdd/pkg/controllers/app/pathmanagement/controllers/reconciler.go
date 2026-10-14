@@ -195,9 +195,9 @@ func (r *PathManagementReconciler) setCondition(ctx context.Context, name string
 // Unwind removes this instance's bin directory from the user's PATH, leaving it
 // unmanaged. Service deletion calls it before removing the bin directory, so the
 // user isn't left with an entry pointing at a directory that no longer exists.
-// It force-removes the entry even from the middle of the Windows Path: the whole
-// instance is going away, so a placement we'd otherwise preserve under manual
-// would just dangle.
+// It force-removes the entry from any position on the Windows Path, even one the
+// marker doesn't claim: the whole instance is going away, so an entry we'd
+// otherwise preserve under manual would just dangle.
 func (r *PathManagementReconciler) Unwind(ctx context.Context) error {
 	return r.apply(ctx, appv1alpha1.AddPathManual, true)
 }

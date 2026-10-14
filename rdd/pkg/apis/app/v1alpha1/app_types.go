@@ -224,14 +224,13 @@ type ApplicationSpec struct {
 	//
 	// On Windows the user Environment Path is a plain semicolon-separated list
 	// with nowhere to fence our entry, so under "manual" we can't tell an entry
-	// we added from one the user typed. We therefore remove the bin directory
-	// only when it sits at the very front or back of Path (the two spots
-	// front/back would have written) and leave a copy the user placed in the
-	// middle alone. The trade-off: an entry parked at either end is treated as
-	// ours and removed, so a user who wants the bin directory at the front or
-	// back on Windows must use "front"/"back", not place it there under
-	// "manual". Unix files use start/end markers, so only our own block is
-	// touched regardless of position.
+	// we added from one the user typed. We instead keep a marker file in the
+	// instance directory that records that rdd added the bin directory: "front"
+	// and "back" write it before editing Path, and "manual" removes the bin
+	// directory from any position only when that marker is present, then deletes
+	// it. Without the marker — an entry the user added themselves — "manual"
+	// leaves Path alone wherever they put it. Unix files use start/end markers, so
+	// only our own block is touched regardless of position.
 	// +optional
 	// +kubebuilder:validation:Enum=front;back;manual
 	// +kubebuilder:default=manual
