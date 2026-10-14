@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 // Package main is the rdd-guest agent that runs inside the Lima/WSL2 VM.
 // It forwards one vsock port each to the Docker and containerd sockets, so the
 // Windows host can reach them over Hyper-V vsock.

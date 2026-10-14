@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 # This script is expected to run from CI, and does a final smoke test.
 # There should be an installer in the current directory (or, in the case of
 # Linux, a zip file), along with its accompanying sha512sum file.

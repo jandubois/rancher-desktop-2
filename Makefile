@@ -2,9 +2,9 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-FileCopyrightText: The Rancher Desktop Authors
 
-# Repository-wide checks. The daemon's build, test, and license-header (ltag)
-# targets live in rdd/Makefile. Spelling covers the whole tree; ltag is scoped to
-# rdd/ and will widen to the whole repository later.
+# Repository-wide checks. The daemon's build and test targets live in
+# rdd/Makefile. Spelling and the license-header check (ltag) cover the whole
+# tree.
 
 EXE := $(if $(shell sh -c 'command -v winver.exe'),.exe,)
 
@@ -18,6 +18,21 @@ default: check
 spelling: scripts/check-spelling.sh .github/actions/spelling/expect/golang-generated.txt
 	$<
 .PHONY: spelling
+
+# ltag is a tool in rdd/go.mod. It must run from the repository root, because
+# with `-path ..` it checks nothing and still succeeds. `go tool -n` builds it
+# and prints its path.
+LTAG = $(shell go$(EXE) -C rdd tool -n ltag)
+LTAG_EXCLUDES := \
+	rdd/bats/lib \
+	rdd/pkg/util/nxadmtail \
+	.github/actions/spelling/check-spelling \
+	${NULL}
+ltag:
+	"$(LTAG)" -v -t .ltag -path . --gitignore --excludes="${LTAG_EXCLUDES}"
+check-ltag:
+	"$(LTAG)" -v -t .ltag -path . --gitignore --excludes="${LTAG_EXCLUDES}" --check
+.PHONY: ltag check-ltag
 
 test-wix-helper:
 	( cd src/go/wix-helper && go$(EXE) test ./... )
@@ -59,5 +74,5 @@ lint-shell-fix:
 	go -C rdd tool shfmt --indent=4 --write $(foreach f,$(SHELL_FILES),../$(f))
 .PHONY: lint-shell-fix
 
-check: spelling
+check: spelling check-ltag
 .PHONY: check

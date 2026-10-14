@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 # This script is expected to run as root and install Rancher Desktop from the
 # repository obs://isv:Rancher:dev
 # Expected environment variables:

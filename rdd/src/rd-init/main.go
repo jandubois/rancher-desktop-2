@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 // Command rd-init is a minimal implementation of cloud-init to start lima.
 // Note that this only implements `cloud-init-local`.
 package main
