@@ -31,8 +31,8 @@ import (
 type EventMonitor struct {
 	dockerClient *client.Client
 	portTracker  tracker.Tracker
-	// map of containerID to iptables rule entry to remove from DOCKER chain
-	iptablesRulesToDelete map[string]*exec.Cmd
+	// map of containerID to iptables rule entries to remove from DOCKER chain
+	iptablesRulesToDelete map[string][]*exec.Cmd
 }
 
 // NewEventMonitor creates and returns a new Event Monitor for
@@ -47,7 +47,7 @@ func NewEventMonitor(portTracker tracker.Tracker) (*EventMonitor, error) {
 	return &EventMonitor{
 		dockerClient:          cli,
 		portTracker:           portTracker,
-		iptablesRulesToDelete: make(map[string]*exec.Cmd),
+		iptablesRulesToDelete: make(map[string][]*exec.Cmd),
 	}, nil
 }
 
@@ -102,15 +102,7 @@ func (e *EventMonitor) MonitorPorts(ctx context.Context) {
 				if err != nil {
 					log.Errorf("remove port mapping from tracker failed: %s", err)
 				}
-				if deleteIptablesCmd, ok := e.iptablesRulesToDelete[container.ID]; ok {
-					log.Debugf("removing the following rules from iptables: %s", deleteIptablesCmd.String())
-					var stderr bytes.Buffer
-					deleteIptablesCmd.Stderr = &stderr
-					if err := deleteIptablesCmd.Run(); err != nil {
-						log.Errorf("deleting loopback iptables rule failed: %s [%s]", err, stderr.String())
-					}
-					delete(e.iptablesRulesToDelete, container.ID)
-				}
+				e.deleteLoopbackIPtablesRules(container.ID)
 			}
 		case err := <-errCh:
 			log.Errorf("receiving container event failed: %s", err)
@@ -261,12 +253,14 @@ func (e *EventMonitor) createLoopbackIPtablesRules(ctx context.Context, containe
 			if err := iptableCmd.Run(); err != nil {
 				errs = append(errs, fmt.Errorf("creating loopback rule in DOCKER chain failed: %w [%s]", err, stderr.String()))
 				log.Debugf("running the following iptables rule [%s] with the error(s):[%v]", iptableCmd.String(), errs)
+
+				continue
 			}
-			e.iptablesRulesToDelete[containerID] = iptablesDeleteLoopbackRuleCmd(
+			e.iptablesRulesToDelete[containerID] = append(e.iptablesRulesToDelete[containerID], iptablesDeleteLoopbackRuleCmd(
 				ctx,
 				portProto.Proto(),
 				portBinding.HostPort,
-				fmt.Sprintf("%s:%s", containerIP, portProto.Port()))
+				fmt.Sprintf("%s:%s", containerIP, portProto.Port())))
 		}
 	}
 
@@ -311,6 +305,20 @@ func (e *EventMonitor) createIptablesRuleForContainer(ctx context.Context, conta
 			}
 		}
 	}
+}
+
+// deleteLoopbackIPtablesRules removes the loopback DNAT rules that
+// createLoopbackIPtablesRules added for the container.
+func (e *EventMonitor) deleteLoopbackIPtablesRules(containerID string) {
+	for _, deleteIptablesCmd := range e.iptablesRulesToDelete[containerID] {
+		log.Debugf("removing the following rule from iptables: %s", deleteIptablesCmd.String())
+		var stderr bytes.Buffer
+		deleteIptablesCmd.Stderr = &stderr
+		if err := deleteIptablesCmd.Run(); err != nil {
+			log.Errorf("deleting loopback iptables rule failed: %s [%s]", err, stderr.String())
+		}
+	}
+	delete(e.iptablesRulesToDelete, containerID)
 }
 
 func iptablesDeleteLoopbackRuleCmd(ctx context.Context, protocol, dport, toDestination string) *exec.Cmd {
