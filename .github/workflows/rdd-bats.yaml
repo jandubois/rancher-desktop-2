@@ -284,6 +284,12 @@ jobs:
       working-directory: rdd
       shell: run-in-shell {0}
 
+    - name: "Windows: build the forwarder"
+      if: needs.check-paths.outputs.should-run && runner.os == 'Windows'
+      run: make build-forwarder
+      working-directory: rdd
+      shell: run-in-shell {0}
+
     - name: "Unix: start resource sampler"
       if: needs.check-paths.outputs.should-run && runner.os != 'Windows'
       uses: $/.github/actions/unix-resource-sampler
