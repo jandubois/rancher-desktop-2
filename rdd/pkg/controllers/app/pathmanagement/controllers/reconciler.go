@@ -71,6 +71,9 @@ type PathManagementReconciler struct {
 
 	// BinDir is the directory to add to PATH (e.g. ~/.rd2/bin).
 	BinDir string
+	// PathMarker is the file that records that rdd added BinDir to the Windows
+	// user Path (e.g. ~/.rd2/.path-managed).
+	PathMarker string
 	// Suffix is the instance suffix (e.g. "2"). It goes into the fence markers so
 	// separate instances (and Rancher Desktop 1) don't touch each other's blocks.
 	Suffix string

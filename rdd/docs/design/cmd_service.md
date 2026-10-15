@@ -24,6 +24,7 @@ The short directory contains the following files and directories:
 
 | File | Description |
 | --- | --- |
+| `.path-managed` | records that rdd added `bin` to the user Path (Windows) |
 | `bin`         | links to `rdd` and `kubectl`, plus bundled tools like `docker` and `helm` when rdd runs from the app bundle |
 | `containerd.sock` | containerd socket that Lima forwards from the guest (macOS and Linux) |
 | `docker.sock` | Docker socket that Lima forwards from the guest (macOS and Linux) |
@@ -156,6 +157,7 @@ Prints instance directory and file paths. Accepts an optional key argument to pr
 | `short_dir` | Short directory (e.g. `~/.rd2`) |
 | `lima_home` | Lima home directory (`$short_dir/lima`) |
 | `bin_dir` | Instance bin directory of user-facing executables (`$short_dir/bin`) |
+| `path_marker` | File that records that rdd added `bin_dir` to the Windows user Path (`$short_dir/.path-managed`) |
 | `tls_dir` | TLS certificate directory |
 | `config` | RDD control plane kubeconfig path |
 | `k3s_config` | Mirror of the in-VM k3s kubeconfig |
@@ -187,6 +189,7 @@ docker_socket      /Users/me/.rd2/docker.sock
 k3s_config         /Users/me/Library/Application Support/rancher-desktop-2/k3s.yaml
 lima_home          /Users/me/.rd2/lima
 log_dir            /Users/me/Library/Logs/rancher-desktop-2
+path_marker        /Users/me/.rd2/.path-managed
 pid_file           /Users/me/Library/Application Support/rancher-desktop-2/rdd.pid
 short_dir          /Users/me/.rd2
 stderr_log         /Users/me/Library/Logs/rancher-desktop-2/rdd.stderr.log

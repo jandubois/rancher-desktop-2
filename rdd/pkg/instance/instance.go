@@ -165,6 +165,12 @@ var BinDir = sync.OnceValue(func() string {
 	return filepath.Join(ShortDir(), "bin")
 })
 
+// PathMarker returns the file that records that rdd added BinDir to the
+// Windows user Path (e.g., ~/.rd2/.path-managed).
+var PathMarker = sync.OnceValue(func() string {
+	return filepath.Join(ShortDir(), ".path-managed")
+})
+
 // KubeConfig returns the path to the instance's standalone kubeconfig
 // (e.g., ~/.rd2/kube.config). It holds only the rancher-desktop-{instance}
 // context and is published alongside the ~/.kube/config merge, so rdd run
