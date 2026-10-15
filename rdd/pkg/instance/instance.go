@@ -165,6 +165,12 @@ var BinDir = sync.OnceValue(func() string {
 	return filepath.Join(ShortDir(), "bin")
 })
 
+// PathMarker returns the file that records that rdd added BinDir to the
+// Windows user Path (e.g., ~/.rd2/.path-managed).
+var PathMarker = sync.OnceValue(func() string {
+	return filepath.Join(ShortDir(), ".path-managed")
+})
+
 // DockerCliPluginsDir returns the directory holding this instance's docker CLI
 // plugins (e.g., ~/.rd2/docker-cli-plugins). binlinks mirrors the bundled
 // plugins here, and the path-management controller adds it to docker's

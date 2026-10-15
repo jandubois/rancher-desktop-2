@@ -49,6 +49,7 @@ source <(rdd svc paths --output=shell)
 | `RDD_K3S_CONFIG` | Mirror of the in-VM k3s kubeconfig | `~/Library/Application Support/rancher-desktop-2/k3s.yaml` |
 | `RDD_LIMA_HOME` | Lima home directory | `~/.rd2/lima` |
 | `RDD_LOG_DIR` | Log directory | `~/Library/Logs/rancher-desktop-2` |
+| `RDD_PATH_MARKER` | File that records that rdd added the bin directory to the Windows user Path | `~/.rd2/.path-managed` |
 | `RDD_PID_FILE` | Service PID file | `~/Library/Application Support/rancher-desktop-2/rdd.pid` |
 | `RDD_SHORT_DIR` | Short directory path | `~/.rd2` |
 | `RDD_STDERR_LOG` | Control plane stderr log | `~/Library/Logs/rancher-desktop-2/rdd.stderr.log` |

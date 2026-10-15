@@ -27,6 +27,7 @@ func instancePaths() map[string]string {
 		"stderr_log":         instance.StderrLog(),
 		"short_dir":          instance.ShortDir(),
 		"bin_dir":            instance.BinDir(),
+		"path_marker":        instance.PathMarker(),
 		"lima_home":          instance.LimaHome(),
 		"tls_dir":            instance.TLSDir(),
 		"config":             instance.Config(),

@@ -72,6 +72,9 @@ type PathManagementReconciler struct {
 
 	// BinDir is the directory to add to PATH (e.g. ~/.rd2/bin).
 	BinDir string
+	// PathMarker is the file that records that rdd added BinDir to the Windows
+	// user Path (e.g. ~/.rd2/.path-managed).
+	PathMarker string
 	// PluginDir is the instance's docker CLI plugins directory
 	// (e.g. ~/.rd2/docker-cli-plugins), registered in config.json's
 	// cliPluginsExtraDirs so `docker` finds the bundled plugins.
