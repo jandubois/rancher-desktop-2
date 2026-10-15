@@ -89,6 +89,12 @@
       <Environment Id="PathWindowsUserBin" Name="PATH"
         Action="set" Part="last" System="no" Permanent="no"
         Value="[APPLICATIONFOLDER]resources\windows\bin\" />
+      <!-- docker-compose and docker-buildx ship only here; keep them on PATH so
+           they work as standalone commands. Under addPath front/back the daemon
+           also registers a per-instance mirror of this directory
+           (~/.rd<suffix>/docker-cli-plugins) in cliPluginsExtraDirs, so `docker`
+           finds them as plugins. Docker ignores PATH for plugin discovery, so the
+           two don't conflict. -->
       <Environment Id="PathWindowsUserDockerCLIPlugins" Name="PATH"
         Action="set" Part="last" System="no" Permanent="no"
         Value="[APPLICATIONFOLDER]resources\windows\docker-cli-plugins\" />
