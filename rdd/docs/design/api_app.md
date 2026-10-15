@@ -110,12 +110,9 @@ status:
 
   On Unix, `manual` removes only the block between our start/end markers, so a hand-written
   `PATH` line survives anywhere. On Windows the user `Environment` `Path` is a plain
-  semicolon-separated list with nowhere to fence our entry, so under `manual` we can't tell an
-  entry we added from one the user typed. We remove the bin directory only when it sits at the
-  very front or back of `Path` (the two spots `front`/`back` would have written) and leave a copy
-  placed in the middle alone. The trade-off: an entry parked at either end is treated as ours and
-  removed, so to put the bin directory at the front or back on Windows use `front`/`back` rather
-  than placing it there under `manual`.
+  semicolon-separated list with nowhere to fence our entry, so `manual` removes the bin directory,
+  wherever it is, only when an earlier `front` or `back` added it. An entry that the user added
+  stays where they put it. `rdd svc delete` removes the bin directory from `Path` in both cases.
 
 - **spec.namespace**: The namespace where the owned `LimaVM` and its ConfigMaps are created. Defaults to `default`. **Immutable after creation** — changing it would orphan resources in the original namespace.
 

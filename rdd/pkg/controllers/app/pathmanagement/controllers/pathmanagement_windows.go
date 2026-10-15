@@ -10,6 +10,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -39,6 +41,47 @@ var (
 // point at a throwaway key instead of the real one.
 var envSubKey = `Environment`
 
+// pathMarkerName is the file in the instance directory (the parent of BinDir,
+// e.g. ~/.rd2) that records that rdd added the bin directory to the user Path.
+// Windows Path has no fenced block to mark our entry, so under manual we consult
+// this file to tell an entry we added from one the user typed: present means
+// remove the entry from any position, absent means leave it alone.
+const pathMarkerName = ".path-managed"
+
+// pathMarkerPath returns the marker file path in the instance directory.
+func (r *PathManagementReconciler) pathMarkerPath() string {
+	return filepath.Join(filepath.Dir(r.BinDir), pathMarkerName)
+}
+
+// pathMarkerExists reports whether the marker is present.
+func (r *PathManagementReconciler) pathMarkerExists() bool {
+	_, err := os.Stat(r.pathMarkerPath())
+	return err == nil
+}
+
+// writePathMarker records that rdd owns the bin directory entry. front/back call
+// it before the registry write, so a crash in between still leaves the marker
+// and a later manual run can remove the entry.
+func (r *PathManagementReconciler) writePathMarker() error {
+	marker := r.pathMarkerPath()
+	if err := os.MkdirAll(filepath.Dir(marker), 0o755); err != nil {
+		return fmt.Errorf("create instance directory: %w", err)
+	}
+	if err := os.WriteFile(marker, nil, 0o644); err != nil {
+		return fmt.Errorf("write PATH marker %q: %w", marker, err)
+	}
+	return nil
+}
+
+// removePathMarker deletes the marker, treating an already-absent marker as
+// success.
+func (r *PathManagementReconciler) removePathMarker() error {
+	if err := os.Remove(r.pathMarkerPath()); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("remove PATH marker: %w", err)
+	}
+	return nil
+}
+
 // applyPath edits the user's Path in HKCU\Environment and, if it changed,
 // broadcasts WM_SETTINGCHANGE so new processes (and refresh-aware apps) pick it
 // up. forceRemove drops our entry regardless of position (used when unwinding
@@ -60,7 +103,25 @@ func (r *PathManagementReconciler) applyPath(_ context.Context, strategy appv1al
 // writeUserPath applies strategy to the user Path in the registry and reports
 // whether it changed. It's separate from apply, and skips the broadcast, so a
 // test can run it against a throwaway key.
+//
+// The marker file tracks ownership across runs: front/back write it before the
+// registry edit, and manual removes the entry only when the marker (or
+// forceRemove) says it's ours, then clears the marker.
 func (r *PathManagementReconciler) writeUserPath(strategy appv1alpha1.AddPathStrategy, forceRemove bool) (bool, error) {
+	adding := strategy == appv1alpha1.AddPathFront || strategy == appv1alpha1.AddPathBack
+
+	// Record ownership before the registry write, so a crash in between still
+	// leaves the marker for a later manual run to act on.
+	if adding {
+		if err := r.writePathMarker(); err != nil {
+			return false, err
+		}
+	}
+
+	// Under manual, the marker decides whether the entry is ours to remove;
+	// forceRemove (deletion unwind) removes it regardless of the marker.
+	removeExisting := forceRemove || (!adding && r.pathMarkerExists())
+
 	key, _, err := registry.CreateKey(registry.CURRENT_USER, envSubKey, registry.QUERY_VALUE|registry.SET_VALUE)
 	if err != nil {
 		return false, fmt.Errorf("open HKCU\\%s: %w", envSubKey, err)
@@ -72,22 +133,33 @@ func (r *PathManagementReconciler) writeUserPath(strategy appv1alpha1.AddPathStr
 		return false, fmt.Errorf("read user Path: %w", err)
 	}
 
-	updated, changed := computeWindowsPath(current, r.BinDir, strategy, forceRemove)
-	if !changed {
-		return false, nil
+	updated, changed := computeWindowsPath(current, r.BinDir, strategy, removeExisting)
+	if changed {
+		// Keep the existing value type. The user Path is usually REG_EXPAND_SZ (it
+		// can contain things like %USERPROFILE%), so use that when it did not exist
+		// yet.
+		if valType == registry.SZ {
+			err = key.SetStringValue("Path", updated)
+		} else {
+			err = key.SetExpandStringValue("Path", updated)
+		}
+		if err != nil {
+			return false, fmt.Errorf("write user Path: %w", err)
+		}
 	}
 
-	// Keep the existing value type. The user Path is usually REG_EXPAND_SZ (it can
-	// contain things like %USERPROFILE%), so use that when it did not exist yet.
-	if valType == registry.SZ {
-		err = key.SetStringValue("Path", updated)
-	} else {
-		err = key.SetExpandStringValue("Path", updated)
+	// Once the entry is removed (manual with the marker, or forceRemove), clear
+	// the marker so a fresh entry the user later adds is left alone. Do it after
+	// the registry write so a crash before the write leaves the marker for the
+	// retry; clear it even when the Path didn't change, to drop a stale marker
+	// whose entry the user had already removed by hand.
+	if !adding && removeExisting {
+		if err := r.removePathMarker(); err != nil {
+			return changed, err
+		}
 	}
-	if err != nil {
-		return false, fmt.Errorf("write user Path: %w", err)
-	}
-	return true, nil
+
+	return changed, nil
 }
 
 // broadcastEnvironmentChange tells running applications the environment changed.
