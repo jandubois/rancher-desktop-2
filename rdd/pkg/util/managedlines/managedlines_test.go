@@ -95,7 +95,7 @@ func TestManageDanglingMarkerErrors(t *testing.T) {
 	path := filepath.Join(t.TempDir(), ".bashrc")
 	assert.NilError(t, os.WriteFile(path, []byte("keep\n"+startMarker+"\nline\n"), 0o644))
 	err := Manage(path, startMarker, endMarker, []string{"x"}, true)
-	assert.ErrorContains(t, err, "exactly one of the delimiter lines")
+	assert.ErrorContains(t, err, "the block opened on line 2 is never closed")
 	// The error names the offending file so the user can find it.
 	assert.ErrorContains(t, err, path)
 }
@@ -130,4 +130,76 @@ func TestManageRemovesDuplicateBlocks(t *testing.T) {
 
 	assert.NilError(t, Manage(path, startMarker, endMarker, nil, false))
 	assert.Equal(t, read(t, path), "keep\ntail\n")
+}
+
+// TestManageRemoveRejectsStrayEndMarkerAfterBlock covers a file with our block
+// followed by a stray end marker. Removal must reject the file with
+// ErrMalformedBlock and leave it untouched: editing around the stray marker would
+// leave a lone marker that every later pass rejects. A second pass behaves
+// identically.
+func TestManageRemoveRejectsStrayEndMarkerAfterBlock(t *testing.T) {
+	path := filepath.Join(t.TempDir(), ".bashrc")
+	content := "keep\n" + startMarker + "\nline\n" + endMarker + "\n" + endMarker + "\ntail\n"
+	assert.NilError(t, os.WriteFile(path, []byte(content), 0o644))
+
+	err := Manage(path, startMarker, endMarker, nil, false)
+	assert.ErrorIs(t, err, ErrMalformedBlock)
+	assert.ErrorContains(t, err, path)
+	assert.Equal(t, read(t, path), content, "the file must be left untouched")
+
+	// A second pass is consistent: the same error, still no half-edit.
+	err = Manage(path, startMarker, endMarker, nil, false)
+	assert.ErrorIs(t, err, ErrMalformedBlock)
+	assert.Equal(t, read(t, path), content)
+}
+
+// TestManageRemoveRejectsStrayStartMarkerAfterBlock covers a file with our block
+// followed by a stray start marker. Removal must reject the file with
+// ErrMalformedBlock and leave it untouched, consistently across passes: stripping
+// around the stray marker would leave an unbalanced marker (or a live export
+// line) behind.
+func TestManageRemoveRejectsStrayStartMarkerAfterBlock(t *testing.T) {
+	path := filepath.Join(t.TempDir(), ".bashrc")
+	content := "keep\n" + startMarker + "\nline\n" + endMarker + "\n" + startMarker + "\ntail\n"
+	assert.NilError(t, os.WriteFile(path, []byte(content), 0o644))
+
+	err := Manage(path, startMarker, endMarker, nil, false)
+	assert.ErrorIs(t, err, ErrMalformedBlock)
+	assert.Equal(t, read(t, path), content, "the file must be left untouched")
+
+	err = Manage(path, startMarker, endMarker, nil, false)
+	assert.ErrorIs(t, err, ErrMalformedBlock)
+	assert.Equal(t, read(t, path), content)
+}
+
+// TestManageRejectsNestedStartMarker covers a start marker nested inside our
+// block. It is unbalanced (the inner start is never closed), so Manage must
+// reject it with ErrMalformedBlock and leave the file untouched.
+func TestManageRejectsNestedStartMarker(t *testing.T) {
+	path := filepath.Join(t.TempDir(), ".bashrc")
+	content := startMarker + "\n" + startMarker + "\nline\n" + endMarker + "\n"
+	assert.NilError(t, os.WriteFile(path, []byte(content), 0o644))
+
+	err := Manage(path, startMarker, endMarker, nil, false)
+	assert.ErrorIs(t, err, ErrMalformedBlock)
+	assert.Equal(t, read(t, path), content)
+}
+
+// TestManageMalformedNamesTheLine checks that the error names the marker line
+// that breaks the pairing, since the user has to find and fix it by hand.
+func TestManageMalformedNamesTheLine(t *testing.T) {
+	for _, tc := range []struct{ name, content, want string }{
+		{"lone end", "keep\n" + endMarker + "\n", "line 2 closes a block that was never opened"},
+		{"stray end after block", startMarker + "\nline\n" + endMarker + "\n" + endMarker + "\n", "line 4 closes a block that was never opened"},
+		{"stray start after block", startMarker + "\nline\n" + endMarker + "\n" + startMarker + "\n", "the block opened on line 4 is never closed"},
+		{"nested start", startMarker + "\n" + startMarker + "\n" + endMarker + "\n", "line 2 opens a block before the one opened on line 1 is closed"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), ".bashrc")
+			assert.NilError(t, os.WriteFile(path, []byte(tc.content), 0o644))
+			err := Manage(path, startMarker, endMarker, nil, false)
+			assert.ErrorIs(t, err, ErrMalformedBlock)
+			assert.ErrorContains(t, err, tc.want)
+		})
+	}
 }

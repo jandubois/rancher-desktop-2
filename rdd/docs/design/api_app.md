@@ -152,7 +152,7 @@ status:
   | `KubernetesReady`      | `False`   | `MergeFailed`    | k3s is reachable but merging the instance kubeconfig failed (see `message`) |
   | `PathManagementReady`  | `True`    | `Applied`        | `spec.application.addPath` was applied for the current generation |
   | `PathManagementReady`  | `False`   | `Failed`         | Editing a shell startup file or the user Environment failed with a repairable error, e.g. I/O (see `message`) |
-  | `PathManagementReady`  | `False`   | `Malformed`      | A startup file was hand-edited into an unparseable state (a lone marker, or markers in the wrong order); only the user can fix it |
+  | `PathManagementReady`  | `False`   | `Malformed`      | A startup file was hand-edited into an unparseable state (an unbalanced marker: a start with no matching end, an end with no open start, or a start nested inside another); only the user can fix it |
   | `Settled`              | `True`    | `Settled`        | Reconcile chain has caught up with the current spec               |
   | `Settled`              | `False`   | `WaitingForLimaVM` | The App has no `Running` condition yet (nothing mirrored from LimaVM) |
   | `Settled`              | `False`   | `WaitingForEngine` | Engine controller has not yet written `ContainerEngineReady`    |

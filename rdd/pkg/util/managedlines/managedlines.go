@@ -27,7 +27,8 @@ import (
 const fileMode = 0o644
 
 // ErrMalformedBlock marks a file the user hand-edited into a state we can't
-// parse: a lone marker, or the end marker before the start. It's permanent —
+// parse: an unbalanced marker (a lone or unclosed marker, or a stray one left
+// beside a block), or the end marker before the start. It's permanent —
 // only the user can fix the file, so retrying can't clear the block — which lets
 // callers tell it apart from a transient I/O error and stop retrying forever.
 var ErrMalformedBlock = errors.New("managed block is malformed")
@@ -96,55 +97,71 @@ type markerSplit struct {
 // block, and reports whether the markers were there at all. With no markers, the
 // whole file counts as "before".
 //
+// It scans in a single pass and rejects any unbalanced marker with
+// ErrMalformedBlock: a start with no matching end, an end with no open start, or
+// a start nested inside another. This keeps removal and the next pass consistent
+// — a file we can't cleanly parse is reported to the user rather than half-edited
+// into a lone marker that a later pass would then reject.
+//
 // A file should only ever hold one block, but if it somehow ends up with more
-// than one (a bad merge, a hand-edit, a past bug), the extra pairs are collapsed:
-// managed is the first block's content, after has every later complete pair
-// stripped out, and duplicates says a pair was removed. Without this a duplicated
-// block is a permanent fixed point — the first pair matches what we want, so we'd
-// never rewrite, and the directory would stay on PATH twice forever. A lone,
-// unbalanced marker is left as ordinary text (kept in before/after), same as
-// before.
+// than one complete block (a bad merge, a hand-edit, a past bug), the extra pairs
+// are collapsed: managed is the first block's content, after has every later
+// complete pair stripped out, and duplicates says a pair was removed. Without
+// this a duplicated block is a permanent fixed point — the first pair matches
+// what we want, so we'd never rewrite, and the directory would stay on PATH twice
+// forever.
 func splitByMarkers(lines []string, startMarker, endMarker string) (markerSplit, error) {
-	startIdx := slices.Index(lines, startMarker)
-	endIdx := slices.Index(lines, endMarker)
-
-	switch {
-	case startIdx < 0 && endIdx < 0:
-		return markerSplit{before: lines}, nil
-	case startIdx < 0 || endIdx < 0:
-		return markerSplit{}, fmt.Errorf("%w: exactly one of the delimiter lines is present", ErrMalformedBlock)
-	case startIdx >= endIdx:
-		return markerSplit{}, fmt.Errorf("%w: the delimiter lines are in the wrong order", ErrMalformedBlock)
+	malformed := func(format string, args ...any) (markerSplit, error) {
+		return markerSplit{}, fmt.Errorf("%w: %s", ErrMalformedBlock, fmt.Sprintf(format, args...))
 	}
 
-	rest := lines[endIdx+1:]
-	after := stripBlocks(rest, startMarker, endMarker)
+	var blocks [][2]int
+	inBlock := false
+	start := -1
+	for i, line := range lines {
+		switch line {
+		case startMarker:
+			if inBlock {
+				return malformed("line %d opens a block before the one opened on line %d is closed", i+1, start+1)
+			}
+			inBlock = true
+			start = i
+		case endMarker:
+			if !inBlock {
+				return malformed("line %d closes a block that was never opened", i+1)
+			}
+			inBlock = false
+			blocks = append(blocks, [2]int{start, i})
+		}
+	}
+	if inBlock {
+		return malformed("the block opened on line %d is never closed", start+1)
+	}
+
+	if len(blocks) == 0 {
+		return markerSplit{before: lines}, nil
+	}
+
+	first := blocks[0]
+	// Collapse any later complete blocks by skipping their line ranges, so the
+	// content between them is kept but a second copy of our block is dropped.
+	after := make([]string, 0, len(lines))
+	next := 1
+	for i := first[1] + 1; i < len(lines); i++ {
+		if next < len(blocks) && i == blocks[next][0] {
+			i = blocks[next][1] // jump to the end marker; the loop's i++ moves past it
+			next++
+			continue
+		}
+		after = append(after, lines[i])
+	}
 	return markerSplit{
-		before:     lines[:startIdx],
-		managed:    lines[startIdx+1 : endIdx],
+		before:     lines[:first[0]],
+		managed:    lines[first[0]+1 : first[1]],
 		after:      after,
 		hasBlock:   true,
-		duplicates: len(after) != len(rest),
+		duplicates: len(blocks) > 1,
 	}, nil
-}
-
-// stripBlocks removes every complete start/end marker pair (and the lines
-// between) from lines, leaving all other content in place. A lone, unbalanced
-// marker is treated as ordinary text and kept, matching splitByMarkers's
-// leniency. It's used to collapse a file that ended up with the managed block
-// more than once down to a single block.
-func stripBlocks(lines []string, startMarker, endMarker string) []string {
-	result := make([]string, 0, len(lines))
-	for i := 0; i < len(lines); i++ {
-		if lines[i] == startMarker {
-			if rel := slices.Index(lines[i+1:], endMarker); rel >= 0 {
-				i += rel + 1 // skip to the end marker; the loop's i++ moves past it
-				continue
-			}
-		}
-		result = append(result, lines[i])
-	}
-	return result
 }
 
 // computeTargetContents works out what the file should contain, given its

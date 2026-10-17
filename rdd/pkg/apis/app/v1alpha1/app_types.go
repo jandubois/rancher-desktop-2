@@ -124,7 +124,8 @@ const (
 	PathManagementReasonFailed = "Failed"
 
 	// PathManagementReasonMalformed means a startup file was hand-edited into a
-	// state we can't parse (a lone marker, or markers in the wrong order), so the
+	// state we can't parse (an unbalanced marker: a start with no matching end, an
+	// end with no open start, or a start nested inside another), so the
 	// block can't be removed. Only the user can fix the file, so unlike Failed
 	// it's permanent: it doesn't gate Settled under manual (which would wedge it
 	// forever) and doesn't block App deletion.
