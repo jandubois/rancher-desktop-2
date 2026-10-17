@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261016-173408-pr-1023</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261016-173408-pr-1023</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-16 17:34</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>3</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/Nino-K">@Nino-K</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1023" class="gh-ref" data-title="Make bundled Docker CLI plugins reachable from docker" data-state="open" data-type="pr">#1023</a> — Make bundled Docker CLI plugins reachable from docker</td></tr>
+      <tr><td>Branch</td><td><code>docker-cli-plugins-reachable</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ed46d0194"><code>ed46d0194</code></a> Make bundled Docker CLI plugins reachable from docker</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ed46d0194d64bf958ab729c81a5a971134a507ea"><code>ed46d0194d64bf958ab729c81a5a971134a507ea</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; round 2&#39;s code fixes hold and tests pin the <code>config.json</code> one, but three statements this round wrote contradict the code: the commit message&#39;s MSI claim, the MSI comment&#39;s directory, and the deletion log&#39;s &quot;without removing our entries&quot;</td></tr>
+      <tr><td>Wall-clock time</td><td><code>17 min 47 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This round restores the MSI&#39;s plugin PATH entries, classifies an unparseable <code>config.json</code> as permanent, and documents the <code>back</code> caveat. Tests pin the <code>config.json</code> fix, and every touched suite passes. But three statements this round wrote contradict the code. The commit message and PR description still say the MSI entries are dropped, the new MSI comment names the wrong directory, and the deletion log says nothing was removed when some entries were.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="ed46d0194">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The commit message and PR description still say the MSI plugin PATH entries are dropped <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+    <p>The commit body still ends &quot;…and drop the dead docker-cli-plugins PATH entries from the MSI&quot;, and the PR description repeats it. This round restored all four entries, so against the merge-base the MSI diff now adds only a comment, and that comment calls the entries necessary for standalone <code>docker-compose</code> and <code>docker-buildx</code>. Anyone who closes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/918" class="gh-ref" data-title="Make the bundled docker CLI plugins reachable from `docker`" data-state="open" data-type="issue">#918</a>&#39;s MSI task from <code>git log</code> would conclude the MSI no longer puts the plugin directories on PATH.</p>
+    <p>The probe counts the claim and the removed entries at round 2&#39;s head, where the sentence was true, and at this one, where it is false.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-msi-claim.sh; run from the repo root: bash probe-msi-claim.sh
+# Compares the commit body&#39;s MSI claim with the MSI diff, at round 2&#39;s head and this one.
+base=db9e229c0bd1bd5fa79b31570334c0d1cd10d262
+for sha in 9a184a6c4434a4aaa83048c09a5a0a1ac7fde9b2 ed46d0194d64bf958ab729c81a5a971134a507ea; do
+  claim=$(git log -1 --format=%B &quot;$sha&quot; | grep -c &#39;drop the dead docker-cli-plugins PATH entries&#39;)
+  removed=$(git diff &quot;$base&quot; &quot;$sha&quot; -- build/wix/main.wxs | grep -c &#39;^-.*&lt;Environment Id=&#39;)
+  echo &quot;${sha:0:9}: body claims removal: $claim; MSI Environment entries removed: $removed&quot;
+done</code></pre>
+      <pre><code class="language-text">$ bash probe-msi-claim.sh
+9a184a6c4: body claims removal: 1; MSI Environment entries removed: 4
+ed46d0194: body claims removal: 1; MSI Environment entries removed: 0</code></pre>
+      </details>
+    <p>Fix: replace the clause with a sentence such as &quot;The MSI keeps its docker-cli-plugins PATH entries, so <code>docker-compose</code> and <code>docker-buildx</code> still work as standalone commands,&quot; and edit the PR description to match. Nothing in the tree changes, so there is no patch.</p>
+    </div>
+    <div class="card card-important" data-file="build/wix/main.wxs">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The new MSI comment says the daemon registers the bundle&#39;s plugin directory; it registers a per-instance mirror <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/build/wix/main.wxs#L88-L99">build/wix/main.wxs</a></div>
+      <pre data-start="88" data-line="93-94"><code class="language-xml">      /&gt;
+      &lt;Environment Id=&quot;PathWindowsUserBin&quot; Name=&quot;PATH&quot;
+        Action=&quot;set&quot; Part=&quot;last&quot; System=&quot;no&quot; Permanent=&quot;no&quot;
+        Value=&quot;[APPLICATIONFOLDER]resources\windows\bin\&quot; /&gt;
+      &lt;!-- docker-compose and docker-buildx ship only here; keep them on PATH so
+           they work as standalone commands. The daemon separately registers this
+           directory in cliPluginsExtraDirs so `docker` finds them as plugins;
+           Docker ignores PATH for plugin discovery, so the two don&#39;t conflict. --&gt;
+      &lt;Environment Id=&quot;PathWindowsUserDockerCLIPlugins&quot; Name=&quot;PATH&quot;
+        Action=&quot;set&quot; Part=&quot;last&quot; System=&quot;no&quot; Permanent=&quot;no&quot;
+        Value=&quot;[APPLICATIONFOLDER]resources\windows\docker-cli-plugins\&quot; /&gt;
+      &lt;Environment Id=&quot;PathLinuxUserBin&quot; Name=&quot;PATH&quot;</code></pre>
+    <p>&quot;This directory&quot; is <code>[APPLICATIONFOLDER]resources\windows\docker-cli-plugins\</code>, and the daemon never registers it. <code>applyDockerPlugins</code> registers <code>r.PluginDir</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go#L84"><code>dockerplugins.go:84</code></a>), and both call sites set that to <code>instance.DockerCliPluginsDir()</code>, the mirror at <code>~/.rd&lt;suffix&gt;/docker-cli-plugins</code> (<code>pathmanagement/controller.go:33,63</code>). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/918" class="gh-ref" data-title="Make the bundled docker CLI plugins reachable from `docker`" data-state="open" data-type="issue">#918</a> rejects registering the bundle directory, since every instance would share one entry. The comment also leaves out that registration happens only under <code>front</code> or <code>back</code>, and no app code sets either.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go#L79-L89">rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go</a></div>
+      <pre data-start="79" data-line="84"><code class="language-go">	if !adding &amp;&amp; !removeExisting {
+		return nil
+	}
+
+	err := dockerconfig.Edit(ctx, func(cf *configfile.ConfigFile) (bool, error) {
+		updated, changed := computePluginDirs(cf.CLIPluginsExtraDirs, r.PluginDir, strategy, removeExisting)
+		if !changed {
+			return false, nil
+		}
+		cf.CLIPluginsExtraDirs = updated
+		return true, nil</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controller.go#L28-L38">rdd/pkg/controllers/app/pathmanagement/controller.go</a></div>
+      <pre data-start="28" data-line="33"><code class="language-go">// directory, so a stale block isn&#39;t left behind pointing at a directory that no
+// longer exists. It runs host-side and needs no API client.
+func Unwind(ctx context.Context) error {
+	r := &amp;controllers.PathManagementReconciler{
+		BinDir:    instance.BinDir(),
+		PluginDir: instance.DockerCliPluginsDir(),
+		Suffix:    instance.Suffix(),
+	}
+	return r.Unwind(ctx)
+}
+</code></pre>
+    <p>The probe runs the reconciler with the production <code>PluginDir</code>. It registers nothing under <code>manual</code> and the instance directory under <code>front</code>, never the MSI&#39;s directory.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/app/pathmanagement/controllers/probe_registered_dir_test.go;
+// run from rdd: go test -count=1 -v -run TestProbeRegisteredPluginDir ./pkg/controllers/app/pathmanagement/controllers/
+
+//go:build !windows
+
+package controllers
+
+import (
+	&quot;context&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+
+	&quot;gotest.tools/v3/assert&quot;
+
+	appv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance&quot;
+)
+
+// Which directory does the daemon put in cliPluginsExtraDirs, and when?
+// PluginDir takes the production value from controller.go.
+func TestProbeRegisteredPluginDir(t *testing.T) {
+	r, configFile := newPluginTestReconciler(t)
+	t.Setenv(&quot;XDG_CONFIG_HOME&quot;, filepath.Join(os.Getenv(&quot;HOME&quot;), &quot;xdg-config-home&quot;))
+	r.PluginDir = instance.DockerCliPluginsDir()
+	for _, s := range []appv1alpha1.AddPathStrategy{appv1alpha1.AddPathManual, appv1alpha1.AddPathFront} {
+		assert.NilError(t, r.apply(context.Background(), s, false))
+		t.Logf(&quot;addPath=%s: cliPluginsExtraDirs=%q&quot;, s, readPluginDirs(t, configFile))
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -v -run TestProbeRegisteredPluginDir ./pkg/controllers/app/pathmanagement/controllers/
+=== RUN   TestProbeRegisteredPluginDir
+    probe_registered_dir_test.go:28: addPath=manual: cliPluginsExtraDirs=[]
+    probe_registered_dir_test.go:28: addPath=front: cliPluginsExtraDirs=[&quot;$TMPDIR/TestProbeRegisteredPluginDir503995693/001/.rd2/docker-cli-plugins&quot;]
+--- PASS: TestProbeRegisteredPluginDir (0.04s)
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/pathmanagement/controllers	0.678s</code></pre>
+      </details>
+    <p>Fix: name the mirror and the condition under which the daemon registers it.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/build/wix/main.wxs b/build/wix/main.wxs
+index 0d987d3b2..65423fb0e 100644
+--- a/build/wix/main.wxs
++++ b/build/wix/main.wxs
+@@ -90,9 +90,11 @@
+         Action=&quot;set&quot; Part=&quot;last&quot; System=&quot;no&quot; Permanent=&quot;no&quot;
+         Value=&quot;[APPLICATIONFOLDER]resources\windows\bin\&quot; /&gt;
+       &lt;!-- docker-compose and docker-buildx ship only here; keep them on PATH so
+-           they work as standalone commands. The daemon separately registers this
+-           directory in cliPluginsExtraDirs so `docker` finds them as plugins;
+-           Docker ignores PATH for plugin discovery, so the two don&#39;t conflict. --&gt;
++           they work as standalone commands. Under addPath front/back the daemon
++           also registers a per-instance mirror of this directory
++           (~/.rd&lt;suffix&gt;/docker-cli-plugins) in cliPluginsExtraDirs, so `docker`
++           finds them as plugins. Docker ignores PATH for plugin discovery, so the
++           two don&#39;t conflict. --&gt;
+       &lt;Environment Id=&quot;PathWindowsUserDockerCLIPlugins&quot; Name=&quot;PATH&quot;
+         Action=&quot;set&quot; Part=&quot;last&quot; System=&quot;no&quot; Permanent=&quot;no&quot;
+         Value=&quot;[APPLICATIONFOLDER]resources\windows\docker-cli-plugins\&quot; /&gt;</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The deletion log says &quot;without removing our entries&quot; after deletion removed some of them <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L111-L121">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="111" data-line="116"><code class="language-go">		// Environment, would otherwise requeue forever (controller-runtime backs
+		// off but never gives up). After the window we log and release anyway.
+		if err := r.apply(ctx, appv1alpha1.AddPathManual, false); err != nil {
+			switch {
+			case permanentPathError(err):
+				log.Error(err, &quot;A startup file or config.json is malformed; releasing finalizer without removing our entries&quot;)
+			case time.Since(app.DeletionTimestamp.Time) &lt; pathUnwindRetryGrace:
+				log.Error(err, &quot;Failed to unwind PATH management before App deletion; will retry&quot;)
+				return ctrl.Result{RequeueAfter: pathUnwindRetryInterval}, nil
+			default:
+				log.Error(err, &quot;Failed to unwind PATH management before App deletion within grace period; releasing finalizer anyway&quot;)</code></pre>
+    <p><code>apply</code> runs the PATH edit and the plugin edit independently and joins their errors (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L221-L225"><code>reconciler.go:221-225</code></a>), so a malformed file stops only its own edit. With only <code>config.json</code> malformed, deletion removes all three startup-file blocks and leaves the <code>cliPluginsExtraDirs</code> entry; with only the startup files malformed, it removes the plugin entry. Either way this line tells the operator that nothing was removed. The message it replaced, &quot;…releasing finalizer without removing it&quot;, spoke only of the malformed block and was accurate.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L216-L230">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="216" data-line="221-225"><code class="language-go">	unlock, err := acquirePathLock(ctx)
+	if err != nil {
+		return err
+	}
+	defer unlock()
+	// The two edits are independent, so a broken startup file must not keep the
+	// plugin entry from being added or removed.
+	pathErr := r.applyPath(ctx, strategy, forceRemove)
+	pluginErr := r.applyDockerPlugins(ctx, strategy, forceRemove)
+	return errors.Join(pathErr, pluginErr)
+}
+
+// permanentPathError reports whether err is non-nil and every underlying cause is
+// a malformed managed block or an unparseable config.json — a file the user
+// corrupted that retrying can&#39;t fix.</code></pre>
+    <p>The probe deletes the App after three kinds of corruption. The message holds only when every file is malformed.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/app/pathmanagement/controllers/probe_delete_log_test.go;
+// run from rdd: go test -count=1 -v -run TestProbeDeleteLog ./pkg/controllers/app/pathmanagement/controllers/
+
+//go:build !windows
+
+package controllers
+
+import (
+	&quot;context&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;strings&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;github.com/go-logr/logr/funcr&quot;
+	&quot;gotest.tools/v3/assert&quot;
+	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client/fake&quot;
+	logf &quot;sigs.k8s.io/controller-runtime/pkg/log&quot;
+
+	appv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1&quot;
+)
+
+const badConfig = `{&quot;auths&quot;:{&quot;example.com&quot;:{&quot;auth&quot;:&quot;not-base64&quot;}}}`
+
+// Apply front, corrupt some files, delete the App, and report what the
+// deletion log says against what was actually left behind.
+func TestProbeDeleteLog(t *testing.T) {
+	startupFiles := []string{&quot;.zshrc&quot;, &quot;.bash_profile&quot;, &quot;.bashrc&quot;, &quot;.profile&quot;}
+	cases := []struct {
+		name                     string
+		breakConfig, breakBlocks bool
+	}{
+		{&quot;only config.json malformed&quot;, true, false},
+		{&quot;only startup files malformed&quot;, false, true},
+		{&quot;every file malformed&quot;, true, true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			r, configFile := newPluginTestReconciler(t)
+			home := os.Getenv(&quot;HOME&quot;)
+			t.Setenv(&quot;XDG_CONFIG_HOME&quot;, filepath.Join(home, &quot;xdg-config-home&quot;))
+			assert.NilError(t, r.apply(context.Background(), appv1alpha1.AddPathFront, false))
+			countBlocks := func() (n int) {
+				for _, f := range startupFiles {
+					if data, _ := os.ReadFile(filepath.Join(home, f)); strings.Contains(string(data), r.startMarker()) {
+						n++
+					}
+				}
+				return n
+			}
+			before := countBlocks()
+			if tc.breakBlocks {
+				for _, f := range startupFiles {
+					p := filepath.Join(home, f)
+					if data, _ := os.ReadFile(p); strings.Contains(string(data), r.startMarker()) {
+						assert.NilError(t, os.WriteFile(p, []byte(r.startMarker()+&quot;\n&quot;), 0o644))
+					}
+				}
+			}
+			if tc.breakConfig {
+				assert.NilError(t, os.WriteFile(configFile, []byte(badConfig), 0o600))
+			}
+
+			var logged []string
+			ctx := logf.IntoContext(context.Background(), funcr.New(func(_, args string) {
+				if i := strings.Index(args, `&quot;msg&quot;=`); i &gt;= 0 {
+					logged = append(logged, args[i:strings.Index(args[i:], `&quot; &quot;`)+i+1])
+				}
+			}, funcr.Options{}))
+			now := metav1.NewTime(time.Now())
+			app := &amp;appv1alpha1.App{Name: appName, Generation: 1, DeletionTimestamp: &amp;now, Finalizers: []string{pathManagementFinalizer}}
+			r.Client = fake.NewClientBuilder().WithScheme(reconcilerTestScheme(t)).WithObjects(app).Build()
+			_, err := r.Reconcile(ctx, ctrl.Request{})
+			assert.NilError(t, err)
+
+			pluginEntryLeft := false
+			if !tc.breakConfig {
+				pluginEntryLeft = len(readPluginDirs(t, configFile)) &gt; 0
+			} else {
+				data, _ := os.ReadFile(configFile)
+				pluginEntryLeft = strings.Contains(string(data), &quot;docker-cli-plugins&quot;) || r.dockerPluginsMarkerExists()
+			}
+			t.Logf(&quot;log: %v&quot;, logged)
+			t.Logf(&quot;startup blocks before=%d after=%d; plugin entry or marker left=%v&quot;, before, countBlocks(), pluginEntryLeft)
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -v -run TestProbeDeleteLog ./pkg/controllers/app/pathmanagement/controllers/
+=== RUN   TestProbeDeleteLog
+=== RUN   TestProbeDeleteLog/only_config.json_malformed
+    probe_delete_log_test.go:86: log: [&quot;msg&quot;=&quot;A startup file or config.json is malformed; releasing finalizer without removing our entries&quot;]
+    probe_delete_log_test.go:87: startup blocks before=3 after=0; plugin entry or marker left=true
+=== RUN   TestProbeDeleteLog/only_startup_files_malformed
+    probe_delete_log_test.go:86: log: [&quot;msg&quot;=&quot;A startup file or config.json is malformed; releasing finalizer without removing our entries&quot;]
+    probe_delete_log_test.go:87: startup blocks before=3 after=3; plugin entry or marker left=false
+=== RUN   TestProbeDeleteLog/every_file_malformed
+    probe_delete_log_test.go:86: log: [&quot;msg&quot;=&quot;A startup file or config.json is malformed; releasing finalizer without removing our entries&quot;]
+    probe_delete_log_test.go:87: startup blocks before=3 after=3; plugin entry or marker left=true
+--- PASS: TestProbeDeleteLog (0.18s)
+    --- PASS: TestProbeDeleteLog/only_config.json_malformed (0.10s)
+    --- PASS: TestProbeDeleteLog/only_startup_files_malformed (0.04s)
+    --- PASS: TestProbeDeleteLog/every_file_malformed (0.04s)
+PASS
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/pathmanagement/controllers	0.675s</code></pre>
+      </details>
+    <p>Fix: say what stays, the entries in the malformed files. With the patch, the probe prints the new message in all three cases, and the package&#39;s tests still pass.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go b/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go
+index fce282b0b..8eee7b651 100644
+--- a/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go
++++ b/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go
+@@ -113,7 +113,7 @@ func (r *PathManagementReconciler) Reconcile(ctx context.Context, _ ctrl.Request
+ 		if err := r.apply(ctx, appv1alpha1.AddPathManual, false); err != nil {
+ 			switch {
+ 			case permanentPathError(err):
+-				log.Error(err, &quot;A startup file or config.json is malformed; releasing finalizer without removing our entries&quot;)
++				log.Error(err, &quot;A startup file or config.json is malformed; releasing finalizer and leaving our entries in the malformed files&quot;)
+ 			case time.Since(app.DeletionTimestamp.Time) &lt; pathUnwindRetryGrace:
+ 				log.Error(err, &quot;Failed to unwind PATH management before App deletion; will retry&quot;)
+ 				return ctrl.Result{RequeueAfter: pathUnwindRetryInterval}, nil</code></pre>
+      </details>
+    <p>The I2 and I3 patches touch different files and apply in sequence to a clean checkout of the review SHA.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The engine probe&#39;s <code>config.json</code> lock wait still ignores the probe&#39;s cancellation <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go#L308-L318">rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go</a></div>
+      <pre data-start="308" data-line="313"><code class="language-go">			healthy = probeDockerContext(probeCtx)
+		}
+		// Guard against writing currentContext after removeDockerContext has
+		// already cancelled probeCtx and deleted the context directory.
+		if !healthy &amp;&amp; probeCtx.Err() == nil {
+			if err := setCurrentDockerContext(r.watcherCtx, contextName); err != nil {
+				log.Error(err, &quot;Failed to set current Docker context&quot;, &quot;context&quot;, contextName)
+			}
+		}
+	})
+}</code></pre>
+    <p>Round 2 S1, unaddressed. <code>removeDockerContext</code> cancels <code>probeCtx</code> and waits for the probe goroutine (line 337), and its comment (lines 331-336) promises the 3 s ping timeout. A probe already waiting for the <code>config.json</code> lock waits under <code>r.watcherCtx</code>, so the cancel cannot reach it. The wait lasts up to <code>lockTimeout</code> (30 s), and the probe then writes <code>currentContext</code> anyway. The clear that follows still leaves the right final state, and the lock&#39;s holders keep it for milliseconds, so the long wait needs a stuck holder.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go#L326-L342">rdd/pkg/controllers/app/engine/controllers/watch_reconciler.go</a></div>
+      <pre data-start="326" data-line="331-337"><code class="language-go">		r.contextProbeCancel()
+		r.contextProbeCancel = nil
+	}
+	r.contextMu.Unlock()
+
+	// Wait for any in-flight probe goroutines to finish before deleting the
+	// context directory. Each probe&#39;s context was cancelled above (or by an
+	// earlier manageDockerContext call), so each Ping returns within
+	// dockerContextProbeTimeout (3s). Multiple goroutines can be outstanding
+	// if manageDockerContext was called while a prior probe was still running;
+	// Wait blocks until all of them have exited.
+	r.contextProbeWg.Wait()
+
+	contextName := instance.Name()
+	log := logf.FromContext(r.watcherCtx).WithName(&quot;docker-context&quot;)
+	// The shutdown hook cancels watcherCtx before calling stopWatcher, so the
+	// clear must not inherit that cancellation; Edit bounds the lock wait itself.</code></pre>
+    <p>Fix: pass <code>probeCtx</code>, and skip the error log when <code>probeCtx.Err() != nil</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/dockerconfig/dockerconfig_test.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The I/O subtest accepts any error from <code>Edit</code> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/dockerconfig/dockerconfig_test.go#L135-L143">rdd/pkg/dockerconfig/dockerconfig_test.go</a></div>
+      <pre data-start="135" data-line="140"><code class="language-go">		// I/O error (*fs.PathError), not a parse error. Unlike chmod 0, reading a
+		// directory also fails for root, so this holds in CI containers.
+		assert.NilError(t, os.Mkdir(configFile, 0o755))
+
+		err := Edit(context.Background(), noop)
+		assert.Assert(t, err != nil)
+		assert.Assert(t, !errors.Is(err, ErrMalformed), &quot;an I/O failure must stay repairable&quot;)
+	})
+}</code></pre>
+    <p><code>err != nil</code> passes for any failure, including one from the lock step before <code>config.Load</code> runs, so the subtest can pass without reaching the <code>*fs.PathError</code> branch it describes. A mutation that wraps every load error in <code>ErrMalformed</code> does fail it, so it catches over-wrapping; it misses only a vacuous pass.</p>
+    <p>Fix: <code>var pathErr *fs.PathError; assert.Assert(t, errors.As(err, &amp;pathErr))</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/app/v1alpha1/app_types.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The <code>Malformed</code> reason doc leaves out the verb and covers only removal <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/apis/app/v1alpha1/app_types.go#L123-L134">rdd/pkg/apis/app/v1alpha1/app_types.go</a></div>
+      <pre data-start="123" data-line="128-129"><code class="language-go">	// keeps retrying and it gates Settled until it clears.
+	PathManagementReasonFailed = &quot;Failed&quot;
+
+	// PathManagementReasonMalformed means a startup file was hand-edited into a
+	// state we can&#39;t parse (a lone marker, or markers in the wrong order), so the
+	// block can&#39;t be removed, or docker/cli can&#39;t parse ~/.docker/config.json, so
+	// our cliPluginsExtraDirs entry can&#39;t be. Only the user can fix the file, so
+	// unlike Failed it&#39;s permanent: it doesn&#39;t gate Settled under manual (which
+	// would wedge it forever) and doesn&#39;t block App deletion.
+	PathManagementReasonMalformed = &quot;Malformed&quot;
+)
+</code></pre>
+    <p>&quot;Can&#39;t be&quot; leaves the reader to supply &quot;removed&quot;. Under <code>front</code> and <code>back</code> the same reason fires when the entry can&#39;t be added (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L151-L152"><code>reconciler.go:151-152</code></a> classifies every strategy), and there it gates Settled. <code>Dir()</code> also honours <code>$DOCKER_CONFIG</code>, so &quot;docker&#39;s config.json&quot; is more accurate than <code>~/.docker/config.json</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L146-L157">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="146" data-line="151-152"><code class="language-go">		// of reporting success, then requeue on the original error. A malformed
+		// block is permanent (only the user can fix it), so it gets a distinct
+		// reason: under manual that keeps Settled from wedging on a file we can&#39;t
+		// repair, while a transient failure still gates.
+		reason := appv1alpha1.PathManagementReasonFailed
+		if permanentPathError(err) {
+			reason = appv1alpha1.PathManagementReasonMalformed
+		}
+		if condErr := r.setCondition(ctx, app.Name, app.Generation, metav1.ConditionFalse, reason, err.Error()); condErr != nil {
+			log.Error(condErr, &quot;Failed to record PathManagementReady failure&quot;)
+		}
+		return ctrl.Result{}, err</code></pre>
+    <p>Fix: &quot;…or docker/cli can&#39;t parse docker&#39;s config.json, so our cliPluginsExtraDirs entry can&#39;t be added or removed.&quot;</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>(in-scope) A <code>config.json</code> that docker loads with a warning now blocks Settled under <code>front</code> and <code>back</code>.<em></em> The plugin edit fails with <code>ErrMalformed</code>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/app/controllers/app_controller.go#L721-L722"><code>app_controller.go:721-722</code></a> gates on any failure when PATH is managed, so <code>rdd set --wait</code> times out until the user repairs a file that docker itself tolerates (<code>LoadDefaultConfigFile</code> only warns). At the merge-base, <code>front</code> never read <code>config.json</code>. Round 2&#39;s patch kept this gating on purpose, matching the contract at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/app/controllers/app_controller.go#L700"><code>app_controller.go:700</code></a>. The alternative is to record a permanent plugin-edit failure without gating under every strategy, as <code>manual</code> already does. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(in-scope) App users still cannot reach the plugin registration.</strong> No code under <code>pkg/rancher-desktop</code> writes <code>application.addPath</code>, so app installs run <code>manual</code>, and <code>docker compose</code> stays broken for them on every platform (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/899" class="gh-ref" data-title="docker-compose isn&#39;t packaged" data-state="open" data-type="issue">#899</a>). With the MSI entries restored, standalone <code>docker-compose</code> works again on Windows. <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li><em></em>(future) <code>rdd svc delete</code> unwinds with the CLI&#39;s <code>DOCKER_CONFIG</code>, not the daemon&#39;s.<em></em> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><strong>(future) The shutdown clear can outlast the manager&#39;s 10 s grace period</strong>, since <code>lockTimeout</code> is 30 s (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/service/controllers/manager.go#L153"><code>service/controllers/manager.go:153</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/dockerconfig/dockerconfig.go#L29"><code>dockerconfig.go:29</code></a>). <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>(in-scope)</strong> Classifying by <code>*fs.PathError</code> matches docker/cli&#39;s <code>load()</code>. <code>load()</code> wraps open failures with <code>%w</code>, read failures reach it through the JSON decoder, and every other error comes from parsing. docker/cli saves through a temp file and a rename (<code>configfile/file.go:206,242</code>), so a half-written save cannot look malformed. <code>config.go</code> and <code>configfile/file.go</code> are byte-identical between docker/cli v29.8.2, which the PR pins, and v29.9.0, which <code>main</code> now pins. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><strong>(in-scope)</strong> <code>ErrMalformed</code> is the only <code>%w</code> operand, so <code>permanentPathError</code> reads it as one cause, and a malformed <code>config.json</code> beside a startup file that fails on I/O stays repairable. <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>At the review SHA, <code>go test -race</code> passes for <code>pkg/dockerconfig</code>, <code>pkg/binlinks</code>, <code>pkg/instance</code>, <code>pkg/controllers/app/pathmanagement/...</code>, <code>pkg/controllers/app/engine/...</code> and <code>pkg/controllers/app/app/...</code>, run from the lead worktree. CI on the head commit has 42 checks passing, 8 pending and none failing. The Windows unit-test job ran <code>pkg/dockerconfig</code> and passed, so the directory-as-<code>config.json</code> subtest holds there too.</p>
+    <p>Three <code>go test -overlay</code> mutations show that a test pins each half of round 2&#39;s I2 fix. Dropping the <code>ErrMalformed</code> arm from <code>permanentPathError</code> fails <code>TestReconcileManualMalformedDockerConfig</code> (<code>Failed != Malformed</code>). Disabling the wrap in <code>Edit</code> fails that test and <code>TestEditWrapsParseFailureAsMalformed</code>. Wrapping every load error fails the I/O subtest. <code>reconciler_test.go</code> builds only off Windows; the <code>dockerconfig</code> test runs everywhere.</p>
+    <p>No test pins round 2&#39;s I1 (the MSI entries) or I3 (the field doc). An MSI test needs an installer build, and doc text does not need one. This round&#39;s findings are all prose, so none requires a test. Optional: S2&#39;s sharper assertion.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I1, I2 and I3 cover the three statements from this round that the code contradicts, and S3 the <code>Malformed</code> reason doc. The <code>back</code> caveat agrees across <code>app_types.go</code>, both <code>crd.yaml</code> files and the TypeScript model, and <code>scripts/generate-crds.sh</code> in a clone of the review SHA left both CRDs unchanged. Two problems sit outside the diff. The field doc&#39;s &quot;the GUI sends &quot;front&quot; when the user opts in&quot; was already false at the merge-base (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/apis/app/v1alpha1/app_types.go#L224"><code>app_types.go:224</code></a>), and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/918" class="gh-ref" data-title="Make the bundled docker CLI plugins reachable from `docker`" data-state="open" data-type="issue">#918</a>&#39;s MSI task still says to stop adding the plugin directory to PATH, which this PR has decided against.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The one commit&#39;s message misstates the MSI change (I1); the rest of it matches the diff.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 1 raised these Suggestions and round 2 re-raised them. This round&#39;s diff leaves the code they cite unchanged, so they stay here instead of in the findings:</p>
+    <ul>
+      <li><code>pluginTargets</code> treats every read error of the bundle&#39;s plugin directory as &quot;no plugins&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/binlinks/binlinks.go#L72-L75"><code>binlinks.go:72-75</code></a>). Rounds 1 and 2.</li>
+      <li><code>dockerconfig</code> copies the PATH lock and marker helpers, and its <code>!locked</code> branch cannot run. Rounds 1 and 2.</li>
+      <li>The BATS test builds <code>PLUGIN_DEST_DIR</code> by hand instead of reading <code>RDD_DOCKER_CLI_PLUGINS</code>, and duplicates <code>assert_published</code>. Rounds 1 and 2.</li>
+      <li>The <code>docker_cli_plugins</code> key and <code>DockerCliPluginsDir</code> break their neighbours&#39; naming, and the design docs&#39; key tables lack the key. Rounds 1 and 2.</li>
+      <li>No test fails when the production <code>PluginDir</code> wiring is deleted. Rounds 1 and 2.</li>
+      <li><code>TestEditSerializesConcurrentWriters</code> calls <code>assert.NilError</code> from writer goroutines. Rounds 1 and 2.</li>
+      <li>The <code>Unwind</code> comments describe only PATH. Rounds 1 and 2.</li>
+    </ul>
+    <p>Round 2&#39;s limitations still hold, each checked against the code this round:</p>
+    <ul>
+      <li>docker/cli&#39;s <code>ConfigFile</code> drops unknown top-level keys on save; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ed46d0194d64bf958ab729c81a5a971134a507ea/rdd/pkg/controllers/app/engine/controllers/docker_context_test.go#L183-L184"><code>docker_context_test.go:183-184</code></a> pins that, and <code>docker context use</code> behaves the same way.</li>
+      <li><code>docker login</code>, <code>docker context use</code> and other docker commands write <code>config.json</code> without Rancher Desktop&#39;s lock, and the <code>dockerconfig</code> package doc names only Rancher Desktop&#39;s writers.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/918" class="gh-ref" data-title="Make the bundled docker CLI plugins reachable from `docker`" data-state="open" data-type="issue">#918</a>&#39;s &quot;To discuss&quot; items stay open: with two instances at <code>front</code> the last writer wins <code>docker compose</code>, and an uninstall that keeps <code>~/.rd2</code> leaves the <code>cliPluginsExtraDirs</code> entry behind.</li>
+      <li><code>apply</code> holds the PATH lock while it waits for the <code>config.json</code> lock; both controllers take the locks in the same order, and <code>lockTimeout</code> bounds the wait. Do not re-suggest releasing the PATH lock before the plugin edit.</li>
+      <li>The plugin marker&#39;s location derives from <code>BinDir</code>&#39;s parent, as the Windows Path marker&#39;s does, and both production call sites put <code>BinDir</code> and <code>PluginDir</code> in the instance directory. Do not re-suggest deriving it from <code>PluginDir</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>After round 1 the author replied that all Important issues were fixed. This round fixes round 2&#39;s three in code, but round 2&#39;s I1 also asked for the commit message to drop &quot;dead&quot;, and it still says the entries are dropped (I1).</li>
+      <li>Round 2&#39;s S1 is still open (S1).</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude raised all three Important findings, including the deletion log, which no other agent found, and its probe showed the false message. Its session shows the three <code>go test -overlay</code> mutations that it reports, and they match the ones I ran. Its error-shape table checks the classification against five <code>config.json</code> states, and it ran <code>generate-crds</code> in a clone to confirm the CRDs. It also raised the one new design concern, that a <code>config.json</code> docker tolerates now gates Settled under <code>front</code>.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex merged the two MSI prose problems into one finding, which this report splits because they need different fixes. Its session shows the probes that it reports, including one that held the lock while cancelling the probe and so confirms S1, which it kept as a design observation. It marked <code>reconciler.go</code> clean and missed the deletion log. It reasoned through, and said so, which test fails when each half of the I2 fix is reverted.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro found the stale commit message and promoted S1 to Important, saying the wait &quot;leaks the context&quot;. The clear after the wait leaves the right final state, and a long wait needs a lock holder stuck for seconds, so S1 stays a Suggestion. It described the new MSI comment as explaining the restored entries and missed that the comment names the wrong directory. Its Go probes wrote <code>test_config_err.go</code> and <code>testdir/</code> into its worktree&#39;s <code>rdd/</code>, outside <code>.scratch/</code>, though no tracked file changed.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found both MSI prose problems but marked each <code>Unproven:</code>, when a <code>git diff</code> settles either. Its Testing Assessment says reverting each half of the I2 fix fails a named test line, but its session ran two <code>go test</code> commands and reverted nothing, and the line it names fails only when the other half is reverted. A sandbox refusal stopped it reading docker/cli&#39;s source in the module cache. The two Gemini models agree on the commit message and S1, which counts as one model family&#39;s opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>9m 58s</td><td>6m 00s</td><td>5m 03s</td><td>7m 56s</td></tr>
+        <tr><td>Findings</td><td>3I 3S</td><td>2I 1S</td><td>1I 1S</td><td>2I 1S</td></tr>
+        <tr><td>Tool calls</td><td>56 (Bash 50, Read 6)</td><td>21 (shell 16, stdin 3, apply_patch 2)</td><td>25 (run<em>shell</em>command 24, read_file 1)</td><td>55 (run<em>shell</em>command 26, read<em>file 14, grep</em>search 13)</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>5</td><td>0</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>4</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>25</td><td>25</td><td>25</td><td>25</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>3I 3S</strong></td><td><strong>2I 1S</strong></td><td><strong>1I 1S</strong></td><td><strong>2I 1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Gemini Pro pass 1, the probe&#39;s lock wait (its I2): important → suggestion S1. Codex pass 1, the same wait (one of its design concerns): design observation → suggestion S1.</p>
+    <p>Claude gave the most value, with all three Important findings, including the one that no other agent found, and an executed check behind each verdict. Codex matched it on the MSI findings with probes that really ran. The Gemini pair added nothing the other two lacked.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>Summary messages over independent steps</strong>: when a function runs several independent steps and joins their errors, read every log line, condition reason and status message that describes the combined failure against each mix of steps that succeeded and failed. A message that says nothing was done, written while only one step could fail permanently, turns false once a second step can, and no test reads log text.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] <code>PathManagementReconciler.apply</code> runs the PATH edit and the <code>cliPluginsExtraDirs</code> edit independently and returns both errors joined, so one edit can succeed while the other fails. Flag any log message, condition reason or doc that describes the combined result as all-or-nothing.</li>
+      <li>[repo] UPDATE the pending rules from 20261015-155214-pr-1023 and 20261016-110548-pr-1023 about the path-management reconciler under <code>manual</code>: <code>permanentPathError</code> maps both <code>managedlines.ErrMalformedBlock</code> and <code>dockerconfig.ErrMalformed</code> to the non-gating <code>Malformed</code>, and <code>dockerconfig.Edit</code> wraps every <code>config.Load</code> error except an <code>*fs.PathError</code> in <code>ErrMalformed</code>, so I/O failures stay repairable.</li>
+    </ul>
+    <h3 id="lint-exceptions">Lint exceptions <a href="#lint-exceptions" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>I1 cites the commit SHA <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ed46d0194"><code>ed46d0194</code></a> because the finding is about the commit message, which no file holds. <code>beautify --lint</code> reports it as an unresolved file reference and exits 1; that warning is expected.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
