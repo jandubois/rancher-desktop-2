@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CI Failures: 2026-W42</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CI Failures: 2026-W42</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-18 09:00</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Period</td><td>2026-W42 (Sat 2026-10-10 – Fri 2026-10-16)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">68 failed jobs</span> &mdash; 21 on <code>main</code>, 9 known flakes, 15 proven</td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="at-a-glance">At a glance <a href="#at-a-glance" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th></th><th>this period</th><th>prev week</th><th>Δ</th><th>4-week avg</th></tr></thead>
+      <tbody>
+        <tr><td>failed jobs</td><td>68</td><td>84</td><td>▼ -16</td><td>123.2</td></tr>
+        <tr><td>on <code>main</code></td><td>21</td><td>26</td><td>▼ -5</td><td>28.8</td></tr>
+        <tr><td>known flakes</td><td>9</td><td>22</td><td>▼ -13</td><td>28.8</td></tr>
+        <tr><td>proven flakes (re-run went green)</td><td>15</td><td>23</td><td>▼ -8</td><td>26.8</td></tr>
+        <tr><td>unrecognized</td><td>48</td><td>48</td><td>—</td><td>85.0</td></tr>
+        <tr><td>awaiting analysis (<code>main</code>)</td><td>0</td><td>0</td><td>—</td><td>0.0</td></tr>
+        <tr><td>jobs run (outside the quarantine)</td><td>4572</td><td>6175</td><td>▼ -1603</td><td>5889.5</td></tr>
+        <tr><td>failure rate</td><td>1.5%</td><td>1.4%</td><td>▲ +0.1pp</td><td>2.1%</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <hr>
+    <h2 id="assessment">Assessment <a href="#assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>68 jobs failed against 84 the week before, but only 4,572 jobs ran against 6,175, so the failure rate barely moved (1.5% against 1.4%, and 2.1% over four weeks). Lost runners made up the largest group on <code>main</code>, 9 of the 11 BATS jobs (10 on Windows, 1 on macOS) that died with GitHub&#39;s &quot;hosted runner lost communication with the server&quot; annotation and didn&#39;t leave a log; 6 of them passed on a re-run of the same commit. This is the failure to root-cause, and that&#39;s hard, because a runner that dies never uploads the data that would show whether it was starved. Of the other 12 <code>main</code> failures, 8 were Dependabot hitting the same two standing breaks every day from Tuesday to Friday (the <code>/rdd</code> k8s.io/kubernetes 1.37 bump and the npm <code>@yarnpkg/core</code> got-patch scan), 4 were single hits of known flakes, and none was a regression. Among the known flakes, <code>windows-ssh-keygen-timeout</code> led with 4 jobs, all on PR branches, and it has fired every week since it first appeared in W39 (4, 2, 3, 4), so it&#39;s the next flake to fix. On PR branches, 25 of the 47 failures came from the gvisor-tap-vsock 0.9.0 Dependabot bump, which broke the build of lima&#39;s <code>pkg/networks/usernet/gvproxy.go</code>; lima-vm/lima#5616 adapted that file on 2026-10-15, so the bump builds only together with a lima pin that includes it.</p>
+    </div>
+    <hr>
+    <h2 id="known-flakes">Known flakes <a href="#known-flakes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th>flake</th><th>jobs</th><th><code>main</code></th><th>prev wk</th><th>Δ</th><th>4-wk avg</th><th>fix</th><th>what it is</th></tr></thead>
+      <tbody>
+        <tr><td><code>windows-ssh-keygen-timeout</code></td><td>4</td><td>0</td><td>3</td><td>▲ +1</td><td>2.2</td><td>—</td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates the key, ran past ensureSSHKeysAt&#39;s 30-second timeout. Each hit came from a job where unrelated packages also ran several times slower than usual, so we suspect a slow runner.</td></tr>
+        <tr><td><code>docker-hub-unreachable</code></td><td>1</td><td>1</td><td>6</td><td>▼ -5</td><td>4.2</td><td>—</td><td>Guest can&#39;t reach Docker Hub during a pull (registry-1, auth, or cloudfront CDN) — DNS/TCP timeout, no-such-host, 5xx/429, HTTP client timeout, connection reset, or dropped transfer, any OS</td></tr>
+        <tr><td><code>github-release-5xx</code></td><td>1</td><td>1</td><td>1</td><td>—</td><td>5.2</td><td>—</td><td>a GitHub release-asset download served 504/5xx/429 — the release CDN, not our code. Hits yarn postinstall (steve, buildx, helm, ...), envtest&#39;s controller-tools binaries, and download-guest-deps</td></tr>
+        <tr><td><code>go-proxy-module-fetch</code></td><td>1</td><td>1</td><td>3</td><td>▼ -2</td><td>4.0</td><td>—</td><td>Go module fetch failed on proxy.golang.org/googleapis (timeout or stream error) during build</td></tr>
+        <tr><td><code>namespace-delete-wait-timeout</code></td><td>1</td><td>1</td><td>0</td><td>▲ +1</td><td>0.2</td><td>—</td><td><code>rdd ctl delete namespace multi-ns</code> timed out after 20 s with the test&#39;s LimaVM still finalizing; in the run with daemon logs, the LimaVM&#39;s download of its fake image URL (<code>https://example.invalid</code>) hung for 21 s instead of failing at once</td></tr>
+        <tr><td><code>upload-artifact-finalize-failed</code></td><td>1</td><td>0</td><td>0</td><td>▲ +1</td><td>0.2</td><td>—</td><td>actions/upload-artifact uploaded every byte, then its FinalizeArtifact call to GitHub&#39;s artifact service failed (a 403 from an intermediary, or a timeout)</td></tr>
+      </tbody>
+    </table>
+    <p>Silent this period (fired in the previous 4 weeks): <code>app-readiness-timeout</code>, <code>bats-log-collect-race</code>, <code>bats-suite-timeout</code>, <code>docker-hub-unreachable-on-runner</code>, <code>github-artifact-upload-unreachable</code>, <code>guestdeps-trickling-transfer-retried</code>, <code>limavm-readiness-timeout</code>, <code>windows-graceful-stop-pidfile-left</code>, <code>windows-rdd-file-still-locked</code>, <code>wix-msi-version-hang</code>. For the rest, either the fix landed or the matcher rotted — check which.</p>
+    </div>
+    <hr>
+    <h2 id="proven-flakes-15">Proven flakes (15) <a href="#proven-flakes-15" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>These failed, and the identical job then passed on a re-run of the same commit. The code did not change, so the failure was never the developer&#39;s diff.</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>branch</th><th>job name</th><th>what failed</th><th>matcher</th><th>went green after</th></tr></thead>
+      <tbody>
+        <tr><td>Sat 10 03:27</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38020600293/job/114120571757">114120571757</a></td><td><code>translate-host-path-fixes</code></td><td><code>package (windows, aarch64, windows-11-arm)</code></td><td>actions/upload-artifact uploaded every byte, then its FinalizeArtifac…</td><td><code>upload-artifact-finalize-failed</code></td><td>91.2h</td></tr>
+        <tr><td>Sat 10 03:28</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38020666241/job/114120773265">114120773265</a></td><td><code>main</code></td><td><code>Lint TypeScript (ubuntu-latest)</code></td><td>a GitHub release-asset download served 504/5xx/429 — the release CD…</td><td><code>github-release-5xx</code></td><td>119.8h</td></tr>
+        <tr><td>Sat 10 07:58</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38036250120/job/114167181682">114167181682</a></td><td><code>main</code></td><td><code>BATS (macos-15-intel, bats-others)</code></td><td><code>rdd ctl delete namespace multi-ns</code> timed out after 20 s with the tes…</td><td><code>namespace-delete-wait-timeout</code></td><td>115.0h</td></tr>
+        <tr><td>Tue 13 21:11</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38468701023/job/115541992912">115541992912</a></td><td><code>main</code></td><td><code>Jest Tests</code></td><td>Go module fetch failed on proxy.golang.org/googleapis (timeout or str…</td><td><code>go-proxy-module-fetch</code></td><td>30.1h</td></tr>
+        <tr><td>Tue 13 21:11</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38468701024/job/115542044048">115542044048</a></td><td><code>main</code></td><td><code>BATS (windows-latest, bats-docker)</code></td><td><em>no log</em></td><td><em>no log</em></td><td>30.9h</td></tr>
+        <tr><td>Wed 14 21:02</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38637034932/job/116102741845">116102741845</a></td><td><code>dependabot/github_actions/actions/upload-artifact-7.0.2</code></td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code></td><td>0.1h</td></tr>
+        <tr><td>Wed 14 21:30</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38640855690/job/116115728321">116115728321</a></td><td><code>dependabot/npm_and_yarn/electron-44.7.0</code></td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code></td><td>0.9h</td></tr>
+        <tr><td>Wed 14 22:43</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649573979/job/116144785092">116144785092</a></td><td><code>main</code></td><td><code>BATS (windows-latest, bats-docker)</code></td><td><em>no log</em></td><td><em>no log</em></td><td>3.8h</td></tr>
+        <tr><td>Wed 14 22:43</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649612029/job/116144905057">116144905057</a></td><td><code>main</code></td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em></td><td>5.1h</td></tr>
+        <tr><td>Wed 14 22:44</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649700844/job/116145208415">116145208415</a></td><td><code>main</code></td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em></td><td>3.8h</td></tr>
+        <tr><td>Thu 15 00:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38658965586/job/116175433923">116175433923</a></td><td><code>main</code></td><td><code>BATS (macos-15-intel, bats-docker)</code></td><td>Guest can&#39;t reach Docker Hub during a pull (registry-1, auth, or clou…</td><td><code>docker-hub-unreachable</code></td><td>70.9h</td></tr>
+        <tr><td>Thu 15 08:41</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38707515814/job/116330535788">116330535788</a></td><td><code>rddepman/electron/44.5.1-to-44.7.0</code></td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code></td><td>8.2h</td></tr>
+        <tr><td>Thu 15 17:06</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38774504349/job/116558581064">116558581064</a></td><td><code>main</code></td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em></td><td>53.4h</td></tr>
+        <tr><td>Fri 16 16:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38930475270/job/117072910260">117072910260</a></td><td><code>dependabot/go_modules/rdd/github.com/docker/cli-29.9.0incompatible</code></td><td><code>RDD Unit tests (macos-latest)</code></td><td><code>go test :: TestSharedControllerManagerMarksReadyAfterWebhooks</code></td><td><strong>none — write one</strong></td><td>0.2h</td></tr>
+        <tr><td>Fri 16 17:28</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38939965872/job/117104874325">117104874325</a></td><td><code>main</code></td><td><code>BATS (windows-latest, bats-lima)</code></td><td><em>no log</em></td><td><em>no log</em></td><td>29.0h</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <hr>
+    <h2 id="trend">Trend <a href="#trend" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th>flake</th><th>2026-W37</th><th>2026-W38</th><th>2026-W39</th><th>2026-W40</th><th>2026-W41</th><th>2026-W42</th></tr></thead>
+      <tbody>
+        <tr><td><code>go-proxy-module-fetch</code></td><td>18</td><td>6</td><td>5</td><td>2</td><td>3</td><td>1</td></tr>
+        <tr><td><code>docker-hub-unreachable</code></td><td>8</td><td>6</td><td>3</td><td>2</td><td>6</td><td>1</td></tr>
+        <tr><td><code>github-release-5xx</code></td><td>3</td><td>2</td><td>10</td><td>8</td><td>1</td><td>1</td></tr>
+        <tr><td><code>bats-suite-timeout</code></td><td>·</td><td>15</td><td>·</td><td>·</td><td>1</td><td>·</td></tr>
+        <tr><td><code>windows-ssh-keygen-timeout</code></td><td>·</td><td>·</td><td>4</td><td>2</td><td>3</td><td>4</td></tr>
+        <tr><td><code>vault-login-transport-error</code></td><td>10</td><td>·</td><td>·</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>limavm-readiness-timeout</code></td><td>1</td><td>·</td><td>8</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>app-readiness-timeout</code></td><td>1</td><td>1</td><td>5</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>docker-hub-unreachable-on-runner</code></td><td>·</td><td>·</td><td>·</td><td>·</td><td>6</td><td>·</td></tr>
+        <tr><td><code>apt-chrome-repo-index-mismatch</code></td><td>4</td><td>·</td><td>·</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>bats-log-collect-race</code></td><td>·</td><td>1</td><td>2</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>github-artifact-upload-unreachable</code></td><td>2</td><td>1</td><td>·</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>guestdeps-trickling-transfer-retried</code></td><td>·</td><td>3</td><td>·</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>namespace-delete-wait-timeout</code></td><td>1</td><td>·</td><td>·</td><td>1</td><td>·</td><td>1</td></tr>
+        <tr><td><code>upload-artifact-finalize-failed</code></td><td>1</td><td>1</td><td>·</td><td>·</td><td>·</td><td>1</td></tr>
+        <tr><td><code>windows-binlinks-busy</code></td><td>3</td><td>·</td><td>·</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>wix-msi-version-hang</code></td><td>·</td><td>·</td><td>1</td><td>1</td><td>1</td><td>·</td></tr>
+        <tr><td><code>container-status-wait-timeout</code></td><td>2</td><td>·</td><td>·</td><td>·</td><td>·</td><td>·</td></tr>
+        <tr><td><code>windows-graceful-stop-pidfile-left</code></td><td>·</td><td>·</td><td>·</td><td>1</td><td>1</td><td>·</td></tr>
+        <tr><td><code>windows-rdd-file-still-locked</code></td><td>·</td><td>·</td><td>1</td><td>1</td><td>·</td><td>·</td></tr>
+        <tr><td><em>unrecognized</em></td><td>88</td><td>40</td><td>207</td><td>45</td><td>48</td><td>48</td></tr>
+        <tr><td><em>no log</em></td><td>8</td><td>10</td><td>10</td><td>4</td><td>14</td><td>11</td></tr>
+        <tr><td><strong>total failed</strong></td><td>150</td><td>86</td><td>256</td><td>67</td><td>84</td><td>68</td></tr>
+      </tbody>
+    </table>
+    <p>Every column is a complete week, Saturday to Friday, numbered by the ISO week of its Monday. A partial week reads artificially low, so the report excludes the week in progress.</p>
+    </div>
+    <hr>
+    <h2 id="suite-duration-and-headroom">Suite duration and headroom <a href="#suite-duration-and-headroom" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th>suite</th><th>runs</th><th>p50</th><th>p95</th><th>max</th><th>cap</th><th>p95 of cap</th><th>killed</th></tr></thead>
+      <tbody>
+        <tr><td>BATS (macos-15-intel, bats-app)</td><td>60</td><td>34m52s</td><td>45m06s</td><td>1h04m</td><td>1h15m</td><td>60%</td><td>0</td></tr>
+        <tr><td>BATS (windows-latest, bats-app)</td><td>55</td><td>27m57s</td><td>28m59s</td><td>36m04s</td><td>1h15m</td><td>39%</td><td>0</td></tr>
+        <tr><td>BATS (macos-15-intel, bats-lima)</td><td>58</td><td>13m15s</td><td>17m56s</td><td>21m07s</td><td>1h15m</td><td>24%</td><td>0</td></tr>
+        <tr><td>BATS (ubuntu-latest, bats-app)</td><td>58</td><td>16m57s</td><td>17m26s</td><td>18m02s</td><td>1h15m</td><td>23%</td><td>0</td></tr>
+        <tr><td>BATS (windows-latest, bats-lima)</td><td>60</td><td>14m49s</td><td>15m19s</td><td>16m03s</td><td>1h15m</td><td>20%</td><td>0</td></tr>
+        <tr><td>BATS (ubuntu-latest, bats-lima)</td><td>58</td><td>6m42s</td><td>6m57s</td><td>7m00s</td><td>1h15m</td><td>9%</td><td>0</td></tr>
+        <tr><td>BATS (macos-15-intel, bats-docker)</td><td>55</td><td>5m31s</td><td>6m53s</td><td>7m41s</td><td>1h15m</td><td>9%</td><td>0</td></tr>
+        <tr><td>BATS (windows-latest, bats-docker)</td><td>58</td><td>3m53s</td><td>4m14s</td><td>4m20s</td><td>1h15m</td><td>6%</td><td>0</td></tr>
+        <tr><td>BATS (ubuntu-latest, bats-docker)</td><td>58</td><td>1m44s</td><td>1m54s</td><td>2m05s</td><td>1h15m</td><td>3%</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Durations are of the whole step, which also carries work the cap never counts, so <code>p95 of cap</code> reads high. <strong>killed</strong> is the log&#39;s own account of the cap being enforced.</p>
+    <p>&gt; <strong>bats-suite</strong> — the step builds rdd before bats starts, and the cap only starts counting at bats, so discount the step by the build. The build is no constant: it swings on whether setup-go restored the Go build cache — measured over 24 jobs, macos runs 0.4-1.4m warm against 6.3-10.3m cold, windows 0.7-2.7m against 6.4-6.7m, ubuntu ~3.4m either way. So the percentage carries up to ten minutes of slack. Giving the build its own step would make it exact.</p>
+    </div>
+    <hr>
+    <h2 id="failures-on-main-21">Failures on `main` (21) <a href="#failures-on-main-21" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Sat 10 03:28</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38020666241/job/114120773265">114120773265</a></td><td>Lint</td><td><code>Lint TypeScript (ubuntu-latest)</code></td><td>a GitHub release-asset download served 504/5xx/429 — the release CD…</td><td><code>github-release-5xx</code> ✓</td></tr>
+        <tr><td>Sat 10 07:58</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38036250120/job/114167181682">114167181682</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-others)</code></td><td><code>rdd ctl delete namespace multi-ns</code> timed out after 20 s with the tes…</td><td><code>namespace-delete-wait-timeout</code> ✓</td></tr>
+        <tr><td>Sat 10 07:58</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38036250120/job/114167181687">114167181687</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em></td></tr>
+        <tr><td>Tue 13 19:42</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38456966308/job/115502083876">115502083876</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — npm<em>and</em>yarn / scan: @yarnpkg/core 4.9.1 -&gt; 4.9.2 and @yarn…</td></tr>
+        <tr><td>Tue 13 19:42</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38456966248/job/115502086022">115502086022</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — k8s.io/kubernetes 1.36.4 -&gt; 1.37.x (1.37.1 since ~09-30) wh…</td></tr>
+        <tr><td>Tue 13 21:11</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38468701023/job/115541992912">115541992912</a></td><td>Lint</td><td><code>Jest Tests</code></td><td>Go module fetch failed on proxy.golang.org/googleapis (timeout or str…</td><td><code>go-proxy-module-fetch</code> ✓</td></tr>
+        <tr><td>Tue 13 21:11</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38468701024/job/115542044048">115542044048</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-docker)</code></td><td><em>no log</em></td><td><em>no log</em> ✓</td></tr>
+        <tr><td>Wed 14 20:02</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38628752461/job/116074603646">116074603646</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — k8s.io/kubernetes 1.36.4 -&gt; 1.37.x (1.37.1 since ~09-30) wh…</td></tr>
+        <tr><td>Wed 14 20:02</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38628762954/job/116074642767">116074642767</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — npm<em>and</em>yarn / scan: @yarnpkg/core 4.9.1 -&gt; 4.9.2 and @yarn…</td></tr>
+        <tr><td>Wed 14 22:42</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649489896/job/116144511875">116144511875</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em></td></tr>
+        <tr><td>Wed 14 22:43</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649573979/job/116144785092">116144785092</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-docker)</code></td><td><em>no log</em></td><td><em>no log</em> ✓</td></tr>
+        <tr><td>Wed 14 22:43</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649612029/job/116144905057">116144905057</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em> ✓</td></tr>
+        <tr><td>Wed 14 22:44</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38649700844/job/116145208415">116145208415</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em> ✓</td></tr>
+        <tr><td>Thu 15 00:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38658965586/job/116175433923">116175433923</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-docker)</code></td><td>Guest can&#39;t reach Docker Hub during a pull (registry-1, auth, or clou…</td><td><code>docker-hub-unreachable</code> ✓</td></tr>
+        <tr><td>Thu 15 16:13</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38767140033/job/116533196314">116533196314</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — standing npm scan break: @yarnpkg/core got@patch ENOENT on …</td></tr>
+        <tr><td>Thu 15 16:13</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38767140169/job/116533197852">116533197852</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — standing /rdd k8s.io/kubernetes minor-bump break: dependenc…</td></tr>
+        <tr><td>Thu 15 17:06</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38774504349/job/116558581064">116558581064</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><em>no log</em></td><td><em>no log</em> ✓</td></tr>
+        <tr><td>Thu 15 17:06</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38774504349/job/116558581627">116558581627</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-docker)</code></td><td><em>no log</em></td><td><em>no log</em></td></tr>
+        <tr><td>Fri 16 16:12</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38930155603/job/117071786494">117071786494</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — standing /rdd k8s.io/kubernetes minor-bump break: dependenc…</td></tr>
+        <tr><td>Fri 16 16:12</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38930157938/job/117071794483">117071794483</a></td><td>Dependabot Updates</td><td><code>Dependabot</code></td><td><code>job error :: Dependabot encountered an error performing the update</code></td><td><code>real</code> — standing npm scan break: @yarnpkg/core got@patch ENOENT on …</td></tr>
+        <tr><td>Fri 16 17:28</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38939965872/job/117104874325">117104874325</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-lima)</code></td><td><em>no log</em></td><td><em>no log</em> ✓</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <hr>
+    <h2 id="by-workflow">By workflow <a href="#by-workflow" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <table>
+      <thead><tr><th>workflow</th><th>jobs</th><th>known flake</th><th>unrecognized</th><th>on <code>main</code></th></tr></thead>
+      <tbody>
+        <tr><td>BATS</td><td>28</td><td>2</td><td>15</td><td>11</td></tr>
+        <tr><td>Lint</td><td>24</td><td>6</td><td>18</td><td>2</td></tr>
+        <tr><td>Dependabot Updates</td><td>8</td><td>0</td><td>8</td><td>8</td></tr>
+        <tr><td>Package</td><td>7</td><td>1</td><td>6</td><td>0</td></tr>
+        <tr><td>UI E2E Tests</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <hr>
+    <h2 id="pr-branch-failures-47-jobs-across-11-branches">PR-branch failures (47 jobs across 11 branches) <a href="#pr-branch-failures-47-jobs-across-11-branches" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>A failure here is usually the branch&#39;s own work in progress, not CI health. Counted, not analyzed — except where a known flake fired.</p>
+    <table>
+      <thead><tr><th>branch</th><th>jobs</th><th>known flake</th><th>unrecognized</th><th>most common failure</th></tr></thead>
+      <tbody>
+        <tr><td><code>dependabot/go_modules/rdd/github.com/containers/gvisor-tap-vsock-0.9.0</code></td><td>25</td><td>0</td><td>25</td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td></tr>
+        <tr><td><code>docker-cli-plugins-reachable</code></td><td>9</td><td>1</td><td>8</td><td><code>go test :: TestEditWrapsParseFailureAsMalformed</code></td></tr>
+        <tr><td><code>windows-add-path-manual</code></td><td>4</td><td>0</td><td>3</td><td><code>front adds the bin directory and records the marker in 39750ms :: try</code></td></tr>
+        <tr><td><code>dependabot/go_modules/rdd/sigs.k8s.io/controller-tools-0.22.0</code></td><td>2</td><td>0</td><td>1</td><td><code>job error :: /home/runner/work/rancher-desktop-2/rancher-desktop-2/rdd/pkg/apis/con</code></td></tr>
+        <tr><td><code>dependabot/github_actions/actions/upload-artifact-7.0.2</code></td><td>1</td><td>1</td><td>0</td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td></tr>
+        <tr><td><code>dependabot/go_modules/rdd/github.com/docker/cli-29.9.0incompatible</code></td><td>1</td><td>0</td><td>1</td><td><code>go test :: TestSharedControllerManagerMarksReadyAfterWebhooks</code></td></tr>
+        <tr><td><code>dependabot/npm_and_yarn/electron-44.7.0</code></td><td>1</td><td>1</td><td>0</td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td></tr>
+        <tr><td><code>ltag-whole-repo</code></td><td>1</td><td>0</td><td>1</td><td><code>step :: Run make verify-generate</code></td></tr>
+        <tr><td><code>rdd-svc-paths-bin-dir</code></td><td>1</td><td>0</td><td>1</td><td><code>job error :: fatal: unable to access &#39;https://github.com/bats-core/bats-core.git/&#39;:</code></td></tr>
+        <tr><td><code>rddepman/electron/44.5.1-to-44.7.0</code></td><td>1</td><td>1</td><td>0</td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td></tr>
+        <tr><td><code>translate-host-path-fixes</code></td><td>1</td><td>1</td><td>0</td><td>actions/upload-artifact uploaded every byte, then its FinalizeArtifac…</td></tr>
+      </tbody>
+    </table>
+    <details>
+    <summary>Every PR-branch failure, by branch</summary>
+    <p><em></em><code>dependabot/go_modules/rdd/github.com/containers/gvisor-tap-vsock-0.9.0</code><em></em> (25)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298407/job/116100252284">116100252284</a></td><td>Lint</td><td><code>Jest Tests</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298407/job/116100252342">116100252342</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298407/job/116100252552">116100252552</a></td><td>Lint</td><td><code>Lint RDD (ubuntu-latest)</code></td><td><code>job error :: pkg/hostagent/command.go:22:2: could not import github.com/lima-vm/lim</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298407/job/116100252640">116100252640</a></td><td>Lint</td><td><code>RDD Unit tests (ubuntu-latest)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298407/job/116100252665">116100252665</a></td><td>Lint</td><td><code>Lint TypeScript (ubuntu-latest)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298407/job/116100252769">116100252769</a></td><td>Lint</td><td><code>Check licenses</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280847">116100280847</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-docker)</code></td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280871">116100280871</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-app)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280878">116100280878</a></td><td>BATS</td><td><code>BATS (ubuntu-latest, bats-docker)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280902">116100280902</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-docker)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280915">116100280915</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-others)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280918">116100280918</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280926">116100280926</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-others)</code></td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280933">116100280933</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-lima)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280936">116100280936</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-lima)</code></td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280992">116100280992</a></td><td>BATS</td><td><code>BATS (ubuntu-latest, bats-others)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100280998">116100280998</a></td><td>BATS</td><td><code>BATS (ubuntu-latest, bats-lima)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298476/job/116100281060">116100281060</a></td><td>BATS</td><td><code>BATS (ubuntu-latest, bats-app)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298996/job/116100337671">116100337671</a></td><td>UI E2E Tests</td><td><code>e2e-tests</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298959/job/116100350015">116100350015</a></td><td>Package</td><td><code>package (windows, aarch64, windows-11-arm)</code></td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298959/job/116100350057">116100350057</a></td><td>Package</td><td><code>package (linux, aarch64, ubuntu-22.04-arm)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298959/job/116100350067">116100350067</a></td><td>Package</td><td><code>package (linux, x86_64, ubuntu-22.04)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298959/job/116100350135">116100350135</a></td><td>Package</td><td><code>package (darwin, x86_64, macos-latest)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298959/job/116100350168">116100350168</a></td><td>Package</td><td><code>package (windows, x86_64, windows-latest)</code></td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 20:56</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38636298959/job/116100350267">116100350267</a></td><td>Package</td><td><code>package (darwin, aarch64, macos-latest)</code></td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td><td>unrecognized</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>docker-cli-plugins-reachable</code><em></em> (9)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Thu 15 21:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38808487056/job/116675454207">116675454207</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>step :: Run make verify-generate</code></td><td>unrecognized</td></tr>
+        <tr><td>Thu 15 21:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38808487056/job/116675454337">116675454337</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code></td></tr>
+        <tr><td>Thu 15 21:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38808487056/job/116675454454">116675454454</a></td><td>Lint</td><td><code>Lint RDD (ubuntu-latest)</code></td><td><code>job error :: pkg/controllers/app/pathmanagement/controllers/dockerplugins_test.go:2</code></td><td>unrecognized</td></tr>
+        <tr><td>Fri 16 19:32</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38955655971/job/117157786344">117157786344</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>step :: Run make verify-generate</code></td><td>unrecognized</td></tr>
+        <tr><td>Fri 16 19:32</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38955655971/job/117157786580">117157786580</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td><code>go test :: TestEditWrapsParseFailureAsMalformed</code></td><td>unrecognized</td></tr>
+        <tr><td>Fri 16 19:32</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38955655971/job/117187646340">117187646340</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>step :: Run make verify-generate</code></td><td>unrecognized</td></tr>
+        <tr><td>Fri 16 19:32</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38955655971/job/117187646805">117187646805</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td><code>go test :: TestEditWrapsParseFailureAsMalformed</code></td><td>unrecognized</td></tr>
+        <tr><td>Fri 16 20:51</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38965286413/job/117190175274">117190175274</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td><code>go test :: TestEditWrapsParseFailureAsMalformed</code></td><td>unrecognized</td></tr>
+        <tr><td>Fri 16 20:51</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38965286413/job/117198827389">117198827389</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td><code>go test :: TestEditWrapsParseFailureAsMalformed</code></td><td>unrecognized</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>windows-add-path-manual</code><em></em> (4)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Wed 14 19:29</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38624148089/job/116058973473">116058973473</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><code>front adds the bin directory and records the marker in 39750ms :: try</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 19:29</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38624147904/job/116058978585">116058978585</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>step :: Run make verify-generate</code></td><td>unrecognized</td></tr>
+        <tr><td>Wed 14 19:55</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38627697373/job/116071029355">116071029355</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-others)</code></td><td><em>no log</em></td><td><em>no log</em></td></tr>
+        <tr><td>Wed 14 19:55</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38627697373/job/116071030274">116071030274</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-app)</code></td><td><code>front adds the bin directory and records the marker in 42180ms :: try</code></td><td>unrecognized</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>dependabot/go_modules/rdd/sigs.k8s.io/controller-tools-0.22.0</code><em></em> (2)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Sat 10 03:30</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38020818809/job/114121221080">114121221080</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>job error :: /home/runner/work/rancher-desktop-2/rancher-desktop-2/rdd/pkg/apis/con</code></td><td>unrecognized</td></tr>
+        <tr><td>Sat 10 03:30</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38020818810/job/114121225686">114121225686</a></td><td>BATS</td><td><code>BATS (windows-latest, bats-lima)</code></td><td><em>no log</em></td><td><em>no log</em></td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>dependabot/github_actions/actions/upload-artifact-7.0.2</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Wed 14 21:02</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38637034932/job/116102741845">116102741845</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code> ✓</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>dependabot/go_modules/rdd/github.com/docker/cli-29.9.0incompatible</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Fri 16 16:15</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38930475270/job/117072910260">117072910260</a></td><td>Lint</td><td><code>RDD Unit tests (macos-latest)</code></td><td><code>go test :: TestSharedControllerManagerMarksReadyAfterWebhooks</code></td><td><strong>proven flake — needs matcher</strong></td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>dependabot/npm_and_yarn/electron-44.7.0</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Wed 14 21:30</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38640855690/job/116115728321">116115728321</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code> ✓</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>ltag-whole-repo</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Wed 14 00:02</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38487839689/job/115605705790">115605705790</a></td><td>Lint</td><td><code>Verify generated files</code></td><td><code>step :: Run make verify-generate</code></td><td>unrecognized</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>rdd-svc-paths-bin-dir</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Thu 15 00:30</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38660413398/job/116180115217">116180115217</a></td><td>BATS</td><td><code>BATS (macos-15-intel, bats-docker)</code></td><td><code>job error :: fatal: unable to access &#39;https://github.com/bats-core/bats-core.git/&#39;:</code></td><td>unrecognized</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>rddepman/electron/44.5.1-to-44.7.0</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Thu 15 08:41</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38707515814/job/116330535788">116330535788</a></td><td>Lint</td><td><code>RDD Unit tests (windows-latest)</code></td><td>TestEnsureSSHKeysAt&#39;s first ssh-keygen call, the one that generates t…</td><td><code>windows-ssh-keygen-timeout</code> ✓</td></tr>
+      </tbody>
+    </table>
+    <p><em></em><code>translate-host-path-fixes</code><em></em> (1)</p>
+    <table>
+      <thead><tr><th>when</th><th>job</th><th>workflow</th><th>job name</th><th>what failed</th><th>verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Sat 10 03:27</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/actions/runs/38020600293/job/114120571757">114120571757</a></td><td>Package</td><td><code>package (windows, aarch64, windows-11-arm)</code></td><td>actions/upload-artifact uploaded every byte, then its FinalizeArtifac…</td><td><code>upload-artifact-finalize-failed</code> ✓</td></tr>
+      </tbody>
+    </table>
+    </details>
+    </div>
+    <hr>
+    <h2 id="unrecognized-failure-surfaces">Unrecognized failure surfaces <a href="#unrecognized-failure-surfaces" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Grouped by failing test <strong>and</strong> failing command. A surface spanning several unrelated branches is a candidate flake worth a matcher; one confined to a single branch is that branch&#39;s own breakage.</p>
+    <table>
+      <thead><tr><th>jobs</th><th>branches</th><th>failing test :: failing command</th></tr></thead>
+      <tbody>
+        <tr><td>5</td><td>3</td><td><code>step :: Run make verify-generate</code></td></tr>
+        <tr><td>18</td><td>1</td><td><code>job error :: ../../../../go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta.1.0.2026</code></td></tr>
+        <tr><td>8</td><td>1</td><td><code>job error :: Dependabot encountered an error performing the update</code></td></tr>
+        <tr><td>6</td><td>1</td><td><code>job error :: C:/Users/runneradmin/go/pkg/mod/github.com/lima-vm/lima/v2@v2.3.0-beta</code></td></tr>
+        <tr><td>4</td><td>1</td><td><code>go test :: TestEditWrapsParseFailureAsMalformed</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>front adds the bin directory and records the marker in 39750ms :: try</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>job error :: fatal: unable to access &#39;https://github.com/bats-core/bats-core.git/&#39;:</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>job error :: pkg/controllers/app/pathmanagement/controllers/dockerplugins_test.go:2</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>go test :: TestSharedControllerManagerMarksReadyAfterWebhooks</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>job error :: /home/runner/work/rancher-desktop-2/rancher-desktop-2/rdd/pkg/apis/con</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>front adds the bin directory and records the marker in 42180ms :: try</code></td></tr>
+        <tr><td>1</td><td>1</td><td><code>job error :: pkg/hostagent/command.go:22:2: could not import github.com/lima-vm/lim</code></td></tr>
+      </tbody>
+    </table>
+    <details>
+    <summary>How this report is built</summary>
+    <p><code>ci-sweep weekly --week 2026-W42</code> over <code>sweep.db</code>, one row per <strong>failed job</strong> — a run can fail on one matrix leg out of many, so the job is the unit.</p>
+    <ul>
+      <li><strong>Known flake</strong> — a job whose log matched a <code>matchers.yaml</code> pattern. Pattern matching only, no LLM.</li>
+      <li><strong>One flake per job</strong> — when several matchers fire, the job counts under the one whose surface appears <strong>earliest</strong> in the log, because the first failure is the root and what follows is fallout: a suite killed at its wall-clock cap logs a failed wait on the way out. The others are recorded but not counted, and only a true tie is left uncounted.</li>
+      <li><strong>Proven flake</strong> — the identical job passed on a re-run of the same commit, so the code cannot be at fault.</li>
+      <li><strong>Unrecognized</strong> — no matcher fired. On <code>main</code> it earns analysis; on a PR branch it earns only a count, because PR failures are dev breakage, not CI health.</li>
+      <li><strong>No log</strong> — the log expired or was never uploaded, so the sweep could not classify the failure. A data gap, not a clean bill.</li>
+      <li><strong>What failed</strong> — for a known flake, the matcher&#39;s summary; otherwise the failing test and command, or the job error for a failure that never reached its tests. <code>--fetch</code> names the rest, at one download each.</li>
+      <li>Counts cover only jobs the sweep recorded. A period never swept reads as zero failures.</li>
+    </ul>
+    </details>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
