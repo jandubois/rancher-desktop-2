@@ -14,6 +14,7 @@ export default {
     'json',
     'node', // For native modules, e.g. @napi-rs/xattr
     'ts',
+    'tsx',
     'vue',
   ],
   modulePathIgnorePatterns: [

@@ -16,6 +16,7 @@ import yaml from 'yaml';
 
 import buildUtils from './build-utils';
 import generateFileList from './installer-win32-gen';
+import { peSectionNames } from './pe-image';
 
 import { simpleSpawn } from '@/scripts/simple_process';
 import { appArtifactName } from '@pkg/utils/releaseArtifacts';
@@ -63,6 +64,13 @@ export async function buildCustomAction(): Promise<string> {
     cwd: path.join(buildUtils.rootDir, 'src', 'go', 'wix-helper'),
     env: { ...process.env, GOOS: 'windows' },
   });
+
+  // Go's linker puts a c-shared DLL's runtime init in .ctors.  A mingw link
+  // merges it into its CRT's constructor list; an MSVC link leaves a
+  // stand-alone .ctors section that its CRT never runs, and every export hangs.
+  if (peSectionNames(await fs.promises.readFile(output)).includes('.ctors')) {
+    throw new Error(`${ output } keeps Go's runtime init in a stand-alone .ctors section, so its exports would hang; build it with a mingw-target C compiler (CC)`);
+  }
 
   return output;
 }
