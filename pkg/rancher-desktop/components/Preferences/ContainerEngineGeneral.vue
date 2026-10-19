@@ -1,54 +1,22 @@
-<script lang="ts">
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 
-import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
-
-import Banner from '@pkg/components/Banner.vue';
 import EngineSelector from '@pkg/components/EngineSelector.vue';
-import RdCheckbox from '@pkg/components/form/RdCheckbox.vue';
 import RdFieldset from '@pkg/components/form/RdFieldset.vue';
-import { ContainerEngine, Settings } from '@pkg/config/settings';
-import { mapTypedActions } from '@pkg/entry/store';
-import { RecursiveTypes } from '@pkg/utils/typeUtils';
+import { IoRancherdesktopAppV1alpha1AppSpecContainerEngineNameEnum as ContainerEngineName } from '@rdd-client';
 
-import type { PropType } from 'vue';
+defineOptions({ name: 'preferences-container-engine-general' });
 
-export default defineComponent({
-  name:       'preferences-container-engine-general',
-  components: {
-    Banner,
-    EngineSelector,
-    RdCheckbox,
-    RdFieldset,
-  },
-  props: {
-    preferences: {
-      type:     Object as PropType<Settings>,
-      required: true,
-    },
-  },
-  data() {
-    return { containerEngine: ContainerEngine.CONTAINERD };
-  },
-  computed: {
-    ...mapGetters('preferences', ['isPreferenceLocked']),
-    webAssemblyIncompatible(): boolean {
-      return this.preferences.kubernetes.enabled &&
-        this.preferences.experimental.kubernetes.options.spinkube &&
-        !this.preferences.experimental.containerEngine.webAssembly.enabled;
-    },
-  },
-  methods: {
-    ...mapTypedActions('transient-preferences', ['navigateByClick']),
-    onChangeEngine(desiredEngine: ContainerEngine) {
-      this.containerEngine = desiredEngine;
-      this.$emit('container-engine-change', desiredEngine);
-    },
-    onChange<P extends keyof RecursiveTypes<Settings>>(property: P, value: RecursiveTypes<Settings>[P]) {
-      this.$store.dispatch('preferences/updatePreferencesData', { property, value });
-    },
-  },
-});
+const store = useStore();
+const isPreferenceLocked = computed(() => store.getters['preferences/isPreferenceLocked']);
+const preferences = computed(() => store.getters['preferences/preferences']);
+const currentContainerEngine = computed(() => preferences.value.containerEngine?.name ?? ContainerEngineName.Moby);
+
+function onChangeEngine(value: ContainerEngineName) {
+  store.dispatch('preferences/modify', { key: 'containerEngine.name', value });
+}
+
 </script>
 
 <template>
@@ -60,38 +28,11 @@ export default defineComponent({
     >
       <template #default="{ isLocked }">
         <engine-selector
-          :container-engine="preferences.containerEngine.name"
+          :container-engine="currentContainerEngine"
           :is-locked="isLocked"
-          @change="onChange('containerEngine.name', $event)"
+          @change="onChangeEngine"
         />
       </template>
-    </rd-fieldset>
-    <rd-fieldset
-      data-test="webAssembly"
-      :legend-text="t('webAssembly.label')"
-      :is-experimental="true"
-    >
-      <rd-checkbox
-        data-test="webAssemblyCheckbox"
-        :label="t('webAssembly.enabled')"
-        :description="t('webAssembly.description')"
-        :value="preferences.experimental.containerEngine.webAssembly.enabled"
-        :is-locked="isPreferenceLocked('experimental.containerEngine.webAssembly.enabled')"
-        @update:value="onChange('experimental.containerEngine.webAssembly.enabled', $event)"
-      >
-        <template
-          v-if="webAssemblyIncompatible"
-          #below
-        >
-          <banner
-            color="warning"
-            @click.prevent="navigateByClick"
-          >
-            <!-- v-clean-html: the translated warning embeds a link -->
-            <span v-clean-html="t('preferences.containerEngine.webAssembly.warning')" />
-          </banner>
-        </template>
-      </rd-checkbox>
     </rd-fieldset>
   </div>
 </template>

@@ -24,7 +24,7 @@ class PreferencesHelp {
     'virtual-machine/hardware':        'ui/preferences/virtual-machine/hardware',
     // 'virtual-machine/volumes':         'ui/preferences/virtual-machine/volumes',
     // 'virtual-machine/emulation':       'ui/preferences/virtual-machine/emulation',
-    // 'container-engine/general':        'ui/preferences/container-engine/general',
+    'container-engine/general':        'ui/preferences/container-engine/general',
     // 'container-engine/allowed-images': 'ui/preferences/container-engine/allowed-images',
     // 'wsl/integrations':                'ui/preferences/wsl/integrations',
     // 'wsl/proxy':                       'ui/preferences/wsl/proxy',
