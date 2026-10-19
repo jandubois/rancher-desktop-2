@@ -52,8 +52,13 @@ type resourceNames = ResourceNames<typeof resources>;
 
 export const state = () => ({
   ...resourceState(resources),
-  currentNamespace: undefined as string | undefined,
-  error:            undefined as undefined | { error: Error, source: resourceNames },
+  /**
+   * The currently selected namespace; {@link getters.currentNamespace} should
+   * be used instead to look up the active namespace, and
+   * {@link actions.setCurrentNamespace} should be used to change the value.
+   */
+  selectedNamespace: undefined as string | undefined,
+  error:             undefined as undefined | { error: Error, source: resourceNames },
 });
 
 export const getters = {
@@ -69,7 +74,13 @@ export const getters = {
   },
   /** The currently selected namespace, or undefined if namespaces are not supported */
   currentNamespace(state, getters): string | undefined {
-    return getters.supportsNamespaces ? state.currentNamespace : undefined;
+    if (!getters.supportsNamespaces) {
+      return undefined;
+    }
+    if (state.selectedNamespace) {
+      return state.selectedNamespace;
+    }
+    return getters.namespaces.includes('default') ? 'default' : getters.namespaces[0];
   },
   /** Get a container by its ID */
   containerById(state) {
@@ -79,8 +90,8 @@ export const getters = {
 
 export const mutations = {
   ...resourceMutations(resources),
-  SET_CURRENT_NAMESPACE(state, namespace) {
-    state.currentNamespace = namespace;
+  SET_SELECTED_NAMESPACE(state, namespace) {
+    state.selectedNamespace = namespace;
   },
   SET_ERROR(state, payload?) {
     state.error = payload;
@@ -90,19 +101,19 @@ export const mutations = {
 export const actions = {
   ...resourceWatchActions('container-engine', resources),
   async setCurrentNamespace({ commit, getters, state, dispatch }, { namespace }: { namespace: string | undefined }) {
-    if (namespace === state.currentNamespace) {
+    if (namespace === state.selectedNamespace) {
       return;
     }
     if (!getters.supportsNamespaces) {
       const error = new Error('Current container engine does not support namespaces');
       commit('SET_ERROR', { error, source: 'namespaces' });
       console.log(error);
-    } else if (namespace !== undefined && !state.namespaces?.some(ns => ns.status?.name === namespace)) {
+    } else if (namespace !== undefined && !getters.namespaces.includes(namespace)) {
       const error = new Error(`Cannot set current namespace to nonexistent namespace ${ namespace }`);
       commit('SET_ERROR', { error, source: 'namespaces' });
       console.log(error);
     } else {
-      commit('SET_CURRENT_NAMESPACE', namespace);
+      commit('SET_SELECTED_NAMESPACE', namespace);
       // Refresh all resources to update the namespace filter.
       try {
         await dispatch('rewatchResources', resources.map(r => r.name));
