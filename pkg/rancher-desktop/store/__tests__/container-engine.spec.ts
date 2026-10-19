@@ -68,7 +68,7 @@ describe('container-engine store', () => {
       jest.spyOn(console, 'log').mockImplementation(() => {});
       setCurrentNamespace.call(null as any, context, { namespace: 'hair' });
       expect(commit).toHaveBeenCalledWith('SET_ERROR', expect.objectContaining({
-        error: expect.any(Error),
+        error:  expect.any(Error),
         source: 'namespaces',
       }));
     });
@@ -80,7 +80,7 @@ describe('container-engine store', () => {
       jest.spyOn(console, 'log').mockImplementation(() => {});
       setCurrentNamespace.call(null as any, context, { namespace: 'zero-width' });
       expect(commit).toHaveBeenCalledWith('SET_ERROR', expect.objectContaining({
-        error: expect.any(Error),
+        error:  expect.any(Error),
         source: 'namespaces',
       }));
     });

@@ -22,7 +22,7 @@ function onChangeEngine(value: ContainerEngineName) {
 <template>
   <div class="container-engine-general">
     <rd-fieldset
-      data-test="containerEngine"
+      data-testid="containerEngine"
       :legend-text="t('containerEngine.label')"
       :is-locked="isPreferenceLocked('containerEngine.name')"
     >

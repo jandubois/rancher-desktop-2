@@ -5,6 +5,7 @@ import semver from 'semver';
 
 import { NavPage } from './pages/nav-page';
 import { PreferencesPage } from './pages/preferences';
+import { ContainerEngineNav } from './pages/preferences/containerEngine';
 import { KubernetesNav } from './pages/preferences/kubernetes';
 import { VirtualMachineNav } from './pages/preferences/virtualMachine';
 import { rdd, startRancherDesktop, teardown } from './utils/TestUtils';
@@ -142,6 +143,30 @@ test.describe('Preferences Dialog', () => {
     });
   });
 
+  test.describe('Container Engine', () => {
+    let containerEngine: ContainerEngineNav;
+
+    test('should navigate to container engine', async() => {
+      containerEngine = prefPage.containerEngine;
+
+      await containerEngine.nav.click();
+
+      await expect(containerEngine.nav).toHaveClass('preferences-nav-item active');
+      await expect(prefPage.body).toHaveAttribute('data-test-component', 'container-engine');
+    });
+
+    test('should render general tab', async() => {
+      await containerEngine.tabGeneral.click();
+
+      await expect(containerEngine.engineSelector).toBeVisible();
+      await expect(containerEngine.engineSelector).toHaveAttribute('data-value', 'moby');
+      await containerEngine.engineContainerd.click();
+      await expect(containerEngine.engineSelector).toHaveAttribute('data-value', 'containerd');
+      await containerEngine.engineMoby.click();
+      await expect(containerEngine.engineSelector).toHaveAttribute('data-value', 'moby');
+    });
+  });
+
   test.fixme('should render volumes tab', async() => {
     test.skip(os.platform() === 'win32', 'Virtual Machine not available on Windows');
     const { virtualMachine } = prefPage;
@@ -197,27 +222,6 @@ test.describe('Preferences Dialog', () => {
         await expect(virtualMachine.useRosetta).toBeDisabled();
       }
     }
-  });
-
-  test.fixme('should navigate to container engine', async() => {
-    const { containerEngine } = prefPage;
-
-    await containerEngine.nav.click();
-
-    await expect(containerEngine.nav).toHaveClass('preferences-nav-item active');
-    await expect(containerEngine.containerEngine).toBeVisible();
-
-    await expect(containerEngine.tabGeneral).toBeVisible();
-    await expect(containerEngine.tabAllowedImages).toBeVisible();
-  });
-
-  test.fixme('should render allowed images tab after click on allowed images tab', async() => {
-    const { containerEngine } = prefPage;
-
-    await containerEngine.tabAllowedImages.click();
-
-    await expect(containerEngine.allowedImages).toBeVisible();
-    await expect(containerEngine.containerEngine).not.toBeVisible();
   });
 
   test.describe('Kubernetes', () => {

@@ -32,7 +32,10 @@ const options = computed(() => Object.values(ContainerEngineName)
 </script>
 
 <template>
-  <div class="engine-selector">
+  <div
+    class="engine-selector"
+    :data-value="containerEngine"
+  >
     <radio-group
       name="containerEngine"
       class="container-engine"
