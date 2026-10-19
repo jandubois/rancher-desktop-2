@@ -19,10 +19,11 @@ commit, and version are recorded in `UPSTREAM`.
 ## Build
 
 Built from source by `make build-forwarder` (see `rdd/Makefile`), Windows-only,
-natively on the Windows runners under MSYS2 bash — using the same C toolchain
-`make build-rdd`'s cgo already uses there: mingw `g++` (x86_64) and `clang++`
-(arm64), no new dependency. Override `FORWARDER_CXX` to cross-build elsewhere
-(e.g. `FORWARDER_CXX=x86_64-w64-mingw32-g++` with a Linux mingw-w64 toolchain).
+natively on the Windows runners under MSYS2 bash. It uses mingw `g++` for x86_64
+and llvm-mingw's `aarch64-w64-mingw32-clang++` for arm64, the same C toolchain
+that `make build-rdd`'s cgo uses there. Override `FORWARDER_CXX` to
+cross-build elsewhere (e.g. `FORWARDER_CXX=x86_64-w64-mingw32-g++` with a Linux
+mingw-w64 toolchain).
 The output `rdd-forwarder.exe` is staged into `resources/windows/bin/` by
 `packaging/electron-builder.yml`.
 

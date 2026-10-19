@@ -261,12 +261,12 @@ build-rdd: bin/rdd$(EXE)
 # see src/rdd-forwarder) that the instance bin directory publishes per tool on
 # Windows, where symlinks and hardlinks to bundled binaries are unavailable to a
 # standard user. It is only built for Windows targets, natively on the Windows
-# runners under MSYS2 bash. The defaults match the C toolchain build-rdd's cgo
-# already uses there — mingw g++ for x86_64, clang++ for arm64 (the mingw gcc
-# only targets x86_64). Override FORWARDER_CXX to cross-build elsewhere.
+# runners under MSYS2 bash. The defaults, mingw g++ for x86_64 and llvm-mingw's
+# clang++ for arm64, match the C toolchain that build-rdd's cgo uses there.
+# Override FORWARDER_CXX to cross-build elsewhere.
 FORWARDER_SRC := src/rdd-forwarder/shim.cpp
 ifeq ($(TARGET_ARCH),arm64)
-FORWARDER_CXX ?= clang++
+FORWARDER_CXX ?= aarch64-w64-mingw32-clang++
 else
 FORWARDER_CXX ?= g++
 endif
