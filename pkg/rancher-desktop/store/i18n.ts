@@ -231,6 +231,10 @@ export const actions = {
     }
 
     commit('setSelected', locale);
+    // Chromium uses the document language to pick a fallback font for
+    // characters Lato lacks. Without a language, Han text can come out with
+    // Japanese or Traditional Chinese glyphs.
+    document.documentElement.lang = locale;
     localStorage.setItem('locale', locale);
     ipcRenderer.send('i18n/locale-change', locale);
   },
