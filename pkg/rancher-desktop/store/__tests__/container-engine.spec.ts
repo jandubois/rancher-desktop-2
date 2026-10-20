@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals';
+import { createStore } from 'vuex';
 
 import { ActionContext } from '@pkg/store/ts-helpers';
 import mockModules from '@pkg/utils/testUtils/mockModules';
@@ -12,17 +13,25 @@ mockModules({
   electron:           undefined,
 });
 
-const { getters: realGetters, actions: realActions, mutations } = await import('../container-engine');
+const containerEngineModule = await import('../container-engine');
+const { actions: realActions } = containerEngineModule;
+
+type actionContextType = ActionContext<State,
+  typeof containerEngineModule.mutations,
+  typeof containerEngineModule.getters>;
 
 describe('container-engine store', () => {
   describe('getters.currentNamespace', () => {
-    const { currentNamespace } = realGetters;
+    const { currentNamespace } = containerEngineModule.getters;
     it('should return undefined when namespace are not supported', () => {
       const getters = { supportsNamespaces: false };
       expect(currentNamespace({} as State, getters)).toBeUndefined();
     });
     it('should return selected namespace when available', () => {
-      const getters = { supportsNamespaces: true };
+      const getters = {
+        supportsNamespaces: true,
+        namespaces:         ['three-per-em'],
+      };
       const state = { selectedNamespace: 'three-per-em' } as unknown as State;
       expect(currentNamespace(state, getters)).toBe('three-per-em');
     });
@@ -32,6 +41,14 @@ describe('container-engine store', () => {
         namespaces:         ['figure', 'default', 'hair'],
       };
       const state = { } as unknown as State;
+      expect(currentNamespace(state, getters)).toBe('default');
+    });
+    it('should return fallback if currently selected namespace goes away', () => {
+      const getters = {
+        supportsNamespaces: true,
+        namespaces:         ['figure', 'default', 'hair'],
+      };
+      const state = { selectedNamespace: 'four-per-em' } as unknown as State;
       expect(currentNamespace(state, getters)).toBe('default');
     });
     it('should pick the first one if no default is available', () => {
@@ -56,7 +73,7 @@ describe('container-engine store', () => {
     it('should ignore no-op updates', () => {
       const commit = jest.fn();
       const state = { selectedNamespace: 'six-per-em' } as unknown as State;
-      const context = { commit, state } as unknown as ActionContext<State, typeof mutations, typeof realGetters>;
+      const context = { commit, state } as unknown as actionContextType;
       setCurrentNamespace.call(null as any, context, { namespace: 'six-per-em' });
       expect(commit).not.toHaveBeenCalled();
     });
@@ -64,7 +81,7 @@ describe('container-engine store', () => {
       const commit = jest.fn();
       const state = { selectedNamespace: 'thin' } as unknown as State;
       const getters = { supportsNamespaces: false };
-      const context = { commit, state, getters } as unknown as ActionContext<State, typeof mutations, typeof realGetters>;
+      const context = { commit, state, getters } as unknown as actionContextType;
       jest.spyOn(console, 'log').mockImplementation(() => {});
       setCurrentNamespace.call(null as any, context, { namespace: 'hair' });
       expect(commit).toHaveBeenCalledWith('SET_ERROR', expect.objectContaining({
@@ -76,7 +93,7 @@ describe('container-engine store', () => {
       const commit = jest.fn();
       const state = { selectedNamespace: 'en' } as unknown as State;
       const getters = { supportsNamespaces: true, namespaces: ['medium-mathematical'] };
-      const context = { commit, state, getters } as unknown as ActionContext<State, typeof mutations, typeof realGetters>;
+      const context = { commit, state, getters } as unknown as actionContextType;
       jest.spyOn(console, 'log').mockImplementation(() => {});
       setCurrentNamespace.call(null as any, context, { namespace: 'zero-width' });
       expect(commit).toHaveBeenCalledWith('SET_ERROR', expect.objectContaining({
@@ -89,10 +106,40 @@ describe('container-engine store', () => {
       const state = { selectedNamespace: 'no-break' } as unknown as State;
       const getters = { supportsNamespaces: true, namespaces: ['narrow-no-break'] };
       const dispatch = jest.fn();
-      const context = { commit, state, getters, dispatch } as unknown as ActionContext<State, typeof mutations, typeof realGetters>;
+      const context = { commit, state, getters, dispatch } as unknown as actionContextType;
       setCurrentNamespace.call(null as any, context, { namespace: 'narrow-no-break' });
       expect(commit).toHaveBeenCalledWith('SET_SELECTED_NAMESPACE', 'narrow-no-break');
-      expect(dispatch).toHaveBeenCalledWith('rewatchResources', expect.anything());
+    });
+  });
+  describe('rewatchResourcesPlugin', () => {
+    it('should rewatch resources on namespace change', async() => {
+      // Disable the plugin that sets up resource watching automatically; we are
+      // testing the other one.
+      jest.spyOn(containerEngineModule.actions, 'setupResourceWatch')
+        .mockResolvedValue(undefined);
+
+      const store = createStore({
+        modules: {
+          'container-engine': { ...containerEngineModule, namespaced: true },
+          rdd:                {
+            namespaced: true,
+            getters:    { app: () => ({ status: { supportsNamespaces: true } }) },
+          },
+        },
+        plugins: containerEngineModule.plugins,
+      });
+
+      const dispatch = jest.spyOn(store, 'dispatch').mockResolvedValue(undefined);
+
+      // Loading the namespace list should cause a refresh, because the default
+      // namespace has changed (from undefined to _something_).
+      store.commit('container-engine/SET_NAMESPACES', [{ status: { name: 'default' } }]);
+
+      // Advance a few ticks to allow any asynchronous watchers to trigger.
+      await new Promise<void>(queueMicrotask);
+
+      expect(dispatch).toHaveBeenCalledWith('container-engine/rewatchResources',
+        expect.arrayContaining(['containers']));
     });
   });
 });

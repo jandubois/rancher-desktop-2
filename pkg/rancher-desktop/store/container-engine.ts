@@ -1,10 +1,10 @@
-import { Plugin } from 'vuex';
-
 import { RootState } from '@pkg/entry/store';
 import { defineResource, resourceMutations, resourceState, resourceWatchActions, ResourceNames } from '@pkg/store/rddConnection';
 import { ActionContext, ActionTree, GetterTree, MutationsType } from '@pkg/store/ts-helpers';
 import { defined, RecursivePartial } from '@pkg/utils/typeUtils';
 import * as RDDClient from '@rdd-client';
+
+import type { Plugin, Store } from 'vuex';
 
 type ContainerEngineState = ReturnType<typeof state>;
 
@@ -77,7 +77,7 @@ export const getters = {
     if (!getters.supportsNamespaces) {
       return undefined;
     }
-    if (state.selectedNamespace) {
+    if (state.selectedNamespace && getters.namespaces.includes(state.selectedNamespace)) {
       return state.selectedNamespace;
     }
     return getters.namespaces.includes('default') ? 'default' : getters.namespaces[0];
@@ -100,7 +100,7 @@ export const mutations = {
 
 export const actions = {
   ...resourceWatchActions('container-engine', resources),
-  async setCurrentNamespace({ commit, getters, state, dispatch }, { namespace }: { namespace: string | undefined }) {
+  setCurrentNamespace({ commit, getters, state }, { namespace }: { namespace: string | undefined }) {
     if (namespace === state.selectedNamespace) {
       return;
     }
@@ -114,13 +114,8 @@ export const actions = {
       console.log(error);
     } else {
       commit('SET_SELECTED_NAMESPACE', namespace);
-      // Refresh all resources to update the namespace filter.
-      try {
-        await dispatch('rewatchResources', resources.map(r => r.name));
-      } catch (error) {
-        commit('SET_ERROR', { error: error as Error, source: 'containers' });
-        console.error('Error setting up resource watch:', error);
-      }
+      // The Vuex plugin below will cause the resource watches to be refreshed
+      // when the `currentNamespace` getter returns a different result.
     }
   },
   /** Request the given container to transition to the provided state. */
@@ -286,5 +281,22 @@ export const plugins: Plugin<RootState>[] = [
       // There is no specific resource associated with this error.
       store.commit('container-engine/SET_ERROR', { error, source: 'containers' });
     });
+  },
+  // Force re-watching resources when the current namespace changes.
+  function(store: Store<RootState>) {
+    const namespacedResourceNames = resources
+      .filter(r => r.fieldSelector === resourceFieldSelector)
+      .map(r => r.name);
+    store.watch(
+      (_state, getters) => getters['container-engine/currentNamespace'],
+      async() => {
+        try {
+          await store.dispatch('container-engine/rewatchResources', namespacedResourceNames);
+        } catch (error) {
+          store.commit('container-engine/SET_ERROR', { error: error as Error, source: 'containers' });
+          console.error('Error setting up resource watch on namespace change:', error);
+        }
+      },
+    );
   },
 ];
