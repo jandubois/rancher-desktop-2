@@ -632,6 +632,10 @@ class Watcher<
       // Only trigger a change if this is the current watcher.
       if (Object.is(watcher, this.#watcher)) {
         this.onChange();
+      } else {
+        // Stale watcher; destroy it.  It's probably already marked as stopped,
+        // but the connection initiated while the marker was still false.
+        watcher.stop(errorManuallyStopped);
       }
     });
     watcher.on('connect', () => {
