@@ -24,13 +24,6 @@ type I18nState = ReturnType<typeof state>;
  */
 export const _intlCache: Record<`${ LocaleString }/${ string }`, IntlMessageFormat | string> = {};
 
-// Chromium uses the document language to pick a fallback font for characters
-// Lato lacks. Without one, Han text can come out with Japanese or Traditional
-// Chinese glyphs.
-function setDocumentLanguage(locale: LocaleString) {
-  document.documentElement.lang = locale;
-}
-
 export const state = () => ({
   default:      'en-us' as LocaleString,
   selected:     null as LocaleString | null,
@@ -238,7 +231,10 @@ export const actions = {
     }
 
     commit('setSelected', locale);
-    setDocumentLanguage(locale);
+    // Chromium uses the document language to pick a fallback font for
+    // characters Lato lacks. Without a language, Han text can come out with
+    // Japanese or Traditional Chinese glyphs.
+    document.documentElement.lang = locale;
     localStorage.setItem('locale', locale);
     ipcRenderer.send('i18n/locale-change', locale);
   },
