@@ -491,7 +491,7 @@ require (
 	mvdan.cc/sh/v3 v3.14.1 // indirect
 	mvdan.cc/unparam v0.0.0-20260823230713-2fa3d841b0c8 // indirect
 	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0 // indirect
-	sigs.k8s.io/controller-tools v0.22.0 // indirect
+	sigs.k8s.io/controller-tools v0.23.0 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/kustomize/api v0.21.1 // indirect
 	sigs.k8s.io/kustomize/kustomize/v5 v5.8.1 // indirect

@@ -26,7 +26,7 @@ EOF
 for apigroup in $API_GROUPS; do
 	# Generate all CRDs for this API group to temp directory
 	rm -f "$TMPDIR"/*.yaml
-	go tool controller-gen "crd" "paths=./pkg/apis/${apigroup}/..." "output:crd:dir=${TMPDIR}"
+	go tool controller-gen "crd:omitToolVersion=true" "paths=./pkg/apis/${apigroup}/..." "output:crd:dir=${TMPDIR}"
 
 	# Concatenate CRDs into their respective controller directories
 	for crd_path in "$TMPDIR"/*.yaml; do
