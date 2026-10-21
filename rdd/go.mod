@@ -5,7 +5,7 @@ go 1.27.0
 require (
 	al.essio.dev/pkg/shellescape v1.6.1
 	github.com/MakeNowJust/heredoc v1.0.0
-	github.com/Microsoft/go-winio v0.6.3
+	github.com/Microsoft/go-winio v0.6.4
 	github.com/containerd/containerd/api v1.12.0
 	github.com/containerd/containerd/v2 v2.4.1
 	github.com/containerd/errdefs v1.0.0
