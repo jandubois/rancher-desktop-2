@@ -79,6 +79,9 @@ type PathManagementReconciler struct {
 	// (e.g. ~/.rd2/docker-cli-plugins), registered in config.json's
 	// cliPluginsExtraDirs so `docker` finds the bundled plugins.
 	PluginDir string
+	// DockerPluginsMarker is the file that records that rdd added PluginDir to
+	// config.json's cliPluginsExtraDirs (e.g. ~/.rd2/.docker-plugins-managed).
+	DockerPluginsMarker string
 	// Suffix is the instance suffix (e.g. "2"). It goes into the fence markers so
 	// separate instances (and Rancher Desktop 1) don't touch each other's blocks.
 	Suffix string

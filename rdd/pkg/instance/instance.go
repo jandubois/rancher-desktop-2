@@ -181,6 +181,13 @@ var DockerCliPluginsDir = sync.OnceValue(func() string {
 	return filepath.Join(ShortDir(), "docker-cli-plugins")
 })
 
+// DockerPluginsMarker returns the file that records that rdd added
+// DockerCliPluginsDir to docker's cliPluginsExtraDirs (e.g.,
+// ~/.rd2/.docker-plugins-managed).
+var DockerPluginsMarker = sync.OnceValue(func() string {
+	return filepath.Join(ShortDir(), ".docker-plugins-managed")
+})
+
 // KubeConfig returns the path to the instance's standalone kubeconfig
 // (e.g., ~/.rd2/kube.config). It holds only the rancher-desktop-{instance}
 // context and is published alongside the ~/.kube/config merge, so rdd run

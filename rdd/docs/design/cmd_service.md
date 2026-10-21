@@ -24,6 +24,7 @@ The short directory contains the following files and directories:
 
 | File | Description |
 | --- | --- |
+| `.docker-plugins-managed` | records that rdd added `docker-cli-plugins` to Docker's `cliPluginsExtraDirs` |
 | `.path-managed` | records that rdd added `bin` to the user Path (Windows) |
 | `bin`         | links to `rdd` and `kubectl`, plus bundled tools like `docker` and `helm` when rdd runs from the app bundle |
 | `containerd.sock` | containerd socket that Lima forwards from the guest (macOS and Linux) |
