@@ -45,8 +45,7 @@ local_setup_file() {
 
     FAKE_BIN="${fake_bin}"
     FAKE_PLUGIN_SRC="${plugin_src}"
-    PLUGIN_DEST_DIR="${RDD_SHORT_DIR}/docker-cli-plugins"
-    save_var FAKE_BIN FAKE_PLUGIN_SRC PLUGIN_DEST_DIR
+    save_var FAKE_BIN FAKE_PLUGIN_SRC
 }
 
 local_setup() {
@@ -140,14 +139,14 @@ assert_not_published() { # <name>
 }
 
 @test 'publishes bundled docker CLI plugins into the bin and plugin directories' {
-    load_var FAKE_BIN FAKE_PLUGIN_SRC PLUGIN_DEST_DIR
+    load_var FAKE_BIN FAKE_PLUGIN_SRC
     fake_rdd svc start
     # Each bundled docker CLI plugin is reachable both as a standalone command in
     # the bin directory and in the plugins-only directory docker searches via
     # cliPluginsExtraDirs.
     for plugin in "docker-buildx${EXE}" "docker-compose${EXE}"; do
         assert_published_in "${RDD_BIN_DIR}" "${FAKE_PLUGIN_SRC}/${plugin}" "${plugin}"
-        assert_published_in "${PLUGIN_DEST_DIR}" "${FAKE_PLUGIN_SRC}/${plugin}" "${plugin}"
+        assert_published_in "${RDD_DOCKER_CLI_PLUGINS}" "${FAKE_PLUGIN_SRC}/${plugin}" "${plugin}"
     done
     fake_rdd svc stop
 }
