@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 )
 
@@ -57,7 +58,7 @@ func (c *controller) handleLogs(w http.ResponseWriter, r *http.Request) {
 
 	var container v1alpha1.Container
 	err := c.mgr.GetClient().Get(r.Context(), types.NamespacedName{
-		Namespace: apiNamespace,
+		Namespace: appv1alpha1.AppNamespace,
 		Name:      containerID,
 	}, &container)
 	if err != nil {

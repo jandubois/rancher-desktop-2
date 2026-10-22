@@ -24,6 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
 )
@@ -69,7 +70,7 @@ func (r *volumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		err = r.Client.Apply(
 			ctx,
 			containersv1alpha1apply.
-				Volume(sanitizeKubernetesObjectName(inspect.Name), apiNamespace).
+				Volume(sanitizeKubernetesObjectName(inspect.Name), appv1alpha1.AppNamespace).
 				WithOwnerReferences(ownerReference),
 			client.ForceOwnership,
 			client.FieldOwner(controllerLongName))
@@ -97,7 +98,7 @@ func (r *volumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		err = r.Client.Status().Apply(
 			ctx,
 			containersv1alpha1apply.
-				Volume(sanitizeKubernetesObjectName(inspect.Name), apiNamespace).
+				Volume(sanitizeKubernetesObjectName(inspect.Name), appv1alpha1.AppNamespace).
 				WithStatus(statusApplyConfig),
 			client.ForceOwnership,
 			client.FieldOwner(controllerLongName))

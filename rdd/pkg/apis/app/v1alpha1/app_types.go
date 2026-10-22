@@ -12,6 +12,11 @@ import (
 // AppKind is the Kind string for App resources.
 const AppKind = "App"
 
+// AppNamespace is the namespace of the App's namespaced resources, such as its
+// LimaVM and ConfigMaps, the container engine's mirror resources and the
+// requests to the engine.
+const AppNamespace = "rancher-desktop"
+
 // EngineControllerName is the registry name of the engine controller.
 // Both the engine controller's own registration and the App reconciler's
 // discovery query reference this constant so they cannot drift.
@@ -279,15 +284,6 @@ type ApplicationUpdatesSpec struct {
 type AppSpec struct {
 	// running specifies whether the VM should be running.
 	Running bool `json:"running"`
-	// namespace where this cluster-scoped App resource creates and manages its
-	// owned namespaced resources (e.g., rancher-desktop).
-	// Defaults to "default" if not specified.
-	// This field is immutable after creation: changing it would orphan existing
-	// owned resources (LimaVM, ConfigMaps) in the original namespace.
-	// +optional
-	// +kubebuilder:default="default"
-	// +kubebuilder:validation:XValidation:rule="self == oldSelf",message="spec.namespace is immutable"
-	Namespace string `json:"namespace,omitempty"`
 	// containerEngine specifies the container engine configuration.
 	// +optional
 	// +kubebuilder:default={name:"moby"}
@@ -365,11 +361,6 @@ func init() {
 }
 
 // GetResourceNamespace implements the base.ResourceNamespace interface.
-// It returns the namespace where this cluster-scoped App resource creates
-// and manages its owned namespaced resources.
 func (a *App) GetResourceNamespace() string {
-	if a.Spec.Namespace != "" {
-		return a.Spec.Namespace
-	}
-	return metav1.NamespaceDefault
+	return AppNamespace
 }

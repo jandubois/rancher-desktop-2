@@ -56,14 +56,6 @@ export const getters = {
   settled(state, getters) {
     return getters.status('Settled');
   },
-  /**
-   * Get the current Kubernetes namespace from the app; undefined if the app is
-   * missing or does not specify one (which is invalid due to the defaulter).
-   */
-  kubernetesNamespace(state, getters) {
-    const app: RDDClient.IoRancherdesktopAppV1alpha1App | undefined = getters.app;
-    return app?.spec?.namespace;
-  },
 } satisfies GetterTree<RDDState>;
 
 export const mutations = {
@@ -106,8 +98,7 @@ export const actions = {
               name: 'app',
             },
             spec: {
-              namespace: 'rancher-desktop',
-              running:   false,
+              running: false,
             },
           },
         });
@@ -151,17 +142,6 @@ export const plugins: Plugin<RootState>[] = [
       console.error('Failed to set up watch for RDD resources:', error);
       store.commit('rdd/SET_ERROR', error);
     });
-  },
-  // When the app namespace changes, set it on the connection state.
-  function(store) {
-    store.watch(
-      (_state, getters) => getters['rdd/kubernetesNamespace'],
-      (newNamespace: string | undefined) => {
-        if (newNamespace) { // Ignore empty/unset; not valid for state.
-          store.commit('rdd-connection/SET_NAMESPACE', newNamespace);
-        }
-      },
-    );
   },
   // When the app state changes, tell the backend about it.
   function(store) {

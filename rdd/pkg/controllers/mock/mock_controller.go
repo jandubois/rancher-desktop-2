@@ -26,8 +26,6 @@ import (
 const (
 	// The reconcilers will trigger on update of a namespace with this name.
 	mockNamespaceName = "rdd-mocks"
-	// The name of the Kubernetes namespace in which the resources will be created.
-	apiNamespace = "rancher-desktop"
 	// The mock controller creates all items in this (container) namespace.
 	containerNamespace = "buildkit"
 

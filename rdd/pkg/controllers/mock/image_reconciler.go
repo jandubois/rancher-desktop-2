@@ -26,6 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
@@ -100,7 +101,7 @@ func (r *imageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 					sha256.Sum256([]byte(tag)))
 				statusApplyCopy := *statusApplyConfig
 				errs = append(errs, r.updateImage(ctx,
-					containersv1alpha1apply.Image(name, apiNamespace).
+					containersv1alpha1apply.Image(name, appv1alpha1.AppNamespace).
 						WithOwnerReferences(ownerReference),
 					statusApplyCopy.
 						WithRepoTag(tag).
@@ -110,7 +111,7 @@ func (r *imageReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		} else {
 			// No tags; create a single dangling image.
 			errs = append(errs, r.updateImage(ctx,
-				containersv1alpha1apply.Image(sanitizeKubernetesObjectName(inspect.ID), apiNamespace).
+				containersv1alpha1apply.Image(sanitizeKubernetesObjectName(inspect.ID), appv1alpha1.AppNamespace).
 					WithOwnerReferences(ownerReference),
 				statusApplyConfig)...,
 			)

@@ -21,6 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 )
 
@@ -103,10 +104,9 @@ func (r *EngineReconciler) reconcileImagePullRequest(
 ) (ctrl.Result, error) {
 	r.engineMu.Lock()
 	e := r.engine
-	namespace := r.apiNamespace
 	r.engineMu.Unlock()
 	if req.Namespace == "" {
-		req.Namespace = namespace
+		req.Namespace = appv1alpha1.AppNamespace
 	}
 
 	if req.UID == "" {

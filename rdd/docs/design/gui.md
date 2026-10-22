@@ -13,11 +13,9 @@ The GUI will only run an external process once to get the kube config for the rd
 2.  Setup a watch on `diagnostics` in the `rdd-system` namespace.
     This will also make sure that the control plane will not be stopped due to the idle-timeout.
 
-3.  Fetch the app-namespace value from the config map in `rdd-system`.
+3.  Setup a watch on the `app`.
 
-4.  Setup a watch on the `app` in the app-namespace.
-
-5.  If there is no app instance, then display the first-run dialog.
+4.  If there is no app instance, then display the first-run dialog.
     Create the new instance with the specified settings (in "Running" state).
     Then setup the watch on the app again; this time it must succeed.
 

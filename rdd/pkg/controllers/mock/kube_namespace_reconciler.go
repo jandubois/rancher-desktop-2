@@ -15,6 +15,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
+
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 )
 
 type kubeNamespaceReconciler struct {
@@ -47,7 +49,7 @@ func (r *kubeNamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 
 	err = r.Client.Apply(
 		ctx,
-		corev1apply.Namespace(apiNamespace).
+		corev1apply.Namespace(appv1alpha1.AppNamespace).
 			WithOwnerReferences(ownerReference),
 		client.ForceOwnership,
 		client.FieldOwner(controllerLongName),

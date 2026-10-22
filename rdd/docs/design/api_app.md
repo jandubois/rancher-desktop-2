@@ -8,9 +8,7 @@ The `App` object is part of the `app.rancherdesktop.io` API group.
 
 There can be only a single `App` object in an RDD instance. It is **cluster-scoped** and must be named `app`.
 
-Both the [rdd start](cmd_app.md#rdd-start) command and the [GUI](gui.md) app create the cluster-scoped `App` object, setting its `spec.namespace` to the configured "app-namespace" stored in the `config` ConfigMap in the `rdd-system` namespace (`rancher-desktop` by default)[^hardcoded].
-
-[^hardcoded]: The "app-namespace" is only configurable so that it can be tested that the namespace isn't hardcoded anywhere in the controller.
+Both the [rdd start](cmd_app.md#rdd-start) command and the [GUI](gui.md) app create the cluster-scoped `App` object. Its namespaced resources, such as the `LimaVM` and ConfigMaps that it owns, the container engine's mirror resources and the requests to the engine, are in the App namespace, which is always `rancher-desktop`.
 
 Multiple versions of "Rancher Desktop 2" can be run in parallel by using different RDD instances, e.g.
 
@@ -70,7 +68,6 @@ spec:
     enabled: false
     version: 1.32.2
   running: true
-  namespace: rancher-desktop
 
 status:
   kubernetesPort: 7443
@@ -117,8 +114,6 @@ status:
   semicolon-separated list with nowhere to fence our entry, so `manual` removes the bin directory,
   wherever it is, only when an earlier `front` or `back` added it. An entry that the user added
   stays where they put it. `rdd svc delete` removes the bin directory from `Path` in both cases.
-
-- **spec.namespace**: The namespace where the owned `LimaVM` and its ConfigMaps are created. Defaults to `default`. **Immutable after creation** — changing it would orphan resources in the original namespace.
 
 - **spec.running**: Set to `true` to start the LimaVM, `false` to stop it. The App controller propagates this value to `LimaVM.spec.running` on every reconcile.
 

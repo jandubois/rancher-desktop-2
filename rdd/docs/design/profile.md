@@ -29,7 +29,7 @@ It doesn't make sense to have an `app` profile without an `rdd` one because then
 
 ### `rdd` profile
 
-The `rdd` profile is implemented using RBAC. The service account used by the builtin controller manager always has full access to the control plane, but the service account returned by `rdd service config` may be limited to modifying the `app` object in the default app-namespace by the `rdd` profile.
+The `rdd` profile is implemented using RBAC. The service account used by the builtin controller manager always has full access to the control plane, but the service account returned by `rdd service config` may be limited to modifying the cluster-scoped `app` object by the `rdd` profile.
 
 This means that non-builtin controllers will not work (which is the intention of having a locked `rdd` profile).
 

@@ -9,6 +9,9 @@ APP_NAME="app"
 
 local_setup_file() {
     setup_rdd_control_plane
+    # The resources under test are in the App namespace.
+    RDD_NAMESPACE=${RDD_APP_NAMESPACE}
+    export RDD_NAMESPACE
 }
 
 delete_app() {
@@ -28,7 +31,6 @@ kind: App
 metadata:
   name: ${APP_NAME}
 spec:
-  namespace: ${RDD_NAMESPACE}
   running: false
 EOF
 }

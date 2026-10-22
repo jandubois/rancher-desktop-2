@@ -6,9 +6,9 @@ about the supported versions and channels.
 
 ## `k3s-versions` `ConfigMap`
 
-A `ConfigMap` named `k3s-versions` is maintained in the namespace named by the
-[`App` object](api_app.md) (in `spec.namespace`).  The `ConfigMap` has two
-pieces of data, both serialized as JSON:
+The controller maintains a `ConfigMap` named `k3s-versions` in the
+[App namespace](api_app.md#singleton), `rancher-desktop`.  The `ConfigMap` has
+two pieces of data, both serialized as JSON:
 
 - The `versions` key is a mapping of version (e.g. `1.32.4`) to the full k3s
   version number (`v1.32.4+k3s1`).

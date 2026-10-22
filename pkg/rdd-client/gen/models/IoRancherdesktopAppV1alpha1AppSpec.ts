@@ -24,10 +24,6 @@ export class IoRancherdesktopAppV1alpha1AppSpec {
     'containerEngine'?: IoRancherdesktopAppV1alpha1AppSpecContainerEngine;
     'kubernetes'?: IoRancherdesktopAppV1alpha1AppSpecKubernetes;
     /**
-    * namespace where this cluster-scoped App resource creates and manages its owned namespaced resources (e.g., rancher-desktop). Defaults to \"default\" if not specified. This field is immutable after creation: changing it would orphan existing owned resources (LimaVM, ConfigMaps) in the original namespace.
-    */
-    'namespace'?: string;
-    /**
     * running specifies whether the VM should be running.
     */
     'running': boolean;
@@ -54,12 +50,6 @@ export class IoRancherdesktopAppV1alpha1AppSpec {
             "name": "kubernetes",
             "baseName": "kubernetes",
             "type": "IoRancherdesktopAppV1alpha1AppSpecKubernetes",
-            "format": ""
-        },
-        {
-            "name": "namespace",
-            "baseName": "namespace",
-            "type": "string",
             "format": ""
         },
         {

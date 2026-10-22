@@ -69,12 +69,6 @@ Configuration options (incomplete):
     Changing directories for an existing instance will attempt to move the existing data
     to the new locations.
 
-Additional configuration for individual controllers:
-
-*   `--app-namespace=rancher-desktop`
-
-    Specify the namespace for the Rancher Desktop app.
-
 
 ### `rdd service serve`
 

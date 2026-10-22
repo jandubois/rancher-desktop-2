@@ -9,7 +9,8 @@ load '../../helpers/load'
 local_setup_file() {
     start_docker_engine
 
-    RDD_NAMESPACE=$(rdd ctl get app app -o jsonpath='{.spec.namespace}')
+    # The resources under test are in the App namespace.
+    RDD_NAMESPACE=${RDD_APP_NAMESPACE}
     export RDD_NAMESPACE
 
     # Ensure moby namespace exists.

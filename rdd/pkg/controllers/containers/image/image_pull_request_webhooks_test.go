@@ -5,6 +5,7 @@
 package image
 
 import (
+	"fmt"
 	"testing"
 
 	"gotest.tools/v3/assert"
@@ -15,6 +16,10 @@ import (
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 )
+
+// k8sNamespace differs from the App's namespace, so a test fails if a
+// controller hard-codes the App's namespace instead of using the object's.
+const k8sNamespace = "test-namespace"
 
 func newImageWebhookTestClient(t *testing.T, objs ...client.Object) client.Client {
 	t.Helper()
@@ -32,12 +37,12 @@ func TestImagePullRequestValidatorValidateCreate(t *testing.T) {
 	t.Run("valid with existing container namespace", func(t *testing.T) {
 		containerNamespace := &v1alpha1.ContainerNamespace{}
 		containerNamespace.Name = "moby"
-		containerNamespace.Namespace = "rancher-desktop"
+		containerNamespace.Namespace = k8sNamespace
 		c := newImageWebhookTestClient(t, containerNamespace)
 		v := &imagePullRequestValidator{reader: c}
 
 		req := &v1alpha1.ImagePullRequest{}
-		req.Namespace = "rancher-desktop"
+		req.Namespace = k8sNamespace
 		req.Spec.Namespace = "moby"
 		req.Spec.RepoTag = "alpine:latest"
 
@@ -51,7 +56,7 @@ func TestImagePullRequestValidatorValidateCreate(t *testing.T) {
 		v := &imagePullRequestValidator{reader: c}
 
 		req := &v1alpha1.ImagePullRequest{}
-		req.Namespace = "rancher-desktop"
+		req.Namespace = k8sNamespace
 		req.Spec.RepoTag = "alpine:latest"
 
 		warnings, err := v.ValidateCreate(t.Context(), req)
@@ -64,24 +69,24 @@ func TestImagePullRequestValidatorValidateCreate(t *testing.T) {
 		v := &imagePullRequestValidator{reader: c}
 
 		req := &v1alpha1.ImagePullRequest{}
-		req.Namespace = "rancher-desktop"
+		req.Namespace = k8sNamespace
 		req.Spec.Namespace = "missing"
 		req.Spec.RepoTag = "alpine:latest"
 
 		warnings, err := v.ValidateCreate(t.Context(), req)
 		assert.Assert(t, warnings == nil)
-		assert.ErrorContains(t, err, `spec.namespace "missing" does not refer to an existing ContainerNamespace in namespace "rancher-desktop"`)
+		assert.ErrorContains(t, err, fmt.Sprintf(`spec.namespace "missing" does not refer to an existing ContainerNamespace in namespace %q`, k8sNamespace))
 	})
 
 	t.Run("invalid when repo tag cannot be parsed", func(t *testing.T) {
 		containerNamespace := &v1alpha1.ContainerNamespace{}
 		containerNamespace.Name = "moby"
-		containerNamespace.Namespace = "rancher-desktop"
+		containerNamespace.Namespace = k8sNamespace
 		c := newImageWebhookTestClient(t, containerNamespace)
 		v := &imagePullRequestValidator{reader: c}
 
 		req := &v1alpha1.ImagePullRequest{}
-		req.Namespace = "rancher-desktop"
+		req.Namespace = k8sNamespace
 		req.Spec.Namespace = "moby"
 		req.Spec.RepoTag = "Invalid Repo Tag"
 
@@ -94,18 +99,18 @@ func TestImagePullRequestValidatorValidateCreate(t *testing.T) {
 func TestImagePullRequestValidatorValidateUpdate(t *testing.T) {
 	containerNamespace := &v1alpha1.ContainerNamespace{}
 	containerNamespace.Name = "moby"
-	containerNamespace.Namespace = "rancher-desktop"
+	containerNamespace.Namespace = k8sNamespace
 	c := newImageWebhookTestClient(t, containerNamespace)
 	v := &imagePullRequestValidator{reader: c}
 
 	t.Run("valid when spec.repoTag is unchanged", func(t *testing.T) {
 		oldReq := &v1alpha1.ImagePullRequest{}
-		oldReq.Namespace = "rancher-desktop"
+		oldReq.Namespace = k8sNamespace
 		oldReq.Spec.Namespace = "moby"
 		oldReq.Spec.RepoTag = "busybox:latest"
 
 		newReq := &v1alpha1.ImagePullRequest{}
-		newReq.Namespace = "rancher-desktop"
+		newReq.Namespace = k8sNamespace
 		newReq.Spec.Namespace = "moby"
 		newReq.Spec.RepoTag = "busybox:latest"
 
@@ -116,12 +121,12 @@ func TestImagePullRequestValidatorValidateUpdate(t *testing.T) {
 
 	t.Run("invalid when spec.repoTag changes", func(t *testing.T) {
 		oldReq := &v1alpha1.ImagePullRequest{}
-		oldReq.Namespace = "rancher-desktop"
+		oldReq.Namespace = k8sNamespace
 		oldReq.Spec.Namespace = "moby"
 		oldReq.Spec.RepoTag = "alpine:latest"
 
 		newReq := &v1alpha1.ImagePullRequest{}
-		newReq.Namespace = "rancher-desktop"
+		newReq.Namespace = k8sNamespace
 		newReq.Spec.Namespace = "moby"
 		newReq.Spec.RepoTag = "busybox:latest"
 
@@ -132,12 +137,12 @@ func TestImagePullRequestValidatorValidateUpdate(t *testing.T) {
 
 	t.Run("invalid when spec.namespace changes", func(t *testing.T) {
 		oldReq := &v1alpha1.ImagePullRequest{}
-		oldReq.Namespace = "rancher-desktop"
+		oldReq.Namespace = k8sNamespace
 		oldReq.Spec.Namespace = "moby"
 		oldReq.Spec.RepoTag = "busybox:latest"
 
 		newReq := &v1alpha1.ImagePullRequest{}
-		newReq.Namespace = "rancher-desktop"
+		newReq.Namespace = k8sNamespace
 		newReq.Spec.Namespace = "other"
 		newReq.Spec.RepoTag = "busybox:latest"
 
@@ -152,7 +157,7 @@ func TestImagePullRequestValidatorValidateDelete(t *testing.T) {
 	v := &imagePullRequestValidator{reader: c}
 
 	req := &v1alpha1.ImagePullRequest{}
-	req.Namespace = "rancher-desktop"
+	req.Namespace = k8sNamespace
 	req.Spec.Namespace = "moby"
 	req.Spec.RepoTag = "alpine:latest"
 

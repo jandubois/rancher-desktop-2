@@ -46,7 +46,6 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	var watcherDied bool
 	var previousEngine string
 	r.engineMu.Lock()
-	r.apiNamespace = app.GetResourceNamespace()
 	watcherRunning := r.engine != nil
 	switch {
 	case r.watcherEngine != "" && r.watcherEngine != engineName:
@@ -86,7 +85,7 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 		// on the requeue; the terminal branch retries its own sweep the
 		// same way.
 		if wantWatcher {
-			if err := r.cleanupMirrorResources(ctx, app.GetResourceNamespace()); err != nil {
+			if err := r.cleanupMirrorResources(ctx, appv1alpha1.AppNamespace); err != nil {
 				return ctrl.Result{}, err
 			}
 		}
@@ -117,7 +116,7 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 			current.Status == metav1.ConditionFalse &&
 			current.ObservedGeneration >= app.Generation
 		if !alreadyClean {
-			if err := r.cleanupMirrorResources(ctx, app.GetResourceNamespace()); err != nil {
+			if err := r.cleanupMirrorResources(ctx, appv1alpha1.AppNamespace); err != nil {
 				log.Error(err, "Failed to clean up mirror resources")
 				return ctrl.Result{}, err
 			}
@@ -170,10 +169,10 @@ func (r *EngineReconciler) reconcileWatcher(ctx context.Context, app *appv1alpha
 	// a single stuck container action: the next reconcile would hit
 	// the same broken container first and skip finalizers again.
 	var actionsErr, finErr error
-	if err := r.reconcileContainerActions(ctx, app.GetResourceNamespace()); err != nil {
+	if err := r.reconcileContainerActions(ctx, appv1alpha1.AppNamespace); err != nil {
 		actionsErr = fmt.Errorf("failed to reconcile container actions: %w", err)
 	}
-	if err := r.processFinalizers(ctx, app.GetResourceNamespace()); err != nil {
+	if err := r.processFinalizers(ctx, appv1alpha1.AppNamespace); err != nil {
 		finErr = fmt.Errorf("failed to process finalizers: %w", err)
 	}
 	return ctrl.Result{}, errors.Join(actionsErr, finErr)
@@ -207,7 +206,7 @@ func (r *EngineReconciler) startWatcherAndSync(_ context.Context, engineName str
 	}
 	switch engineName {
 	case engineMoby:
-		e, err := newDockerWatcher(r.watcherCtx, r.Client, r.apiNamespace, enqueueReconcile(r.reconcileAppChan))
+		e, err := newDockerWatcher(r.watcherCtx, r.Client, appv1alpha1.AppNamespace, enqueueReconcile(r.reconcileAppChan))
 		if err != nil {
 			return err
 		}
@@ -215,7 +214,7 @@ func (r *EngineReconciler) startWatcherAndSync(_ context.Context, engineName str
 		r.watcherEngine = engineName
 		r.manageDockerContext(instance.DockerEndpoint())
 	case engineContainerd:
-		e, err := newContainerdWatcher(r.watcherCtx, r.Client, r.apiNamespace, enqueueReconcile(r.reconcileAppChan))
+		e, err := newContainerdWatcher(r.watcherCtx, r.Client, appv1alpha1.AppNamespace, enqueueReconcile(r.reconcileAppChan))
 		if err != nil {
 			return err
 		}

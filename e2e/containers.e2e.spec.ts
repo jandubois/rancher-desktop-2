@@ -10,6 +10,7 @@ import { ContainersPage } from './pages/containers-page';
 import { NavPage } from './pages/nav-page';
 import { getRDDConfig, startSlowerDesktop, teardown, tool } from './utils/TestUtils';
 
+import { APP_NAMESPACE } from '@pkg/utils/rdd';
 import * as RDDClient from '@rdd-client';
 
 let page: Page;
@@ -20,7 +21,6 @@ test.describe('Containers', () => {
   let electronApp: ElectronApplication;
   let containersPage: ContainersPage;
   let client: RDDClient.ContainersRancherdesktopIoV1alpha1Api;
-  let namespace: string;
   let rddConfigCleanup = () => {};
 
   test.beforeAll(async({ colorScheme }, testInfo) => {
@@ -31,10 +31,6 @@ test.describe('Containers', () => {
 
     const navPage = new NavPage(page);
     await navPage.waitForAppSettled();
-
-    const apps = await rddConfig.makeApiClient(RDDClient.AppRancherdesktopIoV1alpha1Api)
-      .listApp();
-    namespace = apps.items[0].spec!.namespace!;
   });
 
   test.afterAll(async({ colorScheme }, testInfo) => {
@@ -279,18 +275,18 @@ test.describe('Containers', () => {
       const navPage = new NavPage(page);
       await navPage.navigateTo('Containers');
       await containersPage.waitForTableToLoad();
-      const containers = await client.listNamespacedContainer({ namespace });
+      const containers = await client.listNamespacedContainer({ namespace: APP_NAMESPACE });
       await expect(containersPage.containers).toHaveCount(containers.items.length);
       await expect(containersPage.getContainerRow(containerId)).toBeHidden();
 
       container = await client.createNamespacedContainer({
-        namespace,
+        namespace: APP_NAMESPACE,
         body:      {
           apiVersion: 'containers.rancherdesktop.io/v1alpha1',
           kind:       'Container',
           metadata:   {
-            name: containerId,
-            namespace,
+            name:      containerId,
+            namespace: APP_NAMESPACE,
           },
           spec:       {
             image: 'alpine',
@@ -301,7 +297,7 @@ test.describe('Containers', () => {
       expect(container).toHaveProperty('metadata.name', containerId);
       container = await client.patchNamespacedContainerStatus({
         name:      containerId,
-        namespace,
+        namespace: APP_NAMESPACE,
         body:      {
           status: {
             id:        containerId,
@@ -314,7 +310,7 @@ test.describe('Containers', () => {
       }, RDDClient.setHeaderOptions(
         'Content-Type', RDDClient.PatchStrategy.MergePatch));
 
-      await expect(client.listNamespacedContainer({ namespace })).resolves.toEqual(
+      await expect(client.listNamespacedContainer({ namespace: APP_NAMESPACE })).resolves.toEqual(
         expect.objectContaining({
           items: expect.arrayContaining([
             expect.objectContaining({
@@ -328,8 +324,8 @@ test.describe('Containers', () => {
       await expect(containersPage.getContainerRow(containerId)).toBeVisible();
 
       await client.deleteNamespacedContainer({
-        namespace,
-        name: containerId,
+        namespace: APP_NAMESPACE,
+        name:      containerId,
       });
 
       await expect(containersPage.getContainerRow(containerId)).toBeHidden();
@@ -337,8 +333,8 @@ test.describe('Containers', () => {
       if (container) {
         try {
           await client.deleteNamespacedContainer({
-            namespace,
-            name: containerId,
+            namespace: APP_NAMESPACE,
+            name:      containerId,
           });
         } catch {}
       }

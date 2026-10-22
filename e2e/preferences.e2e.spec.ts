@@ -10,6 +10,8 @@ import { KubernetesNav } from './pages/preferences/kubernetes';
 import { VirtualMachineNav } from './pages/preferences/virtualMachine';
 import { rdd, startRancherDesktop, teardown } from './utils/TestUtils';
 
+import { APP_NAMESPACE } from '@pkg/utils/rdd';
+
 import type { ElectronApplication } from '@playwright/test';
 
 let mainNav: NavPage;
@@ -260,12 +262,11 @@ test.describe('Preferences Dialog', () => {
       await expect(options).toContainText(['stable']);
       await expect(options).toContainText(['latest']);
 
-      const namespace = await rdd('ctl', 'get', 'app/app', '--output=jsonpath={.spec.namespace}');
       const versionsText = await rdd('ctl', 'get', 'configmap/k3s-versions',
-        `--namespace=${ namespace }`, '--output=jsonpath={.data.versions}');
+        `--namespace=${ APP_NAMESPACE }`, '--output=jsonpath={.data.versions}');
       const versionMap: Record<string, string> = JSON.parse(versionsText);
       const channelsText = await rdd('ctl', 'get', 'configmap/k3s-versions',
-        `--namespace=${ namespace }`, '--output=jsonpath={.data.channels}');
+        `--namespace=${ APP_NAMESPACE }`, '--output=jsonpath={.data.channels}');
       const channelsMap: Record<string, string> = JSON.parse(channelsText);
       const versions = Object.keys(versionMap).sort((a, b) => {
         return semver.compare(b, a); // Newest first.

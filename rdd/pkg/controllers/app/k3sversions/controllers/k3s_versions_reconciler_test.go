@@ -71,13 +71,9 @@ func setLogger(t *testing.T) context.Context {
 
 func TestK3sVersionsReconciler(t *testing.T) {
 	const appName = "app-name"
-	const targetNamespace = "target-namespace"
 	app := &v1alpha1.App{
 		// Apps are not namespaced
 		Name: appName,
-		Spec: v1alpha1.AppSpec{
-			Namespace: targetNamespace,
-		},
 	}
 
 	// Create a new request to reconcile the app.
@@ -89,7 +85,7 @@ func TestK3sVersionsReconciler(t *testing.T) {
 	// Create a new object meta for the config map.
 	newObjectMeta := func() metav1.ObjectMeta {
 		return metav1.ObjectMeta{
-			Namespace: targetNamespace,
+			Namespace: v1alpha1.AppNamespace,
 			Name:      k3sVersionsConfigMapName,
 			OwnerReferences: []metav1.OwnerReference{
 				{
@@ -118,7 +114,7 @@ func TestK3sVersionsReconciler(t *testing.T) {
 			assert.NilError(t, err)
 
 			cm := &v1.ConfigMap{}
-			err = cc.GetByName(ctx, targetNamespace, k3sVersionsConfigMapName, cm)
+			err = cc.GetByName(ctx, v1alpha1.AppNamespace, k3sVersionsConfigMapName, cm)
 			assert.NilError(t, err, "expected configmap to exist after reconcile")
 			assert.DeepEqual(t, cm.Data, data)
 		})
@@ -149,7 +145,7 @@ func TestK3sVersionsReconciler(t *testing.T) {
 			assert.NilError(t, err)
 
 			cm := &v1.ConfigMap{}
-			err = cc.GetByName(ctx, targetNamespace, k3sVersionsConfigMapName, cm)
+			err = cc.GetByName(ctx, v1alpha1.AppNamespace, k3sVersionsConfigMapName, cm)
 			assert.NilError(t, err, "expected configmap to exist after reconcile")
 			assert.DeepEqual(t, cm.Data, data)
 		})
@@ -179,7 +175,7 @@ func TestK3sVersionsReconciler(t *testing.T) {
 			assert.Equal(t, cc.createCalls, 0, "expected 0 create calls")
 
 			cm := &v1.ConfigMap{}
-			err = cc.GetByName(ctx, targetNamespace, k3sVersionsConfigMapName, cm)
+			err = cc.GetByName(ctx, v1alpha1.AppNamespace, k3sVersionsConfigMapName, cm)
 			assert.NilError(t, err, "expected configmap to exist after reconcile")
 			assert.Equal(t, cm.Labels["extra"], "label")
 			for k, v := range desiredLabels {
