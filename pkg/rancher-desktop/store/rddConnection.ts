@@ -8,6 +8,7 @@ import type { RootState } from '@pkg/entry/store';
 import { ActionContext, ActionTree, Commit, MutationsType } from '@pkg/store/ts-helpers';
 import ipcRenderer from '@pkg/utils/ipcRenderer';
 import Latch from '@pkg/utils/latch';
+import { APP_NAMESPACE } from '@pkg/utils/rdd';
 import { UnionToIntersection, UpperSnakeCase } from '@pkg/utils/typeUtils';
 import * as RDDClient from '@rdd-client';
 
@@ -16,13 +17,9 @@ import * as RDDClient from '@rdd-client';
  */
 export interface RDDConnectionState {
   /** config is the Kubernetes configuration to use. */
-  config:              RDDClient.KubeConfig;
-  error:               any;
-  watch:               RDDClient.Watch;
-  /** A mapping of module name to the names of resources set up for watching. */
-  namespacedResources: Record<string, Set<string>>;
-  /** Kubernetes namespace RDD objects live in; must not be empty. */
-  namespace:           string;
+  config: RDDClient.KubeConfig;
+  error:  any;
+  watch:  RDDClient.Watch;
 };
 
 /** Vuex state for managing the RDD connection. */
@@ -30,10 +27,8 @@ export const state: () => RDDConnectionState = () => {
   const config = new RDDClient.KubeConfig();
   return {
     config,
-    error:               undefined,
-    watch:               markRaw(new RDDClient.Watch(config)),
-    namespacedResources: {},
-    namespace:           'default',
+    error: undefined,
+    watch: markRaw(new RDDClient.Watch(config)),
   };
 };
 
@@ -45,18 +40,6 @@ export const mutations = {
   },
   SET_ERROR(state, error) {
     state.error = error ? markRaw(error) : error;
-  },
-  SET_NAMESPACE(state, namespace) {
-    state.namespace = namespace;
-  },
-  /**
-   * Mark a namespaced resource as being watched; this is used to track
-   * re-watching resources on connect and when the Kubernetes namespace changes.
-   * @param moduleName the name of the Vuex module.
-   */
-  addNamespacedResource(state, [module, resource]: [string, string]) {
-    state.namespacedResources[module] ??= new Set();
-    state.namespacedResources[module].add(resource);
   },
 } satisfies MutationsType<RDDConnectionState> & MutationTree<RDDConnectionState>;
 
@@ -104,28 +87,6 @@ export const plugins: Plugin<RootState>[] = [
     store.dispatch('rdd-connection/fetchConfig').catch(ex => {
       console.error(ex);
     });
-  },
-  /** Vuex plugin to re-watch resources on Kubernetes namespace change. */
-  function(store) {
-    let currentNamespace = store.state['rdd-connection'].namespace;
-    store.watch(
-      (state) => state['rdd-connection'].namespace,
-      (newNamespace) => {
-        if (newNamespace && newNamespace !== currentNamespace) {
-          currentNamespace = newNamespace;
-
-          const { namespacedResources } = store.state['rdd-connection'];
-          for (const [module, resources] of Object.entries(namespacedResources)) {
-            if (resources.size) {
-              store.dispatch(`${ module }/rewatchResources`, Array.from(resources))
-                .catch(error => {
-                  console.error(`Failed to rewatch resources for module ${ module }:`, error);
-                });
-            }
-          }
-        }
-      },
-    );
   },
 ];
 
@@ -178,11 +139,6 @@ interface ResourceTypeLike {
    * By default, the client's `list[Namespaced]<Type>` function is used.
    */
   list?:          (client: any, options: ListResourceOptions<any>) => Promise<RDDClient.KubernetesListObject<any>>;
-  /**
-   * Indicates that the resource needs to be re-watched when the Kubernetes namespace changes.
-   * This is only needed if `list` is given.
-   */
-  namespaced?:    boolean;
 }
 
 /**
@@ -212,7 +168,6 @@ interface ResourceType<C, StateName extends string, TypeName extends string> ext
   fieldSelector?: (context: any) => string | undefined;
   makeClient:     (config: RDDClient.KubeConfig) => C,
   list?:          (client: C, options: ListResourceOptions<ResourceStateItem<StateName, ItemType<C, TypeName>>>) => Promise<RDDClient.KubernetesListObject<ItemType<C, TypeName>>>;
-  namespaced?:    boolean;
 }
 
 /**
@@ -383,12 +338,8 @@ ResourceWatchActionsReturn<T> {
           const listFn: (client: any, options: ListResourceOptions<typeof state>) => any = (() => {
             const type = r.type ?? r.name.replace(/s$/, '').replace(/^./, s => s.toUpperCase());
             if (r.list) {
-              if (r.namespaced) {
-                commit('rdd-connection/addNamespacedResource', [module, r.name], { root: true });
-              }
               return r.list;
             } else if (`listNamespaced${ type }` in client) {
-              commit('rdd-connection/addNamespacedResource', [module, r.name], { root: true });
               return (client, options) => {
                 return client[`listNamespaced${ type }`]({
                   namespace:     options.namespace,
@@ -409,11 +360,11 @@ ResourceWatchActionsReturn<T> {
           })();
           const watcher = new Watcher(
             r.name,
-            () => r.path(rootState['rdd-connection'].namespace),
+            () => r.path(APP_NAMESPACE),
             async() => { // listFn
               // If this throws, the `doneFn` callback gets called with the exception.
               const listOptions: ListResourceOptions<any> = {
-                namespace:       rootState['rdd-connection'].namespace,
+                namespace:       APP_NAMESPACE,
                 state,
                 connectionState: rddState,
                 fieldSelector:   r.fieldSelector?.(actionContext),
