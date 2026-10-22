@@ -30,9 +30,10 @@ func newPluginTestReconciler(t *testing.T) (r *PathManagementReconciler, configF
 	t.Setenv("DOCKER_CONFIG", dockerDir)
 
 	r = &PathManagementReconciler{
-		BinDir:    filepath.Join(home, ".rd2", "bin"),
-		PluginDir: filepath.Join(home, ".rd2", "docker-cli-plugins"),
-		Suffix:    "2",
+		BinDir:              filepath.Join(home, ".rd2", "bin"),
+		PluginDir:           filepath.Join(home, ".rd2", "docker-cli-plugins"),
+		DockerPluginsMarker: filepath.Join(home, ".rd2", ".docker-plugins-managed"),
+		Suffix:              "2",
 	}
 	return r, filepath.Join(dockerDir, "config.json")
 }

@@ -20,25 +20,18 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerconfig"
 )
 
-// dockerPluginsMarkerName marks, in the instance directory, that rdd added its
-// plugin directory to config.json's cliPluginsExtraDirs. config.json's array has
-// no fence, so under manual we consult this marker to remove only an entry we
-// added, mirroring the Windows Path marker.
-const dockerPluginsMarkerName = ".docker-plugins-managed"
-
-func (r *PathManagementReconciler) dockerPluginsMarkerPath() string {
-	return filepath.Join(filepath.Dir(r.BinDir), dockerPluginsMarkerName)
-}
-
+// dockerPluginsMarkerExists reports whether the docker plugins marker is
+// present. config.json's array has no fence, so under manual we consult the
+// marker to remove only an entry we added, mirroring the Windows Path marker.
 func (r *PathManagementReconciler) dockerPluginsMarkerExists() bool {
-	_, err := os.Stat(r.dockerPluginsMarkerPath())
+	_, err := os.Stat(r.DockerPluginsMarker)
 	return err == nil
 }
 
 func (r *PathManagementReconciler) writeDockerPluginsMarker() error {
-	marker := r.dockerPluginsMarkerPath()
+	marker := r.DockerPluginsMarker
 	if err := os.MkdirAll(filepath.Dir(marker), 0o755); err != nil {
-		return fmt.Errorf("create instance directory: %w", err)
+		return fmt.Errorf("create docker plugins marker directory: %w", err)
 	}
 	if err := os.WriteFile(marker, nil, 0o644); err != nil {
 		return fmt.Errorf("write docker plugins marker %q: %w", marker, err)
@@ -47,7 +40,7 @@ func (r *PathManagementReconciler) writeDockerPluginsMarker() error {
 }
 
 func (r *PathManagementReconciler) removeDockerPluginsMarker() error {
-	if err := os.Remove(r.dockerPluginsMarkerPath()); err != nil && !errors.Is(err, os.ErrNotExist) {
+	if err := os.Remove(r.DockerPluginsMarker); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return fmt.Errorf("remove docker plugins marker: %w", err)
 	}
 	return nil

@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/gofrs/flock"
@@ -31,6 +30,7 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/predicates"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerconfig"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/managedlines"
 )
 
@@ -72,10 +72,16 @@ type PathManagementReconciler struct {
 
 	// BinDir is the directory to add to PATH (e.g. ~/.rd2/bin).
 	BinDir string
+	// PathMarker is the file that records that rdd added BinDir to the Windows
+	// user Path (e.g. ~/.rd2/.path-managed).
+	PathMarker string
 	// PluginDir is the instance's docker CLI plugins directory
 	// (e.g. ~/.rd2/docker-cli-plugins), registered in config.json's
 	// cliPluginsExtraDirs so `docker` finds the bundled plugins.
 	PluginDir string
+	// DockerPluginsMarker is the file that records that rdd added PluginDir to
+	// config.json's cliPluginsExtraDirs (e.g. ~/.rd2/.docker-plugins-managed).
+	DockerPluginsMarker string
 	// Suffix is the instance suffix (e.g. "2"). It goes into the fence markers so
 	// separate instances (and Rancher Desktop 1) don't touch each other's blocks.
 	Suffix string
@@ -255,7 +261,7 @@ func permanentPathError(err error) bool {
 // releases it. It blocks up to pathManagementLockTimeout; a stuck holder surfaces
 // as an error so the reconcile requeues rather than hanging.
 func acquirePathLock(ctx context.Context) (func(), error) {
-	dir, err := sharedDataDir()
+	dir, err := instance.SharedDataDir()
 	if err != nil {
 		return nil, fmt.Errorf("locate PATH lock directory: %w", err)
 	}
@@ -274,28 +280,6 @@ func acquirePathLock(ctx context.Context) (func(), error) {
 		return nil, fmt.Errorf("acquire PATH lock: timed out after %s", pathManagementLockTimeout)
 	}
 	return func() { _ = fl.Unlock() }, nil
-}
-
-// sharedDataDir returns the per-user data root that every instance shares (the
-// parent of instance.Dir()). The PATH lock lives here rather than under a single
-// instance's directory, so all of a user's daemons serialize on the same file.
-// It mirrors instance.Dir()'s layout but drops the instance-specific leaf, and
-// avoids instance.Dir()'s memoization so it tracks HOME in tests.
-func sharedDataDir() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	switch runtime.GOOS {
-	case "windows":
-		return filepath.Join(home, "AppData", "Local"), nil
-	case "linux":
-		return filepath.Join(home, ".local", "share"), nil
-	case "darwin":
-		return filepath.Join(home, "Library", "Application Support"), nil
-	default:
-		return "", fmt.Errorf("platform %s not supported", runtime.GOOS)
-	}
 }
 
 // SetupWithManager wires the reconciler to the App singleton.
