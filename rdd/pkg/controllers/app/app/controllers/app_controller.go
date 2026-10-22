@@ -242,7 +242,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 	if base.IsBeingDeleted(&app) {
 		log.Info("App resource is being deleted, performing cleanup")
 
-		namespace := app.GetResourceNamespace()
+		namespace := v1alpha1.AppNamespace
 
 		// Delete the LimaVM and wait for it to finish cleaning up.
 		limaVM := &limav1alpha1.LimaVM{}
@@ -302,7 +302,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 		return ctrl.Result{}, nil
 	}
 
-	namespace := app.GetResourceNamespace()
+	namespace := v1alpha1.AppNamespace
 
 	// Create the namespace if it does not exist.
 	ns := &corev1.Namespace{}

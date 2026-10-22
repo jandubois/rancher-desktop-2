@@ -26,7 +26,7 @@ func newValidComposeUpRequest(namespace, name, kubename, tempDir string) *v1alph
 	return &v1alpha1.ComposeUpRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      kubename,
-			Namespace: "rancher-desktop",
+			Namespace: k8sNamespace,
 		},
 		Spec: v1alpha1.ComposeUpRequestSpec{
 			Namespace:  namespace,
@@ -47,7 +47,7 @@ func TestComposeUpRequestValidator_ValidateCreate(t *testing.T) {
 		WithObjects(&v1alpha1.ContainerNamespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "moby",
-				Namespace: "rancher-desktop",
+				Namespace: k8sNamespace,
 			},
 		}).
 		Build()
@@ -87,7 +87,7 @@ func TestComposeUpRequestValidator_ValidateUpdate(t *testing.T) {
 	cl := fake.NewClientBuilder().WithScheme(scheme).WithObjects(&v1alpha1.ContainerNamespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "moby",
-			Namespace: "rancher-desktop",
+			Namespace: k8sNamespace,
 		},
 	}).Build()
 	v := &composeUpRequestValidator{Reader: cl}

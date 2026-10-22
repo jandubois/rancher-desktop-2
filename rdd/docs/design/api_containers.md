@@ -150,8 +150,8 @@ status:
   labels: {}
 ```
 
-- **metadata.namespace**: the Kubernetes namespace; this must be the same value
-  as the [App](api_app.md#app-object) resources's `spec.namespace` field.
+- **metadata.namespace**: the Kubernetes namespace; this must be the
+  [App namespace](api_app.md#singleton), `rancher-desktop`.
 - **metadata.name**: This is the container namespace name, encoded using the
   [algorithm above](#name-encoding) using the prefix `cns-`.
 - **status.name**: The container namespace.
@@ -212,8 +212,8 @@ status:
     completedAt: "2026-04-15T10:30:00Z"
 ```
 
-- **metadata.namespace**: the Kubernetes namespace; this must be the same value
-  as the [App](api_app.md#app-object) resources's `spec.namespace` field.
+- **metadata.namespace**: the Kubernetes namespace; this must be the
+  [App namespace](api_app.md#singleton), `rancher-desktop`.
 - **metadata.name**: The container ID, in lower case hexidecimal.  This should
   always be a valid Kubernetes object name.  In case this is not, this is
   encoded using [the algorithm above](#name-encoding) using `ctr-` as the prefix,
@@ -304,8 +304,8 @@ status:
     status: False
 ```
 
-- **metadata.namespace**: the Kubernetes namespace; this must be the same value
-  as the [App](api_app.md#app-object) resources's `spec.namespace` field.
+- **metadata.namespace**: the Kubernetes namespace; this must be the
+  [App namespace](api_app.md#singleton), `rancher-desktop`.
 - **metadata.name**: No restrictions on the name; clients may use the
   `generateName` functionality if desired.
 - **spec.name**: The desired container name; if unset, a random container name
@@ -440,8 +440,8 @@ status:
   conditions: []
 ```
 
-- **metadata.namespace**: the Kubernetes namespace; this must be the same value
-  as the [App](api_app.md#app-object) resources's `spec.namespace` field.
+- **metadata.namespace**: the Kubernetes namespace; this must be the
+  [App namespace](api_app.md#singleton), `rancher-desktop`.
 - **metadata.name**: A name encoded using the [algorithm above](#name-encoding),
   using `img-` as the prefix.  The data differs between container engines:
   - When using docker, the input is the image id (`status.id`) followed by the
@@ -619,8 +619,8 @@ status:
   options: {}
 ```
 
-- **metadata.namespace**: the Kubernetes namespace; this must be the same value
-  as the [App](api_app.md#app-object) resources's `spec.namespace` field.
+- **metadata.namespace**: the Kubernetes namespace; this must be the
+  [App namespace](api_app.md#singleton), `rancher-desktop`.
 - **metadata.name**: The original Docker/containerd volume name, encoded using
   the [algorithm above](#name-encoding), with the prefix `vol-`.
 - **status.namespace**: The containerd namespace; same as the `status.name` of a

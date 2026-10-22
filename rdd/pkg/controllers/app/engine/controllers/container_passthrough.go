@@ -24,6 +24,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/validation"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 )
 
@@ -75,11 +76,8 @@ func (r *EngineReconciler) HandleLogs(w http.ResponseWriter, req *http.Request) 
 	log.V(5).Info("Handling logs for container", "containerID", containerID)
 
 	var c containersv1alpha1.Container
-	r.engineMu.Lock()
-	namespace := r.apiNamespace
-	r.engineMu.Unlock()
 	err := r.Client.Get(req.Context(), types.NamespacedName{
-		Namespace: namespace,
+		Namespace: appv1alpha1.AppNamespace,
 		Name:      containerID,
 	}, &c)
 	if err != nil {

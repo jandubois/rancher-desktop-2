@@ -23,6 +23,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
 )
@@ -64,7 +65,7 @@ func (r *containerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if namespace == "" {
 			namespace = containerNamespace
 		}
-		applyConfig := containersv1alpha1apply.Container(inspect.ID, apiNamespace).
+		applyConfig := containersv1alpha1apply.Container(inspect.ID, appv1alpha1.AppNamespace).
 			WithOwnerReferences(ownerReference)
 
 		err := r.Client.Apply(ctx, applyConfig, client.ForceOwnership, client.FieldOwner(controllerLongName))
@@ -94,7 +95,7 @@ func (r *containerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 				WithBindings(bindings...))
 		}
 		applyStatus.WithPorts(applyPorts...)
-		applyConfig = containersv1alpha1apply.Container(inspect.ID, apiNamespace).
+		applyConfig = containersv1alpha1apply.Container(inspect.ID, appv1alpha1.AppNamespace).
 			WithStatus(applyStatus)
 
 		err = r.Client.SubResource("status").Apply(ctx, applyConfig, client.ForceOwnership, client.FieldOwner(controllerLongName))

@@ -137,13 +137,8 @@ type EngineReconciler struct {
 	// reconcileImagePullRequestChan triggers when the engine is connected.
 	reconcileImagePullRequestChan chan event.GenericEvent
 
-	// apiNamespace mirrors App.spec.namespace (immutable). Reconcile
-	// populates it before any mirror operation.  Must be accessed while holding
-	// engineMu.
-	apiNamespace string
-
-	// engineMu guards r.engine, r.watcherEngine and r.apiNamespace; note that
-	// this may be held for a long time during initialization.
+	// engineMu guards r.engine and r.watcherEngine; note that this may be
+	// held for a long time during initialization.
 	engineMu sync.Mutex
 	engine   engine
 	// watcherEngine is the App.spec.containerEngine.name the current

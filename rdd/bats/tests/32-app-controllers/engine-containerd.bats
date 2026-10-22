@@ -14,11 +14,8 @@ VM_NAME="rd"
 local_setup_file() {
     rdd svc delete
     rdd set containerEngine.name=containerd running=true
-    # Mirror resources live in App.spec.namespace. Override RDD_NAMESPACE
-    # to whatever the App was created with so the test queries the same
-    # namespace the engine controller uses, regardless of CRD defaults.
-    run -0 rdd ctl get app app -o jsonpath='{.spec.namespace}'
-    RDD_NAMESPACE=${output}
+    # The resources under test are in the App namespace.
+    RDD_NAMESPACE=${RDD_APP_NAMESPACE}
     export RDD_NAMESPACE
 }
 

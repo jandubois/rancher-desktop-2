@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 )
 
@@ -100,7 +101,7 @@ func TestEngineImagePullRequestReconcileEngineNotReady(t *testing.T) {
 	result, err := r.reconcileImagePullRequest(t.Context(), engineRequest{
 		Kind: containersv1alpha1.ImagePullRequestKind,
 		NamespacedName: types.NamespacedName{
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			Name:      "pull-request",
 		},
 		UID: types.UID("pull-request-uid"),
@@ -117,7 +118,7 @@ func TestEngineImagePullRequestReconcileUIDMismatchCancelsExistingState(t *testi
 	liveReq := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("different-uid"),
 		},
 	}
@@ -133,7 +134,7 @@ func TestEngineImagePullRequestReconcileUIDMismatchCancelsExistingState(t *testi
 	result, err := r.reconcileImagePullRequest(t.Context(), engineRequest{
 		Kind: containersv1alpha1.ImagePullRequestKind,
 		NamespacedName: types.NamespacedName{
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			Name:      "pull-request",
 		},
 		UID: reqUID,
@@ -151,7 +152,7 @@ func TestEngineImagePullRequestReconcileBulkProcessesPendingRequests(t *testing.
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -169,7 +170,7 @@ func TestEngineImagePullRequestReconcileBulkProcessesPendingRequests(t *testing.
 	result, err := r.reconcileImagePullRequest(t.Context(), engineRequest{
 		Kind: containersv1alpha1.ImagePullRequestKind,
 		NamespacedName: types.NamespacedName{
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 		},
 	})
 	assert.NilError(t, err)
@@ -192,7 +193,7 @@ func TestEngineImagePullRequestReconcileTerminalReasonSuccess(t *testing.T) {
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 	}
@@ -223,7 +224,7 @@ func TestEngineImagePullRequestReconcileTerminalReasonFailure(t *testing.T) {
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 		Status: containersv1alpha1.ImagePullRequestStatus{
@@ -272,7 +273,7 @@ func TestEngineImagePullRequestReconcileDeletedRequestCancelsPull(t *testing.T) 
 	result, err := r.reconcileImagePullRequest(t.Context(), engineRequest{
 		Kind: containersv1alpha1.ImagePullRequestKind,
 		NamespacedName: types.NamespacedName{
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			Name:      "pull-request",
 		},
 		UID: reqUID,
@@ -292,7 +293,7 @@ func TestEngineImagePullRequestReconcileSinglePullingTimeoutQueuesTerminalReason
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       reqUID,
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -327,7 +328,7 @@ func TestEngineImagePullRequestReconcileSinglePullingRequeuesHalfTimeout(t *test
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       reqUID,
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -364,7 +365,7 @@ func TestEngineImagePullRequestReconcileSinglePullingUntrackedClearsStatus(t *te
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       reqUID,
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -400,7 +401,7 @@ func TestEngineImagePullRequestReconcileSingleQueuedTerminalReason(t *testing.T)
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 	}
@@ -432,7 +433,7 @@ func TestEngineImagePullRequestReconcileSingleImmediatePullError(t *testing.T) {
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -461,7 +462,7 @@ func TestEngineImagePullRequestReconcileSingleProgressCallbackUpdatesStatus(t *t
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 		Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -531,7 +532,7 @@ func TestEngineImagePullRequestReconcileSingleCompleteReasonMapping(t *testing.T
 			req := &containersv1alpha1.ImagePullRequest{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "pull-request",
-					Namespace: "rancher-desktop",
+					Namespace: appv1alpha1.AppNamespace,
 					UID:       types.UID("pull-request-uid"),
 				},
 				Spec: containersv1alpha1.ImagePullRequestSpec{
@@ -577,7 +578,7 @@ func TestSetImagePullRequestTerminalReasonCancelsExistingPull(t *testing.T) {
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 	}
@@ -603,7 +604,7 @@ func TestEngineImagePullRequestReconcileTerminalReasonNoDesiredNoop(t *testing.T
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			UID:       types.UID("pull-request-uid"),
 		},
 	}
@@ -625,7 +626,7 @@ func TestEngineImagePullRequestReconcileTerminalDeletesOwnerlessAfterTimer(t *te
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 		},
 	}
 	c := newEngineImagePullReconcilerTestClient(t, req)
@@ -648,7 +649,7 @@ func TestEngineImagePullRequestReconcileTerminalOwnedNoDelete(t *testing.T) {
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			OwnerReferences: []metav1.OwnerReference{
 				{UID: types.UID("owner-uid")},
 			},
@@ -673,7 +674,7 @@ func TestEngineImagePullRequestReconcileTerminalRequeuesBeforeTimerEvenIfOwned(t
 	req := &containersv1alpha1.ImagePullRequest{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "pull-request",
-			Namespace: "rancher-desktop",
+			Namespace: appv1alpha1.AppNamespace,
 			OwnerReferences: []metav1.OwnerReference{
 				{UID: types.UID("owner-uid")},
 			},

@@ -57,21 +57,12 @@ func (r *K3sVersionsReconciler) Reconcile(ctx context.Context, req reconcile.Req
 		}
 		logger.V(1).Info("app not found; it may have been deleted", "namespace", req.Namespace, "name", req.Name)
 		// The k3s versions config map is owned by the app, and the app reconciler
-		// is responsible for deleting its owned resources.  Without the app, we do
-		// not know which namespace in which to look for the config map anyway, so
-		// there is nothing we can do here.
-		return reconcile.Result{}, nil
-	}
-
-	if app.Spec.Namespace == "" {
-		// The app doesn't have a namespace yet; the app reconciler should deal with
-		// it before we create the config map.
-		logger.V(1).Info("app does not have a namespace yet", "namespace", req.Namespace, "name", req.Name)
+		// is responsible for deleting its owned resources.
 		return reconcile.Result{}, nil
 	}
 
 	cm := v1.ConfigMap{
-		Namespace: app.Spec.Namespace,
+		Namespace: v1alpha1.AppNamespace,
 		Name:      k3sVersionsConfigMapName,
 	}
 

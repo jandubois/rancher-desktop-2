@@ -21,6 +21,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	containersv1alpha1apply "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1/applyconfiguration/containers/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
@@ -54,7 +55,7 @@ func (r *containerNamespaceReconciler) Reconcile(ctx context.Context, req ctrl.R
 
 	var errs []error
 	for namespace := range namespaces {
-		applyConfig := containersv1alpha1apply.ContainerNamespace(api.MirrorName[*containersv1alpha1.ContainerNamespace](namespace), apiNamespace).
+		applyConfig := containersv1alpha1apply.ContainerNamespace(api.MirrorName[*containersv1alpha1.ContainerNamespace](namespace), appv1alpha1.AppNamespace).
 			WithOwnerReferences(metav1apply.OwnerReference().
 				WithAPIVersion(gvk.GroupVersion().String()).
 				WithKind(gvk.Kind).

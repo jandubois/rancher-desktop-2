@@ -43,8 +43,8 @@ status:
     message: Extension is ready for use
 ```
 
-- **metadata.namespace**: the Kubernetes namespace; this must be the same value
-  as the [App](api_app.md#app-object) resources's `spec.namespace` field.
+- **metadata.namespace**: the Kubernetes namespace; this must be the
+  [App namespace](api_app.md#singleton), `rancher-desktop`.
 - **metadata.name**: The name of the extension; this is free-form.
 
 - **spec.image**: Required; the image of the extension.  The image reference

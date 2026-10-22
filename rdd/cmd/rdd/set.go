@@ -668,8 +668,6 @@ func fetchSpecSchema(ctx context.Context, config *rest.Config) (*apiextensionsv1
 		if !ok {
 			return nil, fmt.Errorf("app CRD version %s has no spec field in schema", v.Name)
 		}
-		// namespace is immutable after creation and not settable via "rdd set".
-		delete(spec.Properties, "namespace")
 		return &spec, nil
 	}
 	return nil, errors.New("app CRD has no storage version")

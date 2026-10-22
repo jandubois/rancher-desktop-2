@@ -97,6 +97,13 @@ func newReconciler(t *testing.T, objs ...client.Object) (*reconciler, *spyingCli
 	return &reconciler{Client: fakeClient}, fakeClient
 }
 
+const (
+	// k8sNamespace differs from the App's namespace, so a test fails if a
+	// controller hard-codes the App's namespace instead of using the object's.
+	k8sNamespace    = "test-namespace"
+	dockerNamespace = "moby"
+)
+
 // newContainer builds a Container mirror with the given k8s namespace/name,
 // docker-context namespace (status.namespace), and docker labels. The UID is
 // derived from name, so it's stable and unique per test resource.
@@ -126,9 +133,6 @@ func reconcileKind(r *reconciler, kind string, key types.NamespacedName, uid typ
 // reconcileContainer, keyed off the com.docker.compose.project* labels.
 func TestReconcileContainer(t *testing.T) {
 	t.Parallel()
-
-	const k8sNamespace = "rancher-desktop"
-	const dockerNamespace = "moby"
 
 	keyFromProjectName := func(projectName string) client.ObjectKey {
 		return types.NamespacedName{
@@ -344,7 +348,7 @@ func TestReconcile_dispatch(t *testing.T) {
 		r, _ := newReconciler(t)
 		result, err := r.Reconcile(t.Context(), composeRequest{
 			Kind:      "SomeUnknownKind",
-			Namespace: "rancher-desktop",
+			Namespace: k8sNamespace,
 			Name:      "whatever",
 		})
 		assert.NilError(t, err)
@@ -356,7 +360,7 @@ func TestReconcile_dispatch(t *testing.T) {
 		r, fakeClient := newReconciler(t)
 		result, err := r.Reconcile(t.Context(), composeRequest{
 			Kind:      v1alpha1.ComposeProjectKind,
-			Namespace: "rancher-desktop",
+			Namespace: k8sNamespace,
 			Name:      "whatever",
 		})
 		assert.NilError(t, err)
@@ -367,7 +371,7 @@ func TestReconcile_dispatch(t *testing.T) {
 
 	t.Run("dispatches ContainerKind to reconcileContainer", func(t *testing.T) {
 		t.Parallel()
-		container := newContainer("rancher-desktop", "c1", "moby", map[string]string{
+		container := newContainer(k8sNamespace, "c1", dockerNamespace, map[string]string{
 			composeProjectLabel:    "myproject",
 			composeConfigHashLabel: "somehash",
 		})

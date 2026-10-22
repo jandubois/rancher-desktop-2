@@ -34,7 +34,6 @@ kind: App
 metadata:
   name: ${APP_NAME}
 spec:
-  namespace: ${RDD_NAMESPACE}
   running: ${running}
 EOF
 }
@@ -58,7 +57,7 @@ local_setup_file() {
 
 @test "wait for LimaVM to be created" {
     rdd ctl wait --for=create limavm/"${VM_NAME}" \
-        --namespace "${RDD_NAMESPACE}" --timeout=60s
+        --namespace "${RDD_APP_NAMESPACE}" --timeout=60s
 }
 
 @test "verify App and LimaVM are in the 'all' category" {
@@ -68,29 +67,29 @@ local_setup_file() {
 }
 
 @test "verify 'get all' returns the LimaVM instance" {
-    run -0 rdd ctl get all --namespace "${RDD_NAMESPACE}" --output=name
+    run -0 rdd ctl get all --namespace "${RDD_APP_NAMESPACE}" --output=name
     assert_line "limavm.lima.rancherdesktop.io/${VM_NAME}"
 }
 
 @test "verify LimaVM is named rd" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" -o name
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" -o name
     assert_output "limavm.lima.rancherdesktop.io/${VM_NAME}"
 }
 
 @test "verify LimaVM has owned finalizer set by App controller" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" \
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" \
         -o jsonpath='{.metadata.finalizers}'
     assert_output --partial "rdd.rancherdesktop.io/owned-by-App"
 }
 
 @test "verify LimaVM has cleanup finalizer set by LimaVM webhook" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" \
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" \
         -o jsonpath='{.metadata.finalizers}'
     assert_output --partial "rdd.rancherdesktop.io/cleanup"
 }
 
 @test "verify LimaVM has owner reference pointing to App" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" -o json
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" -o json
     json="${output}"
 
     run -0 jq_raw '.metadata.ownerReferences[0].kind' "${json}"
@@ -104,37 +103,37 @@ local_setup_file() {
 }
 
 @test "verify LimaVM templateRef points to input ConfigMap" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" \
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" \
         -o jsonpath='{.spec.templateRef.name}'
     assert_output "${INPUT_CM_NAME}"
 }
 
 @test "verify LimaVM spec.running starts as false" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" \
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" \
         -o jsonpath='{.spec.running}'
     assert_output "false"
 }
 
 @test "wait for LimaVM webhook to copy template into rd-template ConfigMap" {
     rdd ctl wait --for=jsonpath='{.status.templateConfigMap}'="${VM_NAME}-template" \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=30s
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=30s
 }
 
 @test "verify input ConfigMap is deleted after LimaVM copies it" {
     rdd ctl wait --for=delete configmap/"${INPUT_CM_NAME}" \
-        --namespace "${RDD_NAMESPACE}" --timeout=30s
+        --namespace "${RDD_APP_NAMESPACE}" --timeout=30s
 }
 
 @test "verify rd-template ConfigMap exists and contains template data" {
     run -0 rdd ctl get configmap "${VM_NAME}-template" \
-        --namespace "${RDD_NAMESPACE}" -o jsonpath='{.data.template}'
+        --namespace "${RDD_APP_NAMESPACE}" -o jsonpath='{.data.template}'
     assert_output
 }
 
 @test "wait for LimaVM Created condition to be set" {
     # Creating the VM decodes the embedded distro image.
     rdd ctl wait --for=condition=Created \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=5m
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=5m
 }
 
 @test "verify App status mirrors LimaVM Created condition" {
@@ -149,7 +148,7 @@ local_setup_file() {
 }
 
 @test "verify App conditions preserve LimaVM LastTransitionTime" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" -o json
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" -o json
     run -0 jq_output '.status.conditions[] | select(.type == "Created") | .lastTransitionTime'
     limavm_ts="${output}"
 
@@ -161,12 +160,12 @@ local_setup_file() {
 @test "propagating running=true updates LimaVM spec.running" {
     rdd ctl patch app "${APP_NAME}" --type='merge' -p='{"spec":{"running":true}}'
     rdd ctl wait --for=jsonpath='{.spec.running}'=true \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=30s
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=30s
 }
 
 @test "wait for LimaVM Running condition to become true after start" {
     rdd ctl wait --for=condition=Running \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=300s
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=300s
 }
 
 @test "wait for App Running condition to become True" {
@@ -180,7 +179,7 @@ local_setup_file() {
 }
 
 @test "verify App Running condition preserves LimaVM LastTransitionTime" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" -o json
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" -o json
     run -0 jq_output '.status.conditions[] | select(.type == "Running") | .lastTransitionTime'
     limavm_ts="${output}"
 
@@ -219,7 +218,7 @@ local_setup_file() {
     # cover different failure modes: lastTransitionTime advances only when Running
     # flips, proving a reboot; observedTemplateResourceVersion advances only after
     # the VM applies the new template, guarding against a premature Settled.
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" -o json
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" -o json
     before="${output}"
     run -0 jq_raw '.status.conditions[] | select(.type == "Running") | .status' "${before}"
     assert_output "True"
@@ -230,7 +229,7 @@ local_setup_file() {
 
     rdd set containerEngine.name=containerd
 
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" -o json
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" -o json
     after="${output}"
     run -0 jq_raw '.status.conditions[] | select(.type == "Running") | .status' "${after}"
     assert_output "True"
@@ -252,11 +251,11 @@ local_setup_file() {
 @test "stop VM and restore moby engine after containerd test" {
     rdd set running=false containerEngine.name=moby
     rdd ctl wait --for=condition=Running=False \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=60s
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=60s
 }
 
 @test "propagating running=false updates LimaVM spec.running" {
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" \
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" \
         -o jsonpath='{.spec.running}'
     assert_output "false"
 }
@@ -274,26 +273,19 @@ kind: App
 metadata:
   name: not-app
 spec:
-  namespace: ${RDD_NAMESPACE}
   running: false
 EOF
     assert_output --partial "App resource must be named 'app'"
 }
 
-@test "reject mutation of spec.namespace after creation" {
-    run -1 rdd ctl patch app "${APP_NAME}" --type='merge' \
-        -p='{"spec":{"namespace":"other-ns"}}'
-    assert_output --partial "spec.namespace is immutable"
-}
-
 @test "reject direct deletion of LimaVM while owned by App" {
-    run -1 rdd ctl delete limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}" --grace-period=0
+    run -1 rdd ctl delete limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --grace-period=0
     assert_output --partial "Forbidden"
     assert_output --partial "owned by App"
     assert_output --partial "delete the App resource instead"
 
     # Verify the LimaVM still exists and is not stuck in Terminating
-    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}"
+    run -0 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}"
 }
 
 @test "delete App resource" {
@@ -306,14 +298,21 @@ EOF
 }
 
 @test "verify LimaVM rd is deleted when App is deleted" {
-    run -1 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_NAMESPACE}"
+    run -1 rdd ctl get limavm "${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}"
     assert_output --partial "not found"
 }
 
 @test "verify App can be recreated after deletion" {
     create_app false
     rdd ctl wait --for=create limavm/"${VM_NAME}" \
-        --namespace "${RDD_NAMESPACE}" --timeout=60s
+        --namespace "${RDD_APP_NAMESPACE}" --timeout=60s
+    delete_app
+}
+
+@test "App created by rdd set puts its LimaVM in the App namespace" {
+    rdd set --wait=false running=false
+    rdd ctl wait --for=create limavm/"${VM_NAME}" \
+        --namespace "${RDD_APP_NAMESPACE}" --timeout=60s
     delete_app
 }
 
@@ -359,14 +358,13 @@ kind: App
 metadata:
   name: ${APP_NAME}
 spec:
-  namespace: ${RDD_NAMESPACE}
   running: false
   kubernetes:
     enabled: true
     version: "1.32.0"
 EOF
     rdd ctl wait --for=create limavm/"${VM_NAME}" \
-        --namespace "${RDD_NAMESPACE}" --timeout=60s
+        --namespace "${RDD_APP_NAMESPACE}" --timeout=60s
 }
 
 @test "start VM with Kubernetes enabled" {
@@ -377,7 +375,7 @@ EOF
     # enforces the overall suite limit).
     rdd set --timeout=900s running=true
     rdd ctl wait --for=condition=Running \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=300s
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=300s
 }
 
 @test "wait for k3s nodes to be Ready" {
@@ -400,7 +398,7 @@ EOF
     skip_on_windows "Kubernetes tests require further setup on Windows"
     rdd set running=false
     rdd ctl wait --for=condition=Running=False \
-        limavm/"${VM_NAME}" --namespace "${RDD_NAMESPACE}" --timeout=60s
+        limavm/"${VM_NAME}" --namespace "${RDD_APP_NAMESPACE}" --timeout=60s
     delete_app
 }
 

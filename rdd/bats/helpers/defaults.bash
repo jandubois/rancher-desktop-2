@@ -4,6 +4,8 @@ export RDD_INSTANCE
 
 : "${RDD_TRACE:=false}"
 : "${RDD_NAMESPACE:=rdd-bats}"
+# Same as AppNamespace in rdd/pkg/apis/app/v1alpha1/app_types.go.
+RDD_APP_NAMESPACE=rancher-desktop
 : "${RDD_KEEP_LOGS:=1}"
 export RDD_KEEP_LOGS
 
