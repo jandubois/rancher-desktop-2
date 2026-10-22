@@ -1,6 +1,6 @@
 module github.com/rancher-sandbox/rancher-desktop-daemon
 
-go 1.27.0
+go 1.27.3
 
 require (
 	al.essio.dev/pkg/shellescape v1.6.1
