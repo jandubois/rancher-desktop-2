@@ -67,7 +67,7 @@ Except for the backgrounding of the control plane process all other actions are 
 
 ### Setting up `PATH` and shell completions
 
-`rdd start` has installed additional utilities to `~/.rd2/bin`, and that directory must be added to the `PATH`. Unless `spec.application.addPath` is `manual`, PATH management does this automatically: it writes a marker-fenced `export PATH` line into the user's shell startup files (the first existing of `~/.bash_profile`, `~/.bash_login`, `~/.profile`, plus `~/.bashrc` and `~/.zshrc`, with the equivalent for csh/tcsh and fish):
+`rdd start` has installed additional utilities to `~/.rd2/bin`, and that directory must be added to the `PATH`. When `spec.application.addPath` is `front` or `back`, PATH management does this automatically: it writes a marker-fenced `export PATH` line into the user's shell startup files (the first existing of `~/.bash_profile`, `~/.bash_login`, `~/.profile`, plus `~/.bashrc` and `~/.zshrc`, with the equivalent for csh/tcsh and fish):
 
 ```bash
 ### MANAGED BY RANCHER DESKTOP 2 START (DO NOT EDIT)

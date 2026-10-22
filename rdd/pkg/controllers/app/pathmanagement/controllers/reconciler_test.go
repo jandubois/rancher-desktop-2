@@ -67,6 +67,43 @@ func TestReconcileWritesReadyCondition(t *testing.T) {
 	assert.Equal(t, cond.ObservedGeneration, int64(3))
 }
 
+// TestReconcileUnsetAddsNoBlock checks that the default "unset" strategy writes
+// no managed block, leaves an existing rc file alone, and still reports success.
+func TestReconcileUnsetAddsNoBlock(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, "xdg-config-home"))
+	zshrc := filepath.Join(home, ".zshrc")
+	assert.NilError(t, os.WriteFile(zshrc, []byte("# user content\n"), 0o644))
+
+	app := &appv1alpha1.App{
+		Name: appName, Generation: 1,
+		Spec: appv1alpha1.AppSpec{Application: appv1alpha1.ApplicationSpec{AddPath: appv1alpha1.AddPathUnset}},
+	}
+	scheme := reconcilerTestScheme(t)
+	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(app).WithStatusSubresource(app).Build()
+	r := &PathManagementReconciler{Client: c, BinDir: filepath.Join(home, ".rd2", "bin"), Suffix: "2"}
+
+	_, err := r.Reconcile(context.Background(), ctrl.Request{})
+	assert.NilError(t, err)
+
+	for _, name := range []string{".zshrc", ".bashrc", ".bash_profile", ".bash_login", ".profile", ".cshrc"} {
+		if data, err := os.ReadFile(filepath.Join(home, name)); err == nil {
+			assert.Assert(t, !strings.Contains(string(data), r.startMarker()),
+				"%s must not carry our block under unset", name)
+		}
+	}
+	got, err := os.ReadFile(zshrc)
+	assert.NilError(t, err)
+	assert.Equal(t, string(got), "# user content\n")
+
+	var appGot appv1alpha1.App
+	assert.NilError(t, c.Get(context.Background(), client.ObjectKey{Name: appName}, &appGot))
+	cond := findCondition(appGot.Status.Conditions, appv1alpha1.AppConditionPathManagementReady)
+	assert.Assert(t, cond != nil)
+	assert.Equal(t, cond.Reason, appv1alpha1.PathManagementReasonApplied)
+}
+
 // TestReconcileWritesFailureCondition checks that an apply failure stamps
 // PathManagementReady=False and still requeues on the error. A directory in
 // place of ~/.zshrc makes managedlines.Manage fail to read it.

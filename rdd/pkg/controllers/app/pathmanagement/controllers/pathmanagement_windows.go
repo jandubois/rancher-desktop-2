@@ -99,7 +99,7 @@ func (r *PathManagementReconciler) applyPath(_ context.Context, strategy appv1al
 // registry edit, and manual removes the entry only when the marker (or
 // forceRemove) says it's ours, then clears the marker.
 func (r *PathManagementReconciler) writeUserPath(strategy appv1alpha1.AddPathStrategy, forceRemove bool) (bool, error) {
-	adding := strategy == appv1alpha1.AddPathFront || strategy == appv1alpha1.AddPathBack
+	adding := strategy.IsAdding()
 
 	// Record ownership before the registry write, so a crash in between still
 	// leaves the marker for a later manual run to act on.

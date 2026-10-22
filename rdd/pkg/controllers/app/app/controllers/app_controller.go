@@ -707,7 +707,7 @@ func computeSettledCondition(app *v1alpha1.App, in settledInputs) metav1.Conditi
 	// over an intact block still gates: the reconciler requeues and clears it, so
 	// `rdd set addPath=manual --wait` shouldn't report success over a residue that
 	// is about to go away. Both are recorded on PathManagementReady regardless.
-	pathManaged := effectiveAddPath(app) != v1alpha1.AddPathManual
+	pathManaged := app.Spec.Application.AddPath.IsAdding()
 	if settled.Status == metav1.ConditionTrue && in.pathManagementEnabled {
 		switch {
 		case pathCond == nil:
@@ -726,15 +726,6 @@ func computeSettledCondition(app *v1alpha1.App, in settledInputs) metav1.Conditi
 		}
 	}
 	return settled
-}
-
-// effectiveAddPath returns the addPath strategy with the empty (unset) value
-// resolved to its default, matching the PATH management reconciler.
-func effectiveAddPath(app *v1alpha1.App) v1alpha1.AddPathStrategy {
-	if s := app.Spec.Application.AddPath; s != "" {
-		return s
-	}
-	return v1alpha1.AddPathManual
 }
 
 // runningLimaVMMessage builds the Settled message when LimaVM's

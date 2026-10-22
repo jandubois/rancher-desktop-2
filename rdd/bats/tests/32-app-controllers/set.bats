@@ -195,3 +195,111 @@ local_setup_file() {
     run -0 get_app_field '.metadata.name'
     assert_output "${APP_NAME}"
 }
+
+# --- addPath (#1052): unset default, rdd set pins manual, CEL blocks going back ---
+
+@test "rdd set stores addPath=manual when creating an App without naming it" {
+    delete_app
+    rdd set --wait=false running=false
+
+    # The field defaults to unset, but rdd set pins a CLI-created instance to
+    # manual so it never gets the app's first-run dialog.
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "manual"
+}
+
+@test "rdd run stores addPath=manual when it creates the App" {
+    delete_app
+    # rdd run has no --wait flag and this suite starts no VM, so timeout ends
+    # the wait after rdd run has stored the App.
+    run -124 timeout 10 rdd run true
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "manual"
+}
+
+@test "rdd set pins addPath=manual on an existing App that is still unset" {
+    delete_app
+    # Create the App without addPath, as the GUI does.
+    rdd ctl apply -f - <<EOF
+apiVersion: app.rancherdesktop.io/v1alpha1
+kind: App
+metadata:
+  name: ${APP_NAME}
+spec:
+  running: false
+EOF
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "unset"
+
+    rdd set --wait=false running=false
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "manual"
+}
+
+@test "rdd run pins addPath=manual on an existing App that is still unset" {
+    delete_app
+    # Create the App without addPath, as the GUI does.
+    rdd ctl apply -f - <<EOF
+apiVersion: app.rancherdesktop.io/v1alpha1
+kind: App
+metadata:
+  name: ${APP_NAME}
+spec:
+  running: false
+EOF
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "unset"
+
+    # A started App's settings are final, so rdd run pins addPath like rdd set.
+    # timeout ends rdd run's wait, as in the creation test above.
+    run -124 timeout 10 rdd run true
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "manual"
+}
+
+@test "rdd set leaves an existing addPath=front alone" {
+    delete_app
+    rdd set --wait=false running=false application.addPath=front
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "front"
+
+    # A later set that does not name addPath must not overwrite front with manual.
+    rdd set --wait=false running=false
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "front"
+}
+
+@test "the API server rejects changing addPath back to unset" {
+    delete_app
+    rdd set --wait=false running=false application.addPath=front
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "front"
+
+    # Exit code 3 is cliexit.CodeRejected; the CEL rule forbids front -> unset.
+    run -3 rdd set --wait=false application.addPath=unset
+    assert_output --partial "addPath cannot be changed back to unset"
+
+    # The rejected request leaves the value unchanged.
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "front"
+}
+
+@test "rdd stop leaves an existing unset App's addPath alone" {
+    delete_app
+    # Create the App without addPath, as the GUI does.
+    rdd ctl apply -f - <<YAML
+apiVersion: app.rancherdesktop.io/v1alpha1
+kind: App
+metadata:
+  name: ${APP_NAME}
+spec:
+  running: false
+YAML
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "unset"
+
+    # rdd stop must not pin addPath, so the GUI's first-run signal survives.
+    rdd stop --wait=false
+    run -0 get_app_field '.spec.application.addPath'
+    assert_output "unset"
+}

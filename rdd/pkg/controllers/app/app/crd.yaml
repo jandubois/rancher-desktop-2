@@ -53,7 +53,7 @@ spec:
                   Electron frontend.
                 properties:
                   addPath:
-                    default: manual
+                    default: unset
                     description: |-
                       addPath controls whether and where the Rancher Desktop bin directory
                       (~/.rd<suffix>/bin) is added to the user's PATH, by editing their shell
@@ -61,8 +61,10 @@ spec:
                         - "front":  prepend, so the bin directory wins   (bin:$PATH)
                         - "back":   append,  so existing PATH entries win ($PATH:bin)
                         - "manual": leave PATH alone; remove any lines a previous front/back added.
-                      It defaults to "manual" so CLI-created instances don't touch shell startup
-                      files unasked; the GUI sends "front" when the user opts in.
+                      It defaults to "unset", which means nobody has picked a value yet: rdd
+                      treats it exactly like "manual", the field can't be changed back to it once
+                      it holds another value, and `rdd set` replaces it with "manual" for a
+                      CLI-created instance. The GUI sends "front" when the user opts in.
 
                       On Windows the user Environment Path is a plain semicolon-separated list
                       with nowhere to fence our entry, so under "manual" we can't tell an entry
@@ -83,10 +85,14 @@ spec:
                       "back" the bundled plugins win over the user's own copies there; "back"
                       yields only to other tools' cliPluginsExtraDirs entries.
                     enum:
+                    - unset
                     - front
                     - back
                     - manual
                     type: string
+                    x-kubernetes-validations:
+                    - message: addPath cannot be changed back to unset
+                      rule: self != 'unset' || oldSelf == 'unset'
                   locale:
                     default: en-us
                     description: locale is the language/locale to use for the Rancher

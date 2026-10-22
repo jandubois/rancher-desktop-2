@@ -102,12 +102,20 @@ status:
   user's shell startup files on Unix (`.bash_profile`/`.bash_login`/`.profile`, `.bashrc`,
   `.zshrc`, `.cshrc`/`.tcshrc`, and fish's `config.fish`) and the user `Environment` in the
   registry on Windows. Valide values:
+  - `unset`: nobody has picked a value yet. This is the **default**. rdd treats it exactly like
+    `manual` (it leaves `PATH` alone); the GUI uses it to decide whether to open its first-run
+    dialog. A CEL rule forbids changing the field back to `unset` once it holds another value (a
+    patch that deletes the field gets `unset` back from defaulting, so that is rejected too), and
+    `rdd set` replaces it with `manual` (see below).
   - `front`: prepend, so the bin directory takes precedence (`bin:$PATH`).
   - `back`: append, so existing `PATH` entries win (`$PATH:bin`).
   - `manual`: do not manage `PATH`; remove any lines a previous `front`/`back` added.
 
-  Defaults to `manual`, so instances created by the CLI never edit shell startup files without user's
-  user's knowledge; the GUI is expected to send `front` explicitly when the user opts in.
+  The field defaults to `unset`, so the App can record that nobody has chosen yet. The GUI sends
+  `front`/`back`/`manual` when the user opts in. When `rdd set` runs without naming
+  `application.addPath` and the App is missing or still `unset`, it also writes
+  `application.addPath: manual`, so a CLI-created instance — including one started with
+  `rdd set running=true` — leaves `PATH` alone and never gets the first-run dialog.
 
   On Unix, `manual` removes only the block between our start/end markers, so a hand-written
   `PATH` line survives anywhere. On Windows the user `Environment` `Path` is a plain
@@ -179,8 +187,8 @@ status:
     `False`/`PathManagementStale`, so `rdd set --wait` can't report success before the edit runs —
     this holds even for `manual`, which still removes a block a previous `front`/`back` left behind.
     A *failure* holds `Settled` at `False` under `front`/`back`: there the user asked us to edit
-    files, so a failed startup-file or user-Environment edit is surfaced. Under `manual` (the CRD
-    default) it depends on whether the failure is repairable. A *repairable* failure
+    files, so a failed startup-file or user-Environment edit is surfaced. Under `manual` and the
+    default `unset` it depends on whether the failure is repairable. A *repairable* failure
     (`PathManagementReasonFailed` — I/O, a read-only home, a full disk) over an intact block still
     gates: the reconciler requeues and clears it, so `rdd set --wait` shouldn't report success over a
     residue that's about to go away. A *permanent* failure (`PathManagementReasonMalformed` — a
