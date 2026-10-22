@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 # This script expects to be called from the root of the repo.
 # It will rebuild the App controller's k3s-versions.json from both the
 # k3s update channel and the GitHub k3s releases list.
