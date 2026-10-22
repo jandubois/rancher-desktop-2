@@ -133,8 +133,8 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapTypedState('container-engine', ['error', 'currentNamespace', 'volumes']),
-    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces']),
+    ...mapTypedState('container-engine', ['error', 'volumes']),
+    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces', 'currentNamespace']),
     rows(): RowItem[] {
       return (this.volumes ?? [])
         .filter(hasField('metadata'))
@@ -146,7 +146,7 @@ export default defineComponent({
             {
               label:    this.t('volumes.manager.table.action.browse'),
               action:   'browseFiles',
-              enabled:  true,
+              enabled:  false,
               bulkable: false,
             },
             {
@@ -179,7 +179,7 @@ export default defineComponent({
     },
   },
   beforeMount() {
-    this.watchResources(['volumes']).catch(error => {
+    this.watchResources(['namespaces', 'volumes']).catch(error => {
       this.SET_ERROR({ source: 'volumes', error });
     });
   },
@@ -187,26 +187,16 @@ export default defineComponent({
     this.setHeader({ titleKey: 'volumes.title' });
   },
   beforeUnmount() {
-    this.unwatchResources(['volumes']);
+    this.unwatchResources(['namespaces', 'volumes']);
   },
   methods: {
-    ...mapTypedActions('container-engine', ['volumeDelete', 'watchResources', 'unwatchResources']),
+    ...mapTypedActions('container-engine', ['volumeDelete', 'watchResources', 'unwatchResources', 'setCurrentNamespace']),
     ...mapTypedActions('page', ['setHeader']),
-    ...mapTypedMutations('container-engine', ['SET_ERROR', 'SET_CURRENT_NAMESPACE']),
-    checkSelectedNamespace() {
-      if (!this.supportsNamespaces || !this.namespaces.length) {
-        return;
-      }
-      if (!this.namespaces.includes(this.currentNamespace ?? '')) {
-        const K8S_NAMESPACE = 'k8s.io';
-        const defaultNamespace = this.namespaces.includes(K8S_NAMESPACE) ? K8S_NAMESPACE : this.namespaces[0];
-        this.SET_CURRENT_NAMESPACE(defaultNamespace);
-      }
-    },
+    ...mapTypedMutations('container-engine', ['SET_ERROR']),
     onChangeNamespace(event: Event) {
       const { value } = event.target as HTMLSelectElement;
       if (value !== this.currentNamespace) {
-        this.SET_CURRENT_NAMESPACE(value);
+        this.setCurrentNamespace({ namespace: value });
       }
     },
     shortHash(hash: string) {

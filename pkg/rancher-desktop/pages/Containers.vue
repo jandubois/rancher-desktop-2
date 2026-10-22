@@ -203,8 +203,8 @@ export default defineComponent({
     };
   },
   computed: {
-    ...mapTypedState('container-engine', ['containers', 'images', 'currentNamespace', 'error']),
-    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces']),
+    ...mapTypedState('container-engine', ['containers', 'images', 'error']),
+    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces', 'currentNamespace']),
     rows(): RowItem[] {
       const StatusRunning = 'running';
       return (this.containers ?? [])

@@ -35,9 +35,9 @@ export default defineComponent({
 
   computed: {
     ...mapTypedGetters('extensions', ['installedExtensions']),
-    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces']),
+    ...mapTypedGetters('container-engine', ['supportsNamespaces', 'namespaces', 'currentNamespace']),
     ...mapTypedState('rdd-connection', { kubeNamespace: 'namespace' }),
-    ...mapTypedState('container-engine', ['currentNamespace', 'images']),
+    ...mapTypedState('container-engine', ['images']),
     rancherImages(): string[] {
       return (this.images ?? [])
         .map(image => image.status?.repoTag)

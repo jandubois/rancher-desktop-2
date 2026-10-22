@@ -108,6 +108,9 @@ export const getters = {
   committed: (_state, _getters, _rootState, rootGetters) => {
     return (rootGetters['rdd/app']?.spec ?? {}) as Required<RecursiveReadonly<AppSpec>>;
   },
+  /**
+   * Preferences is the desired preferences, including uncommitted changes.
+   */
   preferences: (state, getters) => {
     const modified = structuredClone(toRaw(getters.committed));
     for (const [key, value] of Object.entries(state.changes)) {

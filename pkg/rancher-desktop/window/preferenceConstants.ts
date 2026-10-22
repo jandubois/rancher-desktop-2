@@ -36,14 +36,14 @@ const prefItemData = defineNavItems([
   //     ['proxy', 'preferences.tabs.proxy'],
   //   ],
   // },
-  // {
-  //   name: 'container-engine',
-  //   labelKey: 'preferences.nav.containerEngine',
-  //   tabs: [
-  //     ['general', 'preferences.tabs.general'],
-  //     ['allowed-images', 'preferences.tabs.allowedImages'],
-  //   ],
-  // },
+  {
+    name:     'container-engine',
+    labelKey: 'preferences.nav.containerEngine',
+    tabs:     [
+      ['general', 'preferences.tabs.general'],
+      // ['allowed-images', 'preferences.tabs.allowedImages'],
+    ],
+  },
   { name: 'kubernetes', labelKey: 'preferences.nav.kubernetes' },
 ] as const);
 

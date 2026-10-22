@@ -218,7 +218,7 @@ $fontColor: var(--input-label);
   position: relative;
   display: inline-flex;
   align-items: flex-start;
-  margin: 0;
+  margin: 0 0 0 var(--outline-width);
   user-select: none;
   border-radius: var(--border-radius);
   padding-bottom: 5px;

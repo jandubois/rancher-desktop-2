@@ -5,6 +5,7 @@ import semver from 'semver';
 
 import { NavPage } from './pages/nav-page';
 import { PreferencesPage } from './pages/preferences';
+import { ContainerEngineNav } from './pages/preferences/containerEngine';
 import { KubernetesNav } from './pages/preferences/kubernetes';
 import { VirtualMachineNav } from './pages/preferences/virtualMachine';
 import { rdd, startRancherDesktop, teardown } from './utils/TestUtils';
@@ -142,6 +143,30 @@ test.describe('Preferences Dialog', () => {
     });
   });
 
+  test.describe('Container Engine', () => {
+    let containerEngine: ContainerEngineNav;
+
+    test('should navigate to container engine', async() => {
+      containerEngine = prefPage.containerEngine;
+
+      await containerEngine.nav.click();
+
+      await expect(containerEngine.nav).toHaveClass('preferences-nav-item active');
+      await expect(prefPage.body).toHaveAttribute('data-test-component', 'container-engine');
+    });
+
+    test('should render general tab', async() => {
+      await containerEngine.tabGeneral.click();
+
+      await expect(containerEngine.engineSelector).toBeVisible();
+      await expect(containerEngine.engineSelector).toHaveAttribute('data-value', 'moby');
+      await containerEngine.engineContainerd.click();
+      await expect(containerEngine.engineSelector).toHaveAttribute('data-value', 'containerd');
+      await containerEngine.engineMoby.click();
+      await expect(containerEngine.engineSelector).toHaveAttribute('data-value', 'moby');
+    });
+  });
+
   test.fixme('should render volumes tab', async() => {
     test.skip(os.platform() === 'win32', 'Virtual Machine not available on Windows');
     const { virtualMachine } = prefPage;
@@ -197,27 +222,6 @@ test.describe('Preferences Dialog', () => {
         await expect(virtualMachine.useRosetta).toBeDisabled();
       }
     }
-  });
-
-  test.fixme('should navigate to container engine', async() => {
-    const { containerEngine } = prefPage;
-
-    await containerEngine.nav.click();
-
-    await expect(containerEngine.nav).toHaveClass('preferences-nav-item active');
-    await expect(containerEngine.containerEngine).toBeVisible();
-
-    await expect(containerEngine.tabGeneral).toBeVisible();
-    await expect(containerEngine.tabAllowedImages).toBeVisible();
-  });
-
-  test.fixme('should render allowed images tab after click on allowed images tab', async() => {
-    const { containerEngine } = prefPage;
-
-    await containerEngine.tabAllowedImages.click();
-
-    await expect(containerEngine.allowedImages).toBeVisible();
-    await expect(containerEngine.containerEngine).not.toBeVisible();
   });
 
   test.describe('Kubernetes', () => {
@@ -307,17 +311,12 @@ test.describe('Preferences Dialog', () => {
     await expect(wsl.nav).not.toBeVisible();
   });
 
-  test.describe.fixme('Preferences State', () => {
+  test.describe('Preferences State', () => {
     test.beforeAll(async() => {
-      const { application } = prefPage;
+      const { kubernetes } = prefPage;
 
-      // Start this collection of tests on the environment tab
-      await application.nav.click();
-      if (os.platform() === 'win32') {
-        await application.tabGeneral.click();
-      } else {
-        await application.tabEnvironment.click();
-      }
+      // Start this collection of tests on the Kubernetes tab
+      await kubernetes.nav.click();
 
       // This collection of tests is about making sure that we persist state
       // in the preferences window, so we close the preferences window before
@@ -330,6 +329,7 @@ test.describe('Preferences Dialog', () => {
     test.beforeEach(async() => {
       await mainNav.preferencesButton.click();
       const prefWindow = await electronApp.waitForEvent('window', page => /preferences/i.test(page.url()));
+      expect(prefWindow).toBeDefined();
       prefPage = new PreferencesPage(prefWindow);
     });
 
@@ -339,56 +339,17 @@ test.describe('Preferences Dialog', () => {
       }
     });
 
-    test('should render environment tab after close and reopen preferences modal', async() => {
-      test.skip(os.platform() === 'win32', 'Environment tab not available on Windows');
-
+    test('should render Kubernetes tab after close and reopen preferences modal', async() => {
       expect(prefPage).toBeDefined();
 
-      const { application, containerEngine } = prefPage;
+      const { kubernetes } = prefPage;
 
-      await application.tabEnvironment.click();
+      await expect(kubernetes.nav).toHaveClass('preferences-nav-item active');
+      await expect(prefPage.body).toHaveAttribute('data-test-component', 'kubernetes');
 
-      await expect(application.nav).toHaveClass('preferences-nav-item active');
-      await expect(application.tabBehavior).toBeVisible();
-      await expect(application.tabEnvironment).toBeVisible();
-      await expect(application.administrativeAccess).not.toBeVisible();
-      await expect(application.automaticUpdates).not.toBeVisible();
-      await expect(application.statistics).not.toBeVisible();
-      await expect(application.pathManagement).toBeVisible();
-
-      // Move onto the container engine before starting the next test
-      await containerEngine.nav.click();
-      await containerEngine.tabGeneral.click();
+      await expect(kubernetes.kubernetesToggle).toBeVisible();
     });
 
-    test('should render container engine page after close and reopen preferences modal', async() => {
-      expect(prefPage).toBeDefined();
-      await prefPage.waitForLoad();
-      const { containerEngine } = prefPage;
-
-      if (os.platform() === 'win32') {
-        // We didn't run the previous test which landed on `tabGeneral`, so run that here.
-        await containerEngine.nav.click();
-        await containerEngine.tabGeneral.click();
-      }
-      await expect(containerEngine.nav).toHaveClass('preferences-nav-item active');
-      await expect(containerEngine.containerEngine).toBeVisible();
-
-      await expect(containerEngine.tabGeneral).toBeVisible();
-      await expect(containerEngine.tabAllowedImages).toBeVisible();
-
-      // Move onto the allowed images tab before the next test
-      await containerEngine.tabAllowedImages.click();
-    });
-
-    test('should render allowed image tab in container engine page after close and reopen preferences modal', async() => {
-      expect(prefPage).toBeDefined();
-      await prefPage.waitForLoad();
-      const { containerEngine } = prefPage;
-
-      await expect(containerEngine.nav).toHaveClass('preferences-nav-item active');
-      await expect(containerEngine.allowedImages).toBeVisible();
-      await expect(containerEngine.containerEngine).not.toBeVisible();
-    });
+    // Once we have pref pages with multiple sub-tabs, we can test them here.
   });
 });
