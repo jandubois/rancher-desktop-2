@@ -78,7 +78,7 @@ APIs include:
 * [app API](api_app.md) is the "Rancher Desktop 2" application object itself
 * [k3s version API](api_k3sversion.md) maintains a list of k3s versions resource objects
 
-The [GUI application](gui.md) does not interact with the host machine except via the kube API of RDD (or the `containerd`/`dockerd`/`k3s` APIs of the corresponding services)[^remote].
+The [GUI application](gui.md) avoids interaction with the host machine except via the kube API of RDD (or the `containerd`/`dockerd`/`k3s` APIs of the corresponding services)[^remote].
 
 [^remote]: This means that technically the GUI doesn't have to run on the same host as `rdd`. But this is not a goal. If this ever becomes necessary, it would more likely be implemented by an `rdd-shim` that would handle the remoting.
 
