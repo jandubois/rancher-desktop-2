@@ -55,7 +55,7 @@ func (r *PathManagementReconciler) applyPath(_ context.Context, strategy appv1al
 // doesn't stop the rest; the errors are joined so the caller sees every offender
 // and the remaining files still converge.
 func applyPosix(home, configHome, binDir string, strategy appv1alpha1.AddPathStrategy, start, end string) error {
-	present := strategy != appv1alpha1.AddPathManual
+	present := strategy.IsAdding()
 	posixLine := posixPathLine(binDir, strategy)
 	var errs []error
 

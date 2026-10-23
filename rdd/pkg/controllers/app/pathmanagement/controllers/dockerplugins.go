@@ -56,7 +56,7 @@ func (r *PathManagementReconciler) applyDockerPlugins(ctx context.Context, strat
 		return nil
 	}
 
-	adding := strategy == appv1alpha1.AddPathFront || strategy == appv1alpha1.AddPathBack
+	adding := strategy.IsAdding()
 
 	// Record ownership before the config.json write, so a crash in between leaves
 	// the marker for a later manual run.
@@ -102,7 +102,7 @@ func (r *PathManagementReconciler) applyDockerPlugins(ctx context.Context, strat
 // present or force-remove). An empty result is nil so config.json's omitempty
 // drops the key.
 func computePluginDirs(current []string, pluginDir string, strategy appv1alpha1.AddPathStrategy, removeExisting bool) ([]string, bool) {
-	adding := strategy == appv1alpha1.AddPathFront || strategy == appv1alpha1.AddPathBack
+	adding := strategy.IsAdding()
 	removeOurs := adding || removeExisting
 
 	kept := make([]string, 0, len(current)+1)

@@ -29,7 +29,7 @@ import (
 func computeWindowsPath(current, binDir string, strategy appv1alpha1.AddPathStrategy, removeExisting bool) (string, bool) {
 	segments := strings.Split(current, ";")
 	wanted := normalizeWindowsPathEntry(binDir)
-	adding := strategy == appv1alpha1.AddPathFront || strategy == appv1alpha1.AddPathBack
+	adding := strategy.IsAdding()
 	// Drop our entries when adding (front/back re-add one below) or when the
 	// caller says the marker owns them (manual with the marker, or force-remove).
 	removeOurs := adding || removeExisting

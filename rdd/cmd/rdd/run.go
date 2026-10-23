@@ -47,7 +47,8 @@ func newRunCommand() *cobra.Command {
 			is missing or not working. When the App does not exist yet and
 			the command is kubectl or helm, rdd run enables Kubernetes so
 			the command has a cluster to talk to. An existing App is only
-			started, never reconfigured.
+			started, except that rdd run, like rdd set, changes an
+			application.addPath that is still unset to manual.
 
 			Examples:
 			  rdd run docker run --rm hello-world
@@ -89,7 +90,8 @@ func runAction(cmd *cobra.Command, args []string) error {
 // ensureAppRunning starts Rancher Desktop and waits for it to settle. When the
 // App does not exist yet and command invokes a Kubernetes client, it enables
 // Kubernetes so the client has a cluster to talk to; the App defaulter then
-// picks the default Kubernetes version. An existing App is only started.
+// picks the default Kubernetes version. An existing App is only started,
+// except that setAction pins a still-unset addPath to manual.
 func ensureAppRunning(ctx context.Context, command string) error {
 	c, _, err := getAppKubeClient(ctx)
 	if err != nil {
@@ -107,7 +109,7 @@ func ensureAppRunning(ctx context.Context, command string) error {
 		return fmt.Errorf("failed to get App: %w", err)
 	}
 
-	return setAction(ctx, props, false, true, limaLongWaitTimeout)
+	return setAction(ctx, props, true, false, true, limaLongWaitTimeout)
 }
 
 // isKubeCommand reports whether name invokes kubectl or helm, ignoring any

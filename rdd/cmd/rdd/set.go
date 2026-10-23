@@ -65,7 +65,9 @@ func newSetCommand() *cobra.Command {
 
 			Valid property names and types are derived from the App CRD at
 			runtime. If the App resource does not exist, it is created with
-			default settings before applying the specified values.
+			default settings before applying the specified values. Unless
+			application.addPath is given, rdd set also sets it to manual
+			when the App is new or the field is still unset.
 
 			By default, rdd set waits for the App's Settled condition
 			to reach True at the new generation. The wait covers every
@@ -82,7 +84,7 @@ func newSetCommand() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return setAction(cmd.Context(), args, dryRun, wait, timeout)
+			return setAction(cmd.Context(), args, true, dryRun, wait, timeout)
 		},
 	}
 	command.Flags().BoolVar(&dryRun, "dry-run", false,
@@ -251,7 +253,7 @@ func collectEntries(schema *apiextensionsv1.JSONSchemaProps, prefix string, out 
 	}
 }
 
-func setAction(ctx context.Context, args []string, dryRun, wait bool, timeout time.Duration) error {
+func setAction(ctx context.Context, args []string, pinUnset, dryRun, wait bool, timeout time.Duration) error {
 	// Parse PROPERTY=VALUE arguments.
 	properties := make(map[string]string, len(args))
 	for _, arg := range args {
@@ -290,8 +292,6 @@ func setAction(ctx context.Context, args []string, dryRun, wait bool, timeout ti
 		coerced[path] = value
 	}
 
-	specMap := buildNestedMap(coerced)
-
 	// Get-or-create the App, then patch with the specified values.
 	// Capture the post-write generation so waitForDesiredState can
 	// reject stale condition snapshots from a previous reconcile.
@@ -300,6 +300,23 @@ func setAction(ctx context.Context, args []string, dryRun, wait bool, timeout ti
 		targetGen int64
 	)
 	err = c.Get(ctx, client.ObjectKey{Name: "app"}, &app)
+	if err != nil && !apierrors.IsNotFound(err) {
+		return fmt.Errorf("failed to get App: %w", err)
+	}
+
+	// When pinUnset is set and the caller doesn't name a strategy, pin a new or
+	// still-unset App to "manual", so a CLI-created or CLI-started instance never
+	// gets the app's first-run dialog. rdd stop passes pinUnset=false, so stopping
+	// a GUI-created App that has never started leaves it undecided. An App that
+	// already holds front/back/manual keeps its value.
+	if _, named := properties["application.addPath"]; pinUnset && !named {
+		if apierrors.IsNotFound(err) || app.Spec.Application.AddPath == appv1alpha1.AddPathUnset {
+			coerced["application.addPath"] = string(appv1alpha1.AddPathManual)
+		}
+	}
+
+	specMap := buildNestedMap(coerced)
+
 	switch {
 	case apierrors.IsNotFound(err):
 		gen, err := createAndPatchApp(ctx, c, restConfig, specMap, specSchema, dryRun)
@@ -307,8 +324,6 @@ func setAction(ctx context.Context, args []string, dryRun, wait bool, timeout ti
 			return classifyAPIError(err)
 		}
 		targetGen = gen
-	case err != nil:
-		return fmt.Errorf("failed to get App: %w", err)
 	default:
 		gen, err := patchApp(ctx, c, &app, specMap, dryRun)
 		if err != nil {
@@ -336,7 +351,7 @@ func classifyAPIError(err error) error {
 }
 
 // createAndPatchApp creates the App using the dynamic client so that
-// only user-specified fields (plus required fields with zero values)
+// only the fields in specMap (plus required fields with zero values)
 // are sent; the API server fills in CRD defaults. The returned
 // generation is metadata.generation after the write, used to filter
 // stale condition snapshots in the post-write wait.

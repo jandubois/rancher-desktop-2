@@ -142,9 +142,6 @@ func (r *PathManagementReconciler) Reconcile(ctx context.Context, _ ctrl.Request
 	}
 
 	strategy := app.Spec.Application.AddPath
-	if strategy == "" {
-		strategy = appv1alpha1.AddPathManual
-	}
 
 	if err := r.apply(ctx, strategy, false); err != nil {
 		log.Error(err, "Failed to apply PATH management", "strategy", strategy)

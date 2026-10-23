@@ -383,7 +383,7 @@ func Test_computeSettledCondition(t *testing.T) {
 			wantMessage:           "cannot write .zshrc",
 		},
 		{
-			// Under the manual default the user opted out of PATH management, so a
+			// Under manual the user opted out of PATH management, so a
 			// permanent failure (a hand-edited dotfile with a dangling marker,
 			// reported as Malformed) is one we can't repair and must not block
 			// Settled for unrelated settings.
@@ -394,6 +394,22 @@ func Test_computeSettledCondition(t *testing.T) {
 				pathMgmt(v1alpha1.PathManagementReasonMalformed, "cannot parse .zshrc", metav1.ConditionFalse, 2),
 			),
 			addPath:               v1alpha1.AddPathManual,
+			engineEnabled:         true,
+			pathManagementEnabled: true,
+			wantStatus:            metav1.ConditionTrue,
+			wantReason:            v1alpha1.AppSettledReasonSettled,
+			wantMessage:           settledMessageSettled,
+		},
+		{
+			// unset (the default) behaves like manual: a permanent (malformed)
+			// path management failure must not block Settled.
+			name: "unset strategy ignores a permanent (malformed) path management failure",
+			app: makeApp(2, true,
+				running("Started", "Lima instance is running", metav1.ConditionTrue, 2),
+				engine(v1alpha1.EngineReasonConnected, "Container engine synced", metav1.ConditionTrue, 2),
+				pathMgmt(v1alpha1.PathManagementReasonMalformed, "cannot parse .zshrc", metav1.ConditionFalse, 2),
+			),
+			addPath:               v1alpha1.AddPathUnset,
 			engineEnabled:         true,
 			pathManagementEnabled: true,
 			wantStatus:            metav1.ConditionTrue,
