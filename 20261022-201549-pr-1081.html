@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261022-201549-pr-1081</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261022-201549-pr-1081</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-22 20:15</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>3 (of target)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/Nino-K">@Nino-K</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1081" class="gh-ref" data-title="Default addPath to unset until user picks a value" data-state="open" data-type="pr">#1081</a> — Default addPath to unset until user picks a value</td></tr>
+      <tr><td>Branch</td><td><code>addpath-default-unset</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7f43d6026"><code>7f43d6026</code></a> Default addPath to unset until user picks a value</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7f43d602694c44545f3d50e4fe14bfb994b5d2c0"><code>7f43d602694c44545f3d50e4fe14bfb994b5d2c0</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; <code>rdd run</code> stores <code>unset</code> on an App it creates, and no test pins <code>rdd run</code> leaving an existing <code>unset</code> App alone</td></tr>
+      <tr><td>Wall-clock time</td><td><code>36 min 6 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 3 adds a <code>pinUnset</code> parameter so that <code>rdd stop</code> and <code>rdd run</code> leave an undecided App alone, and it applies round 2&#39;s test patch; every <code>IsAdding()</code> site now has a test that fails on revert. But <code>rdd run</code> passes <code>pinUnset=false</code> even when it creates the App, so the App it creates stays <code>unset</code>, which contradicts <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a> and the PR&#39;s own docs. And no test notices <code>rdd run</code> going back to pinning an existing <code>unset</code> App.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/cmd/rdd/run.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> <code>rdd run</code> creates a new App with <code>addPath: unset</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L105-L115">rdd/cmd/rdd/run.go</a></div>
+      <pre data-start="105" data-line="110"><code class="language-go">		}
+	case err != nil:
+		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
+	}
+
+	return setAction(ctx, props, false, false, true, limaLongWaitTimeout)
+}
+
+// isKubeCommand reports whether name invokes kubectl or helm, ignoring any
+// directory prefix and a trailing .exe.
+func isKubeCommand(name string) bool {</code></pre>
+    <p><code>ensureAppRunning</code> passes <code>pinUnset=false</code> whether or not the App exists, so <code>setAction</code> skips the pin for a missing App too (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L312"><code>set.go:312</code></a>) and the CRD default stores <code>unset</code>. Round 2 and the merge-base stored <code>manual</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L307-L317">rdd/cmd/rdd/set.go</a></div>
+      <pre data-start="307" data-line="312"><code class="language-go">	// When pinUnset is set and the caller doesn&#39;t name a strategy, pin a new or
+	// still-unset App to &quot;manual&quot;, so a CLI-created instance never gets the app&#39;s
+	// first-run dialog. rdd stop and rdd run pass pinUnset=false so they leave a
+	// GUI-created, still-undecided App alone. An App that already holds
+	// front/back/manual keeps its value.
+	if _, named := properties[&quot;application.addPath&quot;]; pinUnset &amp;&amp; !named {
+		if apierrors.IsNotFound(err) || app.Spec.Application.AddPath == appv1alpha1.AddPathUnset {
+			coerced[&quot;application.addPath&quot;] = string(appv1alpha1.AddPathManual)
+		}
+	}
+</code></pre>
+    <p>So once <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> ships, an instance set up with <code>rdd run docker ps</code> gets the first-run dialog. That contradicts <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a>, the commit message, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L116-L118"><code>api_app.md:116-118</code></a> and the pin&#39;s own comment, which reserves <code>pinUnset=false</code> for GUI-created Apps. Nothing reads <code>unset</code> yet, so no user sees it today.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L111-L123">rdd/docs/design/api_app.md</a></div>
+      <pre data-start="111" data-line="116-118"><code class="language-markdown">  - `back`: append, so existing `PATH` entries win (`$PATH:bin`).
+  - `manual`: do not manage `PATH`; remove any lines a previous `front`/`back` added.
+
+  The field defaults to `unset`, so the App can record that nobody has chosen yet. The GUI sends
+  `front`/`back`/`manual` when the user opts in. When `rdd set` runs without naming
+  `application.addPath` and the App is missing or still `unset`, it also writes
+  `application.addPath: manual`, so a CLI-created instance — including one started with
+  `rdd set running=true` — leaves `PATH` alone and never gets the first-run dialog.
+
+  On Unix, `manual` removes only the block between our start/end markers, so a hand-written
+  `PATH` line survives anywhere. On Windows the user `Environment` `Path` is a plain
+  semicolon-separated list with nowhere to fence our entry, so `manual` removes the bin directory,
+  wherever it is, only when an earlier `front` or `back` added it. An entry that the user added</code></pre>
+    <p><code>rdd set</code> and <code>rdd start</code> on a missing App are the probe&#39;s control.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-pin-callers.sh; run from the repo root after `make -C rdd build-rdd`:
+#   bash probe-pin-callers.sh
+# Needs GNU timeout. Starts a scratch control plane (instance probe-1081, app
+# controller only, no VM) and deletes it at the end.
+set -o errexit -o nounset
+export RDD_INSTANCE=probe-1081
+rdd=rdd/bin/rdd
+
+&quot;${rdd}&quot; svc delete --timeout=120s &gt;/dev/null 2&gt;&amp;1
+&quot;${rdd}&quot; svc create --controllers=app &gt;/dev/null 2&gt;&amp;1
+&quot;${rdd}&quot; svc start &gt;/dev/null 2&gt;&amp;1
+
+# Leave the App missing, or create it with the given addPath (&quot;unset&quot; omits
+# the field, as the GUI does).
+prepare_app() {
+    &quot;${rdd}&quot; ctl delete app app --ignore-not-found &gt;/dev/null
+    &quot;${rdd}&quot; ctl wait --for=delete app/app --timeout=30s 2&gt;/dev/null || true
+    [[ ${1} == missing ]] &amp;&amp; return
+    local application=&quot;&quot;
+    if [[ ${1} != unset ]]; then
+        application=&quot;  application: {addPath: ${1}}&quot;
+    fi
+    printf &#39;apiVersion: app.rancherdesktop.io/v1alpha1\nkind: App\nmetadata:\n  name: app\nspec:\n  running: false\n%s\n&#39; \
+        &quot;${application}&quot; | &quot;${rdd}&quot; ctl apply -f - &gt;/dev/null
+}
+addpath() {
+    &quot;${rdd}&quot; ctl get app app -o jsonpath=&#39;{.spec.application.addPath}&#39; 2&gt;/dev/null || echo &quot;(no App)&quot;
+}
+
+for state in missing unset front; do
+    for command in &quot;set --wait=false running=false&quot; &quot;start --wait=false&quot; &quot;stop --wait=false&quot; &quot;run true&quot;; do
+        prepare_app &quot;${state}&quot;
+        # rdd run patches the App, then waits for a VM this instance cannot
+        # start; timeout ends the wait after the patch is stored.
+        timeout 15 &quot;${rdd}&quot; ${command} &gt;/dev/null 2&gt;&amp;1 || true
+        printf &#39;%-8s %-32s -&gt; %s\n&#39; &quot;${state}&quot; &quot;rdd ${command}&quot; &quot;$(addpath)&quot;
+    done
+done
+
+&quot;${rdd}&quot; svc delete &gt;/dev/null 2&gt;&amp;1</code></pre>
+      <pre><code class="language-text">$ bash probe-pin-callers.sh
+missing  rdd set --wait=false running=false -&gt; manual
+missing  rdd start --wait=false           -&gt; manual
+missing  rdd stop --wait=false            -&gt; (no App)
+missing  rdd run true                     -&gt; unset
+unset    rdd set --wait=false running=false -&gt; manual
+unset    rdd start --wait=false           -&gt; manual
+unset    rdd stop --wait=false            -&gt; unset
+unset    rdd run true                     -&gt; unset
+front    rdd set --wait=false running=false -&gt; front
+front    rdd start --wait=false           -&gt; front
+front    rdd stop --wait=false            -&gt; front
+front    rdd run true                     -&gt; front
+$ git apply i1.patch &amp;&amp; make -C rdd build-rdd  # the patch below
+$ bash probe-pin-callers.sh
+missing  rdd set --wait=false running=false -&gt; manual
+missing  rdd start --wait=false           -&gt; manual
+missing  rdd stop --wait=false            -&gt; (no App)
+missing  rdd run true                     -&gt; manual
+unset    rdd set --wait=false running=false -&gt; manual
+unset    rdd start --wait=false           -&gt; manual
+unset    rdd stop --wait=false            -&gt; unset
+unset    rdd run true                     -&gt; unset
+front    rdd set --wait=false running=false -&gt; front
+front    rdd start --wait=false           -&gt; front
+front    rdd stop --wait=false            -&gt; front
+front    rdd run true                     -&gt; front</code></pre>
+      </details>
+    <p>Fix: pin every new App in <code>setAction</code>, where the create is decided, and let <code>pinUnset</code> gate only an existing <code>unset</code> App. The patch&#39;s new test fails against the reviewed code and passes with the fix. It has not run on Windows, where it relies on MSYS2&#39;s <code>timeout</code> to stop <code>rdd.exe</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/bats/tests/32-app-controllers/set.bats b/rdd/bats/tests/32-app-controllers/set.bats
+index ca13a4d27..6038d25e2 100644
+--- a/rdd/bats/tests/32-app-controllers/set.bats
++++ b/rdd/bats/tests/32-app-controllers/set.bats
+@@ -208,6 +208,15 @@ local_setup_file() {
+     assert_output &quot;manual&quot;
+ }
+ 
++@test &quot;rdd run stores addPath=manual when it creates the App&quot; {
++    delete_app
++    # rdd run has no --wait flag and this suite starts no VM, so timeout ends
++    # the wait after rdd run has stored the App.
++    run -124 timeout 10 rdd run true
++    run -0 get_app_field &#39;.spec.application.addPath&#39;
++    assert_output &quot;manual&quot;
++}
++
+ @test &quot;rdd set pins addPath=manual on an existing App that is still unset&quot; {
+     delete_app
+     # Create the App without addPath, as the GUI does.
+diff --git a/rdd/cmd/rdd/set.go b/rdd/cmd/rdd/set.go
+index 248be581e..7d42d0850 100644
+--- a/rdd/cmd/rdd/set.go
++++ b/rdd/cmd/rdd/set.go
+@@ -304,13 +304,13 @@ func setAction(ctx context.Context, args []string, pinUnset, dryRun, wait bool,
+ 		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
+ 	}
+ 
+-	// When pinUnset is set and the caller doesn&#39;t name a strategy, pin a new or
+-	// still-unset App to &quot;manual&quot;, so a CLI-created instance never gets the app&#39;s
+-	// first-run dialog. rdd stop and rdd run pass pinUnset=false so they leave a
+-	// GUI-created, still-undecided App alone. An App that already holds
+-	// front/back/manual keeps its value.
+-	if _, named := properties[&quot;application.addPath&quot;]; pinUnset &amp;&amp; !named {
+-		if apierrors.IsNotFound(err) || app.Spec.Application.AddPath == appv1alpha1.AddPathUnset {
++	// When the caller doesn&#39;t name a strategy, pin a new App to &quot;manual&quot;, so a
++	// CLI-created instance never gets the app&#39;s first-run dialog. With pinUnset,
++	// also pin an existing App that is still unset; rdd stop and rdd run pass
++	// pinUnset=false so they leave a GUI-created, still-undecided App alone. An
++	// App that already holds front/back/manual keeps its value.
++	if _, named := properties[&quot;application.addPath&quot;]; !named {
++		if apierrors.IsNotFound(err) || (pinUnset &amp;&amp; app.Spec.Application.AddPath == appv1alpha1.AddPathUnset) {
+ 			coerced[&quot;application.addPath&quot;] = string(appv1alpha1.AddPathManual)
+ 		}
+ 	}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/cmd/rdd/run.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> No test pins <code>rdd run</code> leaving an existing <code>unset</code> App alone <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L105-L115">rdd/cmd/rdd/run.go</a></div>
+      <pre data-start="105" data-line="110"><code class="language-go">		}
+	case err != nil:
+		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
+	}
+
+	return setAction(ctx, props, false, false, true, limaLongWaitTimeout)
+}
+
+// isKubeCommand reports whether name invokes kubectl or helm, ignoring any
+// directory prefix and a trailing .exe.
+func isKubeCommand(name string) bool {</code></pre>
+    <p>Round 3 added a test for <code>rdd stop</code> keeping an <code>unset</code> App, but none for <code>rdd run</code>. Reverting <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> to <code>true</code> leaves <code>set.bats</code> green, and <code>rdd run</code> then silently turns a GUI-created <code>unset</code> App into <code>manual</code>, erasing the first-run signal that this PR exists to record. A silent wrong result makes the test required.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L105-L115">rdd/cmd/rdd/run.go</a></div>
+      <pre data-start="105" data-line="110"><code class="language-go">		}
+	case err != nil:
+		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
+	}
+
+	return setAction(ctx, props, false, false, true, limaLongWaitTimeout)
+}
+
+// isKubeCommand reports whether name invokes kubectl or helm, ignoring any
+// directory prefix and a trailing .exe.
+func isKubeCommand(name string) bool {</code></pre>
+    <p>The <code>rdd run</code> tests in <code>engine-docker.bats</code> and <code>kube-context.bats</code> run against an App that their setup created, and none of them reads <code>addPath</code>. <code>rdd run</code> does not accept <code>--wait=false</code>, so the new test ends its wait with <code>timeout</code>, as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/33-lima-controllers/limavm-wsl2-orphan.bats#L127"><code>limavm-wsl2-orphan.bats:127</code></a> does for <code>rdd ctl wait</code>. The probe reverts each <code>pinUnset=false</code> caller in turn; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/app.go#L105"><code>app.go:105</code></a> is the control.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/33-lima-controllers/limavm-wsl2-orphan.bats#L122-L132">rdd/bats/tests/33-lima-controllers/limavm-wsl2-orphan.bats</a></div>
+      <pre data-start="122" data-line="127"><code class="language-bash">@test &quot;cleanup&quot; {
+    rdd ctl delete limavm &quot;${VM_NAME}&quot; --namespace &quot;${NAMESPACE}&quot;
+    # A failed wsl.exe --unregister can deadlock wslservice.exe and block the
+    # reconciler&#39;s store.Inspect, so wrap the wait in an outer timeout. Kill
+    # wslservice.exe to recover.
+    if ! timeout 90 rdd ctl wait --for=delete \
+        &quot;limavm/${VM_NAME}&quot; --namespace &quot;${NAMESPACE}&quot; --timeout=60s; then
+        MSYS_NO_PATHCONV=1 taskkill.exe /F /IM wslservice.exe || true
+        false
+    fi
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/app.go#L100-L106">rdd/cmd/rdd/app.go</a></div>
+      <pre data-start="100" data-line="105"><code class="language-go">			logrus.Info(&quot;App does not exist; nothing to stop&quot;)
+			return nil
+		}
+		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
+	}
+	return setAction(ctx, []string{&quot;running=false&quot;}, false, false, wait, timeout)
+}</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-pin-tests.sh; run from the repo root: bash probe-pin-tests.sh
+# Needs GNU timeout. Reverts one pinUnset=false caller at a time to true,
+# rebuilds rdd and runs set.bats under a scratch instance (review-1081, app
+# controller only, no VM). app.go:105 is the control.
+set -o nounset
+for site in app.go:105 run.go:110; do
+    file=rdd/cmd/rdd/${site%:*}
+    line=${site#*:}
+    sed -i.bak &quot;${line}s/setAction(\(.*\), false, false,/setAction(\1, true, false,/&quot; &quot;${file}&quot;
+    GOFLAGS=-buildvcs=false make -C rdd build-rdd &gt;/dev/null 2&gt;&amp;1 || echo &quot;${site}: build failed&quot;
+    result=$(cd rdd/bats &amp;&amp; RDD_INSTANCE=review-1081 ./lib/bats-core/bin/bats tests/32-app-controllers/set.bats 2&gt;&amp;1 |
+        grep &#39;^not ok&#39; | tr &#39;\n&#39; &#39; &#39;)
+    # The restored file keeps its old mtime, so touch it for make&#39;s next build.
+    mv &quot;${file}.bak&quot; &quot;${file}&quot;
+    touch &quot;${file}&quot;
+    echo &quot;${site}: ${result:-every test passes}&quot;
+done
+GOFLAGS=-buildvcs=false make -C rdd build-rdd &gt;/dev/null 2&gt;&amp;1
+RDD_INSTANCE=review-1081 rdd/bin/rdd svc delete &gt;/dev/null 2&gt;&amp;1</code></pre>
+      <pre><code class="language-text">$ bash probe-pin-tests.sh
+app.go:105: not ok 17 rdd stop leaves an existing unset App&#39;s addPath alone
+run.go:110: every test passes
+$ git apply i2.patch  # the patch below
+$ bash probe-pin-tests.sh
+app.go:105: not ok 17 rdd stop leaves an existing unset App&#39;s addPath alone
+run.go:110: not ok 18 rdd run leaves an existing unset App&#39;s addPath alone</code></pre>
+      </details>
+    <p>Fix: add the test beside the <code>rdd stop</code> one. It passes against the reviewed code and fails when <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> reverts. It applies before or after I1&#39;s patch.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/bats/tests/32-app-controllers/set.bats b/rdd/bats/tests/32-app-controllers/set.bats
+index ca13a4d27..117046cf2 100644
+--- a/rdd/bats/tests/32-app-controllers/set.bats
++++ b/rdd/bats/tests/32-app-controllers/set.bats
+@@ -273,3 +273,23 @@ YAML
+     run -0 get_app_field &#39;.spec.application.addPath&#39;
+     assert_output &quot;unset&quot;
+ }
++
++@test &quot;rdd run leaves an existing unset App&#39;s addPath alone&quot; {
++    delete_app
++    # Create the App without addPath, as the GUI does.
++    rdd ctl apply -f - &lt;&lt;YAML
++apiVersion: app.rancherdesktop.io/v1alpha1
++kind: App
++metadata:
++  name: ${APP_NAME}
++spec:
++  running: false
++YAML
++    run -0 get_app_field &#39;.spec.application.addPath&#39;
++    assert_output &quot;unset&quot;
++
++    # rdd run only starts an existing App, so the GUI&#39;s first-run signal survives.
++    run -124 timeout 10 rdd run true
++    run -0 get_app_field &#39;.spec.application.addPath&#39;
++    assert_output &quot;unset&quot;
++}</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/docs/design/cmd_app.md">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>cmd_app.md</code> still says <code>rdd stop</code> behaves like <code>rdd set running=false</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/cmd_app.md#L46-L56">rdd/docs/design/cmd_app.md</a></div>
+      <pre data-start="46" data-line="51"><code class="language-markdown">
+Start Rancher Desktop by setting `running=true` on the App singleton, creating the App with default settings if it does not yet exist. This is shorthand for `rdd set running=true`, sharing its `--wait`, `--timeout`, and exit-code behavior.
+
+## `rdd stop`
+
+Stop Rancher Desktop by setting `running=false` on the App singleton. `rdd stop` returns successfully without creating or starting anything when the instance or the App does not exist, or when the control plane is stopped. On a stopped control plane the App keeps its `running` value, so the next control-plane start resumes it. Otherwise it behaves like `rdd set running=false`, sharing the same `--wait` and `--timeout` flags.
+
+
+## `rdd delete`
+
+Delete the `App` and all owned objects, like the `LimaVM` and the `K3sVersions`, etc.</code></pre>
+    <p>Round 3 made the pin depend on the caller, which breaks two equivalences on this page for an App that is still <code>unset</code>. <code>rdd set running=false</code> stores <code>manual</code> there, and <code>rdd stop</code> keeps <code>unset</code>. The <code>rdd run</code> example at lines 82-85 expands to <code>rdd start</code>, which pins an existing <code>unset</code> App that <code>rdd run</code> leaves alone (I1&#39;s probe, the <code>unset</code> rows). Both statements held at the merge-base.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/cmd_app.md#L77-L90">rdd/docs/design/cmd_app.md</a></div>
+      <pre data-start="77" data-line="82-85"><code class="language-markdown">
+`rdd run` prepends `~/.rd2/bin` to `PATH`, sets the Docker context to `rancher-desktop-2`, and points `KUBECONFIG` at `~/.rd2/kube.config`, whose current context is `rancher-desktop-2`. It clears `DOCKER_HOST` so the Docker context takes effect. `rdd run` itself leaves your selected Docker context and the current context in `~/.kube/config` unchanged. Starting the App still merges the `rancher-desktop-2` entry into `~/.kube/config`, and on the moby backend creates its Docker context; as a normal startup does, it switches your current context only when the existing one is missing or not working (see [api_app.md](api_app.md)).
+
+Rancher Desktop starts first if it is not already running. When the App does not exist yet and the command is `kubectl` or `helm`, `rdd run` also enables Kubernetes so the command has a cluster to talk to; the App defaulter then picks the default version. `rdd run` only starts an existing App; it never reconfigures one.
+
+For example, `rdd run docker run --rm hello-world` effectively executes:
+
+```bash
+rdd start
+export PATH=&quot;$HOME/.rd2/bin:$PATH&quot;
+unset DOCKER_HOST
+export DOCKER_CONTEXT=rancher-desktop-2
+export KUBECONFIG=&quot;$HOME/.rd2/kube.config&quot;  # current context is rancher-desktop-2
+docker run --rm hello-world</code></pre>
+    <p>Fix: after &quot;behaves like <code>rdd set running=false</code>&quot;, add &quot;except that it leaves an <code>application.addPath</code> that is still <code>unset</code> alone&quot;. Below the example, say that <code>rdd run</code>, unlike <code>rdd start</code>, leaves an existing App&#39;s <code>addPath</code> unchanged.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/bootstrap.md">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>bootstrap.md</code> never says how to turn PATH management on <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="title-note">(round 2 S3 unaddressed)</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+    <p>The page walks through <code>rdd start</code>, which stores <code>manual</code> on a new App, and line 70 limits automatic PATH edits to <code>front</code> and <code>back</code>. A reader who follows the page does not get a PATH edit, or any instruction for opting in.</p>
+    <p>Fix: add &quot;<code>rdd start</code> sets it to <code>manual</code>; run <code>rdd set application.addPath=front</code> to opt in.&quot;</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/set.bats">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The <code>unset</code> App manifest is copied into each bats test that needs it <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/32-app-controllers/set.bats#L209-L226">rdd/bats/tests/32-app-controllers/set.bats</a></div>
+      <pre data-start="209" data-line="214-221"><code class="language-bash">}
+
+@test &quot;rdd set pins addPath=manual on an existing App that is still unset&quot; {
+    delete_app
+    # Create the App without addPath, as the GUI does.
+    rdd ctl apply -f - &lt;&lt;EOF
+apiVersion: app.rancherdesktop.io/v1alpha1
+kind: App
+metadata:
+  name: ${APP_NAME}
+spec:
+  running: false
+EOF
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;unset&quot;
+
+    rdd set --wait=false running=false
+    run -0 get_app_field &#39;.spec.application.addPath&#39;</code></pre>
+    <p>The <code>rdd stop</code> test repeats it at lines 260-267 with a different delimiter, and I2&#39;s patch adds a third copy.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/32-app-controllers/set.bats#L255-L272">rdd/bats/tests/32-app-controllers/set.bats</a></div>
+      <pre data-start="255" data-line="260-267"><code class="language-bash">}
+
+@test &quot;rdd stop leaves an existing unset App&#39;s addPath alone&quot; {
+    delete_app
+    # Create the App without addPath, as the GUI does.
+    rdd ctl apply -f - &lt;&lt;YAML
+apiVersion: app.rancherdesktop.io/v1alpha1
+kind: App
+metadata:
+  name: ${APP_NAME}
+spec:
+  running: false
+YAML
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;unset&quot;
+
+    # rdd stop must not pin addPath, so the GUI&#39;s first-run signal survives.
+    rdd stop --wait=false</code></pre>
+    <p>Fix: add a <code>create_unset_app</code> helper beside <code>delete_app</code> and call it from each test.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <p>None.</p>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>Every <code>IsAdding()</code> site has a test that fails on revert<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: round 2&#39;s I2 patch closed the gap at the docker-plugin and Windows sites. Reverting each of the five sites whose tests run on macOS turns its named test red; the Windows site compiles under <code>GOOS=windows</code>, and CI&#39;s <code>windows-latest</code> leg runs its test.</li>
+      <li><em></em><code>pinUnset</code> keeps <code>rdd stop</code> and <code>rdd run</code> off an existing App&#39;s <code>addPath</code><em></em> (in-scope) <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>: the <code>rdd run</code> help and the <code>ensureAppRunning</code> comment (&quot;an existing App is only started&quot;) are true again, and the round-3 bats test pins <code>rdd stop</code>.</li>
+      <li><strong>The one-way rule holds in the API server</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: raised in round 2 by Claude Opus 5.5 and Gemini 3.5 Flash. A patch that deletes the field is defaulted back to <code>unset</code> and rejected.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>I1 and I2 (required):</strong> decided by &quot;How would a user see it?&quot;. A regression in either stores the wrong <code>addPath</code> with no error, and the first-run dialog then appears for a CLI user or never appears for a GUI user.</li>
+      <li><strong>What pins each round-2 fix</strong> (each reverted in the lead worktree):</li>
+    </ul>
+    <ul>
+      <li><code>pinUnset=false</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/app.go#L105"><code>app.go:105</code></a>: &quot;rdd stop leaves an existing unset App&#39;s addPath alone&quot; fails (<code>expected : unset</code>, <code>actual : manual</code>).</li>
+      <li><code>pinUnset=false</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a>: nothing (I2).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go#L59"><code>dockerplugins.go:59</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go#L105"><code>dockerplugins.go:105</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/pathlist.go#L32"><code>pathlist.go:32</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go#L58"><code>pathmanagement_unix.go:58</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/app/controllers/app_controller.go#L710"><code>app_controller.go:710</code></a>, each reverted to a <code>!= AddPathManual</code> test: <code>TestApplyDockerPluginsUnsetKeepsUserEntryWithoutMarker</code>, <code>TestComputePluginDirs</code>, <code>TestComputeWindowsPath</code>, <code>TestReconcileUnsetAddsNoBlock</code> and <code>Test_computeSettledCondition</code> fail, in that order.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_windows.go#L102"><code>pathmanagement_windows.go:102</code></a>: <code>TestWriteUserPathUnsetWithoutMarkerLeavesEntry</code> should fail, since the reverted line writes the marker that the test asserts absent. It did not run here; CI&#39;s <code>RDD Unit tests (windows-latest)</code> ran it and passed.</li>
+    </ul>
+    <ul>
+      <li><strong>Executed by the consolidator:</strong></li>
+    </ul>
+    <ul>
+      <li><code>go test</code> passed for <code>pkg/apis/...</code>, <code>pkg/controllers/app/...</code> and <code>cmd/rdd</code>.</li>
+      <li><code>set.bats</code> passed 17 of 17 at the review SHA and 19 of 19 with both patches, on a scratch control plane (app controller only). <code>make lint-bats</code> passed with both patches.</li>
+      <li>The I1 and I2 probes, with their output in each finding. <code>~/.docker/config.json</code> and <code>~/.kube/config</code> were byte-identical before and after.</li>
+    </ul>
+    <ul>
+      <li><strong>CI on the head commit:</strong> all 50 completed checks passed and 17 were skipped, every BATS leg and <code>RDD Unit tests (windows-latest)</code> included.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I1&#39;s patch makes the PR&#39;s central claim hold for <code>rdd run</code> as it does for <code>rdd set</code> and <code>rdd start</code>. That claim is in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L116-L118"><code>api_app.md:116-118</code></a> and in the commit message&#39;s &quot;ensuring CLI-created instances never show the first-run dialog&quot;. The commit message names only <code>rdd set</code>, though <code>rdd start</code> pins too and <code>rdd stop</code> and <code>rdd run</code> leave an existing <code>unset</code> App alone. S1 covers <code>cmd_app.md</code> and S2 <code>bootstrap.md</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites the GUI wording (see Acknowledged Limitations).</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><strong>The pin is decided from a read that its patch does not check</strong> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L302"><code>set.go:302</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L385-L391"><code>set.go:385-391</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L454-L466"><code>set.go:454-466</code></a>): raised as round 1 S1 and round 2 S1, and by all four reviewers again this round; the author has neither changed nor declined it. No product path writes <code>addPath</code> concurrently today.</li>
+      <li><em></em>The field doc&#39;s value bullets omit <code>unset</code>, and <code>api_app.md</code> states the default and the <code>rdd set</code> replacement twice<em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/apis/app/v1alpha1/app_types.go#L227-L233"><code>app_types.go:227-233</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L105-L118"><code>api_app.md:105-118</code></a>): raised as round 1 S2 and round 2 S2, and by all four reviewers again this round (Gemini 3.1 Pro raised only the bullets); neither changed nor declined.</li>
+      <li><strong>The docs describe GUI behaviour that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> has yet to build:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L105-L107"><code>api_app.md:105-107</code></a> and <code>:114-115</code> say in the present tense that the GUI uses <code>unset</code> and sends the user&#39;s choice, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a> still says to display the first-run dialog when no App exists. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites the field doc, <code>api_app.md</code> and that <code>gui.md</code> step, so do not re-suggest them on this PR.</li>
+      <li><em></em>No path back to <code>unset</code>:<em></em> restoring the first-run state takes deleting the App or <code>rdd svc delete</code>, as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a> intends. Outside its declaration, the only non-test reference to <code>AddPathUnset</code> is the comparison at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L313"><code>set.go:313</code></a>.</li>
+      <li><em></em><code>rdd set --dry-run</code> creates a real App:<em></em> on a missing App, <code>createAndPatchApp</code> creates the App for real with only required fields, so it keeps the default <code>unset</code>, and only the dry-run patch has the <code>manual</code> pin. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/32-app-controllers/set.bats#L190"><code>set.bats:190</code></a> pins the create. Do not re-suggest <code>DryRunAll</code> on it.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://jandubois.github.io/rancher-desktop-2/20261022-135049-pr-1081.html">Round 2 review</a>: its I1 is fixed for existing Apps, but the fix also reaches the missing-App case (I1 here). Its I2 is fixed. S1 and S2 have now run three rounds without a change or a reply and move to Acknowledged Limitations. S3 returns as S2. The documentation note moves to Acknowledged Limitations, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites that text.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found I1 and built the caller table that the prompt asked for, citing each cell. Its fix pinned the App in <code>ensureAppRunning</code>&#39;s missing branch. That passes the probe, but it decides from a <code>Get</code> that <code>setAction</code> repeats, and every later caller would have to remember the pin, so the report&#39;s patch pins in <code>setAction</code>. It rated the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> test gap optional because &quot;a test also needs a booted VM&quot;, but a <code>timeout</code> around <code>rdd run</code> lets the VM-free <code>set.bats</code> test it. And the gap is required, since a regression silently stores the wrong <code>addPath</code>, so the rubric&#39;s drop rule for optional gaps does not apply. It alone found the copied manifest. Its <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a> point and its e2e concern are tasks that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> already lists, so neither made the report. Its reversion overlays ran, and their results match the consolidator&#39;s.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex&#39;s first attempt stopped on &quot;Selected model is at capacity&quot; after it had started its own <code>rdd run</code> probe; the retry finished. It produced the fullest table, with the merge-base, round 2 and the current SHA side by side, and it alone caught the <code>rdd stop</code> equivalence in S1. But it judged a new <code>rdd run</code> App staying <code>unset</code> &quot;internally consistent&quot; and proposed narrowing the contract in the docs, the commit message and the PR description, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a> and the pin&#39;s own comment argue against. It rated two prose findings Important. Its Go tests failed to build for the third round running, since its module cache under <code>.scratch/</code> was empty and <code>GOPROXY=off</code> blocked downloads; it said so.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro returned LGTM without the caller table, so it missed I1 and called <code>api_app.md</code>, <code>bootstrap.md</code> and <code>cmd_app.md</code> accurate. It found the <code>rdd run</code> test gap but rated it a Suggestion. Its &quot;verified by locally reverting&quot; rests on patching tracked files in its worktree, which the preamble forbids, and the Windows site only compiled (<code>GOOS=windows go test -c</code>). It finished with <code>pathmanagement_unix.go</code> still reverted to <code>!= AddPathManual</code> and an <code>app_controller.go.orig</code> left behind. The consolidator&#39;s mutation runs bear out its macOS claims.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash built the table and got I1&#39;s cell right, but filed it as a design concern, &quot;consistent with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L48"><code>run.go:48</code></a> (&quot;creates it with default settings&quot;)&quot;, a phrase that <code>run.go</code> does not contain. It raised I2 at the right severity. Its proposed test calls <code>rdd run true</code> bare, which in the VM-free <code>set.bats</code> waits out the five-minute <code>limaLongWaitTimeout</code> and then fails. Its reversion overlays ran, and their results match the consolidator&#39;s. The two Gemini models split on I2&#39;s severity and only Flash saw I1&#39;s cell, so this round they did not converge.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>7m 37s</td><td>10m 30s</td><td>9m 43s</td><td>7m 07s</td></tr>
+        <tr><td>Findings</td><td>1I 3S</td><td>2I 2S</td><td>1I</td><td>2I 1S</td></tr>
+        <tr><td>Tool calls</td><td>47 (Bash 30, Read 17)</td><td>12 (shell 12)</td><td>34 (run<em>shell</em>command 32, write_file 2)</td><td>39 (read<em>file 20, run</em>shell<em>command 10, grep</em>search 6)</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>3</td><td>0</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>24</td><td>24</td><td>24</td><td>24</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 3S</strong></td><td><strong>2I 2S</strong></td><td><strong>1I</strong></td><td><strong>2I 1S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>3</td><td>3</td><td>2</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Claude and Codex gave the round its value: Claude with I1, Codex with the <code>rdd stop</code> equivalence and the cross-revision table. Flash reached both Importants but rated I1 as a design concern; Gemini Pro added only the test gap.</p>
+    <p><strong>Reconciliation:</strong> Codex pass 1 I1 (<code>cmd_app.md</code> equivalences): important → suggestion S1, and its missing-App half merged into I1. Codex pass 1 I2 (GUI tense) and Claude pass 1 S4 (GUI wording, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a>): dropped to Acknowledged Limitations, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites that text; Claude&#39;s e2e design concern was dropped for the same reason. Codex pass 1 I3 became I2. Claude pass 1 S5 became S3. Gemini Pro pass 1 S3 (<code>rdd run</code> test gap): suggestion → important I2. Flash pass 1&#39;s design concern (<code>rdd run</code> on a missing App) became I1. Every agent&#39;s race and field-doc suggestions moved to Acknowledged Limitations after their third round.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When the PR&#39;s linked issue names a follow-up issue that finishes the feature, fetch the follow-up&#39;s body and inline it beside the linked issue. External agents cannot fetch GitHub, so without it they report as gaps the doc and test changes that the follow-up already plans.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] <code>rdd run</code> does not have a <code>--wait</code> flag and always waits for the App to settle, so a bats test that calls it in a suite without a VM (the app-controller-only suites) must end the wait with <code>timeout</code> and assert exit 124. A test that calls <code>rdd run</code> bare there hangs for the full wait and then fails.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
