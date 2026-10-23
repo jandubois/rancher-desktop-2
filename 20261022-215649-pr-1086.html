@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261022-215649-pr-1086</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261022-215649-pr-1086</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-22 21:56</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1086" class="gh-ref" data-title="Implement first run dialog" data-state="open" data-type="pr">#1086</a> — Implement first run dialog</td></tr>
+      <tr><td>Branch</td><td><code>first-run</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2bd0507a1"><code>2bd0507a1</code></a> RDD: cmd: Extract flag enumerations<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/595a7e6ba"><code>595a7e6ba</code></a> RDD: <code>rdd service status</code>: Support JSON output<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/45fce3feb"><code>45fce3feb</code></a> BATS: Add checks for <code>rdd service status --output=json</code><br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c73cf9cf5"><code>c73cf9cf5</code></a> RDA: directives plugin: Fix potential breakage<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0e0b32564"><code>0e0b32564</code></a> RDA: Jest: Add helper for <code>expect.oneOf</code>.<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b191462d1"><code>b191462d1</code></a> RDA: Trigger first-run window as needed<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a2794828e"><code>a2794828e</code></a> RDA: layouts: dialog: convert to composition API<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5a4424af0"><code>5a4424af0</code></a> RDA: prefs: refactor: Make Kubernetes version selector a component<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/691219951"><code>691219951</code></a> RDA: prefs: Engine selector: make self-contained<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8e865e794"><code>8e865e794</code></a> RDA: first-run: Adapt to current state</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8e865e79498895c906d908048b92611a47e88b27"><code>8e865e79498895c906d908048b92611a47e88b27</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the selectors and the CLI change are sound, but the dialog&#39;s lifecycle hides the process on quit, drops early choices, and skips the dialog for good after an interrupted first run</td></tr>
+      <tr><td>Wall-clock time</td><td><code>47 min 22 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR shows a first-run dialog when the control plane or the App is missing, rebuilds it on shared Kubernetes-version and engine selectors, and adds JSON output to <code>rdd service status</code>. The selectors and the CLI change are sound, but the dialog&#39;s lifecycle is not. Quitting mid-dialog leaves a hidden process, an OK before the App exists drops the user&#39;s choices, the App created on open suppresses the dialog on later starts, and e2e escapes it only by a race.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/FirstRun.vue">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Quitting while the first-run dialog is open leaves a hidden process <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/pages/FirstRun.vue#L59-L70">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="59" data-line="64-65"><code class="language-ts">const t = computed(() =&gt; store.getters[&#39;i18n/t&#39;]);
+const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
+const isPreferencesLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+const engineSelectorLocked = computed(() =&gt; isPreferencesLocked.value(&#39;containerEngine.name&#39;));
+
+async function commitAndClose(event: Event) {
+  event.preventDefault();
+  try {
+    await store.dispatch(&#39;preferences/commit&#39;);
+  } catch (ex) {
+    // If we fail to commit, just close this window and open the main window, so
+    // we can display any following errors via the normal code path.  This</code></pre>
+    <p><code>commitAndClose</code> runs as the dialog&#39;s <code>beforeunload</code> listener (line 82), and <code>preventDefault()</code> there cancels the unload. Electron cancels <code>app.quit()</code> along with it, as the probe below shows against the pinned Electron.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/pages/FirstRun.vue#L77-L87">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="77" data-line="82"><code class="language-markup">}
+
+// Save default settings on closing window.
+onBeforeMount(async() =&gt; {
+  try {
+    window.addEventListener(&#39;beforeunload&#39;, commitAndClose);
+    await store.dispatch(&#39;rdd-connection/fetchConfig&#39;);
+    await store.dispatch(&#39;rdd/watchResources&#39;, [&#39;apps&#39;]);
+    await store.dispatch(&#39;rdd/ensureAppExists&#39;);
+  } catch (ex) {
+    console.error(ex);</code></pre>
+    <p>On macOS the default menu&#39;s Quit works during first-run, because <code>buildApplicationMenu</code> runs after the dialog. Cmd-Q sets <code>ShuttingDown</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/background.ts#L254"><code>background.ts:254</code></a>), the dialog cancels the quit, and once the commit finishes, <code>window.close()</code> closes the last window.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/background.ts#L249-L259">background.ts</a></div>
+      <pre data-start="249" data-line="254"><code class="language-typescript">    console.log(`2: Child exited cleanly.`);
+  } catch (ex: any) {
+    console.log(`2: Child exited with code ${ ex.errCode ?? &#39;&lt;unknown&gt;&#39; }`);
+    handleFailure(ex);
+  } finally {
+    lifetimeState = LifetimeState.ShuttingDown;
+    setImmediate(() =&gt; {
+      Electron.app.quit();
+    });
+  }
+});</code></pre>
+    <p><code>window-all-closed</code> only hides the dock icon (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/background.ts#L261-L263"><code>background.ts:261-263</code></a>), and <code>second-instance</code> and <code>activate</code> do nothing in <code>ShuttingDown</code>. The process keeps running with no window and no dock icon, and launching the app again does nothing.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/background.ts#L256-L268">background.ts</a></div>
+      <pre data-start="256" data-line="261-263"><code class="language-typescript">      Electron.app.quit();
+    });
+  }
+});
+
+Electron.app.on(&#39;window-all-closed&#39;, () =&gt; {
+  // On macOS, hide the dock icon.
+  Electron.app.dock?.hide();
+});
+
+Electron.app.on(&#39;activate&#39;, async() =&gt; {
+  // On macOS it&#39;s common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-js">// Save as probe-quit-first-run.cjs; run from the repo root (needs the installed
+// electron package):
+//   for m in prevent noprevent destroy; do
+//     node_modules/.bin/electron probe-quit-first-run.cjs --mode=$m 2&gt;/dev/null; done
+// The window&#39;s beforeunload handler mirrors FirstRun.vue&#39;s commitAndClose:
+// preventDefault(), an async commit (300ms), then window.close(). Modes:
+// prevent = the PR; noprevent = control without preventDefault(); destroy =
+// the PR plus the proposed before-quit fix that destroys the window.
+const { app, BrowserWindow } = require(&#39;electron&#39;);
+
+const mode = process.argv.find(a =&gt; a.startsWith(&#39;--mode=&#39;))?.slice(7) ?? &#39;prevent&#39;;
+const t0 = Date.now();
+const log = (...a) =&gt; console.log(`[${ mode }] ${ Date.now() - t0 }ms`, ...a);
+let win;
+
+app.on(&#39;before-quit&#39;, () =&gt; {
+  log(&#39;before-quit&#39;);
+  if (mode === &#39;destroy&#39;) {
+    win?.destroy();
+  }
+});
+app.on(&#39;will-quit&#39;, () =&gt; log(&#39;will-quit&#39;));
+app.on(&#39;quit&#39;, () =&gt; log(&#39;quit&#39;));
+app.on(&#39;window-all-closed&#39;, () =&gt; log(&#39;window-all-closed&#39;));
+
+app.whenReady().then(async() =&gt; {
+  win = new BrowserWindow({ show: false });
+  win.on(&#39;closed&#39;, () =&gt; log(&#39;window closed&#39;));
+  const html = `&lt;script&gt;
+    async function commitAndClose(event) {
+      ${ mode === &#39;noprevent&#39; ? &#39;&#39; : &#39;event.preventDefault();&#39; }
+      await new Promise(r =&gt; setTimeout(r, 300));
+      window.removeEventListener(&#39;beforeunload&#39;, commitAndClose);
+      window.close();
+    }
+    window.addEventListener(&#39;beforeunload&#39;, commitAndClose);
+  &lt;/script&gt;`;
+  await win.loadURL(&#39;data:text/html,&#39; + encodeURIComponent(html));
+  log(&#39;calling app.quit()&#39;);
+  app.quit();
+  setTimeout(() =&gt; {
+    log(&#39;STILL RUNNING 3s after app.quit(); forcing app.exit()&#39;);
+    app.exit(0);
+  }, 3000);
+});</code></pre>
+      <pre><code class="language-text">$ for m in prevent noprevent destroy; do node_modules/.bin/electron probe-quit-first-run.cjs --mode=$m 2&gt;/dev/null; done
+[prevent] 171ms calling app.quit()
+[prevent] 172ms before-quit
+[prevent] 487ms window closed
+[prevent] 487ms window-all-closed
+[prevent] 3175ms STILL RUNNING 3s after app.quit(); forcing app.exit()
+[prevent] 3176ms quit
+[noprevent] 170ms calling app.quit()
+[noprevent] 171ms before-quit
+[noprevent] 173ms window closed
+[noprevent] 173ms will-quit
+[noprevent] 173ms quit
+[destroy] 175ms calling app.quit()
+[destroy] 175ms before-quit
+[destroy] 176ms window closed
+[destroy] 176ms window-all-closed
+[destroy] 177ms will-quit
+[destroy] 177ms quit</code></pre>
+      </details>
+    <p>Fix: destroy the dialog in the second <code>before-quit</code> pass. <code>destroy()</code> skips the dialog&#39;s <code>beforeunload</code> handler, and the probe&#39;s <code>destroy</code> mode quits at once.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/background.ts b/background.ts
+index 6da7a8f4e..8135b1a1a 100644
+--- a/background.ts
++++ b/background.ts
+@@ -237,6 +237,9 @@ async function checkPrerequisites() {
+ 
+ Electron.app.on(&#39;before-quit&#39;, (event) =&gt; {
+   if (lifetimeState === LifetimeState.ShuttingDown) {
++    // Destroy the first-run dialog without running its beforeunload handler,
++    // which cancels the unload (and with it the quit) to commit its settings.
++    window.getWindow(&#39;FirstRun&#39;)?.destroy();
+     // We are already ready to quit.
+     mainEvents.emit(&#39;quit&#39;);
+ </code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/FirstRun.vue">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> OK before the App exists, or after a failed commit, closes the dialog and drops the choices <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/pages/FirstRun.vue#L62-L81">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="62" data-line="67-76"><code class="language-ts">const engineSelectorLocked = computed(() =&gt; isPreferencesLocked.value(&#39;containerEngine.name&#39;));
+
+async function commitAndClose(event: Event) {
+  event.preventDefault();
+  try {
+    await store.dispatch(&#39;preferences/commit&#39;);
+  } catch (ex) {
+    // If we fail to commit, just close this window and open the main window, so
+    // we can display any following errors via the normal code path.  This
+    // likely means there is something wrong with the back end.
+    console.error(ex);
+  } finally {
+    window.removeEventListener(&#39;beforeunload&#39;, commitAndClose);
+    window.close();
+  }
+}
+
+// Save default settings on closing window.
+onBeforeMount(async() =&gt; {
+  try {</code></pre>
+    <p><code>preferences/commit</code> reports failure by resolving <code>false</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/store/preferences.ts#L399-L400"><code>store/preferences.ts:399-400</code></a>), so the <code>catch</code> never runs and the <code>finally</code> closes the dialog whatever the result.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/store/preferences.ts#L394-L405">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="394" data-line="399-400"><code class="language-typescript">
+    // Check the result, and resolve `pendingCommit` if we are not interrupted.
+    switch (result) {
+    case PatchAppResult.skipped:
+      return true;
+    case PatchAppResult.failure:
+      return false;
+    case PatchAppResult.interrupted:
+      // Don&#39;t resolve the pending commit; the replacement request will do that.
+      skipResolve = true;
+      return false;
+    default: {</code></pre>
+    <p>The dialog also shows itself on mount (<code>dialog/ready</code>, line 92) while <code>onBeforeMount</code> still waits for the control plane and the App. On a fresh instance here, starting the control plane took 8.6 s (one sample), all of it before the App can exist. Until then the preferences getter returns <code>{}</code>, so no engine is selected; a change the user makes fails with <code>appMissingStatus</code>, and OK closes the dialog without committing anything.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/pages/FirstRun.vue#L87-L97">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="87" data-line="92"><code class="language-markup">    console.error(ex);
+  }
+});
+
+onMounted(() =&gt; {
+  ipcRenderer.send(&#39;dialog/ready&#39;);
+});
+
+onBeforeUnmount(async() =&gt; {
+  try {
+    await store.dispatch(&#39;rdd/unwatchResources&#39;, [&#39;apps&#39;]);</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-ts">// Save as pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts; run:
+//   yarn test:unit:jest pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+import { expect, jest } from &#39;@jest/globals&#39;;
+import { flushPromises, shallowMount } from &#39;@vue/test-utils&#39;;
+import _ from &#39;lodash&#39;;
+import { createStore } from &#39;vuex&#39;;
+
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+
+mockModules({
+  &#39;@pkg/entry/store&#39;:       undefined,
+  &#39;@pkg/utils/ipcRenderer&#39;: { ipcRenderer: { send: jest.fn() } },
+  &#39;@pkg/utils/logging&#39;:     undefined,
+  electron:                 undefined,
+});
+
+const { default: FirstRun } = await import(&#39;@pkg/pages/FirstRun.vue&#39;);
+const preferences = await import(&#39;@pkg/store/preferences&#39;);
+
+globalThis.structuredClone ??= _.cloneDeep;
+
+function mountDialog({ appExists, patchFails }: { appExists: boolean, patchFails: boolean }) {
+  const patchApp = jest.fn((_param: any, _options?: any) =&gt; patchFails
+    ? Promise.reject(new Error(&#39;connection reset&#39;))
+    : Promise.resolve({ metadata: { generation: 1 } }));
+  const app = {
+    metadata: { name: &#39;app&#39;, generation: 1 },
+    spec:     { running: false, containerEngine: { name: &#39;moby&#39; } },
+  };
+  const store = createStore({
+    modules: {
+      preferences: {
+        namespaced: true,
+        state:      preferences.state,
+        getters:    preferences.getters,
+        mutations:  preferences.mutations,
+        actions:    preferences.actions,
+      },
+      rdd:         {
+        namespaced: true,
+        state:      () =&gt; ({ app: appExists ? app : undefined }),
+        getters:    { app: (state: any) =&gt; state.app },
+        actions:    {
+          watchResources: jest.fn(), unwatchResources: jest.fn(), ensureAppExists: jest.fn(),
+        },
+      },
+      &#39;rdd-connection&#39;: {
+        namespaced: true,
+        state:      () =&gt; ({ config: { makeApiClient: () =&gt; ({ patchApp }) } }),
+        actions:    { fetchConfig: jest.fn() },
+      },
+      i18n: { namespaced: true, getters: { t: () =&gt; (key: string) =&gt; key } },
+    },
+  });
+
+  store.commit(&#39;preferences/SET_CHANGES&#39;, { &#39;containerEngine.name&#39;: &#39;containerd&#39; });
+  const wrapper = shallowMount(FirstRun, { global: { plugins: [store], directives: { focus: {} } } });
+
+  return { store, patchApp, wrapper };
+}
+
+describe(&#39;FirstRun&#39;, () =&gt; {
+  let close: jest.Spied&lt;typeof window.close&gt;;
+
+  beforeEach(() =&gt; {
+    close = jest.spyOn(window, &#39;close&#39;).mockImplementation(() =&gt; {});
+  });
+  afterEach(() =&gt; {
+    jest.restoreAllMocks();
+  });
+
+  it(&#39;commits the choices and closes on OK&#39;, async() =&gt; {
+    const { wrapper, patchApp } = mountDialog({ appExists: true, patchFails: false });
+
+    await flushPromises();
+    await wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).trigger(&#39;click&#39;);
+    await flushPromises();
+    expect(patchApp).toHaveBeenCalledWith(expect.objectContaining({
+      body: [{ op: &#39;add&#39;, path: &#39;/spec/containerEngine/name&#39;, value: &#39;containerd&#39; }],
+    }), expect.anything());
+    expect(close).toHaveBeenCalled();
+  });
+
+  it(&#39;does not accept OK before the App exists&#39;, async() =&gt; {
+    const { wrapper, patchApp } = mountDialog({ appExists: false, patchFails: false });
+
+    await flushPromises();
+    await wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).trigger(&#39;click&#39;);
+    await flushPromises();
+    expect(patchApp).not.toHaveBeenCalled();
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it(&#39;stays open when OK fails to commit&#39;, async() =&gt; {
+    const consoleError = jest.spyOn(console, &#39;error&#39;).mockImplementation(() =&gt; {});
+    const { wrapper, store } = mountDialog({ appExists: true, patchFails: true });
+
+    await flushPromises();
+    await wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).trigger(&#39;click&#39;);
+    await flushPromises();
+    expect(consoleError).toHaveBeenCalledWith(&#39;Failed to patch app:&#39;, expect.stringContaining(&#39;connection reset&#39;));
+    expect(store.state.preferences.errorStatus).toBeDefined();
+    expect(close).not.toHaveBeenCalled();
+  });
+});</code></pre>
+      <pre><code class="language-text">$ yarn test:unit:jest pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+FAIL pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+  ● FirstRun › does not accept OK before the App exists
+    expect(jest.fn()).not.toHaveBeenCalled()
+    Expected number of calls: 0
+    Received number of calls: 1
+  ● FirstRun › stays open when OK fails to commit
+    expect(jest.fn()).not.toHaveBeenCalled()
+    Expected number of calls: 0
+    Received number of calls: 1
+Tests:       2 failed, 1 passed, 3 total</code></pre>
+      </details>
+    <p>Fix: disable the inputs and OK until the App exists, and keep the dialog open with <code>PreferencesAlert</code> when OK&#39;s commit fails, as <code>Preferences.vue</code> does; closing the window keeps the current best-effort commit. The patch also replaces the always-true <code>v-if=&quot;preferences&quot;</code> and adds the test above, which passes 3 of 3 with the fix.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/pages/FirstRun.vue b/pkg/rancher-desktop/pages/FirstRun.vue
+index 5477a27ce..4aa3b15df 100644
+--- a/pkg/rancher-desktop/pages/FirstRun.vue
++++ b/pkg/rancher-desktop/pages/FirstRun.vue
+@@ -5,11 +5,12 @@
+     &lt;/h2&gt;
+     &lt;rd-checkbox
+       :label=&quot;t(&#39;firstRun.enableKubernetes&#39;)&quot;
++      :disabled=&quot;!appReady&quot;
+       preference=&quot;kubernetes.enabled&quot;
+     /&gt;
+     &lt;kubernetes-version-selector /&gt;
+     &lt;rd-fieldset
+-      v-if=&quot;preferences&quot;
++      v-if=&quot;appReady&quot;
+       :legend-text=&quot;t(&#39;containerEngine.label&#39;)&quot;
+       :is-locked=&quot;engineSelectorLocked&quot;
+     &gt;
+@@ -30,11 +31,13 @@
+       /&gt;
+     &lt;/rd-fieldset&gt;
+     --&gt;
++    &lt;preferences-alert v-if=&quot;errorStatus&quot; /&gt;
+     &lt;div class=&quot;button-area&quot;&gt;
+       &lt;button
+         v-focus
+         data-testid=&quot;accept-btn&quot;
+         class=&quot;role-primary&quot;
++        :disabled=&quot;!appReady&quot;
+         @click=&quot;commitAndClose&quot;
+       &gt;
+         {{ t(&#39;firstRun.ok&#39;) }}
+@@ -49,6 +52,7 @@ import { useStore } from &#39;vuex&#39;;
+ 
+ import EngineSelector from &#39;@pkg/components/EngineSelector.vue&#39;;
+ import KubernetesVersionSelector from &#39;@pkg/components/KubernetesVersionSelector.vue&#39;;
++import PreferencesAlert from &#39;@pkg/components/Preferences/Alert.vue&#39;;
+ import RdCheckbox from &#39;@pkg/components/form/RdCheckbox.vue&#39;;
+ import RdFieldset from &#39;@pkg/components/form/RdFieldset.vue&#39;;
+ import { ipcRenderer } from &#39;@pkg/utils/ipcRenderer&#39;;
+@@ -57,23 +61,28 @@ defineOptions({ name: &#39;first-run-dialog&#39;, layout: &#39;dialog&#39; });
+ 
+ const store = useStore();
+ const t = computed(() =&gt; store.getters[&#39;i18n/t&#39;]);
+-const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
++// The dialog commits its settings to the App, so wait until it exists.
++const appReady = computed(() =&gt; !!store.getters[&#39;rdd/app&#39;]?.metadata?.name);
++const errorStatus = computed(() =&gt; store.state.preferences.errorStatus);
+ const isPreferencesLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+ const engineSelectorLocked = computed(() =&gt; isPreferencesLocked.value(&#39;containerEngine.name&#39;));
+ 
+ async function commitAndClose(event: Event) {
+   event.preventDefault();
+   try {
+-    await store.dispatch(&#39;preferences/commit&#39;);
++    if (!await store.dispatch(&#39;preferences/commit&#39;) &amp;&amp; event.type === &#39;click&#39;) {
++      // After a failed OK, keep the dialog open with the error shown so the
++      // user can retry; closing the window still moves on to the main window.
++      return;
++    }
+   } catch (ex) {
+     // If we fail to commit, just close this window and open the main window, so
+     // we can display any following errors via the normal code path.  This
+     // likely means there is something wrong with the back end.
+     console.error(ex);
+-  } finally {
+-    window.removeEventListener(&#39;beforeunload&#39;, commitAndClose);
+-    window.close();
+   }
++  window.removeEventListener(&#39;beforeunload&#39;, commitAndClose);
++  window.close();
+ }
+ 
+ // Save default settings on closing window.
+diff --git a/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts b/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+new file mode 100644
+index 000000000..6d2e730d5
+--- /dev/null
++++ b/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+@@ -0,0 +1,103 @@
++import { expect, jest } from &#39;@jest/globals&#39;;
++import { flushPromises, shallowMount } from &#39;@vue/test-utils&#39;;
++import _ from &#39;lodash&#39;;
++import { createStore } from &#39;vuex&#39;;
++
++import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
++
++mockModules({
++  &#39;@pkg/entry/store&#39;:       undefined,
++  &#39;@pkg/utils/ipcRenderer&#39;: { ipcRenderer: { send: jest.fn() } },
++  &#39;@pkg/utils/logging&#39;:     undefined,
++  electron:                 undefined,
++});
++
++const { default: FirstRun } = await import(&#39;@pkg/pages/FirstRun.vue&#39;);
++const preferences = await import(&#39;@pkg/store/preferences&#39;);
++
++globalThis.structuredClone ??= _.cloneDeep;
++
++function mountDialog({ appExists, patchFails }: { appExists: boolean, patchFails: boolean }) {
++  const patchApp = jest.fn((_param: any, _options?: any) =&gt; patchFails
++    ? Promise.reject(new Error(&#39;connection reset&#39;))
++    : Promise.resolve({ metadata: { generation: 1 } }));
++  const app = {
++    metadata: { name: &#39;app&#39;, generation: 1 },
++    spec:     { running: false, containerEngine: { name: &#39;moby&#39; } },
++  };
++  const store = createStore({
++    modules: {
++      preferences: {
++        namespaced: true,
++        state:      preferences.state,
++        getters:    preferences.getters,
++        mutations:  preferences.mutations,
++        actions:    preferences.actions,
++      },
++      rdd:         {
++        namespaced: true,
++        state:      () =&gt; ({ app: appExists ? app : undefined }),
++        getters:    { app: (state: any) =&gt; state.app },
++        actions:    {
++          watchResources: jest.fn(), unwatchResources: jest.fn(), ensureAppExists: jest.fn(),
++        },
++      },
++      &#39;rdd-connection&#39;: {
++        namespaced: true,
++        state:      () =&gt; ({ config: { makeApiClient: () =&gt; ({ patchApp }) } }),
++        actions:    { fetchConfig: jest.fn() },
++      },
++      i18n: { namespaced: true, getters: { t: () =&gt; (key: string) =&gt; key } },
++    },
++  });
++
++  store.commit(&#39;preferences/SET_CHANGES&#39;, { &#39;containerEngine.name&#39;: &#39;containerd&#39; });
++  const wrapper = shallowMount(FirstRun, { global: { plugins: [store], directives: { focus: {} } } });
++
++  return { store, patchApp, wrapper };
++}
++
++describe(&#39;FirstRun&#39;, () =&gt; {
++  let close: jest.Spied&lt;typeof window.close&gt;;
++
++  beforeEach(() =&gt; {
++    close = jest.spyOn(window, &#39;close&#39;).mockImplementation(() =&gt; {});
++  });
++  afterEach(() =&gt; {
++    jest.restoreAllMocks();
++  });
++
++  it(&#39;commits the choices and closes on OK&#39;, async() =&gt; {
++    const { wrapper, patchApp } = mountDialog({ appExists: true, patchFails: false });
++
++    await flushPromises();
++    await wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).trigger(&#39;click&#39;);
++    await flushPromises();
++    expect(patchApp).toHaveBeenCalledWith(expect.objectContaining({
++      body: [{ op: &#39;add&#39;, path: &#39;/spec/containerEngine/name&#39;, value: &#39;containerd&#39; }],
++    }), expect.anything());
++    expect(close).toHaveBeenCalled();
++  });
++
++  it(&#39;does not accept OK before the App exists&#39;, async() =&gt; {
++    const { wrapper, patchApp } = mountDialog({ appExists: false, patchFails: false });
++
++    await flushPromises();
++    await wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).trigger(&#39;click&#39;);
++    await flushPromises();
++    expect(patchApp).not.toHaveBeenCalled();
++    expect(close).not.toHaveBeenCalled();
++  });
++
++  it(&#39;stays open when OK fails to commit&#39;, async() =&gt; {
++    const consoleError = jest.spyOn(console, &#39;error&#39;).mockImplementation(() =&gt; {});
++    const { wrapper, store } = mountDialog({ appExists: true, patchFails: true });
++
++    await flushPromises();
++    await wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).trigger(&#39;click&#39;);
++    await flushPromises();
++    expect(consoleError).toHaveBeenCalledWith(&#39;Failed to patch app:&#39;, expect.stringContaining(&#39;connection reset&#39;));
++    expect(store.state.preferences.errorStatus).toBeDefined();
++    expect(close).not.toHaveBeenCalled();
++  });
++});</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="e2e/utils/TestUtils.ts">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The e2e suite avoids the dialog only by winning a race with the mock controller <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/e2e/utils/TestUtils.ts#L369-L382">e2e/utils/TestUtils.ts</a></div>
+      <pre data-start="369" data-line="374-377"><code class="language-ts">  const controller = childProcess.spawn(
+    path.join(topSrcDir, &#39;rdd&#39;, &#39;bin&#39;, exeName(&#39;mock-controller&#39;)),
+    [&#39;-v&#39;, &#39;2&#39;, &#39;--logtostderr=false&#39;, `-log_file=${ path.join(logsDir, &#39;mock-controller.log&#39;) }`],
+    { env, stdio: &#39;ignore&#39; });
+  // Stash controller PID so we can kill it in teardown().
+  currentTest.mockController = controller;
+  controller.unref(); // Don&#39;t block test if we fail to clean up.
+
+  const args = [
+    path.join(topSrcDir, packageMeta.main),
+    &#39;--disable-gpu&#39;,
+    &#39;--whitelisted-ips=&#39;,
+    // See pkg/rancher-desktop/utils/commandLine.ts before changing the next item as the final option.
+    &#39;--disable-dev-shm-usage&#39;,</code></pre>
+    <p>The harness starts the mock controller in the background and launches the app without an App. In CI, all three e2e specs reached <code>isFirstRunNeeded</code> before discovery listed the mock&#39;s App CRD, so <code>rdd ctl get app</code> failed and the catch branch returned <code>false</code>.</p>
+    <p>With the real binaries here, the query returned an empty list one second after the mock started, in five of six runs (five seconds in the first). From then on <code>isFirstRunNeeded</code> returns <code>true</code>, the FirstRun window opens first, and every spec that takes <code>firstWindow()</code> as the main window fails.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-e2e-first-run.sh; run from the repo root after building
+# rdd/bin/rdd and rdd/bin/mock-controller:
+#   bash probe-e2e-first-run.sh race; bash probe-e2e-first-run.sh seed
+# Replays startRancherDesktop&#39;s startup (e2e/utils/TestUtils.ts), then asks
+# `rdd ctl get app --output=name`, isFirstRunNeeded&#39;s second query, once a
+# second and prints what isFirstRunNeeded would return. &quot;seed&quot; first retries
+# `rdd set --wait=false running=false`, as the proposed harness fix does.
+set -u
+mode=${1:-race}
+export RDD_INSTANCE=probe-e2e-first-run
+log=$(mktemp -d)
+rdd/bin/rdd service delete &gt;/dev/null 2&gt;&amp;1
+rdd/bin/rdd service start --controllers= --wait=false &gt;/dev/null 2&gt;&amp;1
+rdd/bin/mock-controller -v 2 --logtostderr=false &quot;-log_file=${log}/mock.log&quot; 2&gt;&quot;${log}/mock.err&quot; &amp;
+mock=$!
+if [[ ${mode} == seed ]]; then
+    for _ in $(seq 30); do
+        rdd/bin/rdd set --wait=false running=false &gt;/dev/null 2&gt;&amp;1 &amp;&amp; break
+        sleep 0.5
+    done
+fi
+for i in $(seq 0 20); do
+    if out=$(rdd/bin/rdd ctl get app --output=name 2&gt;&quot;${log}/err&quot;); then
+        verdict=$([[ -z ${out// /} ]] &amp;&amp; echo true || echo false)
+        echo &quot;[${mode}] t=${i}s: rc=0 output=&#39;${out}&#39; -&gt; isFirstRunNeeded returns ${verdict}&quot;
+        break
+    fi
+    echo &quot;[${mode}] t=${i}s: rc=1 $(tail -n 1 &quot;${log}/err&quot;) -&gt; catch branch, returns false&quot;
+    sleep 1
+done
+kill &quot;${mock}&quot;
+wait &quot;${mock}&quot; 2&gt;/dev/null
+rdd/bin/rdd service delete &gt;/dev/null 2&gt;&amp;1
+rm -r &quot;${log:?}&quot;</code></pre>
+      <pre><code class="language-text">$ bash probe-e2e-first-run.sh race; bash probe-e2e-first-run.sh seed
+[race] t=0s: rc=1 Error from server (NotFound): Unable to list &quot;app.rancherdesktop.io/v1alpha1, Resource=apps&quot;: the server could not find the requested resource (get apps.app.rancherdesktop.io) -&gt; catch branch, returns false
+[race] t=1s: rc=0 output=&#39;&#39; -&gt; isFirstRunNeeded returns true
+[seed] t=0s: rc=0 output=&#39;app.app.rancherdesktop.io/app&#39; -&gt; isFirstRunNeeded returns false</code></pre>
+      </details>
+    <p>Fix: create the App before launching, retrying <code>rdd set</code> until the mock serves the App CRD (the probe&#39;s <code>seed</code> mode). The patch targets main after <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1061" class="gh-ref" data-title="Hard-code the App namespace as rancher-desktop" data-state="merged" data-type="pr">#1061</a>; at the reviewed SHA add <code>namespace=rancher-desktop</code>, since that CRD defaults the immutable <code>spec.namespace</code> to <code>default</code> and the mock creates its Containers in <code>rancher-desktop</code>. The e2e suite was not run.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/e2e/utils/TestUtils.ts b/e2e/utils/TestUtils.ts
+index cf32f3d55..669f94198 100644
+--- a/e2e/utils/TestUtils.ts
++++ b/e2e/utils/TestUtils.ts
+@@ -374,6 +374,13 @@ export async function startRancherDesktop(testInfo: TestInfo, options: startRanc
+   currentTest.mockController = controller;
+   controller.unref(); // Don&#39;t block test if we fail to clean up.
+ 
++  // Create the App so the app skips the first-run dialog.  `rdd set` fails
++  // until the mock controller has installed the App CRD, so retry it.
++  await retry(() =&gt; spawnFile(
++    path.join(topSrcDir, &#39;rdd&#39;, &#39;bin&#39;, exeName(&#39;rdd&#39;)),
++    [&#39;set&#39;, &#39;--wait=false&#39;, &#39;running=false&#39;],
++    { env, stdio: &#39;ignore&#39; }));
++
+   const args = [
+     path.join(topSrcDir, packageMeta.main),
+     &#39;--disable-gpu&#39;,</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/FirstRun.vue">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> The first-run check keys on the App existing, and the dialog creates the App when it opens <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/pages/FirstRun.vue#L75-L94">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="75" data-line="80-89"><code class="language-ts">    window.close();
+  }
+}
+
+// Save default settings on closing window.
+onBeforeMount(async() =&gt; {
+  try {
+    window.addEventListener(&#39;beforeunload&#39;, commitAndClose);
+    await store.dispatch(&#39;rdd-connection/fetchConfig&#39;);
+    await store.dispatch(&#39;rdd/watchResources&#39;, [&#39;apps&#39;]);
+    await store.dispatch(&#39;rdd/ensureAppExists&#39;);
+  } catch (ex) {
+    console.error(ex);
+  }
+});
+
+onMounted(() =&gt; {
+  ipcRenderer.send(&#39;dialog/ready&#39;);
+});
+</code></pre>
+    <p><code>ensureAppExists</code> creates a stopped App as soon as the dialog mounts, and <code>isFirstRunNeeded</code> returns <code>false</code> whenever an App exists (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/rdd-ctl.ts#L156-L158"><code>main/rdd-ctl.ts:156-158</code></a>). So if the user quits (once I1 is fixed) or the app is killed before OK, every later start skips the dialog, and the defaults apply without the user ever choosing.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/rdd-ctl.ts#L151-L163">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="151" data-line="156-158"><code class="language-typescript">    }
+    // The backend has been created (running or not).  We will need to do first-
+    // run if the app object does not exist.  This can be rather expensive, as
+    // in a real first-run case, this involves registering all the CRDs etc.  We
+    // accept that as inevitable for now.
+    const { stdout } = await spawnFile(rddPath,
+      [&#39;ctl&#39;, &#39;get&#39;, &#39;app&#39;, &#39;--output=name&#39;], { stdio: [&#39;ignore&#39;, &#39;pipe&#39;, console] });
+    return !(stdout?.trim());
+  } catch (err) {
+    console.error(&#39;Error checking if first run is needed:&#39;, err);
+    // In case of failure, default to not showing the first run dialog; this
+    // lets us use the normal path to show fatal errors.  Nothing in first-run
+    // is critical; the user can always change the preferences manually.</code></pre>
+    <p>Issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>, the design of record, requires that the dialog open again after an interrupted first run. An App created with <code>rdd set</code> before the first GUI launch suppresses the dialog the same way.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-first-run-gate.sh; run from the repo root after building
+# rdd/bin/rdd and rdd/bin/mock-controller: bash probe-first-run-gate.sh
+# Asks isFirstRunNeeded&#39;s query (`rdd ctl get app --output=name`) before and
+# after creating a stopped App with default settings, which is what
+# FirstRun.vue&#39;s ensureAppExists does when the dialog mounts, before OK.
+set -u
+export RDD_INSTANCE=probe-first-run-gate
+log=$(mktemp -d)
+gate() {
+    local out
+    out=$(rdd/bin/rdd ctl get app --output=name 2&gt;/dev/null)
+    echo &quot;$1: output=&#39;${out}&#39; -&gt; isFirstRunNeeded returns $([[ -z ${out// /} ]] &amp;&amp; echo true || echo false)&quot;
+}
+rdd/bin/rdd service delete &gt;/dev/null 2&gt;&amp;1
+rdd/bin/rdd service start --controllers= --wait=false &gt;/dev/null 2&gt;&amp;1
+rdd/bin/mock-controller -v 2 --logtostderr=false &quot;-log_file=${log}/mock.log&quot; 2&gt;&quot;${log}/mock.err&quot; &amp;
+mock=$!
+for _ in $(seq 60); do
+    rdd/bin/rdd ctl get app --output=name &gt;/dev/null 2&gt;&amp;1 &amp;&amp; break
+    sleep 0.5
+done
+gate &quot;fresh instance&quot;
+# rdd set can fail for a moment after the query above succeeds, while API
+# discovery catches up; retry it as the e2e harness fix does.
+created=false
+for _ in $(seq 30); do
+    rdd/bin/rdd set --wait=false running=false &gt;/dev/null 2&gt;&quot;${log}/set.err&quot; &amp;&amp; created=true &amp;&amp; break
+    sleep 0.5
+done
+${created} || echo &quot;rdd set failed: $(tail -n 1 &quot;${log}/set.err&quot;)&quot;
+gate &quot;after the dialog mounted, then the app was killed&quot;
+kill &quot;${mock}&quot;
+wait &quot;${mock}&quot; 2&gt;/dev/null
+rdd/bin/rdd service delete &gt;/dev/null 2&gt;&amp;1
+rm -r &quot;${log:?}&quot;</code></pre>
+      <pre><code class="language-text">$ bash probe-first-run-gate.sh
+fresh instance: output=&#39;&#39; -&gt; isFirstRunNeeded returns true
+after the dialog mounted, then the app was killed: output=&#39;app.app.rancherdesktop.io/app&#39; -&gt; isFirstRunNeeded returns false</code></pre>
+      </details>
+    <p>Fix: key the decision on a field that the dialog writes on OK, as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> specifies with <code>spec.application.addPath</code>, or on a marker annotation until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1049" class="gh-ref" data-title="Bring back Preferences › Application › Environment to set `addPath`" data-state="open" data-type="issue">#1049</a> lands. No patch: which field to use is a design choice, and I3&#39;s harness seed must set the same field.</p>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts">
+      <div class="finding-title" id="I5">
+        <span class="finding-num">I5.</span> <code>rdd-ctl.spec.ts</code> needs a built <code>rdd</code>; without one, two tests fail and the other two pass without reaching <code>spawnFile</code> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts#L4-L22">pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts</a></div>
+      <pre data-start="4" data-line="9-17"><code class="language-ts">
+import { expect, jest } from &#39;@jest/globals&#39;;
+
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+
+const modules = mockModules({
+  &#39;@pkg/main/ipcMain&#39;: {
+    getIpcMainProxy: jest.fn(() =&gt; ({ handle: jest.fn() })),
+  },
+  &#39;@pkg/utils/childProcess&#39;: {
+    spawnFile:  jest.fn((exe: string, args: string[]) =&gt; Promise.resolve({ stdout: &#39;&#39; })),
+    SpawnError: jest.fn(),
+  },
+});
+
+const { isFirstRunNeeded } = await import(&#39;@pkg/main/rdd-ctl&#39;);
+
+describe(&#39;isFirstRunNeeded&#39;, () =&gt; {
+  const { spawnFile } = modules[&#39;@pkg/utils/childProcess&#39;];</code></pre>
+    <p>The spec mocks <code>spawnFile</code> but leaves <code>getRDDPath</code> real, and <code>getRDDPath</code> throws when <code>rdd/bin/rdd</code> is missing and <code>rdd</code> is not on PATH (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/utils/paths.ts#L105-L106"><code>utils/paths.ts:105-106</code></a>). <code>isFirstRunNeeded</code> then returns <code>false</code> before any mocked call. Both <code>true</code> cases fail on a fresh checkout. Both <code>false</code> cases still pass with zero <code>spawnFile</code> calls. The error case expects <code>false</code> anyway, and in the other case the <code>for</code> loop over <code>mock.calls</code> checks nothing. CI stays green only because its Jest job runs <code>make build-rdd</code> first.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/utils/paths.ts#L100-L111">pkg/rancher-desktop/utils/paths.ts</a></div>
+      <pre data-start="100" data-line="105-106"><code class="language-typescript">    } catch { /* ignore */ }
+
+    return which.sync(exeName, { nothrow: true }) ?? undefined;
+  })();
+
+  if (!cachedRDDPath) {
+    throw new Error(`Unable to find Rancher Desktop Daemon executable (${ exeName })`);
+  }
+  return cachedRDDPath;
+}
+
+type PlatformSpecificPaths = Pick&lt;RDAPaths, &#39;cache&#39;&gt;;</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Run from the repo root of a checkout with no rdd/bin/rdd and no rdd on PATH:
+yarn test:unit:jest pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts</code></pre>
+      <pre><code class="language-text">$ yarn test:unit:jest pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts
+FAIL pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts (6.973 s)
+  ● isFirstRunNeeded › should return true if control plane is not created
+    Expected: true
+    Received: false
+  ● isFirstRunNeeded › should return true if control plane exists but app does not
+    Expected: true
+    Received: false
+Tests:       2 failed, 2 passed, 4 total</code></pre>
+      </details>
+    <p>Fix: mock <code>@pkg/utils/paths</code> and <code>@pkg/utils/logging</code> (which reads the real paths), and assert the call count in each case. With only the call counts added, all four cases fail on the reviewed code; with the whole patch, all four pass without a built <code>rdd</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts b/pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts
+index d67ec141f..1cb28a3b2 100644
+--- a/pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts
++++ b/pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts
+@@ -14,6 +14,10 @@ const modules = mockModules({
+     spawnFile:  jest.fn((exe: string, args: string[]) =&gt; Promise.resolve({ stdout: &#39;&#39; })),
+     SpawnError: jest.fn(),
+   },
++  &#39;@pkg/utils/logging&#39;: undefined,
++  &#39;@pkg/utils/paths&#39;:   {
++    getRDDPath: jest.fn(() =&gt; &#39;/fake/rdd&#39;),
++  },
+ });
+ 
+ const { isFirstRunNeeded } = await import(&#39;@pkg/main/rdd-ctl&#39;);
+@@ -26,6 +30,7 @@ describe(&#39;isFirstRunNeeded&#39;, () =&gt; {
+   it(&#39;should return true if control plane is not created&#39;, async() =&gt; {
+     spawnFile.mockResolvedValue({ stdout: JSON.stringify({ created: false }) });
+     await expect(isFirstRunNeeded()).resolves.toBe(true);
++    expect(spawnFile).toHaveBeenCalledTimes(1);
+   });
+   it(&#39;should return true if control plane exists but app does not&#39;, async() =&gt; {
+     spawnFile.mockImplementation((_exe, args) =&gt; {
+@@ -35,6 +40,7 @@ describe(&#39;isFirstRunNeeded&#39;, () =&gt; {
+       return Promise.resolve({ stdout: &#39;  \t  \r\n&#39; });
+     });
+     await expect(isFirstRunNeeded()).resolves.toBe(true);
++    expect(spawnFile).toHaveBeenCalledTimes(2);
+     for (const call of spawnFile.mock.calls) {
+       expect(call[1]).toEqual(expect.arrayContaining([expect.toBeOneOf(&#39;status&#39;, &#39;app&#39;)]));
+     }
+@@ -47,6 +53,7 @@ describe(&#39;isFirstRunNeeded&#39;, () =&gt; {
+       return Promise.resolve({ stdout: &#39;app.app.rancherdesktop.io/app\n&#39; });
+     });
+     await expect(isFirstRunNeeded()).resolves.toBe(false);
++    expect(spawnFile).toHaveBeenCalledTimes(2);
+     for (const call of spawnFile.mock.calls) {
+       expect(call[1]).toEqual(expect.arrayContaining([expect.toBeOneOf(&#39;status&#39;, &#39;app&#39;)]));
+     }
+@@ -54,5 +61,6 @@ describe(&#39;isFirstRunNeeded&#39;, () =&gt; {
+   it(&#39;should return false if an error occurs&#39;, async() =&gt; {
+     spawnFile.mockRejectedValue(new Error(&#39;Some error&#39;));
+     await expect(isFirstRunNeeded()).resolves.toBe(false);
++    expect(spawnFile).toHaveBeenCalledTimes(1);
+   });
+ });</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/main/rdd-ctl.ts">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Every launch after a reboot now waits for the control plane before showing a window <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/rdd-ctl.ts#L151-L162">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="151" data-line="156-157"><code class="language-ts">    }
+    // The backend has been created (running or not).  We will need to do first-
+    // run if the app object does not exist.  This can be rather expensive, as
+    // in a real first-run case, this involves registering all the CRDs etc.  We
+    // accept that as inevitable for now.
+    const { stdout } = await spawnFile(rddPath,
+      [&#39;ctl&#39;, &#39;get&#39;, &#39;app&#39;, &#39;--output=name&#39;], { stdio: [&#39;ignore&#39;, &#39;pipe&#39;, console] });
+    return !(stdout?.trim());
+  } catch (err) {
+    console.error(&#39;Error checking if first run is needed:&#39;, err);
+    // In case of failure, default to not showing the first run dialog; this
+    // lets us use the normal path to show fatal errors.  Nothing in first-run</code></pre>
+    <p><code>rdd ctl</code> starts a stopped control plane before it runs kubectl (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/cmd/rdd/kubectl.go#L34"><code>rdd/cmd/rdd/kubectl.go:34</code></a>), and only a reboot or <code>rdd svc stop</code> stops it. <code>initUI</code> waits for this call before opening any window, and <code>second-instance</code> and <code>activate</code> do nothing meanwhile. On this Mac the call took about 2.1 s from a stopped control plane (three samples) and 0.1 s from a running one. At the merge-base the main window opened at once and the same start-up ran behind its progress bar. The comment above (lines 152-155) limits the cost to &quot;a real first-run case&quot;, but it applies to every cold start.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/cmd/rdd/kubectl.go#L29-L39">rdd/cmd/rdd/kubectl.go</a></div>
+      <pre data-start="29" data-line="34"><code class="language-go">	}
+	return command
+}
+
+func ctlAction(cmd *cobra.Command, args []string) error {
+	if err := ensureServiceRunning(cmd.Context()); err != nil {
+		return err
+	}
+	if len(args) &gt; 0 &amp;&amp; args[0] == &quot;wait-condition&quot; {
+		return ctlWaitConditionAction(cmd, args[1:])
+	}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/rdd-ctl.ts#L147-L160">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="147" data-line="152-155"><code class="language-typescript">    const status = JSON.parse(statusJSON);
+    if (!status.created) {
+      // The backend has not been created; we need first run.
+      return true;
+    }
+    // The backend has been created (running or not).  We will need to do first-
+    // run if the app object does not exist.  This can be rather expensive, as
+    // in a real first-run case, this involves registering all the CRDs etc.  We
+    // accept that as inevitable for now.
+    const { stdout } = await spawnFile(rddPath,
+      [&#39;ctl&#39;, &#39;get&#39;, &#39;app&#39;, &#39;--output=name&#39;], { stdio: [&#39;ignore&#39;, &#39;pipe&#39;, console] });
+    return !(stdout?.trim());
+  } catch (err) {
+    console.error(&#39;Error checking if first run is needed:&#39;, err);</code></pre>
+    <p>Fix: decide in the renderer once the App watch is up, as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> proposes, or open a window before the check; at least correct the comment.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/gui.md">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> <code>gui.md</code>&#39;s startup sequence no longer matches the code <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/docs/design/gui.md#L1-L10">rdd/docs/design/gui.md</a></div>
+      <pre data-start="1" data-line="5"><code class="language-markdown"># Rancher Desktop 2.0 GUI
+
+## Startup sequence
+
+The GUI will only run an external process once to get the kube config for the rdd control plane[^RDX].
+
+[^RDX]: The only exception is running external processes for RDX extensions.
+
+1.  Run `rdd service config`.
+    This will create the rdd instance (with default settings) if it doesn&#39;t exist yet.</code></pre>
+    <p>The app now runs <code>rdd service status</code> and <code>rdd ctl get app</code> before <code>rdd service config</code>. The dialog also creates a stopped App when it opens, but step 5 (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/docs/design/gui.md#L20-L22"><code>gui.md:20-22</code></a>) creates the App with the dialog&#39;s settings, already running. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> lists this rewrite as part of the work.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/docs/design/gui.md#L15-L27">rdd/docs/design/gui.md</a></div>
+      <pre data-start="15" data-line="20-22"><code class="language-markdown">
+3.  Fetch the app-namespace value from the config map in `rdd-system`.
+
+4.  Setup a watch on the `app` in the app-namespace.
+
+5.  If there is no app instance, then display the first-run dialog.
+    Create the new instance with the specified settings (in &quot;Running&quot; state).
+    Then setup the watch on the app again; this time it must succeed.
+
+## Stopped App Instance
+
+The GUI can remain running even when the app is in stopped state, so we need a UI mechanism to start/stop the app instance. For example this will be possible purely from the GUI:
+</code></pre>
+    <p>Fix: rewrite the sequence in the implemented order: status check, App lookup, dialog (which creates a stopped App), commit, then <code>running: true</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/main/rdd-ctl.ts">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The main-process <code>rdd/kube-config</code> handler has no callers left <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/rdd-ctl.ts#L164-L169">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="164" data-line="169"><code class="language-ts">    return false;
+  }
+}
+
+getIpcMainProxy(console).handle(&#39;rdd/kube-config&#39;, () =&gt; fetchConfig());
+mainEvents.handle(&#39;rdd/kube-config&#39;, () =&gt; fetchConfig());</code></pre>
+    <p>Its only <code>mainEvents.invoke</code> was the eager call that this PR removes from <code>main/networking/index.ts</code>. Renderers use the IPC handler on line 168.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/rdd-ctl.ts#L163-L169">pkg/rancher-desktop/main/rdd-ctl.ts</a></div>
+      <pre data-start="163" data-line="168"><code class="language-typescript">    // is critical; the user can always change the preferences manually.
+    return false;
+  }
+}
+
+getIpcMainProxy(console).handle(&#39;rdd/kube-config&#39;, () =&gt; fetchConfig());
+mainEvents.handle(&#39;rdd/kube-config&#39;, () =&gt; fetchConfig());</code></pre>
+    <p>Fix: delete line 169 and the <code>&#39;rdd/kube-config&#39;</code> entry in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/mainEvents.ts#L125-L130"><code>main/mainEvents.ts:125-130</code></a>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The <code>toBeOneOf</code> checks pass with zero calls, and the matcher exists only for them <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts#L33-L45">pkg/rancher-desktop/main/__tests__/rdd-ctl.spec.ts</a></div>
+      <pre data-start="33" data-line="38-40"><code class="language-ts">        return Promise.resolve({ stdout: JSON.stringify({ created: true }) });
+      }
+      return Promise.resolve({ stdout: &#39;  \t  \r\n&#39; });
+    });
+    await expect(isFirstRunNeeded()).resolves.toBe(true);
+    for (const call of spawnFile.mock.calls) {
+      expect(call[1]).toEqual(expect.arrayContaining([expect.toBeOneOf(&#39;status&#39;, &#39;app&#39;)]));
+    }
+  });
+  it(&#39;should return false if control plane and app both exist&#39;, async() =&gt; {
+    spawnFile.mockImplementation((_exe, args) =&gt; {
+      if (args.includes(&#39;status&#39;)) {
+        return Promise.resolve({ stdout: JSON.stringify({ created: true }) });</code></pre>
+    <p>The loop accepts two <code>status</code> calls as readily as one <code>status</code> and one <code>app</code> call, and it also passes when there are no calls at all (I5). The matcher&#39;s message ignores <code>this.isNot</code>, so a failed <code>.not.toBeOneOf</code> would still say &quot;to be one of&quot;. Nothing else uses <code>jestMatchers.ts</code>, <code>typings/jest.d.ts</code> or the <code>setupFilesAfterEnv</code> entry.</p>
+    <p>Fix: assert the exact calls with <code>toHaveBeenNthCalledWith</code>, then drop the matcher files and the config entry.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/assets/translations/en-us.yaml">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Removed and reworded English strings leave stale and drifted translations <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/assets/translations/en-us.yaml#L152-L163">pkg/rancher-desktop/assets/translations/en-us.yaml</a></div>
+      <pre data-start="152" data-line="157-158"><code class="language-yaml">  update: &quot;There&#39;s one last step to finish updating Rancher Desktop&quot;
+firstRun:
+  ok: OK
+  # @no-translate Kubernetes
+  enableKubernetes: Enable Kubernetes
+  # @no-translate SUSE
+  welcome: Welcome to {appName} by SUSE
+marketplace:
+  title: Extensions
+  noResults: No extension found for the search criteria
+  tabs:
+    catalog: Catalog</code></pre>
+    <p>All eight other locales still contain the four removed <code>firstRun.kubernetesVersion.*</code> keys, and their <code>firstRun.welcome</code> still hard-codes &quot;Rancher Desktop&quot;; <code>i18n-report stale</code> and <code>drift</code> report both for <code>de</code>.</p>
+    <p>Fix: remove the stale keys from every locale and queue <code>firstRun.welcome</code> for retranslation.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/docs/design/cmd_service.md">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The JSON fields of <code>rdd service status</code> are undocumented <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/docs/design/cmd_service.md#L139-L151">rdd/docs/design/cmd_service.md</a></div>
+      <pre data-start="139" data-line="144-146"><code class="language-markdown">
+Show control plane status: whether it has been created, whether it is running, and its PID.
+
+Additional options:
+
+*   `--output=json` (`-ojson`)
+    Print the output in JSON, instead of the default textual output suitable for
+    human consumption (`=text`).
+
+### `rdd service log`
+
+Show control plane logs.
+</code></pre>
+    <p>The app now depends on <code>created</code>, but the doc names only the flag.</p>
+    <p>Fix: list <code>created</code>, <code>running</code>, <code>pid</code> and <code>developer_mode</code> as the output contract.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/20-service/2-create.bats">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> The BATS JSON block is repeated five times <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/bats/tests/20-service/2-create.bats#L17-L36">rdd/bats/tests/20-service/2-create.bats</a></div>
+      <pre data-start="17" data-line="22-31"><code class="language-bash">    assert_line &quot;\&quot;rancher-desktop-${RDD_INSTANCE}\&quot; control plane has been created: false&quot;
+    assert_line &quot;\&quot;rancher-desktop-${RDD_INSTANCE}\&quot; control plane has been started: false&quot;
+    assert_line &quot;\&quot;rancher-desktop-${RDD_INSTANCE}\&quot; control plane PID is: 0&quot;
+}
+
+@test &#39;verify instance does not exist in json&#39; {
+    run -0 --separate-stderr rdd svc status --output=json
+    json=${output}
+    run -0 jq_raw .created &quot;${json}&quot;
+    assert_output &quot;false&quot;
+    run -0 jq_raw .running &quot;${json}&quot;
+    assert_output &quot;false&quot;
+    run -0 jq_raw .pid &quot;${json}&quot;
+    assert_output &quot;0&quot;
+}
+
+@test &#39;create instance&#39; {
+    run -0 rdd svc create
+    run -0 extract_msg
+    assert_output &quot;successfully created \&quot;rancher-desktop-${RDD_INSTANCE}\&quot; control plane&quot;</code></pre>
+    <p>Each of the five new tests repeats these lines with different expected values.</p>
+    <p>Fix: extract a helper in the file, such as <code>assert_status_json &lt;created&gt; &lt;running&gt; &lt;pid-is-zero&gt;</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><em></em>The gate runs in the main process and spawns the <code>rdd</code> CLI<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-codex">Codex GPT 6 Astra</span>: <code>isFirstRunNeeded</code> runs up to two <code>rdd</code> processes before any window, while <code>gui.md</code> limits the GUI to one external process and keeps every other read on the API connection, which keeps a remote daemon possible. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> puts the gate in the renderer, in <code>ensureAppStarted</code>, and keys it on a field that the dialog writes. That design avoids I3&#39;s race, I4 and S1&#39;s delay together. Separately, the dialog needs explicit loading, saving and completed states; today mounting the dialog enables OK, creating the App suppresses it on later starts, and closing the window counts as completion.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><code>cliflag.EnumValue</code> moves flag validation into pflag and simplifies <code>service paths</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>.</li>
+      <li>The <code>LifetimeState</code> enum makes the <code>activate</code> and <code>second-instance</code> behaviour explicit for each startup phase <span class="pill pill-claude">Claude Opus 5.5</span>.</li>
+      <li><code>KubernetesVersionSelector</code> and the self-contained <code>EngineSelector</code> remove the duplicate selection logic between the Preferences and first-run dialogs <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>.</li>
+      <li>JSON status goes to stdout apart from the log output, and the new BATS cases pin it across the service lifecycle <span class="pill pill-codex">Codex GPT 6 Astra</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Required: the dialog&#39;s commit path (I2) was untested, and both of its failures are silent; I2&#39;s patch adds <code>pages/__tests__/FirstRun.spec.ts</code>. The <code>rdd-ctl</code> spec (I5) needs its mocks and call counts before it tests anything without a built <code>rdd</code>. Optional: e2e coverage of the dialog through the unused <code>testForFirstRunWindow</code> helper (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/e2e/utils/ProfileUtils.ts#L184"><code>e2e/utils/ProfileUtils.ts:184</code></a>), once I3&#39;s harness change makes startup deterministic.</p>
+    <p>Runs during this review: the full Jest suite at the review SHA (586 passed, 2 failed, 36 skipped; the failures are I5&#39;s) and with all four patches applied (591 passed, 36 skipped); each new or changed test against the reviewed code and the fix; ESLint and a filtered <code>tsc</code> on the patched files; <code>go test ./pkg/cli/flag/...</code>; the Electron quit probe (I1); the e2e and gate probes against real <code>rdd</code> and <code>mock-controller</code> binaries (I3, I4); and the cold-start timings (S1). CI is green at the head, BATS on three OSes and e2e included; neither was rerun locally.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>gui.md</code> describes the old startup sequence (S2), and the JSON fields of <code>rdd service status</code> are undocumented (S6). The <code>addPath</code> doc changes that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> lists wait with path management.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b191462d1"><code>b191462d1</code></a> makes the dialog reachable while <code>FirstRun.vue</code> still reads and writes RD1 settings over IPC; the page adapts only in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8e865e794"><code>8e865e794</code></a>, so a bisect between them lands on a dialog whose choices go nowhere. Move the trigger commit after the adaptation <span class="pill pill-claude">Claude Opus 5.5</span>.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0e0b32564"><code>0e0b32564</code></a>&#39;s subject names <code>expect.oneOf</code>, but the matcher is <code>toBeOneOf</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The PR defers path management until the <code>addPath</code> backend is ready and does not close <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>; the commented-out selector in <code>FirstRun.vue</code> matches that.</li>
+      <li><code>isPreferenceLocked</code> always returns <code>false</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/store/preferences.ts#L125"><code>store/preferences.ts:125</code></a>, TODO <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/513" class="gh-ref" data-title="Implement deployment profiles" data-state="open" data-type="issue">#513</a>), so <code>engineSelectorLocked</code> is always <code>false</code> and the dialog never locks the engine selector.</li>
+      <li>Do not re-suggest passing <code>appName</code> to <code>t(&#39;firstRun.welcome&#39;)</code>: the i18n store injects it into every translation (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/pkg/rancher-desktop/store/i18n.ts#L112-L115"><code>store/i18n.ts:112-115</code></a>).</li>
+      <li>Do not re-suggest writing the version selector&#39;s fallback into preferences: when Kubernetes is enabled without a version, the defaulter resolves the same <code>stable</code> channel that the selector shows (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/8e865e79498895c906d908048b92611a47e88b27/rdd/pkg/controllers/app/app/controllers/app_defaulter.go#L62-L72"><code>app_defaulter.go:62-72</code></a>).</li>
+      <li>Do not re-suggest moving <code>.width-xs</code> into <code>KubernetesVersionSelector.vue</code>: Vue applies <code>BodyKubernetes.vue</code>&#39;s scoped rule to the child component&#39;s root element.</li>
+      <li>Do not re-suggest treating the unchecked Kubernetes box as a regression: <code>spec.kubernetes.enabled</code> has no default, and that predates this PR.</li>
+      <li>Do not re-suggest an early <code>ShuttingDown</code> check in <code>initUI</code> to stop it spawning <code>rdd</code> after a quit: with no window open, Electron exits within 50 ms of <code>app.quit()</code> (probe), before startup reaches <code>initUI</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found the review&#39;s only unique Important, the cancelled quit (I1), by tracing the pinned Electron typings through <code>before-quit</code>, <code>window-all-closed</code> and the <code>ShuttingDown</code> branches to a concrete hidden process, and the probe later confirmed each step. It also raised all seven suggestions, three of them alone, and the commit-order note. Its severities ran high. It filed the cold-start delay (S1) and the stale <code>gui.md</code> (S2) as Important, and its I7 restated I2&#39;s missing test as a separate finding. One detail in its I3 was wrong (it said Kubernetes defaults to enabled), and a probe refuted its suggestion that <code>initUI</code> spawns <code>rdd</code> after a quit. Every run it reported appears in its session log.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex supplied the strongest evidence: a component probe against the real preferences store for I2, which the consolidated test grew from, plus a passing control case. It rated the gate (I4) and the test dependency (I5) as Suggestions, the gate because its worst case matches merge-base behaviour; the consolidation raised both, since one contradicts the design of record and the other fails on a fresh checkout. Its reproducer for the e2e race extracted <code>initUI</code> from source and showed only that a <code>true</code> gate opens the dialog, not that the harness produces one. It also caught that the review context wrongly calls the Container Engine preferences latent.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro wrote the thinnest review and left out the Executive Summary heading. Three of its five findings were false. The i18n store injects <code>{appName}</code>, the version fallback matches the defaulter, and its <code>process.resourcesPath</code> explanation of the Jest failure is wrong, since <code>getRDDPath</code> reads that path only for a packaged app; its reproducer tested <code>path.join</code> with <code>undefined</code>, not the reviewed code. It rated the e2e race Critical and proposed returning <code>true</code> on a missing CRD, which would put every e2e spec in front of the dialog. During its run it edited <code>rdd-ctl.ts</code> and its spec to debug, restored both with <code>git checkout</code>, and left probe scripts in the worktree root.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash raised I3, I4 and I5 and the trigger-location divergence from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>, but three of its findings were wrong, two Importants and a Suggestion. It claimed <code>preventDefault()</code> does not cancel the unload, which the probe refutes, and built a dropped-commit theory on it; it filed the Kubernetes-off default as a regression although the default predates the PR; and it called <code>.width-xs</code> orphaned although Vue&#39;s scoped root styling still applies it. The two Gemini models also both raised the blank engine radio, a symptom of I2 that both blamed on the dropped Moby fallback, so that agreement counts as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>11m 32s</td><td>11m 19s</td><td>13m 29s</td><td>10m 12s</td></tr>
+        <tr><td>Findings</td><td>5I 7S</td><td>4I 1S</td><td>2I</td><td>4I 3S</td></tr>
+        <tr><td>Tool calls</td><td>75 (Bash 61, Read 14)</td><td>21 (shell 20, stdin 1)</td><td>54 (run<em>shell</em>command 54)</td><td>74 (read<em>file 33, grep</em>search 23, run<em>shell</em>command 16)</td></tr>
+        <tr><td>Design observations</td><td>4</td><td>3</td><td>1</td><td>4</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>3</td><td>3</td></tr>
+        <tr><td>Unique insights</td><td>4</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>22</td><td>22</td><td>22</td><td>22</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>5I 7S</strong></td><td><strong>4I 1S</strong></td><td><strong>2I</strong></td><td><strong>4I 3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>2</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>Dropped</td><td>3</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Claude and Codex provided most of the value: Claude found the quit defect and the widest set of real issues, and Codex supplied the executable evidence that the consolidation reused. Both Gemini models mostly restated the CI facts that the prompt supplied and produced six false positives between them.</p>
+    <p><strong>Reconciliation.</strong> Claude P1: I5 cold start, important → suggestion S1; I8 <code>gui.md</code>, important → suggestion S2; I7 missing dialog tests, important → folded into I2&#39;s patch and the Testing Assessment; S3 <code>v-if=&quot;preferences&quot;</code>, suggestion → folded into I2&#39;s patch; S1 <code>initUI</code> spawn after quit, suggestion → dropped (probe). Codex P1: S1 App-existence gate, suggestion → important I4; S2 unmocked <code>getRDDPath</code>, suggestion → important I5. Gemini Pro P1: C1 discovery race, critical → important I3; C2 <code>resourcesPath</code>, critical → dropped (false positive); I1 version fallback and I2 <code>appName</code>, important → dropped (false positives); I3 engine fallback, important → merged into I2. Flash P1: I3 <code>preventDefault</code>, I5 Kubernetes default, important → dropped (false positives); I6 trigger location, important → design observation; S1 <code>.width-xs</code> → dropped (false positive); S2 engine fallback, suggestion → merged into I2.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>A reproducer run from the repository root inherits the root <code>package.json</code> module type, so a CommonJS probe saved as <code>.js</code> in an ES-module repo throws on its first <code>require</code> and, behind a filtered output, looks like a hang. Name each probe file for its module system (<code>.cjs</code> or <code>.mjs</code>), and run it from the repo root as the report tells the author to.</li>
+      <li>When the prompt states an observed failure, agents echo it as a finding whether or not they explain it. Credit an agent for a prompt-supplied failure only when its mechanism checks out against the code, and count a wrong mechanism as a false positive.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] UPDATE: the Container Engine nav item is live; <code>window/preferenceConstants.ts</code> lists <code>container-engine</code> with its <code>general</code> tab, and only the WSL item and the remaining tabs stay commented out. Findings in <code>components/Preferences/ContainerEngineGeneral.vue</code> are live.</li>
+      <li>[repo] <code>rdd/docs/design/gui.md</code> limits the GUI to one external process, <code>rdd service config</code>, and keeps every other read on the API connection, so a remote daemon stays possible. Flag GUI code that spawns <code>rdd</code> subcommands to read state the API can serve.</li>
+      <li>[repo] Every <code>rdd</code> command that goes through <code>ensureServiceRunning</code>, <code>rdd ctl</code> and <code>rdd set</code> included, creates and starts the control plane when it is missing or stopped. Flag GUI or test code that calls one as a cheap probe, above all before the first window opens.</li>
+      <li>[repo] In Electron, a <code>beforeunload</code> handler that calls <code>preventDefault()</code> cancels <code>app.quit()</code> as well as the window close, and a later <code>window.close()</code> does not resume the quit. Flag a window that defers work by cancelling its unload unless the quit path destroys that window first.</li>
+      <li>[repo] The e2e harness starts the mock controller in the background and launches the app at once; the mock serves its CRDs about a second later. Require the harness to create any state that the app reads at startup before it launches the app, since a startup read otherwise races the mock.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+!function(e){e.languages.typescript=e.languages.extend("javascript",{"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,lookbehind:!0,greedy:!0,inside:null},builtin:/\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/}),e.languages.typescript.keyword.push(/\b(?:abstract|declare|is|keyof|readonly|require)\b/,/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,/\btype\b(?=\s*(?:[\{*]|$))/),delete e.languages.typescript.parameter,delete e.languages.typescript["literal-property"];var s=e.languages.extend("typescript",{});delete s["class-name"],e.languages.typescript["class-name"].inside=s,e.languages.insertBefore("typescript","function",{decorator:{pattern:/@[$\w\xA0-\uFFFF]+/,inside:{at:{pattern:/^@/,alias:"operator"},function:/^[\s\S]+/}},"generic-function":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,greedy:!0,inside:{function:/^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,generic:{pattern:/<[\s\S]+/,alias:"class-name",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
