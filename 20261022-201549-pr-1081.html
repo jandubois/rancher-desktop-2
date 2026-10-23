@@ -230,7 +230,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
       <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7f43d6026"><code>7f43d6026</code></a> Default addPath to unset until user picks a value</td></tr>
       <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7f43d602694c44545f3d50e4fe14bfb994b5d2c0"><code>7f43d602694c44545f3d50e4fe14bfb994b5d2c0</code></a></td></tr>
       <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
-      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; <code>rdd run</code> stores <code>unset</code> on an App it creates, and no test pins <code>rdd run</code> leaving an existing <code>unset</code> App alone</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; <code>rdd run</code> starts an App without pinning <code>addPath</code>, so a CLI-started instance can stay <code>unset</code> and later get the first-run dialog</td></tr>
       <tr><td>Wall-clock time</td><td><code>36 min 6 s</code></td></tr>
     </table>
 
@@ -240,7 +240,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>Round 3 adds a <code>pinUnset</code> parameter so that <code>rdd stop</code> and <code>rdd run</code> leave an undecided App alone, and it applies round 2&#39;s test patch; every <code>IsAdding()</code> site now has a test that fails on revert. But <code>rdd run</code> passes <code>pinUnset=false</code> even when it creates the App, so the App it creates stays <code>unset</code>, which contradicts <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a> and the PR&#39;s own docs. And no test notices <code>rdd run</code> going back to pinning an existing <code>unset</code> App.</p>
+    <p>Round 3 adds a <code>pinUnset</code> parameter so that <code>rdd stop</code> and <code>rdd run</code> leave an undecided App alone, and it applies round 2&#39;s test patch, so every <code>IsAdding()</code> site has a test that fails on revert. But an App&#39;s settings are final once it starts, so <code>rdd run</code> must pin <code>manual</code> as <code>rdd start</code> does. It leaves both a new App and an existing <code>unset</code> one <code>unset</code>, so a CLI-started instance can still get the first-run dialog.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -253,7 +253,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
 
     <div class="card card-important" data-file="rdd/cmd/rdd/run.go">
       <div class="finding-title" id="I1">
-        <span class="finding-num">I1.</span> <code>rdd run</code> creates a new App with <code>addPath: unset</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+        <span class="finding-num">I1.</span> <code>rdd run</code> starts the App without pinning <code>addPath</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
       </div>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L105-L115">rdd/cmd/rdd/run.go</a></div>
       <pre data-start="105" data-line="110"><code class="language-go">		}
@@ -267,7 +267,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
 // isKubeCommand reports whether name invokes kubectl or helm, ignoring any
 // directory prefix and a trailing .exe.
 func isKubeCommand(name string) bool {</code></pre>
-    <p><code>ensureAppRunning</code> passes <code>pinUnset=false</code> whether or not the App exists, so <code>setAction</code> skips the pin for a missing App too (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L312"><code>set.go:312</code></a>) and the CRD default stores <code>unset</code>. Round 2 and the merge-base stored <code>manual</code>.</p>
+    <p><code>ensureAppRunning</code> passes <code>pinUnset=false</code>, so <code>setAction</code> skips the pin for a missing App and for an <code>unset</code> one (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L312"><code>set.go:312</code></a>), and both stay <code>unset</code>. Round 2 stored <code>manual</code> in both cases, and at the merge-base <code>manual</code> was the default.</p>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/set.go#L307-L317">rdd/cmd/rdd/set.go</a></div>
       <pre data-start="307" data-line="312"><code class="language-go">	// When pinUnset is set and the caller doesn&#39;t name a strategy, pin a new or
 	// still-unset App to &quot;manual&quot;, so a CLI-created instance never gets the app&#39;s
@@ -280,22 +280,8 @@ func isKubeCommand(name string) bool {</code></pre>
 		}
 	}
 </code></pre>
-    <p>So once <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> ships, an instance set up with <code>rdd run docker ps</code> gets the first-run dialog. That contradicts <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a>, the commit message, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L116-L118"><code>api_app.md:116-118</code></a> and the pin&#39;s own comment, which reserves <code>pinUnset=false</code> for GUI-created Apps. Nothing reads <code>unset</code> yet, so no user sees it today.</p>
-      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L111-L123">rdd/docs/design/api_app.md</a></div>
-      <pre data-start="111" data-line="116-118"><code class="language-markdown">  - `back`: append, so existing `PATH` entries win (`$PATH:bin`).
-  - `manual`: do not manage `PATH`; remove any lines a previous `front`/`back` added.
-
-  The field defaults to `unset`, so the App can record that nobody has chosen yet. The GUI sends
-  `front`/`back`/`manual` when the user opts in. When `rdd set` runs without naming
-  `application.addPath` and the App is missing or still `unset`, it also writes
-  `application.addPath: manual`, so a CLI-created instance — including one started with
-  `rdd set running=true` — leaves `PATH` alone and never gets the first-run dialog.
-
-  On Unix, `manual` removes only the block between our start/end markers, so a hand-written
-  `PATH` line survives anywhere. On Windows the user `Environment` `Path` is a plain
-  semicolon-separated list with nowhere to fence our entry, so `manual` removes the bin directory,
-  wherever it is, only when an earlier `front` or `back` added it. An entry that the user added</code></pre>
-    <p><code>rdd set</code> and <code>rdd start</code> on a missing App are the probe&#39;s control.</p>
+    <p>The maintainer has since ruled that an App&#39;s settings are final once it starts, so <code>rdd run</code> must pin as <code>rdd set</code> and <code>rdd start</code> do. <code>rdd stop</code> keeps <code>pinUnset=false</code>, since an <code>unset</code> App has never started. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a> named only <code>rdd set</code>.</p>
+    <p><code>rdd set</code> and <code>rdd start</code> are the probe&#39;s control.</p>
       <details class="fold">
         <summary>Reproducer</summary>
       <pre><code class="language-bash">#!/usr/bin/env bash
@@ -361,17 +347,17 @@ missing  rdd run true                     -&gt; manual
 unset    rdd set --wait=false running=false -&gt; manual
 unset    rdd start --wait=false           -&gt; manual
 unset    rdd stop --wait=false            -&gt; unset
-unset    rdd run true                     -&gt; unset
+unset    rdd run true                     -&gt; manual
 front    rdd set --wait=false running=false -&gt; front
 front    rdd start --wait=false           -&gt; front
 front    rdd stop --wait=false            -&gt; front
 front    rdd run true                     -&gt; front</code></pre>
       </details>
-    <p>Fix: pin every new App in <code>setAction</code>, where the create is decided, and let <code>pinUnset</code> gate only an existing <code>unset</code> App. The patch&#39;s new test fails against the reviewed code and passes with the fix. It has not run on Windows, where it relies on MSYS2&#39;s <code>timeout</code> to stop <code>rdd.exe</code>.</p>
+    <p>Fix: pass <code>pinUnset=true</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a>, and restore round 2&#39;s wording for &quot;an existing App is only started&quot; in the <code>rdd run</code> help, the <code>ensureAppRunning</code> comment and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/cmd_app.md#L80"><code>cmd_app.md:80</code></a>. Both new tests fail against the reviewed code and pass with the fix. They have not run on Windows, where they rely on MSYS2&#39;s <code>timeout</code> to stop <code>rdd.exe</code>.</p>
       <details class="fold">
         <summary>Patch</summary>
       <pre><code class="language-diff">diff --git a/rdd/bats/tests/32-app-controllers/set.bats b/rdd/bats/tests/32-app-controllers/set.bats
-index ca13a4d27..6038d25e2 100644
+index ca13a4d27..14036b511 100644
 --- a/rdd/bats/tests/32-app-controllers/set.bats
 +++ b/rdd/bats/tests/32-app-controllers/set.bats
 @@ -208,6 +208,15 @@ local_setup_file() {
@@ -390,144 +376,99 @@ index ca13a4d27..6038d25e2 100644
  @test &quot;rdd set pins addPath=manual on an existing App that is still unset&quot; {
      delete_app
      # Create the App without addPath, as the GUI does.
-diff --git a/rdd/cmd/rdd/set.go b/rdd/cmd/rdd/set.go
-index 248be581e..7d42d0850 100644
---- a/rdd/cmd/rdd/set.go
-+++ b/rdd/cmd/rdd/set.go
-@@ -304,13 +304,13 @@ func setAction(ctx context.Context, args []string, pinUnset, dryRun, wait bool,
- 		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
- 	}
- 
--	// When pinUnset is set and the caller doesn&#39;t name a strategy, pin a new or
--	// still-unset App to &quot;manual&quot;, so a CLI-created instance never gets the app&#39;s
--	// first-run dialog. rdd stop and rdd run pass pinUnset=false so they leave a
--	// GUI-created, still-undecided App alone. An App that already holds
--	// front/back/manual keeps its value.
--	if _, named := properties[&quot;application.addPath&quot;]; pinUnset &amp;&amp; !named {
--		if apierrors.IsNotFound(err) || app.Spec.Application.AddPath == appv1alpha1.AddPathUnset {
-+	// When the caller doesn&#39;t name a strategy, pin a new App to &quot;manual&quot;, so a
-+	// CLI-created instance never gets the app&#39;s first-run dialog. With pinUnset,
-+	// also pin an existing App that is still unset; rdd stop and rdd run pass
-+	// pinUnset=false so they leave a GUI-created, still-undecided App alone. An
-+	// App that already holds front/back/manual keeps its value.
-+	if _, named := properties[&quot;application.addPath&quot;]; !named {
-+		if apierrors.IsNotFound(err) || (pinUnset &amp;&amp; app.Spec.Application.AddPath == appv1alpha1.AddPathUnset) {
- 			coerced[&quot;application.addPath&quot;] = string(appv1alpha1.AddPathManual)
- 		}
- 	}</code></pre>
-      </details>
-    </div>
-    <div class="card card-important" data-file="rdd/cmd/rdd/run.go">
-      <div class="finding-title" id="I2">
-        <span class="finding-num">I2.</span> No test pins <code>rdd run</code> leaving an existing <code>unset</code> App alone <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#I2" class="pilcrow">&#182;</a>
-      </div>
-      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L105-L115">rdd/cmd/rdd/run.go</a></div>
-      <pre data-start="105" data-line="110"><code class="language-go">		}
-	case err != nil:
-		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
-	}
-
-	return setAction(ctx, props, false, false, true, limaLongWaitTimeout)
-}
-
-// isKubeCommand reports whether name invokes kubectl or helm, ignoring any
-// directory prefix and a trailing .exe.
-func isKubeCommand(name string) bool {</code></pre>
-    <p>Round 3 added a test for <code>rdd stop</code> keeping an <code>unset</code> App, but none for <code>rdd run</code>. Reverting <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> to <code>true</code> leaves <code>set.bats</code> green, and <code>rdd run</code> then silently turns a GUI-created <code>unset</code> App into <code>manual</code>, erasing the first-run signal that this PR exists to record. A silent wrong result makes the test required.</p>
-      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L105-L115">rdd/cmd/rdd/run.go</a></div>
-      <pre data-start="105" data-line="110"><code class="language-go">		}
-	case err != nil:
-		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
-	}
-
-	return setAction(ctx, props, false, false, true, limaLongWaitTimeout)
-}
-
-// isKubeCommand reports whether name invokes kubectl or helm, ignoring any
-// directory prefix and a trailing .exe.
-func isKubeCommand(name string) bool {</code></pre>
-    <p>The <code>rdd run</code> tests in <code>engine-docker.bats</code> and <code>kube-context.bats</code> run against an App that their setup created, and none of them reads <code>addPath</code>. <code>rdd run</code> does not accept <code>--wait=false</code>, so the new test ends its wait with <code>timeout</code>, as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/33-lima-controllers/limavm-wsl2-orphan.bats#L127"><code>limavm-wsl2-orphan.bats:127</code></a> does for <code>rdd ctl wait</code>. The probe reverts each <code>pinUnset=false</code> caller in turn; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/app.go#L105"><code>app.go:105</code></a> is the control.</p>
-      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/33-lima-controllers/limavm-wsl2-orphan.bats#L122-L132">rdd/bats/tests/33-lima-controllers/limavm-wsl2-orphan.bats</a></div>
-      <pre data-start="122" data-line="127"><code class="language-bash">@test &quot;cleanup&quot; {
-    rdd ctl delete limavm &quot;${VM_NAME}&quot; --namespace &quot;${NAMESPACE}&quot;
-    # A failed wsl.exe --unregister can deadlock wslservice.exe and block the
-    # reconciler&#39;s store.Inspect, so wrap the wait in an outer timeout. Kill
-    # wslservice.exe to recover.
-    if ! timeout 90 rdd ctl wait --for=delete \
-        &quot;limavm/${VM_NAME}&quot; --namespace &quot;${NAMESPACE}&quot; --timeout=60s; then
-        MSYS_NO_PATHCONV=1 taskkill.exe /F /IM wslservice.exe || true
-        false
-    fi
-}</code></pre>
-      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/app.go#L100-L106">rdd/cmd/rdd/app.go</a></div>
-      <pre data-start="100" data-line="105"><code class="language-go">			logrus.Info(&quot;App does not exist; nothing to stop&quot;)
-			return nil
-		}
-		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
-	}
-	return setAction(ctx, []string{&quot;running=false&quot;}, false, false, wait, timeout)
-}</code></pre>
-      <details class="fold">
-        <summary>Reproducer</summary>
-      <pre><code class="language-bash">#!/usr/bin/env bash
-# Save as probe-pin-tests.sh; run from the repo root: bash probe-pin-tests.sh
-# Needs GNU timeout. Reverts one pinUnset=false caller at a time to true,
-# rebuilds rdd and runs set.bats under a scratch instance (review-1081, app
-# controller only, no VM). app.go:105 is the control.
-set -o nounset
-for site in app.go:105 run.go:110; do
-    file=rdd/cmd/rdd/${site%:*}
-    line=${site#*:}
-    sed -i.bak &quot;${line}s/setAction(\(.*\), false, false,/setAction(\1, true, false,/&quot; &quot;${file}&quot;
-    GOFLAGS=-buildvcs=false make -C rdd build-rdd &gt;/dev/null 2&gt;&amp;1 || echo &quot;${site}: build failed&quot;
-    result=$(cd rdd/bats &amp;&amp; RDD_INSTANCE=review-1081 ./lib/bats-core/bin/bats tests/32-app-controllers/set.bats 2&gt;&amp;1 |
-        grep &#39;^not ok&#39; | tr &#39;\n&#39; &#39; &#39;)
-    # The restored file keeps its old mtime, so touch it for make&#39;s next build.
-    mv &quot;${file}.bak&quot; &quot;${file}&quot;
-    touch &quot;${file}&quot;
-    echo &quot;${site}: ${result:-every test passes}&quot;
-done
-GOFLAGS=-buildvcs=false make -C rdd build-rdd &gt;/dev/null 2&gt;&amp;1
-RDD_INSTANCE=review-1081 rdd/bin/rdd svc delete &gt;/dev/null 2&gt;&amp;1</code></pre>
-      <pre><code class="language-text">$ bash probe-pin-tests.sh
-app.go:105: not ok 17 rdd stop leaves an existing unset App&#39;s addPath alone
-run.go:110: every test passes
-$ git apply i2.patch  # the patch below
-$ bash probe-pin-tests.sh
-app.go:105: not ok 17 rdd stop leaves an existing unset App&#39;s addPath alone
-run.go:110: not ok 18 rdd run leaves an existing unset App&#39;s addPath alone</code></pre>
-      </details>
-    <p>Fix: add the test beside the <code>rdd stop</code> one. It passes against the reviewed code and fails when <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> reverts. It applies before or after I1&#39;s patch.</p>
-      <details class="fold">
-        <summary>Patch</summary>
-      <pre><code class="language-diff">diff --git a/rdd/bats/tests/32-app-controllers/set.bats b/rdd/bats/tests/32-app-controllers/set.bats
-index ca13a4d27..117046cf2 100644
---- a/rdd/bats/tests/32-app-controllers/set.bats
-+++ b/rdd/bats/tests/32-app-controllers/set.bats
-@@ -273,3 +273,23 @@ YAML
-     run -0 get_app_field &#39;.spec.application.addPath&#39;
-     assert_output &quot;unset&quot;
+@@ -227,6 +236,27 @@ EOF
+     assert_output &quot;manual&quot;
  }
-+
-+@test &quot;rdd run leaves an existing unset App&#39;s addPath alone&quot; {
+ 
++@test &quot;rdd run pins addPath=manual on an existing App that is still unset&quot; {
 +    delete_app
 +    # Create the App without addPath, as the GUI does.
-+    rdd ctl apply -f - &lt;&lt;YAML
++    rdd ctl apply -f - &lt;&lt;EOF
 +apiVersion: app.rancherdesktop.io/v1alpha1
 +kind: App
 +metadata:
 +  name: ${APP_NAME}
 +spec:
 +  running: false
-+YAML
++EOF
 +    run -0 get_app_field &#39;.spec.application.addPath&#39;
 +    assert_output &quot;unset&quot;
 +
-+    # rdd run only starts an existing App, so the GUI&#39;s first-run signal survives.
++    # A started App&#39;s settings are final, so rdd run pins addPath like rdd set.
++    # timeout ends rdd run&#39;s wait, as in the creation test above.
 +    run -124 timeout 10 rdd run true
 +    run -0 get_app_field &#39;.spec.application.addPath&#39;
-+    assert_output &quot;unset&quot;
-+}</code></pre>
++    assert_output &quot;manual&quot;
++}
++
+ @test &quot;rdd set leaves an existing addPath=front alone&quot; {
+     delete_app
+     rdd set --wait=false running=false application.addPath=front
+diff --git a/rdd/cmd/rdd/run.go b/rdd/cmd/rdd/run.go
+index ce197d419..a6bf0bc5c 100644
+--- a/rdd/cmd/rdd/run.go
++++ b/rdd/cmd/rdd/run.go
+@@ -47,7 +47,8 @@ func newRunCommand() *cobra.Command {
+ 			is missing or not working. When the App does not exist yet and
+ 			the command is kubectl or helm, rdd run enables Kubernetes so
+ 			the command has a cluster to talk to. An existing App is only
+-			started, never reconfigured.
++			started, except that rdd run, like rdd set, changes an
++			application.addPath that is still unset to manual.
+ 
+ 			Examples:
+ 			  rdd run docker run --rm hello-world
+@@ -89,7 +90,8 @@ func runAction(cmd *cobra.Command, args []string) error {
+ // ensureAppRunning starts Rancher Desktop and waits for it to settle. When the
+ // App does not exist yet and command invokes a Kubernetes client, it enables
+ // Kubernetes so the client has a cluster to talk to; the App defaulter then
+-// picks the default Kubernetes version. An existing App is only started.
++// picks the default Kubernetes version. An existing App is only started,
++// except that setAction pins a still-unset addPath to manual.
+ func ensureAppRunning(ctx context.Context, command string) error {
+ 	c, _, err := getAppKubeClient(ctx)
+ 	if err != nil {
+@@ -107,7 +109,7 @@ func ensureAppRunning(ctx context.Context, command string) error {
+ 		return fmt.Errorf(&quot;failed to get App: %w&quot;, err)
+ 	}
+ 
+-	return setAction(ctx, props, false, false, true, limaLongWaitTimeout)
++	return setAction(ctx, props, true, false, true, limaLongWaitTimeout)
+ }
+ 
+ // isKubeCommand reports whether name invokes kubectl or helm, ignoring any
+diff --git a/rdd/cmd/rdd/set.go b/rdd/cmd/rdd/set.go
+index 248be581e..5f5214046 100644
+--- a/rdd/cmd/rdd/set.go
++++ b/rdd/cmd/rdd/set.go
+@@ -305,10 +305,10 @@ func setAction(ctx context.Context, args []string, pinUnset, dryRun, wait bool,
+ 	}
+ 
+ 	// When pinUnset is set and the caller doesn&#39;t name a strategy, pin a new or
+-	// still-unset App to &quot;manual&quot;, so a CLI-created instance never gets the app&#39;s
+-	// first-run dialog. rdd stop and rdd run pass pinUnset=false so they leave a
+-	// GUI-created, still-undecided App alone. An App that already holds
+-	// front/back/manual keeps its value.
++	// still-unset App to &quot;manual&quot;, so a CLI-created or CLI-started instance never
++	// gets the app&#39;s first-run dialog. rdd stop passes pinUnset=false, so stopping
++	// a GUI-created App that has never started leaves it undecided. An App that
++	// already holds front/back/manual keeps its value.
+ 	if _, named := properties[&quot;application.addPath&quot;]; pinUnset &amp;&amp; !named {
+ 		if apierrors.IsNotFound(err) || app.Spec.Application.AddPath == appv1alpha1.AddPathUnset {
+ 			coerced[&quot;application.addPath&quot;] = string(appv1alpha1.AddPathManual)
+diff --git a/rdd/docs/design/cmd_app.md b/rdd/docs/design/cmd_app.md
+index 555db83f0..3fa0604b8 100644
+--- a/rdd/docs/design/cmd_app.md
++++ b/rdd/docs/design/cmd_app.md
+@@ -77,7 +77,7 @@ rdd lima shell rd &quot;$@&quot;
+ 
+ `rdd run` prepends `~/.rd2/bin` to `PATH`, sets the Docker context to `rancher-desktop-2`, and points `KUBECONFIG` at `~/.rd2/kube.config`, whose current context is `rancher-desktop-2`. It clears `DOCKER_HOST` so the Docker context takes effect. `rdd run` itself leaves your selected Docker context and the current context in `~/.kube/config` unchanged. Starting the App still merges the `rancher-desktop-2` entry into `~/.kube/config`, and on the moby backend creates its Docker context; as a normal startup does, it switches your current context only when the existing one is missing or not working (see [api_app.md](api_app.md)).
+ 
+-Rancher Desktop starts first if it is not already running. When the App does not exist yet and the command is `kubectl` or `helm`, `rdd run` also enables Kubernetes so the command has a cluster to talk to; the App defaulter then picks the default version. `rdd run` only starts an existing App; it never reconfigures one.
++Rancher Desktop starts first if it is not already running. When the App does not exist yet and the command is `kubectl` or `helm`, `rdd run` also enables Kubernetes so the command has a cluster to talk to; the App defaulter then picks the default version. `rdd run` only starts an existing App, except that, like `rdd set`, it changes an `application.addPath` that is still `unset` to `manual`.
+ 
+ For example, `rdd run docker run --rm hello-world` effectively executes:
+ </code></pre>
       </details>
     </div>
     <hr>
@@ -535,7 +476,7 @@ index ca13a4d27..117046cf2 100644
 
     <div class="card card-suggestion" data-file="rdd/docs/design/cmd_app.md">
       <div class="finding-title" id="S1">
-        <span class="finding-num">S1.</span> <code>cmd_app.md</code> still says <code>rdd stop</code> behaves like <code>rdd set running=false</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+        <span class="finding-num">S1.</span> <code>cmd_app.md</code> still says <code>rdd stop</code> behaves like <code>rdd set running=false</code> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S1" class="pilcrow">&#182;</a>
       </div>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/cmd_app.md#L46-L56">rdd/docs/design/cmd_app.md</a></div>
       <pre data-start="46" data-line="51"><code class="language-markdown">
@@ -549,23 +490,8 @@ Stop Rancher Desktop by setting `running=false` on the App singleton. `rdd stop`
 ## `rdd delete`
 
 Delete the `App` and all owned objects, like the `LimaVM` and the `K3sVersions`, etc.</code></pre>
-    <p>Round 3 made the pin depend on the caller, which breaks two equivalences on this page for an App that is still <code>unset</code>. <code>rdd set running=false</code> stores <code>manual</code> there, and <code>rdd stop</code> keeps <code>unset</code>. The <code>rdd run</code> example at lines 82-85 expands to <code>rdd start</code>, which pins an existing <code>unset</code> App that <code>rdd run</code> leaves alone (I1&#39;s probe, the <code>unset</code> rows). Both statements held at the merge-base.</p>
-      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/cmd_app.md#L77-L90">rdd/docs/design/cmd_app.md</a></div>
-      <pre data-start="77" data-line="82-85"><code class="language-markdown">
-`rdd run` prepends `~/.rd2/bin` to `PATH`, sets the Docker context to `rancher-desktop-2`, and points `KUBECONFIG` at `~/.rd2/kube.config`, whose current context is `rancher-desktop-2`. It clears `DOCKER_HOST` so the Docker context takes effect. `rdd run` itself leaves your selected Docker context and the current context in `~/.kube/config` unchanged. Starting the App still merges the `rancher-desktop-2` entry into `~/.kube/config`, and on the moby backend creates its Docker context; as a normal startup does, it switches your current context only when the existing one is missing or not working (see [api_app.md](api_app.md)).
-
-Rancher Desktop starts first if it is not already running. When the App does not exist yet and the command is `kubectl` or `helm`, `rdd run` also enables Kubernetes so the command has a cluster to talk to; the App defaulter then picks the default version. `rdd run` only starts an existing App; it never reconfigures one.
-
-For example, `rdd run docker run --rm hello-world` effectively executes:
-
-```bash
-rdd start
-export PATH=&quot;$HOME/.rd2/bin:$PATH&quot;
-unset DOCKER_HOST
-export DOCKER_CONTEXT=rancher-desktop-2
-export KUBECONFIG=&quot;$HOME/.rd2/kube.config&quot;  # current context is rancher-desktop-2
-docker run --rm hello-world</code></pre>
-    <p>Fix: after &quot;behaves like <code>rdd set running=false</code>&quot;, add &quot;except that it leaves an <code>application.addPath</code> that is still <code>unset</code> alone&quot;. Below the example, say that <code>rdd run</code>, unlike <code>rdd start</code>, leaves an existing App&#39;s <code>addPath</code> unchanged.</p>
+    <p>Round 3 made the pin depend on the caller, so the two commands now differ for an App that is still <code>unset</code>. <code>rdd set running=false</code> stores <code>manual</code> there, and <code>rdd stop</code> keeps <code>unset</code> (I1&#39;s probe, the <code>unset</code> rows). The statement held at the merge-base.</p>
+    <p>Fix: after &quot;behaves like <code>rdd set running=false</code>&quot;, add &quot;except that it leaves an <code>application.addPath</code> that is still <code>unset</code> alone&quot;.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/bootstrap.md">
       <div class="finding-title" id="S2">
@@ -597,7 +523,7 @@ EOF
 
     rdd set --wait=false running=false
     run -0 get_app_field &#39;.spec.application.addPath&#39;</code></pre>
-    <p>The <code>rdd stop</code> test repeats it at lines 260-267 with a different delimiter, and I2&#39;s patch adds a third copy.</p>
+    <p>The <code>rdd stop</code> test repeats it at lines 260-267 with a different delimiter, and I1&#39;s patch adds a third copy.</p>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/bats/tests/32-app-controllers/set.bats#L255-L272">rdd/bats/tests/32-app-controllers/set.bats</a></div>
       <pre data-start="255" data-line="260-267"><code class="language-bash">}
 
@@ -628,7 +554,7 @@ YAML
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><em></em>Every <code>IsAdding()</code> site has a test that fails on revert<em></em> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: round 2&#39;s I2 patch closed the gap at the docker-plugin and Windows sites. Reverting each of the five sites whose tests run on macOS turns its named test red; the Windows site compiles under <code>GOOS=windows</code>, and CI&#39;s <code>windows-latest</code> leg runs its test.</li>
-      <li><em></em><code>pinUnset</code> keeps <code>rdd stop</code> and <code>rdd run</code> off an existing App&#39;s <code>addPath</code><em></em> (in-scope) <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>: the <code>rdd run</code> help and the <code>ensureAppRunning</code> comment (&quot;an existing App is only started&quot;) are true again, and the round-3 bats test pins <code>rdd stop</code>.</li>
+      <li><em></em><code>rdd stop</code> leaves a never-started App&#39;s <code>addPath</code> alone<em></em> (in-scope) <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span>: the round-3 parameter keeps <code>rdd stop</code> from writing <code>addPath</code>, and the round-3 bats test pins it.</li>
       <li><strong>The one-way rule holds in the API server</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: raised in round 2 by Claude Opus 5.5 and Gemini 3.5 Flash. A patch that deletes the field is defaulted back to <code>unset</code> and rejected.</li>
     </ul>
     </div>
@@ -637,12 +563,12 @@ YAML
 
     <div class="card card-neutral">
     <ul>
-      <li><strong>I1 and I2 (required):</strong> decided by &quot;How would a user see it?&quot;. A regression in either stores the wrong <code>addPath</code> with no error, and the first-run dialog then appears for a CLI user or never appears for a GUI user.</li>
+      <li><strong>I1 (required):</strong> decided by &quot;How would a user see it?&quot;. A regression stores the wrong <code>addPath</code> with no error, and the first-run dialog then appears for an instance started from the CLI.</li>
       <li><strong>What pins each round-2 fix</strong> (each reverted in the lead worktree):</li>
     </ul>
     <ul>
       <li><code>pinUnset=false</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/app.go#L105"><code>app.go:105</code></a>: &quot;rdd stop leaves an existing unset App&#39;s addPath alone&quot; fails (<code>expected : unset</code>, <code>actual : manual</code>).</li>
-      <li><code>pinUnset=false</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a>: nothing (I2).</li>
+      <li><code>pinUnset=false</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a>: no test pinned it, and the maintainer&#39;s ruling reverses it (I1). With I1&#39;s patch, putting <code>false</code> back fails both new <code>rdd run</code> tests.</li>
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go#L59"><code>dockerplugins.go:59</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/dockerplugins.go#L105"><code>dockerplugins.go:105</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/pathlist.go#L32"><code>pathlist.go:32</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_unix.go#L58"><code>pathmanagement_unix.go:58</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/app/controllers/app_controller.go#L710"><code>app_controller.go:710</code></a>, each reverted to a <code>!= AddPathManual</code> test: <code>TestApplyDockerPluginsUnsetKeepsUserEntryWithoutMarker</code>, <code>TestComputePluginDirs</code>, <code>TestComputeWindowsPath</code>, <code>TestReconcileUnsetAddsNoBlock</code> and <code>Test_computeSettledCondition</code> fail, in that order.</li>
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_windows.go#L102"><code>pathmanagement_windows.go:102</code></a>: <code>TestWriteUserPathUnsetWithoutMarkerLeavesEntry</code> should fail, since the reverted line writes the marker that the test asserts absent. It did not run here; CI&#39;s <code>RDD Unit tests (windows-latest)</code> ran it and passed.</li>
     </ul>
@@ -650,9 +576,9 @@ YAML
       <li><strong>Executed by the consolidator:</strong></li>
     </ul>
     <ul>
-      <li><code>go test</code> passed for <code>pkg/apis/...</code>, <code>pkg/controllers/app/...</code> and <code>cmd/rdd</code>.</li>
-      <li><code>set.bats</code> passed 17 of 17 at the review SHA and 19 of 19 with both patches, on a scratch control plane (app controller only). <code>make lint-bats</code> passed with both patches.</li>
-      <li>The I1 and I2 probes, with their output in each finding. <code>~/.docker/config.json</code> and <code>~/.kube/config</code> were byte-identical before and after.</li>
+      <li><code>go test</code> passed for <code>pkg/apis/...</code>, <code>pkg/controllers/app/...</code> and <code>cmd/rdd</code>, and for <code>cmd/rdd</code> again with I1&#39;s patch.</li>
+      <li><code>set.bats</code> passed 17 of 17 at the review SHA and 19 of 19 with I1&#39;s patch, on a scratch control plane (app controller only). <code>make lint-bats</code> passed with the patch.</li>
+      <li>The I1 probe, with its output in the finding. <code>~/.docker/config.json</code> and <code>~/.kube/config</code> were byte-identical before and after.</li>
     </ul>
     <ul>
       <li><strong>CI on the head commit:</strong> all 50 completed checks passed and 17 were skipped, every BATS leg and <code>RDD Unit tests (windows-latest)</code> included.</li>
@@ -662,7 +588,7 @@ YAML
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>I1&#39;s patch makes the PR&#39;s central claim hold for <code>rdd run</code> as it does for <code>rdd set</code> and <code>rdd start</code>. That claim is in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L116-L118"><code>api_app.md:116-118</code></a> and in the commit message&#39;s &quot;ensuring CLI-created instances never show the first-run dialog&quot;. The commit message names only <code>rdd set</code>, though <code>rdd start</code> pins too and <code>rdd stop</code> and <code>rdd run</code> leave an existing <code>unset</code> App alone. S1 covers <code>cmd_app.md</code> and S2 <code>bootstrap.md</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites the GUI wording (see Acknowledged Limitations).</p>
+    <p>I1&#39;s patch makes the PR&#39;s central claim hold for <code>rdd run</code> as it does for <code>rdd set</code> and <code>rdd start</code>. That claim is in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/api_app.md#L116-L118"><code>api_app.md:116-118</code></a> and in the commit message&#39;s &quot;ensuring CLI-created instances never show the first-run dialog&quot;. The commit message names only <code>rdd set</code>, though <code>rdd start</code> and, with the patch, <code>rdd run</code> pin too, while <code>rdd stop</code> leaves an <code>unset</code> App alone. S1 covers <code>cmd_app.md</code> and S2 <code>bootstrap.md</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites the GUI wording (see Acknowledged Limitations).</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
@@ -681,7 +607,7 @@ YAML
 
     <div class="card card-neutral">
     <ul>
-      <li><a href="https://jandubois.github.io/rancher-desktop-2/20261022-135049-pr-1081.html">Round 2 review</a>: its I1 is fixed for existing Apps, but the fix also reaches the missing-App case (I1 here). Its I2 is fixed. S1 and S2 have now run three rounds without a change or a reply and move to Acknowledged Limitations. S3 returns as S2. The documentation note moves to Acknowledged Limitations, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites that text.</li>
+      <li><a href="https://jandubois.github.io/rancher-desktop-2/20261022-135049-pr-1081.html">Round 2 review</a>: to answer its I1, the author added a parameter so that <code>rdd stop</code> and <code>rdd run</code> skip the pin. That holds for <code>rdd stop</code>, but the maintainer has since ruled that <code>rdd run</code> must pin (I1 here). Its I2 is fixed. S1 and S2 have now run three rounds without a change or a reply and move to Acknowledged Limitations. S3 returns as S2. The documentation note moves to Acknowledged Limitations, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites that text.</li>
     </ul>
     </div>
     <hr>
@@ -689,32 +615,32 @@ YAML
 
     <div class="card card-neutral">
     <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
-    <p>Claude found I1 and built the caller table that the prompt asked for, citing each cell. Its fix pinned the App in <code>ensureAppRunning</code>&#39;s missing branch. That passes the probe, but it decides from a <code>Get</code> that <code>setAction</code> repeats, and every later caller would have to remember the pin, so the report&#39;s patch pins in <code>setAction</code>. It rated the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> test gap optional because &quot;a test also needs a booted VM&quot;, but a <code>timeout</code> around <code>rdd run</code> lets the VM-free <code>set.bats</code> test it. And the gap is required, since a regression silently stores the wrong <code>addPath</code>, so the rubric&#39;s drop rule for optional gaps does not apply. It alone found the copied manifest. Its <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a> point and its e2e concern are tasks that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> already lists, so neither made the report. Its reversion overlays ran, and their results match the consolidator&#39;s.</p>
+    <p>Claude found the new-App half of I1 and built the caller table that the prompt asked for, citing each cell. Its fix pinned only in <code>ensureAppRunning</code>&#39;s missing branch, which the maintainer&#39;s ruling makes incomplete, since an existing <code>unset</code> App must be pinned too. It rated the <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L110"><code>run.go:110</code></a> test gap optional because &quot;a test also needs a booted VM&quot;, but a <code>timeout</code> around <code>rdd run</code> lets the VM-free <code>set.bats</code> test it. It alone found the copied manifest. Its <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a> point and its e2e concern are tasks that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> already lists, so neither made the report. Its reversion overlays ran, and their results match the consolidator&#39;s.</p>
     <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
-    <p>Codex&#39;s first attempt stopped on &quot;Selected model is at capacity&quot; after it had started its own <code>rdd run</code> probe; the retry finished. It produced the fullest table, with the merge-base, round 2 and the current SHA side by side, and it alone caught the <code>rdd stop</code> equivalence in S1. But it judged a new <code>rdd run</code> App staying <code>unset</code> &quot;internally consistent&quot; and proposed narrowing the contract in the docs, the commit message and the PR description, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1052" class="gh-ref" data-title="Default `addPath` to `unset` until someone picks a value" data-state="open" data-type="issue">#1052</a> and the pin&#39;s own comment argue against. It rated two prose findings Important. Its Go tests failed to build for the third round running, since its module cache under <code>.scratch/</code> was empty and <code>GOPROXY=off</code> blocked downloads; it said so.</p>
+    <p>Codex&#39;s first attempt stopped on &quot;Selected model is at capacity&quot; after it had started its own <code>rdd run</code> probe; the retry finished. It produced the fullest table, with the merge-base, round 2 and the current SHA side by side, and it alone caught the <code>rdd stop</code> equivalence in S1. But it judged a new <code>rdd run</code> App staying <code>unset</code> &quot;internally consistent&quot; and proposed narrowing the contract in the docs, the commit message and the PR description, the opposite of the maintainer&#39;s ruling. Like Flash and Gemini Pro, it asked for a test that <code>rdd run</code> leaves an existing <code>unset</code> App alone, which the ruling reverses. It rated two prose findings Important. Its Go tests failed to build for the third round running, since its module cache under <code>.scratch/</code> was empty and <code>GOPROXY=off</code> blocked downloads; it said so.</p>
     <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
-    <p>Gemini Pro returned LGTM without the caller table, so it missed I1 and called <code>api_app.md</code>, <code>bootstrap.md</code> and <code>cmd_app.md</code> accurate. It found the <code>rdd run</code> test gap but rated it a Suggestion. Its &quot;verified by locally reverting&quot; rests on patching tracked files in its worktree, which the preamble forbids, and the Windows site only compiled (<code>GOOS=windows go test -c</code>). It finished with <code>pathmanagement_unix.go</code> still reverted to <code>!= AddPathManual</code> and an <code>app_controller.go.orig</code> left behind. The consolidator&#39;s mutation runs bear out its macOS claims.</p>
+    <p>Gemini Pro returned LGTM without the caller table, so it missed I1 and called <code>api_app.md</code>, <code>bootstrap.md</code> and <code>cmd_app.md</code> accurate. Its one remaining point, a test that <code>rdd run</code> leaves an existing <code>unset</code> App alone, asks to pin the behaviour that the maintainer&#39;s ruling reverses. Its &quot;verified by locally reverting&quot; rests on patching tracked files in its worktree, which the preamble forbids, and the Windows site only compiled (<code>GOOS=windows go test -c</code>). It finished with <code>pathmanagement_unix.go</code> still reverted to <code>!= AddPathManual</code> and an <code>app_controller.go.orig</code> left behind. The consolidator&#39;s mutation runs bear out its macOS claims.</p>
     <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
-    <p>Flash built the table and got I1&#39;s cell right, but filed it as a design concern, &quot;consistent with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L48"><code>run.go:48</code></a> (&quot;creates it with default settings&quot;)&quot;, a phrase that <code>run.go</code> does not contain. It raised I2 at the right severity. Its proposed test calls <code>rdd run true</code> bare, which in the VM-free <code>set.bats</code> waits out the five-minute <code>limaLongWaitTimeout</code> and then fails. Its reversion overlays ran, and their results match the consolidator&#39;s. The two Gemini models split on I2&#39;s severity and only Flash saw I1&#39;s cell, so this round they did not converge.</p>
+    <p>Flash built the table and got the new-App cell right, but filed it as a design concern, &quot;consistent with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/cmd/rdd/run.go#L48"><code>run.go:48</code></a> (&quot;creates it with default settings&quot;)&quot;, a phrase that <code>run.go</code> does not contain. Its Important asked for a test that <code>rdd run</code> leaves an existing <code>unset</code> App alone, the behaviour that the ruling reverses, and its proposed test called <code>rdd run true</code> bare, which in the VM-free <code>set.bats</code> waits out the five-minute <code>limaLongWaitTimeout</code> and then fails. Its reversion overlays ran, and their results match the consolidator&#39;s. The two Gemini models agreed only on that reversed test, and only Flash saw I1&#39;s new-App cell.</p>
     <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
     <table class="retro-table">
       <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
       <tbody>
         <tr><td>Duration</td><td>7m 37s</td><td>10m 30s</td><td>9m 43s</td><td>7m 07s</td></tr>
-        <tr><td>Findings</td><td>1I 3S</td><td>2I 2S</td><td>1I</td><td>2I 1S</td></tr>
+        <tr><td>Findings</td><td>1I 2S</td><td>1I 2S</td><td>none</td><td>1I 1S</td></tr>
         <tr><td>Tool calls</td><td>47 (Bash 30, Read 17)</td><td>12 (shell 12)</td><td>34 (run<em>shell</em>command 32, write_file 2)</td><td>39 (read<em>file 20, run</em>shell<em>command 10, grep</em>search 6)</td></tr>
         <tr><td>Design observations</td><td>3</td><td>3</td><td>0</td><td>3</td></tr>
         <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
         <tr><td>Unique insights</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
         <tr><td>Files reviewed</td><td>24</td><td>24</td><td>24</td><td>24</td></tr>
         <tr><td>Coverage misses</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-        <tr><td><strong>Totals</strong></td><td><strong>1I 3S</strong></td><td><strong>2I 2S</strong></td><td><strong>1I</strong></td><td><strong>2I 1S</strong></td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 2S</strong></td><td><strong>1I 2S</strong></td><td><strong>none</strong></td><td><strong>1I 1S</strong></td></tr>
         <tr><td>Downgraded</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
-        <tr><td>Dropped</td><td>3</td><td>3</td><td>2</td><td>2</td></tr>
+        <tr><td>Dropped</td><td>3</td><td>4</td><td>3</td><td>3</td></tr>
       </tbody>
     </table>
-    <p>Claude and Codex gave the round its value: Claude with I1, Codex with the <code>rdd stop</code> equivalence and the cross-revision table. Flash reached both Importants but rated I1 as a design concern; Gemini Pro added only the test gap.</p>
-    <p><strong>Reconciliation:</strong> Codex pass 1 I1 (<code>cmd_app.md</code> equivalences): important → suggestion S1, and its missing-App half merged into I1. Codex pass 1 I2 (GUI tense) and Claude pass 1 S4 (GUI wording, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a>): dropped to Acknowledged Limitations, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites that text; Claude&#39;s e2e design concern was dropped for the same reason. Codex pass 1 I3 became I2. Claude pass 1 S5 became S3. Gemini Pro pass 1 S3 (<code>rdd run</code> test gap): suggestion → important I2. Flash pass 1&#39;s design concern (<code>rdd run</code> on a missing App) became I1. Every agent&#39;s race and field-doc suggestions moved to Acknowledged Limitations after their third round.</p>
+    <p>Claude and Codex gave the round its value: Claude with I1, Codex with the <code>rdd stop</code> equivalence and the cross-revision table. Every agent accepted round 3&#39;s <code>rdd run</code> choice, so none raised the half of I1 that the maintainer&#39;s ruling added.</p>
+    <p><strong>Reconciliation:</strong> Codex pass 1 I1 (<code>cmd_app.md</code> equivalences): important → suggestion S1, and its missing-App half merged into I1. Codex pass 1 I2 (GUI tense) and Claude pass 1 S4 (GUI wording, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7f43d602694c44545f3d50e4fe14bfb994b5d2c0/rdd/docs/design/gui.md#L18"><code>gui.md:18</code></a>): dropped to Acknowledged Limitations, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>&#39;s task list rewrites that text; Claude&#39;s e2e design concern was dropped for the same reason. Codex pass 1 I3, Flash pass 1 I1 and Gemini Pro pass 1 S3 (a test that <code>rdd run</code> leaves an existing <code>unset</code> App alone): dropped after the maintainer ruled that <code>rdd run</code> must pin; I1&#39;s patch tests the opposite. Flash pass 1&#39;s design concern (<code>rdd run</code> on a missing App) became part of I1. Claude pass 1 S5 became S3. Every agent&#39;s race and field-doc suggestions moved to Acknowledged Limitations after their third round.</p>
     </div>
     <hr>
     <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
@@ -723,6 +649,7 @@ YAML
     <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>When the PR&#39;s linked issue names a follow-up issue that finishes the feature, fetch the follow-up&#39;s body and inline it beside the linked issue. External agents cannot fetch GitHub, so without it they report as gaps the doc and test changes that the follow-up already plans.</li>
+      <li>When a prior round left a design choice to the maintainers and the next revision takes one option, look for a maintainer&#39;s ruling before writing a finding or a test that assumes the choice. When none exists, raise the choice in the report as an open question. A test written to the author&#39;s pick otherwise locks in a behaviour that nobody with the authority to decide has approved.</li>
     </ul>
     <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
     <ul>
