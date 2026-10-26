@@ -34,9 +34,10 @@ func newNerdctlCommand() *cobra.Command {
 
 All arguments pass through to nerdctl. Rancher Desktop must already be
 running with the containerd engine; "rdd run nerdctl" starts it first.`,
-		Args:               cobra.ArbitraryArgs,
+		Args: cobra.ArbitraryArgs,
+		// A nerdctl link turns "nerdctl --help" into "rdd nerdctl --help", so
+		// --help must reach the guest nerdctl. "rdd help nerdctl" shows the Long text.
 		DisableFlagParsing: true,
-		SilenceErrors:      true,
 		RunE:               nerdctlAction,
 	}
 }
@@ -70,7 +71,7 @@ func nerdctlAction(cmd *cobra.Command, args []string) error {
 	}
 	// nerdctl must run as root in the guest. Non-root nerdctl insists on
 	// rootless mode even when given an explicit --address.
-	// TODO: let the distro's nerdctl wrapper own the address instead.
+	// TODO: drop --address once containerd listens on its default socket (#1040).
 	guestCmd := append([]string{"sudo", "nerdctl", "--address", containerdGuestSocket}, args...)
 	return limaVMGuestExec(ctx, appLimaVMName, "", "", guestCmd)
 }

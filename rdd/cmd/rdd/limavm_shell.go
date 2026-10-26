@@ -24,12 +24,11 @@ import (
 
 func newLimaVMShellCommand() *cobra.Command {
 	shellCmd := &cobra.Command{
-		Use:           "shell INSTANCE [COMMAND...]",
-		Short:         "Execute shell in Lima VM",
-		Long:          "Open an interactive shell or execute a command in a Lima VM instance.",
-		Args:          cobra.MinimumNArgs(1),
-		RunE:          limaVMShellAction,
-		SilenceErrors: true,
+		Use:   "shell INSTANCE [COMMAND...]",
+		Short: "Execute shell in Lima VM",
+		Long:  "Open an interactive shell or execute a command in a Lima VM instance.",
+		Args:  cobra.MinimumNArgs(1),
+		RunE:  limaVMShellAction,
 	}
 
 	shellCmd.Flags().SetInterspersed(false)
