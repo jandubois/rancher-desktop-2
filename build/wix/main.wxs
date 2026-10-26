@@ -75,63 +75,6 @@
       </Custom>
     </InstallExecuteSequence>
 
-    <!-- Setting the PATH variable -->
-    <Component Id="PathUser" Directory="APPLICATIONFOLDER">
-      <Condition>MSIINSTALLPERUSER = 1</Condition>
-      <RegistryValue
-        Root="HKCU"
-        Key="SOFTWARE\SUSE\$(var.appName)"
-        Name="EnvironmentVariablesSet"
-        Value="yes"
-        Type="string"
-        KeyPath="yes"
-      />
-      <Environment Id="PathWindowsUserBin" Name="PATH"
-        Action="set" Part="last" System="no" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\windows\bin\" />
-      <!-- docker-compose and docker-buildx ship only here; keep them on PATH so
-           they work as standalone commands. Under addPath front/back the daemon
-           also registers a per-instance mirror of this directory
-           (~/.rd<suffix>/docker-cli-plugins) in cliPluginsExtraDirs, so `docker`
-           finds them as plugins. Docker ignores PATH for plugin discovery, so the
-           two don't conflict. -->
-      <Environment Id="PathWindowsUserDockerCLIPlugins" Name="PATH"
-        Action="set" Part="last" System="no" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\windows\docker-cli-plugins\" />
-      <Environment Id="PathLinuxUserBin" Name="PATH"
-        Action="set" Part="last" System="no" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\linux\bin\" />
-      <Environment Id="PathLinuxUserDockerCLIPlugins" Name="PATH"
-        Action="set" Part="last" System="no" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\linux\docker-cli-plugins\" />
-    </Component>
-    <Component Id="PathSystem" Directory="APPLICATIONFOLDER">
-      <Condition>
-        <![CDATA[MSIINSTALLPERUSER <> 1]]>
-      </Condition>
-      <RegistryValue
-        Root="HKLM"
-        Key="SOFTWARE\SUSE\$(var.appName)"
-        Name="EnvironmentVariablesSet"
-        Value="yes"
-        Type="string"
-        KeyPath="yes"
-      />
-      <Environment Id="PathWindowsSystemBin" Name="PATH"
-        Action="set" Part="last" System="yes" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\windows\bin\" />
-      <Environment Id="PathWindowsSystemDockerCLIPlugins" Name="PATH"
-        Action="set" Part="last" System="yes" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\windows\docker-cli-plugins\" />
-      <Environment Id="PathLinuxSystemBin" Name="PATH"
-        Action="set" Part="last" System="yes" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\linux\bin\" />
-      <Environment Id="PathLinuxSystemDockerCLIPlugins" Name="PATH"
-        Action="set" Part="last" System="yes" Permanent="no"
-        Value="[APPLICATIONFOLDER]resources\linux\docker-cli-plugins\" />
-    </Component>
-
-
     <!-- Add Admin install registry element -->
     <Component Id="AdminInstallRegistry" Directory="APPLICATIONFOLDER" Guid="825E1B53-D47A-4630-BDD8-61071DA1245A">
       <Condition>
@@ -165,8 +108,6 @@
 
     <Feature Id="ProductFeature" Absent="disallow">
       <ComponentGroupRef Id="ProductComponents" />
-      <ComponentRef Id="PathUser" />
-      <ComponentRef Id="PathSystem" />
       <ComponentRef Id="AdminInstallRegistry" />
     </Feature>
   </Product>
