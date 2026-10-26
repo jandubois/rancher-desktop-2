@@ -37,6 +37,25 @@ func TestIsKubeCommand(t *testing.T) {
 	}
 }
 
+func TestIsNerdctlCommand(t *testing.T) {
+	cases := []struct {
+		command string
+		want    bool
+	}{
+		{"nerdctl", true},
+		{"/usr/local/bin/nerdctl", true},
+		{"nerdctl.exe", true},
+		{"kubectl", false},
+		{"nerdctllike", false},
+		{"", false},
+	}
+	for _, tc := range cases {
+		t.Run(tc.command, func(t *testing.T) {
+			assert.Equal(t, isNerdctlCommand(tc.command), tc.want)
+		})
+	}
+}
+
 func TestRunHelpSkipsAppStart(t *testing.T) {
 	// A help flag must print usage without starting the App. DisableFlagParsing
 	// otherwise routes it through ensureAppRunning, which creates and starts a

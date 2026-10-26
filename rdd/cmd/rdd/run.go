@@ -44,11 +44,12 @@ func newRunCommand() *cobra.Command {
 			normal startup merges the rancher-desktop-<instance> entry
 			into ~/.kube/config and creates its Docker context; it switches
 			your current Docker or kube context only when the existing one
-			is missing or not working. When the App does not exist yet and
-			the command is kubectl or helm, rdd run enables Kubernetes so
-			the command has a cluster to talk to. An existing App is only
-			started, except that rdd run, like rdd set, changes an
-			application.addPath that is still unset to manual.
+			is missing or not working. When the App does not exist yet,
+			rdd run enables Kubernetes for kubectl and helm, so they have
+			a cluster to talk to, and selects the containerd engine for
+			nerdctl. An existing App is only started, except that rdd run,
+			like rdd set, changes an application.addPath that is still
+			unset to manual.
 
 			Examples:
 			  rdd run docker run --rm hello-world
@@ -90,8 +91,9 @@ func runAction(cmd *cobra.Command, args []string) error {
 // ensureAppRunning starts Rancher Desktop and waits for it to settle. When the
 // App does not exist yet and command invokes a Kubernetes client, it enables
 // Kubernetes so the client has a cluster to talk to; the App defaulter then
-// picks the default Kubernetes version. An existing App is only started,
-// except that setAction pins a still-unset addPath to manual.
+// picks the default Kubernetes version. For nerdctl it selects the containerd
+// engine instead of the default moby. An existing App is only started, except
+// that setAction pins a still-unset addPath to manual.
 func ensureAppRunning(ctx context.Context, command string) error {
 	c, _, err := getAppKubeClient(ctx)
 	if err != nil {
@@ -105,6 +107,9 @@ func ensureAppRunning(ctx context.Context, command string) error {
 		if isKubeCommand(command) {
 			props = append(props, "kubernetes.enabled=true")
 		}
+		if isNerdctlCommand(command) {
+			props = append(props, "containerEngine.name=containerd")
+		}
 	case err != nil:
 		return fmt.Errorf("failed to get App: %w", err)
 	}
@@ -112,11 +117,21 @@ func ensureAppRunning(ctx context.Context, command string) error {
 	return setAction(ctx, props, true, false, true, limaLongWaitTimeout)
 }
 
-// isKubeCommand reports whether name invokes kubectl or helm, ignoring any
-// directory prefix and a trailing .exe.
+// commandBaseName returns the program that name invokes, without its
+// directory and any trailing .exe.
+func commandBaseName(name string) string {
+	return strings.TrimSuffix(filepath.Base(name), ".exe")
+}
+
+// isKubeCommand reports whether name invokes kubectl or helm.
 func isKubeCommand(name string) bool {
-	base := strings.TrimSuffix(filepath.Base(name), ".exe")
+	base := commandBaseName(name)
 	return base == "kubectl" || base == "helm"
+}
+
+// isNerdctlCommand reports whether name invokes nerdctl.
+func isNerdctlCommand(name string) bool {
+	return commandBaseName(name) == "nerdctl"
 }
 
 // setupRunEnv points this process's environment at the instance, so the child

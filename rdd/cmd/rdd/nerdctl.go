@@ -33,7 +33,7 @@ func newNerdctlCommand() *cobra.Command {
 		Long: `Run nerdctl inside the Rancher Desktop VM.
 
 All arguments pass through to nerdctl. Rancher Desktop must already be
-running with the containerd engine.`,
+running with the containerd engine; "rdd run nerdctl" starts it first.`,
 		Args:               cobra.ArbitraryArgs,
 		DisableFlagParsing: true,
 		SilenceErrors:      true,

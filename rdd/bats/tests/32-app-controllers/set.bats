@@ -285,6 +285,22 @@ EOF
     assert_output "false"
 }
 
+@test "rdd run nerdctl creates the App with the containerd engine" {
+    delete_app
+    # timeout ends rdd run's wait, as in the addPath creation test above.
+    run -124 timeout 10 rdd run nerdctl ps
+    run -0 get_app_field '.spec.containerEngine.name'
+    assert_output "containerd"
+}
+
+@test "rdd run nerdctl keeps an existing App's engine" {
+    delete_app
+    rdd set --wait=false running=false containerEngine.name=moby
+    run -124 timeout 10 rdd run nerdctl ps
+    run -0 get_app_field '.spec.containerEngine.name'
+    assert_output "moby"
+}
+
 @test "rdd set leaves an existing addPath=front alone" {
     delete_app
     rdd set --wait=false running=false application.addPath=front
