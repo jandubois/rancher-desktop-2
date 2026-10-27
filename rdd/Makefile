@@ -338,6 +338,12 @@ generate-crds:
 	scripts/generate-crds.sh
 .PHONY: generate-crds
 
+# We do not run this as part of `make generate`, because off Linux it needs a
+# container engine.
+generate-nerdctl:
+	scripts/generate-nerdctl.sh
+.PHONY: generate-nerdctl
+
 # We do not run this as part of `make generate` as this requires the service
 # to be buildable and runnable.
 generate-typescript: bin/rdd$(EXE)
@@ -347,10 +353,10 @@ generate-typescript: bin/rdd$(EXE)
 generate: generate-deepcopy generate-crds
 .PHONY: generate
 
-verify-generate: generate generate-typescript
+verify-generate: generate generate-nerdctl generate-typescript
 	@if [ -n "$$(git diff --name-only)" ]; then \
 		printf "ERROR: Generated files are out of date. Run '%s' and commit the result.\n" \
-			"make generate generate-typescript" >&2; \
+			"make generate generate-nerdctl generate-typescript" >&2; \
 		git diff --stat; \
 		exit 1; \
 	fi
