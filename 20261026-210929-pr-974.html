@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261026-210929-pr-974</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261026-210929-pr-974</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-26 21:09</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/974" class="gh-ref" data-title="Translate Windows host paths in rdd nerdctl" data-state="open" data-type="pr">#974</a> — Translate Windows host paths in rdd nerdctl</td></tr>
+      <tr><td>Branch</td><td><code>rdd-nerdctl</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0ca113f9d"><code>0ca113f9d</code></a> Add the rdd nerdctl command<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8545e6661"><code>8545e6661</code></a> Create the nerdctl binlink<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/12b959447"><code>12b959447</code></a> Create the App with containerd for rdd run nerdctl<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/39361f012"><code>39361f012</code></a> Drop redundant SilenceErrors from nerdctl and limavm shell<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/002210042"><code>002210042</code></a> Add design doc for the nerdctl stub<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d9635b909"><code>d9635b909</code></a> Add the nerdctl parse-table generator<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2ce062e37"><code>2ce062e37</code></a> Port the nerdctl argument parser from Rancher Desktop 1.x<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/484f0ddfd"><code>484f0ddfd</code></a> Pass named volumes through the nerdctl stub<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4dc7f8891"><code>4dc7f8891</code></a> Wire nerdctl table generation into make generate<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f64edea61"><code>f64edea61</code></a> Translate Windows host paths in rdd nerdctl</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f64edea6159d7a81d620699e025bd52010eedf0e"><code>f64edea6159d7a81d620699e025bd52010eedf0e</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the generator design holds; the stub needs seven local fixes, each with a tested patch below</td></tr>
+      <tr><td>Wall-clock time</td><td><code>39 min 34 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>On Windows, <code>rdd nerdctl</code> rewrites host paths through a port of the 1.x stub parser, driven by a table generated from nerdctl&#39;s cobra tree. The generator is sound. But the parser rejects or rewrites command lines that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a>&#39;s pass-through handled: <code>nerdctl --help</code>, <code>-p8080:80</code>, <code>top ctr -ef</code>, <code>build -f -</code>, anonymous volumes, and named volumes with a mode. A rooted path such as <code>\data</code> still mounts the VM&#39;s directory; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asked to settle that rule before this PR leaves draft.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/generate/main.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The generated table lacks cobra&#39;s <code>--help</code>, <code>-h</code> and <code>--version</code> flags <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L114-L129">rdd/pkg/nerdctlstub/generate/main.go</a></div>
+      <pre data-start="114" data-line="119-124"><code class="language-go">		name:         cmd.Name(),
+		short:        cmd.Short,
+		foreignFlags: foreignFlagsRE.MatchString(cmd.Use),
+		flagUsage:    map[string]string{},
+	}
+	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+		names := []string{&quot;--&quot; + f.Name}
+		if f.Shorthand != &quot;&quot; {
+			names = append(names, &quot;-&quot;+f.Shorthand)
+		}
+		if f.NoOptDefVal == &quot;&quot; {
+			spec.valueFlags = append(spec.valueFlags, names...)
+			for _, name := range names {
+				spec.flagUsage[name] = f.Usage
+			}
+		} else {</code></pre>
+    <p>cobra adds <code>--help</code>/<code>-h</code> to a command, and <code>--version</code>/<code>-v</code> to a root that sets <code>Version</code>, only when the command executes. <code>walk</code> executes nothing and <code>replicaRootCmd</code> does not set <code>Version</code>, so only <code>container run</code> and <code>create</code>, which declare their own, list <code>--help</code>. On Windows, <code>nerdctl --help</code>, <code>ps -h</code> and <code>--version</code> now fail in the stub, although <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L43"><code>rdd/cmd/rdd/nerdctl.go:43</code></a> says <code>--help</code> must reach the guest. 1.x and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a> both passed them on.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L38-L48">rdd/cmd/rdd/nerdctl.go</a></div>
+      <pre data-start="38" data-line="43"><code class="language-go">All arguments pass through to nerdctl; on Windows, arguments referring to
+host paths are rewritten to the /mnt/&lt;drive&gt; locations where the guest
+mounts them. Rancher Desktop must already be running with the containerd
+engine; &quot;rdd run nerdctl&quot; starts it first.`,
+		Args: cobra.ArbitraryArgs,
+		// A nerdctl link turns &quot;nerdctl --help&quot; into &quot;rdd nerdctl --help&quot;, so
+		// --help must reach the guest nerdctl. &quot;rdd help nerdctl&quot; shows the Long text.
+		DisableFlagParsing: true,
+		RunE:               nerdctlAction,
+	}
+}</code></pre>
+    <p>With the flags added, <code>cp --help</code> still fails the argument-count check in <code>containerCopyHandler</code>, so the patch lets nerdctl report a wrong count, as <code>builderBuildHandler</code> does. One shipped assertion changes.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_help_test.go; run from rdd/:
+// go test -count=1 -run TestReproHelp -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+package nerdctlstub
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproHelp(t *testing.T) {
+	t.Chdir(&quot;/&quot;)
+	for _, args := range [][]string{
+		{&quot;--help&quot;},
+		{&quot;--version&quot;},
+		{&quot;ps&quot;, &quot;-h&quot;},
+		{&quot;run&quot;, &quot;--help&quot;},
+	} {
+		if got, err := TranslateCommandLine(args); err != nil {
+			fmt.Printf(&quot;%q -&gt; error: %v\n&quot;, args, err)
+		} else {
+			fmt.Printf(&quot;%q -&gt; %q\n&quot;, args, got.Args)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproHelp -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+[&quot;--help&quot;] -&gt; error: command &quot;&quot; does not support option --help
+[&quot;--version&quot;] -&gt; error: command &quot;&quot; does not support option --version
+[&quot;ps&quot; &quot;-h&quot;] -&gt; error: command &quot;ps&quot; does not support option -h
+[&quot;run&quot; &quot;--help&quot;] -&gt; [&quot;run&quot; &quot;--help&quot;]</code></pre>
+      </details>
+    <p>Fix: initialize cobra&#39;s default flags in <code>walk</code>, give the replica nerdctl&#39;s <code>Version</code>, and pass a wrong <code>cp</code> count through. Then regenerate the table with <code>make -C rdd generate-nerdctl</code>, which the patch leaves out. I generated it on macOS with stand-ins for <code>apparmor</code> and <code>container cp</code> that reproduce the checked-in table byte for byte.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/nerdctlstub/command_handlers.go b/rdd/pkg/nerdctlstub/command_handlers.go
+index bf63df843..2925caa64 100644
+--- a/rdd/pkg/nerdctlstub/command_handlers.go
++++ b/rdd/pkg/nerdctlstub/command_handlers.go
+@@ -73,9 +73,8 @@ func containerCopyHandler(_ *commandDefinition, args []string, argHandlers argHa
+ 	}
+ 
+ 	if len(paths) != 2 {
+-		// We should have exactly one source and one destination.
+-		err := fmt.Errorf(&quot;accepts 2 args, received %d&quot;, len(paths))
+-		return nil, errors.Join(err, runCleanups(cleanups))
++		// nerdctl will report the wrong count, or print help for --help.
++		return &amp;ParsedArgs{Args: args}, nil
+ 	}
+ 
+ 	hostPathDeterminerFuncs := []func(i int, p string) hostPathResult{
+diff --git a/rdd/pkg/nerdctlstub/generate/main.go b/rdd/pkg/nerdctlstub/generate/main.go
+index e96aa91f8..d27d6d02e 100644
+--- a/rdd/pkg/nerdctlstub/generate/main.go
++++ b/rdd/pkg/nerdctlstub/generate/main.go
+@@ -110,6 +110,9 @@ func verifyRootFlags(rootCmd *cobra.Command) error {
+ var foreignFlagsRE = regexp.MustCompile(`COMMAND\]? \[ARGS?\.\.\.\]`)
+ 
+ func walk(cmd *cobra.Command, path string, specs map[string]*commandSpec) {
++	// cobra adds these flags only when a command executes.
++	cmd.InitDefaultHelpFlag()
++	cmd.InitDefaultVersionFlag()
+ 	spec := &amp;commandSpec{
+ 		name:         cmd.Name(),
+ 		short:        cmd.Short,
+diff --git a/rdd/pkg/nerdctlstub/generate/replica.go b/rdd/pkg/nerdctlstub/generate/replica.go
+index 09588ccc7..2a558dacd 100644
+--- a/rdd/pkg/nerdctlstub/generate/replica.go
++++ b/rdd/pkg/nerdctlstub/generate/replica.go
+@@ -8,8 +8,11 @@
+ package main
+ 
+ import (
++	&quot;strings&quot;
++
+ 	&quot;github.com/containerd/nerdctl/v2/cmd/nerdctl/helpers&quot;
+ 	&quot;github.com/containerd/nerdctl/v2/pkg/config&quot;
++	&quot;github.com/containerd/nerdctl/v2/pkg/version&quot;
+ 	&quot;github.com/spf13/cobra&quot;
+ 	&quot;github.com/spf13/pflag&quot;
+ )
+@@ -24,6 +27,7 @@ func replicaRootCmd() *cobra.Command {
+ 	cfg := config.New()
+ 	rootCmd := &amp;cobra.Command{
+ 		Use:              &quot;nerdctl&quot;,
++		Version:          strings.TrimPrefix(version.GetVersion(), &quot;v&quot;),
+ 		TraverseChildren: true, // required for global short hands like -a, -H, -n
+ 	}
+ 	aliasToBeInherited := pflag.NewFlagSet(rootCmd.Name(), pflag.ExitOnError)
+diff --git a/rdd/pkg/nerdctlstub/parse_args_test.go b/rdd/pkg/nerdctlstub/parse_args_test.go
+index b6db57238..108bfec88 100644
+--- a/rdd/pkg/nerdctlstub/parse_args_test.go
++++ b/rdd/pkg/nerdctlstub/parse_args_test.go
+@@ -97,12 +97,36 @@ func TestTranslateCommandLine(t *testing.T) {
+ 	}
+ }
+ 
++// TestTranslateCommandLineHelp checks that cobra&#39;s help and version flags
++// pass through to the guest nerdctl.
++func TestTranslateCommandLineHelp(t *testing.T) {
++	for _, args := range [][]string{
++		{&quot;--help&quot;},
++		{&quot;--version&quot;},
++		{&quot;ps&quot;, &quot;--help&quot;},
++		{&quot;ps&quot;, &quot;-h&quot;},
++		{&quot;compose&quot;, &quot;up&quot;, &quot;--help&quot;},
++		{&quot;cp&quot;, &quot;--help&quot;},
++	} {
++		got, err := TranslateCommandLine(args)
++		assert.NilError(t, err, &quot;%q&quot;, args)
++		assert.DeepEqual(t, got.Args, args)
++	}
++
++	// run defines -h as --hostname, which takes a value.
++	got, err := TranslateCommandLine([]string{&quot;run&quot;, &quot;-h&quot;, &quot;myhost&quot;, &quot;alpine&quot;})
++	assert.NilError(t, err)
++	assert.DeepEqual(t, got.Args, []string{&quot;run&quot;, &quot;-h&quot;, &quot;myhost&quot;, &quot;--&quot;, &quot;alpine&quot;})
++}
++
+ func TestTranslateCommandLineErrors(t *testing.T) {
+ 	_, err := TranslateCommandLine([]string{&quot;run&quot;, &quot;--no-such-flag&quot;, &quot;alpine&quot;})
+ 	assert.ErrorContains(t, err, &quot;does not support option --no-such-flag&quot;)
+ 
+-	_, err = TranslateCommandLine([]string{&quot;container&quot;, &quot;cp&quot;, &quot;onlyone&quot;})
+-	assert.ErrorContains(t, err, &quot;accepts 2 args&quot;)
++	// nerdctl reports a wrong argument count itself.
++	got, err := TranslateCommandLine([]string{&quot;container&quot;, &quot;cp&quot;, &quot;onlyone&quot;})
++	assert.NilError(t, err)
++	assert.DeepEqual(t, got.Args, []string{&quot;container&quot;, &quot;cp&quot;, &quot;onlyone&quot;})
+ }
+ 
+ // TestTableSanity pins properties of the generated table that the parser</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/translate.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>volumeArgHandler</code> rejects anonymous volumes and turns named volumes with a mode into bind mounts <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/translate.go#L32-L49">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="32" data-line="37-44"><code class="language-go">	// &lt;host path or volume name&gt;:&lt;container path&gt;:ro
+	// Because we only have Linux containers, and this is for Windows, we
+	// need not handle a bare &lt;path&gt; for identical host and container paths.
+	cleanArg := arg
+	readWrite := &quot;&quot;
+	if strings.HasSuffix(arg, &quot;:ro&quot;) || strings.HasSuffix(arg, &quot;:rw&quot;) {
+		readWrite = arg[len(arg)-3:]
+		cleanArg = arg[:len(arg)-3]
+	}
+	// For now, assume the container path contains no colons.
+	colonIndex := strings.LastIndex(cleanArg, &quot;:&quot;)
+	if colonIndex &lt; 0 {
+		return &quot;&quot;, nil, fmt.Errorf(&quot;invalid volume mount: %s does not contain : separator&quot;, arg)
+	}
+	hostPath := cleanArg[:colonIndex]
+	containerPath := cleanArg[colonIndex+1:]
+	if namedVolume.MatchString(hostPath) {
+		return arg, nil, nil</code></pre>
+    <p>nerdctl splits a <code>--volume</code> spec on <code>:</code> (<code>splitVolumeSpec</code>). A spec with one part is an anonymous volume at that container path, and a third part is a mode that nerdctl validates itself, warning on options it does not know, such as <code>z</code>. The handler instead strips only <code>:ro</code> or <code>:rw</code> and takes everything before the last colon as the source. So <code>-v /data</code> fails. A named volume with any other mode, such as <code>myvol:/data:z</code> or <code>myvol:/data:ro,rshared</code>, misses the named-volume check, and the container gets a bind mount of <code>&lt;cwd&gt;/myvol</code> instead of its volume, without any error. Both forms passed through unchanged under <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a>.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_volume_test.go; run from rdd/:
+// go test -count=1 -run TestReproVolume -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+package nerdctlstub
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproVolume(t *testing.T) {
+	t.Chdir(&quot;/&quot;)
+	for _, args := range [][]string{
+		{&quot;run&quot;, &quot;-v&quot;, &quot;/data&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-v&quot;, &quot;myvol:/data:z&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-v&quot;, &quot;myvol:/data:ro,rshared&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-v&quot;, &quot;myvol:/data:ro&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-v&quot;, `C:\data:/data`, &quot;alpine&quot;},
+	} {
+		if got, err := TranslateCommandLine(args); err != nil {
+			fmt.Printf(&quot;%q -&gt; error: %v\n&quot;, args, err)
+		} else {
+			fmt.Printf(&quot;%q -&gt; %q\n&quot;, args, got.Args)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproVolume -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+[&quot;run&quot; &quot;-v&quot; &quot;/data&quot; &quot;alpine&quot;] -&gt; error: invalid volume mount: /data does not contain : separator
+[&quot;run&quot; &quot;-v&quot; &quot;myvol:/data:z&quot; &quot;alpine&quot;] -&gt; [&quot;run&quot; &quot;-v&quot; &quot;/myvol:/data:z&quot; &quot;--&quot; &quot;alpine&quot;]
+[&quot;run&quot; &quot;-v&quot; &quot;myvol:/data:ro,rshared&quot; &quot;alpine&quot;] -&gt; [&quot;run&quot; &quot;-v&quot; &quot;/myvol:/data:ro,rshared&quot; &quot;--&quot; &quot;alpine&quot;]
+[&quot;run&quot; &quot;-v&quot; &quot;myvol:/data:ro&quot; &quot;alpine&quot;] -&gt; [&quot;run&quot; &quot;-v&quot; &quot;myvol:/data:ro&quot; &quot;--&quot; &quot;alpine&quot;]
+[&quot;run&quot; &quot;-v&quot; &quot;C:\\data:/data&quot; &quot;alpine&quot;] -&gt; [&quot;run&quot; &quot;-v&quot; &quot;/mnt/c/data:/data&quot; &quot;--&quot; &quot;alpine&quot;]</code></pre>
+      </details>
+    <p>Fix: split the spec as nerdctl does, after removing a leading drive. Pass an absolute single part through as an anonymous volume, keep today&#39;s error for any other single part, and copy the mode verbatim.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/nerdctlstub/translate.go b/rdd/pkg/nerdctlstub/translate.go
+index eec118b9c..4157e0689 100644
+--- a/rdd/pkg/nerdctlstub/translate.go
++++ b/rdd/pkg/nerdctlstub/translate.go
+@@ -24,27 +24,36 @@ import (
+ // instead of host paths; it copies isNamedVolume in nerdctl&#39;s pkg/mountutil.
+ var namedVolume = regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9_.-]+$`)
+ 
++// windowsDrive matches a leading Windows drive such as `C:\` or `C:/`.
++var windowsDrive = regexp.MustCompile(`^[a-zA-Z]:[\\/]`)
++
+ // volumeArgHandler handles the argument of `nerdctl run --volume=...`.
+ func volumeArgHandler(arg string) (string, []cleanupFunc, error) {
+ 	// Valid arguments are:
++	// &lt;absolute container path&gt;, an anonymous volume
+ 	// &lt;host path or volume name&gt;:&lt;container path&gt;
+-	// &lt;host path or volume name&gt;:&lt;container path&gt;:rw
+-	// &lt;host path or volume name&gt;:&lt;container path&gt;:ro
+-	// Because we only have Linux containers, and this is for Windows, we
+-	// need not handle a bare &lt;path&gt; for identical host and container paths.
+-	cleanArg := arg
+-	readWrite := &quot;&quot;
+-	if strings.HasSuffix(arg, &quot;:ro&quot;) || strings.HasSuffix(arg, &quot;:rw&quot;) {
+-		readWrite = arg[len(arg)-3:]
+-		cleanArg = arg[:len(arg)-3]
++	// &lt;host path or volume name&gt;:&lt;container path&gt;:&lt;mode&gt;
++	// Split on &quot;:&quot; as nerdctl&#39;s splitVolumeSpec does, after removing a
++	// leading drive, whose colon is not a separator. nerdctl validates the
++	// mode, so it passes through verbatim.
++	drive := &quot;&quot;
++	rest := arg
++	if windowsDrive.MatchString(arg) {
++		drive = arg[:2]
++		rest = arg[2:]
+ 	}
+-	// For now, assume the container path contains no colons.
+-	colonIndex := strings.LastIndex(cleanArg, &quot;:&quot;)
+-	if colonIndex &lt; 0 {
++	parts := strings.Split(rest, &quot;:&quot;)
++	switch {
++	case len(parts) == 1 &amp;&amp; strings.HasPrefix(arg, &quot;/&quot;):
++		// An anonymous volume.
++		return arg, nil, nil
++	case len(parts) == 1:
+ 		return &quot;&quot;, nil, fmt.Errorf(&quot;invalid volume mount: %s does not contain : separator&quot;, arg)
++	case len(parts) &gt; 3:
++		// nerdctl rejects this spec itself.
++		return arg, nil, nil
+ 	}
+-	hostPath := cleanArg[:colonIndex]
+-	containerPath := cleanArg[colonIndex+1:]
++	hostPath := drive + parts[0]
+ 	if namedVolume.MatchString(hostPath) {
+ 		return arg, nil, nil
+ 	}
+@@ -52,7 +61,7 @@ func volumeArgHandler(arg string) (string, []cleanupFunc, error) {
+ 	if err != nil {
+ 		return &quot;&quot;, nil, fmt.Errorf(&quot;could not get volume host path for %s: %w&quot;, arg, err)
+ 	}
+-	return guestPath + &quot;:&quot; + containerPath + readWrite, nil, nil
++	return strings.Join(append([]string{guestPath}, parts[1:]...), &quot;:&quot;), nil, nil
+ }
+ 
+ // mountArgHandler handles the argument of `nerdctl run --mount=...`.
+diff --git a/rdd/pkg/nerdctlstub/translate_test.go b/rdd/pkg/nerdctlstub/translate_test.go
+index 66bbeeec3..ddeb03892 100644
+--- a/rdd/pkg/nerdctlstub/translate_test.go
++++ b/rdd/pkg/nerdctlstub/translate_test.go
+@@ -34,6 +34,26 @@ func TestVolumeArgHandler(t *testing.T) {
+ 	assert.ErrorContains(t, err, &quot;does not contain : separator&quot;)
+ }
+ 
++func TestVolumeArgHandlerModes(t *testing.T) {
++	cases := []struct {
++		arg  string
++		want string
++	}{
++		{`/data`, &quot;/data&quot;},
++		{`myvol:/data:z`, &quot;myvol:/data:z&quot;},
++		{`myvol:/data:rro`, &quot;myvol:/data:rro&quot;},
++		{`myvol:/data:ro,rshared`, &quot;myvol:/data:ro,rshared&quot;},
++		{`C:\data:/data:z`, &quot;/mnt/c/data:/data:z&quot;},
++	}
++	for _, tc := range cases {
++		t.Run(tc.arg, func(t *testing.T) {
++			got, _, err := volumeArgHandler(tc.arg)
++			assert.NilError(t, err)
++			assert.Equal(t, got, tc.want)
++		})
++	}
++}
++
+ func TestMountArgHandler(t *testing.T) {
+ 	cases := []struct {
+ 		name string</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/parse_args.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> Short options with an attached value are rejected <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/parse_args.go#L112-L128">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="112" data-line="117-123"><code class="language-go">	}
+
+	option := arg
+	value := next
+	consumed := true
+	sep := strings.Index(option, &quot;=&quot;)
+	if sep &gt;= 0 {
+		value = option[sep+1:]
+		option = option[:sep]
+		consumed = false
+	}
+	handler, ok := c.options[option]
+	if !ok {
+		// There may be multiple single-character options bunched together,
+		// e.g. `-itp 80`.
+		if len(option) &gt; 1 &amp;&amp; option[0] == &#39;-&#39; &amp;&amp; option[1] != &#39;-&#39; {
+			// Make sure all options (except the last) exist and take no</code></pre>
+    <p>pflag accepts a value attached to a shorthand, as in <code>-p8080:80</code>, <code>-eFOO=bar</code> and <code>-vC:\x:/y</code>. <code>parseOption</code> splits on the first <code>=</code> before the lookup, so <code>-eFOO=bar</code> becomes the option <code>-eFOO</code>, and its bunching loop rejects a value-taking letter anywhere but last. Both paths end in <code>does not support option</code>. 1.x has the same bug, but under <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a> these commands reached nerdctl unchanged.</p>
+    <p>The patch also changes how <code>-namespace=x</code> parses. The old fallback turned it into <code>--namespace x</code>; now it becomes <code>-n amespace=x</code>, as it does in pflag.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_short_test.go; run from rdd/:
+// go test -count=1 -run TestReproShort -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+package nerdctlstub
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproShort(t *testing.T) {
+	t.Chdir(&quot;/&quot;)
+	for _, args := range [][]string{
+		{&quot;run&quot;, &quot;-p8080:80&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-eFOO=bar&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-p&quot;, &quot;8080:80&quot;, &quot;alpine&quot;},
+		{&quot;run&quot;, &quot;-dp&quot;, &quot;8080:80&quot;, &quot;alpine&quot;},
+	} {
+		if got, err := TranslateCommandLine(args); err != nil {
+			fmt.Printf(&quot;%q -&gt; error: %v\n&quot;, args, err)
+		} else {
+			fmt.Printf(&quot;%q -&gt; %q\n&quot;, args, got.Args)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproShort -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+[&quot;run&quot; &quot;-p8080:80&quot; &quot;alpine&quot;] -&gt; error: command &quot;container run&quot; does not support option -p8080:80
+[&quot;run&quot; &quot;-eFOO=bar&quot; &quot;alpine&quot;] -&gt; error: command &quot;container run&quot; does not support option -eFOO=bar
+[&quot;run&quot; &quot;-p&quot; &quot;8080:80&quot; &quot;alpine&quot;] -&gt; [&quot;run&quot; &quot;-p&quot; &quot;8080:80&quot; &quot;--&quot; &quot;alpine&quot;]
+[&quot;run&quot; &quot;-dp&quot; &quot;8080:80&quot; &quot;alpine&quot;] -&gt; [&quot;run&quot; &quot;-dp&quot; &quot;8080:80&quot; &quot;--&quot; &quot;alpine&quot;]</code></pre>
+      </details>
+    <p>Fix: walk a single-dash argument&#39;s letters left to right. The first letter that takes a value gets the rest of the token, minus one leading <code>=</code>, or the next argument when nothing follows.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/nerdctlstub/parse_args.go b/rdd/pkg/nerdctlstub/parse_args.go
+index b5b5364a2..5f3544c15 100644
+--- a/rdd/pkg/nerdctlstub/parse_args.go
++++ b/rdd/pkg/nerdctlstub/parse_args.go
+@@ -114,31 +114,22 @@ func (c *commandDefinition) parseOption(arg, next string) (newArgs []string, con
+ 	option := arg
+ 	value := next
+ 	consumed := true
+-	sep := strings.Index(option, &quot;=&quot;)
+-	if sep &gt;= 0 {
+-		value = option[sep+1:]
+-		option = option[:sep]
+-		consumed = false
+-	}
+ 	handler, ok := c.options[option]
++	if !ok &amp;&amp; len(arg) &gt; 1 &amp;&amp; arg[1] != &#39;-&#39; {
++		// There may be single-character options bunched together, with the
++		// value of the last one attached, e.g. `-itp 80` or `-itp80`.
++		option, value, consumed, handler, ok = c.parseShortOptions(arg, next)
++	}
+ 	if !ok {
+-		// There may be multiple single-character options bunched together,
+-		// e.g. `-itp 80`.
+-		if len(option) &gt; 1 &amp;&amp; option[0] == &#39;-&#39; &amp;&amp; option[1] != &#39;-&#39; {
+-			// Make sure all options (except the last) exist and take no
+-			// arguments.
+-			for _, ch := range option[1 : len(option)-1] {
+-				handler, ok = c.options[fmt.Sprintf(&quot;-%c&quot;, ch)]
+-				if !ok || handler != nil {
+-					ok = false
+-					break
+-				}
+-			}
+-			// If all earlier options are fine, use the handler of the last.
+-			if ok {
+-				handler, ok = c.options[fmt.Sprintf(&quot;-%s&quot;, option[len(option)-1:])]
+-			}
++		option = arg
++		value = next
++		consumed = true
++		if sep := strings.Index(option, &quot;=&quot;); sep &gt;= 0 {
++			value = option[sep+1:]
++			option = option[:sep]
++			consumed = false
+ 		}
++		handler, ok = c.options[option]
+ 		if !ok {
+ 			// The user may say `-foo` instead of `--foo`.
+ 			option = &quot;-&quot; + option
+@@ -178,6 +169,30 @@ func (c *commandDefinition) parseOption(arg, next string) (newArgs []string, con
+ 	return nil, false, extraCleanups, fmt.Errorf(&quot;command %q does not support option %s&quot;, c.commandPath, arg)
+ }
+ 
++// parseShortOptions walks a single-dash argument the way pflag does: boolean
++// letters continue, and the first letter that takes a value takes the rest
++// of the argument (minus one leading `=`) as its value, or the next argument
++// when nothing follows. It returns the bunched letters up to and including
++// that one as the option. ok is false when a letter is unknown.
++func (c *commandDefinition) parseShortOptions(arg, next string) (option, value string, consumed bool, handler argHandler, ok bool) {
++	for i := 1; i &lt; len(arg); i++ {
++		handler, ok = c.options[&quot;-&quot;+arg[i:i+1]]
++		if !ok {
++			return &quot;&quot;, &quot;&quot;, false, nil, false
++		}
++		if handler == nil {
++			continue
++		}
++		value = strings.TrimPrefix(arg[i+1:], &quot;=&quot;)
++		if value == &quot;&quot; {
++			return arg[:i+1], next, true, handler, true
++		}
++		return arg[:i+1], value, false, handler, true
++	}
++	// Every letter is a boolean option.
++	return arg, &quot;&quot;, false, nil, true
++}
++
+ // parse arguments for this command; this includes options (--long, -x) as
+ // well as subcommands and positional arguments.
+ func (c commandDefinition) parse(args []string) (*ParsedArgs, error) {
+diff --git a/rdd/pkg/nerdctlstub/parse_args_test.go b/rdd/pkg/nerdctlstub/parse_args_test.go
+index b6db57238..7707b111b 100644
+--- a/rdd/pkg/nerdctlstub/parse_args_test.go
++++ b/rdd/pkg/nerdctlstub/parse_args_test.go
+@@ -135,3 +135,44 @@ func TestTableMatchesGuestNerdctl(t *testing.T) {
+ 	assert.NilError(t, err)
+ 	assert.Equal(t, nerdctlVersion, &quot;v&quot;+manifest[&quot;nerdctl&quot;].Version)
+ }
++
++func TestTranslateCommandLineAttachedShortValues(t *testing.T) {
++	cases := []struct {
++		name string
++		args []string
++		want []string
++	}{
++		{
++			name: &quot;separate value&quot;,
++			args: []string{&quot;run&quot;, &quot;-p&quot;, &quot;8080:80&quot;, &quot;alpine&quot;},
++			want: []string{&quot;run&quot;, &quot;-p&quot;, &quot;8080:80&quot;, &quot;--&quot;, &quot;alpine&quot;},
++		},
++		{
++			name: &quot;attached value&quot;,
++			args: []string{&quot;run&quot;, &quot;-p8080:80&quot;, &quot;alpine&quot;},
++			want: []string{&quot;run&quot;, &quot;-p&quot;, &quot;8080:80&quot;, &quot;--&quot;, &quot;alpine&quot;},
++		},
++		{
++			name: &quot;attached value containing an equals sign&quot;,
++			args: []string{&quot;run&quot;, &quot;-eFOO=bar&quot;, &quot;alpine&quot;},
++			want: []string{&quot;run&quot;, &quot;-e&quot;, &quot;FOO=bar&quot;, &quot;--&quot;, &quot;alpine&quot;},
++		},
++		{
++			name: &quot;attached value after bunched booleans&quot;,
++			args: []string{&quot;run&quot;, &quot;-itp8080:80&quot;, &quot;alpine&quot;},
++			want: []string{&quot;run&quot;, &quot;-itp&quot;, &quot;8080:80&quot;, &quot;--&quot;, &quot;alpine&quot;},
++		},
++		{
++			name: &quot;attached path value&quot;,
++			args: []string{&quot;run&quot;, `-vC:\x:/y`, &quot;alpine&quot;},
++			want: []string{&quot;run&quot;, &quot;-v&quot;, &quot;/mnt/c/x:/y&quot;, &quot;--&quot;, &quot;alpine&quot;},
++		},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			got, err := TranslateCommandLine(tc.args)
++			assert.NilError(t, err)
++			assert.DeepEqual(t, got.Args, tc.want)
++		})
++	}
++}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/translate.go">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> A <code>-</code> meaning stdin or stdout becomes a path <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/translate.go#L91-L106">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="91" data-line="96-101"><code class="language-go">	}
+	return strings.Join(parts, &quot;,&quot;), nil, nil
+}
+
+// filePathArgHandler handles arguments that take a path for input.
+func filePathArgHandler(arg string) (string, []cleanupFunc, error) {
+	result, err := guestexec.TranslateHostPath(arg)
+	if err != nil {
+		return &quot;&quot;, nil, err
+	}
+	return result, nil, nil
+}
+
+// outputPathArgHandler handles arguments that take a path to write to. On
+// Windows the guest writes through the /mnt/&lt;drive&gt; mount directly, so this
+// matches the input handling.</code></pre>
+    <p>nerdctl reads the Dockerfile from stdin when <code>--file</code> is <code>-</code> (<code>pkg/cmd/builder/build.go:270</code> in v2.1.2), and buildctl writes <code>--output type=tar,dest=-</code> to stdout. The handler resolves <code>-</code> as a relative path, so the build looks for a file named <code>-</code> in the working directory. <code>fileOrURLOrStdin</code> already exempts <code>-</code> for positional arguments, but flag values never get that exemption. Passing <code>-</code> through is safe even where nerdctl reads it as a file name, because the guest working directory maps to the host one.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_stdin_test.go; run from rdd/:
+// go test -count=1 -run TestReproStdin -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+package nerdctlstub
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproStdin(t *testing.T) {
+	t.Chdir(&quot;/&quot;)
+	for _, args := range [][]string{
+		{&quot;build&quot;, &quot;-f&quot;, &quot;-&quot;, `C:\ctx`},
+		{&quot;build&quot;, &quot;-o&quot;, &quot;type=tar,dest=-&quot;, `C:\ctx`},
+		{&quot;build&quot;, &quot;-f&quot;, `C:\ctx\Dockerfile`, `C:\ctx`},
+	} {
+		if got, err := TranslateCommandLine(args); err != nil {
+			fmt.Printf(&quot;%q -&gt; error: %v\n&quot;, args, err)
+		} else {
+			fmt.Printf(&quot;%q -&gt; %q\n&quot;, args, got.Args)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproStdin -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+[&quot;build&quot; &quot;-f&quot; &quot;-&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;-f&quot; &quot;/-&quot; &quot;/mnt/c/ctx&quot;]
+[&quot;build&quot; &quot;-o&quot; &quot;type=tar,dest=-&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;-o&quot; &quot;type=tar,dest=/-&quot; &quot;/mnt/c/ctx&quot;]
+[&quot;build&quot; &quot;-f&quot; &quot;C:\\ctx\\Dockerfile&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;-f&quot; &quot;/mnt/c/ctx/Dockerfile&quot; &quot;/mnt/c/ctx&quot;]</code></pre>
+      </details>
+    <p>Fix: return <code>-</code> unchanged from <code>filePathArgHandler</code>, which <code>outputPathArgHandler</code> calls.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/nerdctlstub/translate.go b/rdd/pkg/nerdctlstub/translate.go
+index eec118b9c..0b35a107d 100644
+--- a/rdd/pkg/nerdctlstub/translate.go
++++ b/rdd/pkg/nerdctlstub/translate.go
+@@ -94,6 +94,10 @@ func mountArgHandler(arg string) (string, []cleanupFunc, error) {
+ 
+ // filePathArgHandler handles arguments that take a path for input.
+ func filePathArgHandler(arg string) (string, []cleanupFunc, error) {
++	// `-` means stdin or stdout, not a file in the working directory.
++	if arg == &quot;-&quot; {
++		return arg, nil, nil
++	}
+ 	result, err := guestexec.TranslateHostPath(arg)
+ 	if err != nil {
+ 		return &quot;&quot;, nil, err
+diff --git a/rdd/pkg/nerdctlstub/translate_test.go b/rdd/pkg/nerdctlstub/translate_test.go
+index 66bbeeec3..4c136cdf9 100644
+--- a/rdd/pkg/nerdctlstub/translate_test.go
++++ b/rdd/pkg/nerdctlstub/translate_test.go
+@@ -65,6 +65,16 @@ func TestMountArgHandler(t *testing.T) {
+ 	}
+ }
+ 
++func TestStdinArgPassesThrough(t *testing.T) {
++	got, err := TranslateCommandLine([]string{&quot;build&quot;, &quot;-f&quot;, &quot;-&quot;, `C:\ctx`})
++	assert.NilError(t, err)
++	assert.DeepEqual(t, got.Args, []string{&quot;build&quot;, &quot;-f&quot;, &quot;-&quot;, &quot;/mnt/c/ctx&quot;})
++
++	arg, _, err := builderCacheArgHandler(&quot;type=tar,dest=-&quot;)
++	assert.NilError(t, err)
++	assert.Equal(t, arg, &quot;type=tar,dest=-&quot;)
++}
++
+ func TestBuilderCacheArgHandler(t *testing.T) {
+ 	got, _, err := builderCacheArgHandler(`type=local,src=C:\in,dest=C:\out`)
+ 	assert.NilError(t, err)</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/generate/main.go">
+      <div class="finding-title" id="I5">
+        <span class="finding-num">I5.</span> <code>top ctr -ef</code> fails because foreign-flag detection reads the <code>Use</code> text <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L102-L115">rdd/pkg/nerdctlstub/generate/main.go</a></div>
+      <pre data-start="102" data-line="107-110"><code class="language-go">		return fmt.Errorf(&quot;replica.go root flags do not match initRootCmdFlags:\n  replica: %v\n  nerdctl: %v&quot;, got, want)
+	}
+	return nil
+}
+
+// foreignFlagsRE matches Use strings such as &quot;run [flags] IMAGE [COMMAND]
+// [ARG...]&quot; where trailing arguments belong to the container command and
+// option parsing must stop at the first positional argument.
+var foreignFlagsRE = regexp.MustCompile(`COMMAND\]? \[ARGS?\.\.\.\]`)
+
+func walk(cmd *cobra.Command, path string, specs map[string]*commandSpec) {
+	spec := &amp;commandSpec{
+		name:         cmd.Name(),
+		short:        cmd.Short,</code></pre>
+    <p>nerdctl calls <code>SetInterspersed(false)</code> on <code>top</code>, so in <code>nerdctl top ctr -ef</code> the <code>-ef</code> goes to <code>ps</code>. The regex matches <code>run</code>, <code>create</code>, <code>exec</code> and the two compose commands, but not <code>top CONTAINER [ps OPTIONS]</code>, so the stub parses <code>-ef</code> as an option of <code>top</code> and fails. <code>container start</code> and <code>container update</code> turn interspersing off too. For them the stub moves later flags in front of the container name, which nerdctl itself would not do. 1.x does not mark <code>top</code> as having foreign flags either.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_top_test.go; run from rdd/:
+// go test -count=1 -run TestReproTop -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+package nerdctlstub
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproTop(t *testing.T) {
+	t.Chdir(&quot;/&quot;)
+	for _, args := range [][]string{
+		{&quot;top&quot;, &quot;ctr&quot;, &quot;-ef&quot;},
+		{&quot;top&quot;, &quot;ctr&quot;},
+		{&quot;exec&quot;, &quot;ctr&quot;, &quot;ps&quot;, &quot;-ef&quot;},
+	} {
+		if got, err := TranslateCommandLine(args); err != nil {
+			fmt.Printf(&quot;%q -&gt; error: %v\n&quot;, args, err)
+		} else {
+			fmt.Printf(&quot;%q -&gt; %q\n&quot;, args, got.Args)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproTop -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+[&quot;top&quot; &quot;ctr&quot; &quot;-ef&quot;] -&gt; error: command &quot;top&quot; does not support option -ef
+[&quot;top&quot; &quot;ctr&quot;] -&gt; [&quot;top&quot; &quot;--&quot; &quot;ctr&quot;]
+[&quot;exec&quot; &quot;ctr&quot; &quot;ps&quot; &quot;-ef&quot;] -&gt; [&quot;exec&quot; &quot;--&quot; &quot;ctr&quot; &quot;ps&quot; &quot;-ef&quot;]</code></pre>
+      </details>
+    <p>Fix: derive <code>foreignFlags</code> from the flag set itself. pflag does not expose the setting, so the patch parses a probe argument followed by an unknown flag, which only an interspersed flag set rejects. Apply it after I1&#39;s patch, which changes the same lines of <code>walk</code>, then regenerate the table. The new table also marks <code>container start</code> and <code>container update</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/nerdctlstub/generate/main.go b/rdd/pkg/nerdctlstub/generate/main.go
+index d27d6d02e..6c855febd 100644
+--- a/rdd/pkg/nerdctlstub/generate/main.go
++++ b/rdd/pkg/nerdctlstub/generate/main.go
+@@ -104,10 +104,14 @@ func verifyRootFlags(rootCmd *cobra.Command) error {
+ 	return nil
+ }
+ 
+-// foreignFlagsRE matches Use strings such as &quot;run [flags] IMAGE [COMMAND]
+-// [ARG...]&quot; where trailing arguments belong to the container command and
+-// option parsing must stop at the first positional argument.
+-var foreignFlagsRE = regexp.MustCompile(`COMMAND\]? \[ARGS?\.\.\.\]`)
++// stopsAtFirstArg reports whether cmd stops parsing flags at its first
++// positional argument (SetInterspersed(false)), leaving the rest for another
++// program: the container command for `run`, `ps` for `top`. pflag has no
++// getter for the setting; only an interspersed flag set goes on to reject
++// the unknown flag after the probe argument.
++func stopsAtFirstArg(cmd *cobra.Command) bool {
++	return cmd.Flags().Parse([]string{&quot;arg&quot;, &quot;--generate-probe&quot;}) == nil
++}
+ 
+ func walk(cmd *cobra.Command, path string, specs map[string]*commandSpec) {
+ 	// cobra adds these flags only when a command executes.
+@@ -116,7 +120,7 @@ func walk(cmd *cobra.Command, path string, specs map[string]*commandSpec) {
+ 	spec := &amp;commandSpec{
+ 		name:         cmd.Name(),
+ 		short:        cmd.Short,
+-		foreignFlags: foreignFlagsRE.MatchString(cmd.Use),
++		foreignFlags: stopsAtFirstArg(cmd),
+ 		flagUsage:    map[string]string{},
+ 	}
+ 	cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
+diff --git a/rdd/pkg/nerdctlstub/parse_args_test.go b/rdd/pkg/nerdctlstub/parse_args_test.go
+index 108bfec88..055756067 100644
+--- a/rdd/pkg/nerdctlstub/parse_args_test.go
++++ b/rdd/pkg/nerdctlstub/parse_args_test.go
+@@ -31,6 +31,11 @@ func TestTranslateCommandLine(t *testing.T) {
+ 			args: []string{&quot;run&quot;, &quot;alpine&quot;, &quot;--env&quot;, &quot;x=y&quot;},
+ 			want: []string{&quot;run&quot;, &quot;--&quot;, &quot;alpine&quot;, &quot;--env&quot;, &quot;x=y&quot;},
+ 		},
++		{
++			name: &quot;ps options after the container are not parsed&quot;,
++			args: []string{&quot;top&quot;, &quot;ctr&quot;, &quot;-ef&quot;},
++			want: []string{&quot;top&quot;, &quot;--&quot;, &quot;ctr&quot;, &quot;-ef&quot;},
++		},
+ 		{
+ 			name: &quot;bunched short flags stay bunched&quot;,
+ 			args: []string{&quot;run&quot;, &quot;-it&quot;, &quot;alpine&quot;},
+@@ -132,7 +137,7 @@ func TestTranslateCommandLineErrors(t *testing.T) {
+ // TestTableSanity pins properties of the generated table that the parser
+ // relies on; a regeneration that loses them should fail here.
+ func TestTableSanity(t *testing.T) {
+-	for _, path := range []string{&quot;container run&quot;, &quot;container create&quot;, &quot;container exec&quot;} {
++	for _, path := range []string{&quot;container run&quot;, &quot;container create&quot;, &quot;container exec&quot;, &quot;top&quot;} {
+ 		assert.Assert(t, commandSpecs[path].foreignFlags, &quot;command %q must have foreign flags&quot;, path)
+ 	}
+ 	for _, alias := range []string{&quot;run&quot;, &quot;build&quot;, &quot;cp&quot;} {</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/docs/design/nerdctl.md">
+      <div class="finding-title" id="I6">
+        <span class="finding-num">I6.</span> A rooted path such as <code>\data</code> still mounts the VM&#39;s directory, and the design doc does not say so <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L8-L21">rdd/docs/design/nerdctl.md</a></div>
+      <pre data-start="8" data-line="13-16"><code class="language-markdown">stub as plain `nerdctl`.
+
+On macOS and Linux the guest mounts the host home directory at its original
+path, so arguments pass through unchanged. On Windows the WSL2 guest
+automounts drives under `/mnt`, so the stub rewrites `C:\src\app` to
+`/mnt/c/src/app`. It first resolves a relative path against the host working
+directory, and a drive-relative one such as `d:app` against the current
+directory of drive D:, as Windows reports it through `GetFullPathName`.
+Windows defines what `d:app` means, so the stub resolves it instead of
+rejecting it as ambiguous. A `--volume` source that nerdctl reads as a volume
+name (`isNamedVolume` in nerdctl&#39;s `pkg/mountutil`) passes through unchanged.
+
+## Runtime
+</code></pre>
+    <p><code>guestexec.TranslateHostPath</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/guestexec/hostpath.go#L41"><code>rdd/pkg/guestexec/hostpath.go:41</code></a>) passes a rooted path without a drive through, so <code>rdd nerdctl run -v \data:/data</code> mounts the VM&#39;s <code>/data</code>. 1.x ran every host path through <code>filepath.Abs</code>, which resolves <code>\data</code> against the current drive. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asks to settle this rule, and document it here, before this PR leaves draft; both maintainers there leaned toward the 1.x rule.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/guestexec/hostpath.go#L36-L46">rdd/pkg/guestexec/hostpath.go</a></div>
+      <pre data-start="36" data-line="41"><code class="language-go">	// A relative path resolves against the working directory.
+	cwd, err := hostCwd()
+	if err != nil {
+		return &quot;&quot;, err
+	}
+	base, err := TranslateHostPath(cwd)
+	if err != nil {
+		return &quot;&quot;, err
+	}
+	return path.Join(base, slashed), nil
+}</code></pre>
+    <p>The doc&#39;s <code>d:app</code> sentence is false at the review SHA but true on upstream/main since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e7b2cac15"><code>e7b2cac15</code></a>. The rebase that the PR needs anyway applies without conflicts, passes the stub tests, and prints the same four lines below.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/guestexec/zz_repro_rooted_test.go; run from rdd/:
+// go test -count=1 -run TestReproRooted -v ./pkg/guestexec/ | grep -- &#39;-&gt;&#39;
+package guestexec
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproRooted(t *testing.T) {
+	withHostCwd(t, `C:\work`)
+	for _, arg := range []string{`\data`, `/data`, `C:\data`, `data`} {
+		got, err := TranslateHostPath(arg)
+		fmt.Printf(&quot;%q -&gt; %q, %v\n&quot;, arg, got, err)
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproRooted -v ./pkg/guestexec/ | grep -- &#39;-&gt;&#39;
+&quot;\\data&quot; -&gt; &quot;/data&quot;, &lt;nil&gt;
+&quot;/data&quot; -&gt; &quot;/data&quot;, &lt;nil&gt;
+&quot;C:\\data&quot; -&gt; &quot;/mnt/c/data&quot;, &lt;nil&gt;
+&quot;data&quot; -&gt; &quot;/mnt/c/work/data&quot;, &lt;nil&gt;</code></pre>
+      </details>
+    <p>Fix: resolve a rooted path against the working directory&#39;s drive and state the rule in the doc. The patch implements the 1.x rule. It applies to this PR rebased onto upstream/main (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a07efa14b"><code>a07efa14b</code></a>), because upstream/main rewrote <code>hostpath.go</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a>&#39;s other option, converting <code>\data</code> but keeping <code>/data</code> for the VM, needs one more condition.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/docs/design/nerdctl.md b/rdd/docs/design/nerdctl.md
+index 87fc00573..d327e3c45 100644
+--- a/rdd/docs/design/nerdctl.md
++++ b/rdd/docs/design/nerdctl.md
+@@ -14,7 +14,9 @@ automounts drives under `/mnt`, so the stub rewrites `C:\src\app` to
+ directory, and a drive-relative one such as `d:app` against the current
+ directory of drive D:, as Windows reports it through `GetFullPathName`.
+ Windows defines what `d:app` means, so the stub resolves it instead of
+-rejecting it as ambiguous. A `--volume` source that nerdctl reads as a volume
++rejecting it as ambiguous. A rooted path without a drive, such as `\data` or
++`/data`, resolves against the current drive, as it did in &quot;Rancher Desktop
++1.x&quot;. A `--volume` source that nerdctl reads as a volume
+ name (`isNamedVolume` in nerdctl&#39;s `pkg/mountutil`) passes through unchanged.
+ 
+ ## Runtime
+diff --git a/rdd/pkg/guestexec/hostpath.go b/rdd/pkg/guestexec/hostpath.go
+index dc9e5c7c0..88c24fd8a 100644
+--- a/rdd/pkg/guestexec/hostpath.go
++++ b/rdd/pkg/guestexec/hostpath.go
+@@ -32,10 +32,21 @@ var hostDriveCwd = func(drive string) (string, error) {
+ // TranslateHostPath rewrites one host path to where the guest mounts it,
+ // e.g. `C:\Users\jan\app` to `/mnt/c/Users/jan/app`. A relative path
+ // resolves against the host working directory, and a drive-relative one
+-// (`d:foo`) against the current directory on its drive. UNC and POSIX-style
+-// absolute paths only get their backslashes turned into forward slashes.
++// (`d:foo`) against the current directory on its drive. A rooted path
++// without a drive (`\data`, `/data`) is on the current drive, as Windows
++// resolves it. UNC paths only get their backslashes turned into forward
++// slashes.
+ func TranslateHostPath(arg string) (string, error) {
+ 	slashed := strings.ReplaceAll(arg, `\`, &quot;/&quot;)
++	if strings.HasPrefix(slashed, &quot;/&quot;) &amp;&amp; !strings.HasPrefix(slashed, &quot;//&quot;) {
++		cwd, err := hostCwd()
++		if err != nil {
++			return &quot;&quot;, err
++		}
++		if drive, _, ok := splitDrive(strings.ReplaceAll(cwd, `\`, &quot;/&quot;)); ok {
++			slashed = drive + &quot;:&quot; + slashed
++		}
++	}
+ 	if _, _, ok := splitDrive(slashed); !ok &amp;&amp; !strings.HasPrefix(slashed, &quot;/&quot;) {
+ 		// Join on the host side, so that cleaning the result stops `..` at
+ 		// the drive root.
+@@ -48,7 +59,8 @@ func TranslateHostPath(arg string) (string, error) {
+ 	if drive, rest, ok := splitDrive(slashed); ok {
+ 		return &quot;/mnt/&quot; + drive + path.Clean(&quot;/&quot;+rest), nil
+ 	}
+-	// UNC (//server/share) or POSIX-style; nothing we can map.
++	// UNC (//server/share), or a rooted path under a UNC working directory;
++	// nothing we can map.
+ 	return slashed, nil
+ }
+ 
+diff --git a/rdd/pkg/guestexec/hostpath_test.go b/rdd/pkg/guestexec/hostpath_test.go
+index 8530e6d5b..2e9c60405 100644
+--- a/rdd/pkg/guestexec/hostpath_test.go
++++ b/rdd/pkg/guestexec/hostpath_test.go
+@@ -55,7 +55,8 @@ func TestTranslateHostPath(t *testing.T) {
+ 		{`D:..\..\x`, &quot;/mnt/d/x&quot;},
+ 		{`d:`, &quot;/mnt/d/proj&quot;},
+ 		{`\\server\share\file`, &quot;//server/share/file&quot;},
+-		{`/already/posix`, &quot;/already/posix&quot;},
++		{`\data`, &quot;/mnt/c/data&quot;},
++		{`/data`, &quot;/mnt/c/data&quot;},
+ 	}
+ 	for _, tc := range cases {
+ 		t.Run(tc.arg, func(t *testing.T) {</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/overlay.go">
+      <div class="finding-title" id="I7">
+        <span class="finding-num">I7.</span> <code>build -o DIR</code> and <code>--secret source=</code> keep their host paths <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/overlay.go#L35-L49">rdd/pkg/nerdctlstub/overlay.go</a></div>
+      <pre data-start="35" data-line="40-44"><code class="language-go">		&quot;--cache-from&quot;:    builderCacheArg,
+		&quot;--cache-to&quot;:      builderCacheArg,
+		&quot;--file&quot;:          filePathArg,
+		&quot;-f&quot;:              filePathArg,
+		&quot;--iidfile&quot;:       outputPathArg,
+		// --output and --secret are CSV; the builder-cache handler rewrites
+		// their src= and dest= values.
+		&quot;--output&quot;: builderCacheArg,
+		&quot;-o&quot;:       builderCacheArg,
+		&quot;--secret&quot;: builderCacheArg,
+	},
+	&quot;builder debug&quot;: {
+		&quot;--file&quot;:   filePathArg,
+		&quot;-f&quot;:       filePathArg,
+		&quot;--secret&quot;: builderCacheArg,</code></pre>
+    <p>nerdctl takes an <code>--output</code> value without <code>type=</code> as <code>type=local,dest=&lt;value&gt;</code> (<code>pkg/cmd/builder/build.go:226-229</code>). The overlay sends <code>-o</code> through the builder-cache handler, which passes a value without <code>src=</code> or <code>dest=</code> through unchanged, so <code>nerdctl build -o C:\out .</code> hands the guest the Windows path. buildctl also accepts <code>source=</code> for <code>--secret</code> (buildkit <code>cmd/buildctl/build/secret.go</code>), which the handler ignores. 1.x has the same gaps.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_output_test.go; run from rdd/:
+// go test -count=1 -run TestReproOutput -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+package nerdctlstub
+
+import (
+	&quot;fmt&quot;
+	&quot;testing&quot;
+)
+
+func TestReproOutput(t *testing.T) {
+	t.Chdir(&quot;/&quot;)
+	for _, args := range [][]string{
+		{&quot;build&quot;, &quot;-o&quot;, `C:\out`, `C:\ctx`},
+		{&quot;build&quot;, &quot;--secret&quot;, `id=s,source=C:\s.txt`, `C:\ctx`},
+		{&quot;build&quot;, &quot;-o&quot;, `type=local,dest=C:\out`, `C:\ctx`},
+		{&quot;build&quot;, &quot;--secret&quot;, `id=s,src=C:\s.txt`, `C:\ctx`},
+	} {
+		if got, err := TranslateCommandLine(args); err != nil {
+			fmt.Printf(&quot;%q -&gt; error: %v\n&quot;, args, err)
+		} else {
+			fmt.Printf(&quot;%q -&gt; %q\n&quot;, args, got.Args)
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestReproOutput -v ./pkg/nerdctlstub/ | grep -- &#39;-&gt;&#39;
+[&quot;build&quot; &quot;-o&quot; &quot;C:\\out&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;-o&quot; &quot;C:\\out&quot; &quot;/mnt/c/ctx&quot;]
+[&quot;build&quot; &quot;--secret&quot; &quot;id=s,source=C:\\s.txt&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;--secret&quot; &quot;id=s,source=C:\\s.txt&quot; &quot;/mnt/c/ctx&quot;]
+[&quot;build&quot; &quot;-o&quot; &quot;type=local,dest=C:\\out&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;-o&quot; &quot;type=local,dest=/mnt/c/out&quot; &quot;/mnt/c/ctx&quot;]
+[&quot;build&quot; &quot;--secret&quot; &quot;id=s,src=C:\\s.txt&quot; &quot;C:\\ctx&quot;] -&gt; [&quot;build&quot; &quot;--secret&quot; &quot;id=s,src=/mnt/c/s.txt&quot; &quot;/mnt/c/ctx&quot;]</code></pre>
+      </details>
+    <p>Fix: add a builder-output handler kind that treats a value without <code>type=</code> as an output path, and accept <code>source=</code> in the builder-cache handler.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/docs/design/nerdctl.md b/rdd/docs/design/nerdctl.md
+index 87fc00573..56b641568 100644
+--- a/rdd/docs/design/nerdctl.md
++++ b/rdd/docs/design/nerdctl.md
+@@ -33,9 +33,10 @@ Three tables drive the parser:
+ | overlay | the flags whose values contain host paths, with a handler kind for each | hand-curated |
+ | command handlers | positional-argument handlers (`container cp`, `builder build`) | hand-written |
+ 
+-Six handler kinds cover nerdctl&#39;s path syntaxes: input path, output path,
++Seven handler kinds cover nerdctl&#39;s path syntaxes: input path, output path,
+ `--volume` (`host:container[:rw]`), `--mount` (CSV with `source=`), builder
+-cache (CSV with `src=`/`dest=`), and build context (`key=value` CSV).
++cache (CSV with `src=`/`dest=`), build context (`key=value` CSV), and builder
++output (an output path, or builder-cache CSV when it contains `type=`).
+ 
+ The stub never starts Rancher Desktop. It fails unless the App runs the
+ containerd engine; `rdd run nerdctl` starts the App first. After parsing, it
+diff --git a/rdd/pkg/nerdctlstub/overlay.go b/rdd/pkg/nerdctlstub/overlay.go
+index 2fcc34ae9..6328831eb 100644
+--- a/rdd/pkg/nerdctlstub/overlay.go
++++ b/rdd/pkg/nerdctlstub/overlay.go
+@@ -21,6 +21,9 @@ const (
+ 	builderCacheArg
+ 	// buildContextArg is name=value CSV where value may be a path or a URN.
+ 	buildContextArg
++	// builderOutputArg is a plain output path, or builderCacheArg CSV when
++	// it contains type=.
++	builderOutputArg
+ )
+ 
+ // pathFlags classifies every nerdctl flag whose value contains host paths.
+@@ -37,10 +40,10 @@ var pathFlags = map[string]map[string]argHandlerKind{
+ 		&quot;--file&quot;:          filePathArg,
+ 		&quot;-f&quot;:              filePathArg,
+ 		&quot;--iidfile&quot;:       outputPathArg,
+-		// --output and --secret are CSV; the builder-cache handler rewrites
+-		// their src= and dest= values.
+-		&quot;--output&quot;: builderCacheArg,
+-		&quot;-o&quot;:       builderCacheArg,
++		// --output is a bare path or CSV with dest=; --secret is CSV with
++		// src= or source=.
++		&quot;--output&quot;: builderOutputArg,
++		&quot;-o&quot;:       builderOutputArg,
+ 		&quot;--secret&quot;: builderCacheArg,
+ 	},
+ 	&quot;builder debug&quot;: {
+diff --git a/rdd/pkg/nerdctlstub/parse_args.go b/rdd/pkg/nerdctlstub/parse_args.go
+index b5b5364a2..7ee38bd28 100644
+--- a/rdd/pkg/nerdctlstub/parse_args.go
++++ b/rdd/pkg/nerdctlstub/parse_args.go
+@@ -45,12 +45,13 @@ type argHandler func(string) (string, []cleanupFunc, error)
+ 
+ // argHandlersType bundles the rewrite functions passed to command handlers.
+ type argHandlersType struct {
+-	volumeArgHandler       argHandler
+-	filePathArgHandler     argHandler
+-	outputPathArgHandler   argHandler
+-	mountArgHandler        argHandler
+-	builderCacheArgHandler argHandler
+-	buildContextArgHandler argHandler
++	volumeArgHandler        argHandler
++	filePathArgHandler      argHandler
++	outputPathArgHandler    argHandler
++	mountArgHandler         argHandler
++	builderCacheArgHandler  argHandler
++	buildContextArgHandler  argHandler
++	builderOutputArgHandler argHandler
+ }
+ 
+ // commandHandlerType is the type of commandDefinition.handler, which is used
+@@ -292,12 +293,13 @@ func ignoredArgHandler(input string) (string, []cleanupFunc, error) {
+ // kindHandlers maps the overlay classification to the rewrite functions.
+ func kindHandlers() map[argHandlerKind]argHandler {
+ 	return map[argHandlerKind]argHandler{
+-		filePathArg:     argHandlers.filePathArgHandler,
+-		outputPathArg:   argHandlers.outputPathArgHandler,
+-		volumeArg:       argHandlers.volumeArgHandler,
+-		mountArg:        argHandlers.mountArgHandler,
+-		builderCacheArg: argHandlers.builderCacheArgHandler,
+-		buildContextArg: argHandlers.buildContextArgHandler,
++		filePathArg:      argHandlers.filePathArgHandler,
++		outputPathArg:    argHandlers.outputPathArgHandler,
++		volumeArg:        argHandlers.volumeArgHandler,
++		mountArg:         argHandlers.mountArgHandler,
++		builderCacheArg:  argHandlers.builderCacheArgHandler,
++		buildContextArg:  argHandlers.buildContextArgHandler,
++		builderOutputArg: argHandlers.builderOutputArgHandler,
+ 	}
+ }
+ 
+diff --git a/rdd/pkg/nerdctlstub/translate.go b/rdd/pkg/nerdctlstub/translate.go
+index eec118b9c..0a26159cd 100644
+--- a/rdd/pkg/nerdctlstub/translate.go
++++ b/rdd/pkg/nerdctlstub/translate.go
+@@ -109,17 +109,17 @@ func outputPathArgHandler(arg string) (string, []cleanupFunc, error) {
+ }
+ 
+ // builderCacheArgHandler handles `nerdctl builder build --cache-from=`,
+-// `--cache-to=`, `--output=`, and `--secret=`.
++// `--cache-to=`, `--output=type=...`, and `--secret=`.
+ func builderCacheArgHandler(arg string) (string, []cleanupFunc, error) {
+ 	var cleanups []cleanupFunc
+ 
+-	// The arg is comma-separated, with `src=` values as inputs and `dest=`
+-	// values as outputs; everything else passes through.
++	// The arg is comma-separated, with `src=` and `source=` values as inputs
++	// and `dest=` values as outputs; everything else passes through.
+ 	var parts []string
+ 	for _, part := range strings.Split(arg, &quot;,&quot;) {
+ 		handler := filePathArgHandler
+ 		switch {
+-		case strings.HasPrefix(part, &quot;src=&quot;):
++		case strings.HasPrefix(part, &quot;src=&quot;), strings.HasPrefix(part, &quot;source=&quot;):
+ 			// handled below
+ 		case strings.HasPrefix(part, &quot;dest=&quot;):
+ 			handler = outputPathArgHandler
+@@ -138,6 +138,16 @@ func builderCacheArgHandler(arg string) (string, []cleanupFunc, error) {
+ 	return strings.Join(parts, &quot;,&quot;), cleanups, nil
+ }
+ 
++// builderOutputArgHandler handles `nerdctl builder build --output=`. nerdctl
++// takes a value without `type=` as `type=local,dest=&lt;value&gt;`, so that value is
++// a plain output path.
++func builderOutputArgHandler(arg string) (string, []cleanupFunc, error) {
++	if !strings.Contains(arg, &quot;type=&quot;) {
++		return outputPathArgHandler(arg)
++	}
++	return builderCacheArgHandler(arg)
++}
++
+ // buildContextArgHandler handles `nerdctl builder build --build-context=`.
+ func buildContextArgHandler(arg string) (string, []cleanupFunc, error) {
+ 	// The arg is CSV of key=value pairs; each value is either a URN with a
+@@ -178,10 +188,11 @@ func buildContextArgHandler(arg string) (string, []cleanupFunc, error) {
+ 
+ // argHandlers is the table of argument rewrite functions.
+ var argHandlers = argHandlersType{
+-	volumeArgHandler:       volumeArgHandler,
+-	filePathArgHandler:     filePathArgHandler,
+-	outputPathArgHandler:   outputPathArgHandler,
+-	mountArgHandler:        mountArgHandler,
+-	builderCacheArgHandler: builderCacheArgHandler,
+-	buildContextArgHandler: buildContextArgHandler,
++	volumeArgHandler:        volumeArgHandler,
++	filePathArgHandler:      filePathArgHandler,
++	outputPathArgHandler:    outputPathArgHandler,
++	mountArgHandler:         mountArgHandler,
++	builderCacheArgHandler:  builderCacheArgHandler,
++	buildContextArgHandler:  buildContextArgHandler,
++	builderOutputArgHandler: builderOutputArgHandler,
+ }
+diff --git a/rdd/pkg/nerdctlstub/translate_test.go b/rdd/pkg/nerdctlstub/translate_test.go
+index 66bbeeec3..143ce6eef 100644
+--- a/rdd/pkg/nerdctlstub/translate_test.go
++++ b/rdd/pkg/nerdctlstub/translate_test.go
+@@ -84,3 +84,33 @@ func TestBuildContextArgHandler(t *testing.T) {
+ 	assert.NilError(t, err)
+ 	assert.Equal(t, got, &quot;alpine=docker-image://alpine:3.20&quot;)
+ }
++
++func TestBuilderOutputArgHandler(t *testing.T) {
++	cases := []struct {
++		arg  string
++		want string
++	}{
++		{`C:\out`, &quot;/mnt/c/out&quot;},
++		{`type=local,dest=C:\out`, &quot;type=local,dest=/mnt/c/out&quot;},
++		{&quot;type=image,name=x&quot;, &quot;type=image,name=x&quot;},
++	}
++	for _, tc := range cases {
++		t.Run(tc.arg, func(t *testing.T) {
++			got, _, err := builderOutputArgHandler(tc.arg)
++			assert.NilError(t, err)
++			assert.Equal(t, got, tc.want)
++		})
++	}
++
++	got, _, err := builderCacheArgHandler(`id=s,source=C:\s.txt`)
++	assert.NilError(t, err)
++	assert.Equal(t, got, &quot;id=s,source=/mnt/c/s.txt&quot;)
++
++	parsed, err := TranslateCommandLine([]string{&quot;build&quot;, &quot;-o&quot;, `C:\out`, `C:\ctx`})
++	assert.NilError(t, err)
++	assert.DeepEqual(t, parsed.Args, []string{&quot;build&quot;, &quot;-o&quot;, &quot;/mnt/c/out&quot;, &quot;/mnt/c/ctx&quot;})
++
++	parsed, err = TranslateCommandLine([]string{&quot;build&quot;, &quot;--cache-from&quot;, &quot;myimage&quot;, `C:\ctx`})
++	assert.NilError(t, err)
++	assert.DeepEqual(t, parsed.Args, []string{&quot;build&quot;, &quot;--cache-from&quot;, &quot;myimage&quot;, &quot;/mnt/c/ctx&quot;})
++}</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>--build-context</code> is parsed as a CSV record <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/translate.go#L141-L154">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="141" data-line="146-149"><code class="language-go">// buildContextArgHandler handles `nerdctl builder build --build-context=`.
+func buildContextArgHandler(arg string) (string, []cleanupFunc, error) {
+	// The arg is CSV of key=value pairs; each value is either a URN with a
+	// prefix from urnPrefixes, or a filesystem path.
+	urnPrefixes := []string{&quot;https://&quot;, &quot;http://&quot;, &quot;docker-image://&quot;, &quot;target:&quot;, &quot;oci-layout://&quot;}
+	parts, err := csv.NewReader(strings.NewReader(arg)).Read()
+	if err != nil {
+		return &quot;&quot;, nil, err
+	}
+	var resultParts []string
+	for _, part := range parts {
+		k, v, ok := strings.Cut(part, &quot;=&quot;)
+		if !ok {
+			return &quot;&quot;, nil, fmt.Errorf(&quot;failed to parse context value %q (expected key=value)&quot;, part)</code></pre>
+    <p>Each <code>--build-context</code> value is one <code>name=value</code> pair, which nerdctl splits once at <code>=</code> (<code>parseContextNames</code> in <code>pkg/cmd/builder/build.go</code>). The handler parses it as CSV instead, so <code>n=C:\a,b</code> fails with <code>failed to parse context value &quot;b&quot;</code>, and the CSV writer can add quotes that nerdctl never removes. Separately, an <code>oci-layout://</code> value names a local directory but is in the URN list, so it stays untranslated.</p>
+    <p>Fix: split once at the first <code>=</code>, translate the value without CSV decoding or encoding, and treat the path after <code>oci-layout://</code> as a host path.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Several host-path forms reach the guest untranslated <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/parse_args.go#L349-L364">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="349" data-line="354-359"><code class="language-go">			}
+			def.options[name] = handlers[kind]
+		}
+	}
+
+	// Positional-argument handlers. The pinned nerdctl has no `image import`;
+	// restore the 1.x imageImportHandler when a bump brings it back.
+	for path, handler := range map[string]commandHandlerType{
+		&quot;builder build&quot;: builderBuildHandler,
+		&quot;container cp&quot;:  containerCopyHandler,
+	} {
+		def, ok := commands[path]
+		if !ok {
+			panic(fmt.Sprintf(&quot;command handler: unknown command %q&quot;, path))
+		}
+		def.handler = handler</code></pre>
+    <p>No positional handler covers <code>compose cp web:/etc/hosts C:\tmp\hosts</code>. <code>run --rootfs C:\rootfs /bin/sh</code> takes the root filesystem as its first positional. <code>build --ssh default=C:\key</code> slips past both path heuristics in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L279-L282"><code>generate/main.go:279-282</code></a>, because its usage says &quot;socket or keys&quot;. <code>--cosign-key</code> is classified as a file path, but nerdctl&#39;s usage text also allows a URI, a KMS reference or a Kubernetes secret there, and <code>--cosign-key=https://example.com/key.pub</code> becomes <code>/https:/example.com/key.pub</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a> passed that through.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L274-L287">rdd/pkg/nerdctlstub/generate/main.go</a></div>
+      <pre data-start="274" data-line="279-282"><code class="language-go">	}
+	return strconv.Unquote(lit.Value)
+}
+
+// pathNameRE spots flag names that suggest the value contains a path.
+var pathNameRE = regexp.MustCompile(`(?i)(file|path|dir|output|input|volume|mount|context|device|sock|key)`)
+
+// pathUsageRE spots usage text that suggests the value contains a path.
+var pathUsageRE = regexp.MustCompile(`(?i)(path|file|director)`)
+
+// validateOverlay checks the overlay both ways: every overlay entry must
+// exist in the tree as a value-consuming flag, and every value-consuming
+// flag that smells like a path must be classified.
+func validateOverlay(specs map[string]*commandSpec, aliases map[string]string, overlay *overlayData) error {</code></pre>
+    <p>Fix: register <code>containerCopyHandler</code> for <code>compose cp</code>, classify <code>--ssh</code> and add <code>socket</code> to the usage heuristic, give <code>--cosign-key</code> a handler that passes URIs through, and handle <code>--rootfs</code> or list it in the doc as unsupported.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The cleanup code has nothing to clean up <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/parse_args.go#L24-L38">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="24" data-line="29-33"><code class="language-go">	Args []string
+	// cleanup functions to call after nerdctl exits.
+	cleanup []cleanupFunc
+}
+
+// RunCleanups releases any resources created during translation. Call it
+// after nerdctl exits, whether or not the command succeeded.
+func (p *ParsedArgs) RunCleanups() error {
+	return runCleanups(p.cleanup)
+}
+
+func runCleanups(cleanups []cleanupFunc) error {
+	var errs []error
+	for _, cleanup := range cleanups {
+		errs = append(errs, cleanup())</code></pre>
+    <p>In 1.x, cleanups released the mounts that the WSL-side helpers created. Every handler in this port returns <code>nil</code> cleanups, so <code>ParsedArgs.cleanup</code>, <code>RunCleanups</code>, the error-path loop in <code>parse</code>, the deferred call in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L83-L87"><code>rdd/cmd/rdd/nerdctl.go:83-87</code></a>, and the doc&#39;s &quot;Cleanup handlers run after the process exits&quot; all do nothing.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L78-L92">rdd/cmd/rdd/nerdctl.go</a></div>
+      <pre data-start="78" data-line="83-87"><code class="language-go">	if runtime.GOOS == &quot;windows&quot; {
+		parsed, err := nerdctlstub.TranslateCommandLine(args)
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := parsed.RunCleanups(); err != nil {
+				logrus.WithError(err).Warn(&quot;failed to clean up translated arguments&quot;)
+			}
+		}()
+		guestArgs = parsed.Args
+	}
+	// nerdctl must run as root in the guest. Non-root nerdctl insists on
+	// rootless mode even when given an explicit --address.
+	// TODO: drop --address once containerd listens on its default socket (#1040).</code></pre>
+    <p>Fix: drop the cleanup code so that handlers return <code>(string, error)</code>, or say in the package doc why it stays.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args_test.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> Tests that the port dropped <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p>1.x&#39;s <code>command_handlers_test.go</code> covered <code>cp</code> with <code>-</code> on either side, <code>c:file d:file</code> (which falls back to treating the first argument as the container path), and flags mixed between the paths; only two <code>cp</code> cases remain. 1.x&#39;s <code>parse_args_test.go</code> unit-tested <code>parseOption</code> bunching, the parent-command fallback and <code>--</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/526" class="gh-ref" data-title="[DO-NOT-MERGE] Add rdd nerdctl: run nerdctl in the VM with Windows path translation" data-state="closed" data-type="pr">#526</a>&#39;s &quot;relative build context&quot; case went away when <code>withHostCwd</code> moved to <code>guestexec</code>. No test uses the <code>commands</code> and <code>aliases</code> test hooks in <code>commandDefinition</code> (&quot;Tests set their own&quot;) any more.</p>
+    <p>Fix: restore the <code>cp</code> and <code>parseOption</code> cases, and either use the hooks or remove them.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/scripts/generate-nerdctl.sh">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>generate-nerdctl.sh</code> misses the repo&#39;s shell conventions <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/scripts/generate-nerdctl.sh#L21-L33">rdd/scripts/generate-nerdctl.sh</a></div>
+      <pre data-start="21" data-line="26-32"><code class="language-bash">go run ./extract
+
+if [ &quot;$(go env GOOS)&quot; = &quot;linux&quot; ]; then
+	go run .
+else
+	binary=generate-nerdctl.tmp
+	trap &#39;rm -f &quot;$binary&quot;&#39; EXIT
+	GOOS=linux go build -o &quot;$binary&quot; .
+	&quot;${CONTAINER_ENGINE:-docker}&quot; run --rm \
+		--volume &quot;$(git rev-parse --show-toplevel):/work&quot; \
+		--workdir /work/rdd/pkg/nerdctlstub/generate \
+		alpine &quot;./$binary&quot;
+fi</code></pre>
+    <p><code>shellcheck --enable=all</code> reports SC2250 at lines 28 and 32, SC2292 at line 23 and SC2312 at lines 23 and 30. <code>shfmt</code> wants 4-space indentation per <code>.editorconfig</code>. The <code>alpine</code> image is unpinned, and the container runs as root, while <code>scripts/generate-rdd-client.sh</code> passes <code>--user=&quot;${UID:-0}&quot;</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/scripts/generate-nerdctl.sh#L18-L28">rdd/scripts/generate-nerdctl.sh</a></div>
+      <pre data-start="18" data-line="23"><code class="language-bash"># imports it.
+go mod download
+
+go run ./extract
+
+if [ &quot;$(go env GOOS)&quot; = &quot;linux&quot; ]; then
+	go run .
+else
+	binary=generate-nerdctl.tmp
+	trap &#39;rm -f &quot;$binary&quot;&#39; EXIT
+	GOOS=linux go build -o &quot;$binary&quot; .</code></pre>
+    <p>Fix: brace the variables, capture <code>go env GOOS</code> and <code>git rev-parse</code> in their own assignments, run <code>shfmt</code>, pin <code>alpine</code> by digest, and pass <code>--user</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The bind-mount BATS test writes its fixture directly and leaks it on failure <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L490-L509">rdd/bats/tests/32-app-controllers/engine-containerd.bats</a></div>
+      <pre data-start="490" data-line="495-504"><code class="language-bash">
+@test &quot;nerdctl bind-mounts a host directory&quot; {
+    # The guest sees the host home directory through Lima&#39;s mount, or on
+    # Windows through WSL&#39;s /mnt/&lt;drive&gt; automount after the stub rewrites
+    # the path.
+    run -0 mktemp -d &quot;${HOME}/rdd-bats-nerdctl.XXXXXX&quot;
+    dir=${output}
+    echo shared &gt;&quot;${dir}/file&quot;
+
+    run -0 host_path &quot;${dir}&quot;
+    src=${output}
+    run_e -0 nerdctl run --rm --volume &quot;${src}:/data&quot; busybox cat /data/file
+    assert_output shared
+
+    rm -rf &quot;${dir}&quot;
+}
+
+@test &quot;nerdctl passes a named volume through&quot; {
+    # A volume name must reach nerdctl unrewritten; rewritten as a path, it
+    # would bind-mount a directory instead of creating the volume.</code></pre>
+    <p><code>create_file</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/bats/helpers/utils.bash#L416"><code>rdd/bats/helpers/utils.bash:416</code></a>) exists so that a WSL-hosted run does not leave ghost files on the Windows side. <code>rm -rf &quot;${dir}&quot;</code> runs only when every earlier line passed, so a failure leaves <code>~/rdd-bats-nerdctl.*</code> behind.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/bats/helpers/utils.bash#L411-L421">rdd/bats/helpers/utils.bash</a></div>
+      <pre data-start="411" data-line="416"><code class="language-bash">
+# create_file path/to/file &lt;&lt;&lt; &quot;contents&quot;
+# Create a new file with the provided path; the contents of standard input will
+# be written to that file.  Analogous to `cat &gt;$1`.  Will create any parent
+# directories.
+create_file() {
+    local dest=$1
+    # On WSL, avoid creating files from within the Linux side; this leads to
+    # issues where the WSL view of the filesystem is desynchronized from the
+    # Windows view, so we end up having ghost files that can&#39;t be deleted from
+    # Windows. MSYS2 writes directly to the Windows filesystem, so it&#39;s safe.</code></pre>
+    <p>Fix: write the fixture with <code>create_file &quot;${dir}/file&quot; &lt;&lt;&lt;shared</code> and remove the directory in a teardown.</p>
+    </div>
+    <div class="card card-suggestion" data-file="d9635b909">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d9635b909"><code>d9635b909</code></a> credits the overlay with flags that 1.x already has <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+    <p>The message says the overlay &quot;adds host-path flags its --help scraping missed: container exec --env-file, builder build --secret and --output, image encrypt/decrypt --key, and image pull/push --cosign-key&quot;. The 1.x <code>registerArgHandler</code> list on rancher-desktop&#39;s main branch has all of them, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/526" class="gh-ref" data-title="[DO-NOT-MERGE] Add rdd nerdctl: run nerdctl in the VM with Windows path translation" data-state="closed" data-type="pr">#526</a>&#39;s findings went upstream in rancher-desktop#10567.</p>
+    <p>Fix: say that the overlay matches 1.x&#39;s current list.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>(in-scope)</strong> The parser fails closed. An option missing from the table aborts the command (I1, I3, I5), while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a>&#39;s pass-through could at worst leave a path untranslated. On an unknown option the stub could instead pass the rest of the command line through unchanged and log it at debug level, which bounds every table gap to &quot;path not rewritten&quot;. Stopping at the unknown option, instead of guessing whether it takes a value, keeps the argument shift that the design doc warns about away from later path flags. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(in-scope)</strong> <code>make generate</code> now needs a container engine on macOS and Windows (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/Makefile#L351"><code>rdd/Makefile:351</code></a>), because the generate stage runs only on Linux. The Makefile keeps <code>generate-typescript</code> out of <code>generate</code> for a similar reason. <code>generate-nerdctl</code> could move to <code>verify-generate</code>, which CI runs on Linux. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(future)</strong> The overlay validation only catches flags whose name or usage text looks like a path, and <code>--ssh</code> (S2) slipped past both. A bump could list every value flag that is new since the previous table, so that the classification covers all of them. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>Deriving the table from the real cobra tree, with an <code>extract</code> stage that fails when nerdctl&#39;s <code>main</code> package changes shape, removes 1.x&#39;s help-text hand patches. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>The overlay validation works both ways: every entry must name a real flag, and every path-like flag must be classified. <code>TestTableMatchesGuestNerdctl</code> ties the table to <code>dependencies.yaml</code>. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>At the review SHA, <code>go test ./pkg/nerdctlstub/...</code> passes on macOS and <code>GOOS=windows go vet ./pkg/nerdctlstub/...</code> is clean. CI passed 46 checks, with macOS bats-app still running. The Windows bats-app job ran and passed both new BATS tests (<code>ok 103 nerdctl bind-mounts a host directory</code>, <code>ok 104 nerdctl passes a named volume through</code>), so the basic translation works end to end on Windows.</p>
+    <p>The unit tests miss every input behind I1 to I7. Each patch adds a test that fails without its fix and passes with it. Applied in order (I1, I2, I3, I4, I5, I7), the six reviewed-tree patches apply without conflicts, and the <code>nerdctlstub</code> and <code>guestexec</code> suites pass, on the review SHA and on the PR rebased onto upstream/main. That rebased tree passes with I6 applied too.</p>
+    <p>Optional: the 1.x <code>cp</code> and <code>parseOption</code> cases in S4, and a mode-suffix case (<code>rdd-bats-vol:/data:ro</code>) in the named-volume BATS test.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L13-L16"><code>nerdctl.md:13-16</code></a> says nothing about rooted paths, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asked for, and its <code>d:app</code> sentence holds only after the rebase (I6).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L36-L38"><code>nerdctl.md:36-38</code></a> lists six handler kinds; I7&#39;s patch adds a seventh and updates the sentence.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L50"><code>nerdctl.md:50</code></a> says cleanup handlers run after the process exits, but nothing registers one (S3).</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The six commit messages match the tree after today&#39;s force-pushes. The range-diff shows <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/002210042"><code>002210042</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f64edea61"><code>f64edea61</code></a> updated for &quot;never starts the App&quot;. S7 covers the one stale claim in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d9635b909"><code>d9635b909</code></a>&#39;s message.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The 1.x seccomp-profile injection is dropped because the RD2 distro does not ship the profile (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L52-L54"><code>nerdctl.md:52-54</code></a>).</li>
+      <li>The 1.x <code>imageImportHandler</code> waits for a nerdctl that has <code>image import</code> again (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/parse_args.go#L354-L355"><code>parse_args.go:354-355</code></a>).</li>
+      <li><code>image encrypt --recipient</code> values stay untranslated; the overlay comment tells users to pass a guest path (<code>overlay.go:199-201</code>).</li>
+      <li><code>generate-nerdctl.sh</code> mounts <code>git rev-parse --show-toplevel</code> directly. Under MSYS2 with Git for Windows that prints a drive path (<code>C:/...</code>), which Windows docker accepts, so it does not need a <code>cygpath</code> conversion. Do not re-suggest this without a Windows run that shows the mount failing.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/484f0ddfd"><code>484f0ddfd</code></a> (named-volume pass-through) stays a separate commit after the port in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2ce062e37"><code>2ce062e37</code></a>, which keeps the port faithful to 1.x and the divergence reviewable. Do not re-suggest squashing it.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude gave the most complete review: seven Important findings, every one confirmed, with probe output that matched my reruns. It alone raised the <code>top</code> foreign-flag gap (I5) and the <code>-o DIR</code>/<code>--secret source=</code> gap (I7), and it supplied S3, S4 and S7. It named the command <code>container top</code>, but nerdctl v2.1.2 registers <code>top</code> only at the root. Its I6 fix wrapped <code>filepath.Abs</code> around the reviewed tree&#39;s <code>TranslateHostPath</code>, without noticing that upstream/main had already rewritten that function. Its fail-closed design concern is the most useful design point in the round.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex overlapped Claude on five Important findings and added two points of its own. It warned that adding the help flag alone leaves <code>cp --help</code> failing on the argument count, which the I1 patch now handles. And it caught two S2 cases, the <code>--cosign-key</code> URL corruption and <code>run --rootfs</code>. It ran its probes in an isolated module of byte-identical copies, and its quoted outputs match mine. It rated the build-context comma case Important, which I lowered to S1, since the failure is loud and the input rare. Its I6 fix, documenting <code>d:app</code> as unsupported, would have contradicted upstream/main.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro raised three findings. The build-context grammar (S1) holds; the <code>\data</code> rule is part of I6. The MSYS2 path claim against <code>generate-nerdctl.sh</code> rests on a <code>git</code> that prints <code>/c/...</code>, which Git for Windows does not. Its shell calls were <code>cat</code>, <code>grep</code> and <code>find</code>; it never ran <code>go</code>, yet its reproducer for S1 quotes test output, with an error string taken from the code. It marked <code>generate/main.go</code>, <code>parse_args.go</code> and <code>overlay.go</code> &quot;no issues&quot;, missing I1, I3, I5 and I7.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found the help-flag bug (rated Critical, lowered to Important) and the volume-mode bug, adding the common <code>:z</code> case. Its claim that <code>.\data:/data:z</code> loses its container path is wrong, because the last-colon split happens to produce the right string for a host path. Its <code>compose cp</code> finding moved into S2. It did run probes, but its quoted outputs use a <code>C:\work</code> working directory that its probes could not set, so the text is reconstructed. Its squash suggestion is in Acknowledged Limitations. The two Gemini reviews agreed only on the <code>\data</code> rule, which counts as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>9m 22s</td><td>17m 21s</td><td>9m 24s</td><td>16m 02s</td></tr>
+        <tr><td>Findings</td><td>7I 6S</td><td>5I 4S</td><td>1I 1S</td><td>3I 3S</td></tr>
+        <tr><td>Tool calls</td><td>56 (Bash 51, Read 5)</td><td>29 (shell 28, stdin 1)</td><td>48 (run<em>shell</em>command 47, grep_search 1)</td><td>134 (run<em>shell</em>command 42, read<em>file 40, grep</em>search 39)</td></tr>
+        <tr><td>Design observations</td><td>4</td><td>6</td><td>2</td><td>3</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>5</td><td>2</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>39</td><td>39</td><td>39</td><td>21</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>3</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>7I 6S</strong></td><td><strong>5I 4S</strong></td><td><strong>1I 1S</strong></td><td><strong>3I 3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1</td><td>1</td><td>2</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>1</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Claude gave the most value, with the widest coverage and two unique Important findings. Codex was the strongest second reader, and its <code>cp --help</code> warning improved a patch.</p>
+    <p><strong>Reconciliation.</strong> Gemini 3.5 Flash C1 (help flags): critical → important I1. Gemini 3.5 Flash I3 (<code>compose cp</code>): important → suggestion S2. Gemini 3.1 Pro I2 and Codex GPT 6 Astra I5 (build-context grammar): important → suggestion S1. Claude Opus 5.5 I7&#39;s <code>--ssh</code> part moved to S2; the rest stays I7.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a generated file&#39;s generator runs only on another platform, try reproducing the checked-in output on the review host with stand-ins for the platform-only parts before patching the generator. A byte-identical reproduction lets the consolidator test a generator fix and its regenerated output locally, instead of shipping an untested patch or leaving the finding without one.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] The nerdctl stub&#39;s parser must accept every command line that nerdctl&#39;s cobra and pflag accept, because on Windows a parse error replaces nerdctl&#39;s own handling of a command that would otherwise work. The pflag forms to check a parser change against are attached short values (<code>-p8080:80</code>), bunched letters, <code>=</code> after a shorthand, <code>--</code>, <code>-</code> for stdin or stdout, <code>SetInterspersed(false)</code> commands, and cobra&#39;s implicit <code>--help</code>, <code>-h</code> and <code>--version</code>.</li>
+      <li>[repo] The nerdctl table generator (<code>rdd/pkg/nerdctlstub/generate</code>) builds only on Linux, and <code>scripts/generate-nerdctl.sh</code> starts a container elsewhere. On macOS, a scratch copy with the <code>//go:build linux</code> lines removed and stand-ins for <code>apparmor</code> and <code>container cp</code> reproduces the checked-in table byte for byte, so a reviewer can test generator changes without a container.</li>
+    </ul>
+    <p>S7 cites a commit, not a file, so the citation lint warns on it by design.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
