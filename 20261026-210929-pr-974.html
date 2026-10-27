@@ -240,7 +240,13 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>On Windows, <code>rdd nerdctl</code> rewrites host paths through a port of the 1.x stub parser, driven by a table generated from nerdctl&#39;s cobra tree. The generator is sound. But the parser rejects or rewrites command lines that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a>&#39;s pass-through handled: <code>nerdctl --help</code>, <code>-p8080:80</code>, <code>top ctr -ef</code>, <code>build -f -</code>, anonymous volumes, and named volumes with a mode. A rooted path such as <code>\data</code> still mounts the VM&#39;s directory; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asked to settle that rule before this PR leaves draft.</p>
+    <p>On Windows, <code>rdd nerdctl</code> rewrites host paths through a port of the 1.x stub parser, driven by a table generated from nerdctl&#39;s cobra tree. The generator is sound. But the parser rejects or rewrites command lines that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="merged" data-type="pr">#981</a>&#39;s pass-through handled: <code>nerdctl --help</code>, <code>-p8080:80</code>, <code>top ctr -ef</code>, <code>build -f -</code>, anonymous volumes, and named volumes with a mode. A rooted path such as <code>\data</code> still mounts the VM&#39;s directory; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asked to settle that rule before this PR leaves draft.</p>
+    </div>
+    <hr>
+    <h2 id="the-code-has-changed-since-this-review">The Code Has Changed Since This Review <a href="#the-code-has-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings cite lines at the review SHA. While addressing them, I rebased <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows host paths in rdd nerdctl" data-state="open" data-type="pr">#974</a> onto upstream/main <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a07efa14b"><code>a07efa14b</code></a> and squashed the fixes into the PR&#39;s commits. So the cited lines and SHAs no longer match branch <code>rdd-nerdctl</code> (tip <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5dafd593e"><code>5dafd593e</code></a>). Each finding below now ends with an outcome line, and for a fixed finding that line names the commits with the fix.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -272,7 +278,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
 				spec.flagUsage[name] = f.Usage
 			}
 		} else {</code></pre>
-    <p>cobra adds <code>--help</code>/<code>-h</code> to a command, and <code>--version</code>/<code>-v</code> to a root that sets <code>Version</code>, only when the command executes. <code>walk</code> executes nothing and <code>replicaRootCmd</code> does not set <code>Version</code>, so only <code>container run</code> and <code>create</code>, which declare their own, list <code>--help</code>. On Windows, <code>nerdctl --help</code>, <code>ps -h</code> and <code>--version</code> now fail in the stub, although <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L43"><code>rdd/cmd/rdd/nerdctl.go:43</code></a> says <code>--help</code> must reach the guest. 1.x and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a> both passed them on.</p>
+    <p>cobra adds <code>--help</code>/<code>-h</code> to a command, and <code>--version</code>/<code>-v</code> to a root that sets <code>Version</code>, only when the command executes. <code>walk</code> executes nothing and <code>replicaRootCmd</code> does not set <code>Version</code>, so only <code>container run</code> and <code>create</code>, which declare their own, list <code>--help</code>. On Windows, <code>nerdctl --help</code>, <code>ps -h</code> and <code>--version</code> now fail in the stub, although <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L43"><code>rdd/cmd/rdd/nerdctl.go:43</code></a> says <code>--help</code> must reach the guest. 1.x and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="merged" data-type="pr">#981</a> both passed them on.</p>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/cmd/rdd/nerdctl.go#L38-L48">rdd/cmd/rdd/nerdctl.go</a></div>
       <pre data-start="38" data-line="43"><code class="language-go">All arguments pass through to nerdctl; on Windows, arguments referring to
 host paths are rewritten to the /mnt/&lt;drive&gt; locations where the guest
@@ -419,6 +425,7 @@ index b6db57238..108bfec88 100644
  
  // TestTableSanity pins properties of the generated table that the parser</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ec7f7e11"><code>6ec7f7e11</code></a>, where the generator adds cobra&#39;s help and version flags and the table was regenerated. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c6b90e13d"><code>c6b90e13d</code></a> passes a <code>cp</code> command line that does not have two paths on to nerdctl.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="I2">
@@ -443,7 +450,7 @@ index b6db57238..108bfec88 100644
 	containerPath := cleanArg[colonIndex+1:]
 	if namedVolume.MatchString(hostPath) {
 		return arg, nil, nil</code></pre>
-    <p>nerdctl splits a <code>--volume</code> spec on <code>:</code> (<code>splitVolumeSpec</code>). A spec with one part is an anonymous volume at that container path, and a third part is a mode that nerdctl validates itself, warning on options it does not know, such as <code>z</code>. The handler instead strips only <code>:ro</code> or <code>:rw</code> and takes everything before the last colon as the source. So <code>-v /data</code> fails. A named volume with any other mode, such as <code>myvol:/data:z</code> or <code>myvol:/data:ro,rshared</code>, misses the named-volume check, and the container gets a bind mount of <code>&lt;cwd&gt;/myvol</code> instead of its volume, without any error. Both forms passed through unchanged under <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a>.</p>
+    <p>nerdctl splits a <code>--volume</code> spec on <code>:</code> (<code>splitVolumeSpec</code>). A spec with one part is an anonymous volume at that container path, and a third part is a mode that nerdctl validates itself, warning on options it does not know, such as <code>z</code>. The handler instead strips only <code>:ro</code> or <code>:rw</code> and takes everything before the last colon as the source. So <code>-v /data</code> fails. A named volume with any other mode, such as <code>myvol:/data:z</code> or <code>myvol:/data:ro,rshared</code>, misses the named-volume check, and the container gets a bind mount of <code>&lt;cwd&gt;/myvol</code> instead of its volume, without any error. Both forms passed through unchanged under <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="merged" data-type="pr">#981</a>.</p>
       <details class="fold">
         <summary>Reproducer</summary>
       <pre><code class="language-go">// Save as rdd/pkg/nerdctlstub/zz_repro_volume_test.go; run from rdd/:
@@ -577,6 +584,7 @@ index 66bbeeec3..ddeb03892 100644
  	cases := []struct {
  		name string</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3123252dd"><code>3123252dd</code></a>, which splits volume specs the way nerdctl does.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="I3">
@@ -600,7 +608,7 @@ index 66bbeeec3..ddeb03892 100644
 		// e.g. `-itp 80`.
 		if len(option) &gt; 1 &amp;&amp; option[0] == &#39;-&#39; &amp;&amp; option[1] != &#39;-&#39; {
 			// Make sure all options (except the last) exist and take no</code></pre>
-    <p>pflag accepts a value attached to a shorthand, as in <code>-p8080:80</code>, <code>-eFOO=bar</code> and <code>-vC:\x:/y</code>. <code>parseOption</code> splits on the first <code>=</code> before the lookup, so <code>-eFOO=bar</code> becomes the option <code>-eFOO</code>, and its bunching loop rejects a value-taking letter anywhere but last. Both paths end in <code>does not support option</code>. 1.x has the same bug, but under <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a> these commands reached nerdctl unchanged.</p>
+    <p>pflag accepts a value attached to a shorthand, as in <code>-p8080:80</code>, <code>-eFOO=bar</code> and <code>-vC:\x:/y</code>. <code>parseOption</code> splits on the first <code>=</code> before the lookup, so <code>-eFOO=bar</code> becomes the option <code>-eFOO</code>, and its bunching loop rejects a value-taking letter anywhere but last. Both paths end in <code>does not support option</code>. 1.x has the same bug, but under <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="merged" data-type="pr">#981</a> these commands reached nerdctl unchanged.</p>
     <p>The patch also changes how <code>-namespace=x</code> parses. The old fallback turned it into <code>--namespace x</code>; now it becomes <code>-n amespace=x</code>, as it does in pflag.</p>
       <details class="fold">
         <summary>Reproducer</summary>
@@ -767,6 +775,7 @@ index b6db57238..7707b111b 100644
 +	}
 +}</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ba2cec07b"><code>ba2cec07b</code></a>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="I4">
@@ -860,6 +869,7 @@ index 66bbeeec3..4c136cdf9 100644
  	got, _, err := builderCacheArgHandler(`type=local,src=C:\in,dest=C:\out`)
  	assert.NilError(t, err)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b22df799b"><code>b22df799b</code></a>. As in buildctl, a builder <code>dest=-</code> stays stdout only for an exporter that writes a single file.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/generate/main.go">
       <div class="finding-title" id="I5">
@@ -972,6 +982,7 @@ index 108bfec88..055756067 100644
  	}
  	for _, alias := range []string{&quot;run&quot;, &quot;build&quot;, &quot;cp&quot;} {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in the generator commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ec7f7e11"><code>6ec7f7e11</code></a>, which reads <code>SetInterspersed(false)</code> from the flag set; the table was regenerated.</p>
     </div>
     <div class="card card-important" data-file="rdd/docs/design/nerdctl.md">
       <div class="finding-title" id="I6">
@@ -1101,6 +1112,7 @@ index 8530e6d5b..2e9c60405 100644
  	for _, tc := range cases {
  		t.Run(tc.arg, func(t *testing.T) {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/734ae6566"><code>734ae6566</code></a>. A rooted path now resolves against the root of the working directory, which is its drive or its <code>\\server\share</code>. The design doc states that rule and names the command for reaching a guest path (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6d38cea06"><code>6d38cea06</code></a>).</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/overlay.go">
       <div class="finding-title" id="I7">
@@ -1348,6 +1360,7 @@ index 66bbeeec3..143ce6eef 100644
 +	assert.DeepEqual(t, parsed.Args, []string{&quot;build&quot;, &quot;--cache-from&quot;, &quot;myimage&quot;, &quot;/mnt/c/ctx&quot;})
 +}</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/fb7796b8b"><code>fb7796b8b</code></a>, with follow-ups for key case (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1cf7c409f"><code>1cf7c409f</code></a>), environment secrets (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/72f5750af"><code>72f5750af</code></a>) and empty values (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e5fad7105"><code>e5fad7105</code></a>).</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -1373,6 +1386,7 @@ func buildContextArgHandler(arg string) (string, []cleanupFunc, error) {
 			return &quot;&quot;, nil, fmt.Errorf(&quot;failed to parse context value %q (expected key=value)&quot;, part)</code></pre>
     <p>Each <code>--build-context</code> value is one <code>name=value</code> pair, which nerdctl splits once at <code>=</code> (<code>parseContextNames</code> in <code>pkg/cmd/builder/build.go</code>). The handler parses it as CSV instead, so <code>n=C:\a,b</code> fails with <code>failed to parse context value &quot;b&quot;</code>, and the CSV writer can add quotes that nerdctl never removes. Separately, an <code>oci-layout://</code> value names a local directory but is in the URN list, so it stays untranslated.</p>
     <p>Fix: split once at the first <code>=</code>, translate the value without CSV decoding or encoding, and treat the path after <code>oci-layout://</code> as a host path.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/be2b4129e"><code>be2b4129e</code></a>. A path with a comma in a builder CSV value stays unsupported, as the design doc now says (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/92751f310"><code>92751f310</code></a>). Parsing those values with go-csvvalue is tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="S2">
@@ -1395,7 +1409,7 @@ func buildContextArgHandler(arg string) (string, []cleanupFunc, error) {
 			panic(fmt.Sprintf(&quot;command handler: unknown command %q&quot;, path))
 		}
 		def.handler = handler</code></pre>
-    <p>No positional handler covers <code>compose cp web:/etc/hosts C:\tmp\hosts</code>. <code>run --rootfs C:\rootfs /bin/sh</code> takes the root filesystem as its first positional. <code>build --ssh default=C:\key</code> slips past both path heuristics in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L279-L282"><code>generate/main.go:279-282</code></a>, because its usage says &quot;socket or keys&quot;. <code>--cosign-key</code> is classified as a file path, but nerdctl&#39;s usage text also allows a URI, a KMS reference or a Kubernetes secret there, and <code>--cosign-key=https://example.com/key.pub</code> becomes <code>/https:/example.com/key.pub</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a> passed that through.</p>
+    <p>No positional handler covers <code>compose cp web:/etc/hosts C:\tmp\hosts</code>. <code>run --rootfs C:\rootfs /bin/sh</code> takes the root filesystem as its first positional. <code>build --ssh default=C:\key</code> slips past both path heuristics in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L279-L282"><code>generate/main.go:279-282</code></a>, because its usage says &quot;socket or keys&quot;. <code>--cosign-key</code> is classified as a file path, but nerdctl&#39;s usage text also allows a URI, a KMS reference or a Kubernetes secret there, and <code>--cosign-key=https://example.com/key.pub</code> becomes <code>/https:/example.com/key.pub</code>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="merged" data-type="pr">#981</a> passed that through.</p>
       <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/pkg/nerdctlstub/generate/main.go#L274-L287">rdd/pkg/nerdctlstub/generate/main.go</a></div>
       <pre data-start="274" data-line="279-282"><code class="language-go">	}
 	return strconv.Unquote(lit.Value)
@@ -1412,6 +1426,7 @@ var pathUsageRE = regexp.MustCompile(`(?i)(path|file|director)`)
 // flag that smells like a path must be classified.
 func validateOverlay(specs map[string]*commandSpec, aliases map[string]string, overlay *overlayData) error {</code></pre>
     <p>Fix: register <code>containerCopyHandler</code> for <code>compose cp</code>, classify <code>--ssh</code> and add <code>socket</code> to the usage heuristic, give <code>--cosign-key</code> a handler that passes URIs through, and handle <code>--rootfs</code> or list it in the doc as unsupported.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0a43be680"><code>0a43be680</code></a>. <code>--rootfs</code> stays untranslated, and the design doc says so.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="S3">
@@ -1451,6 +1466,7 @@ func runCleanups(cleanups []cleanupFunc) error {
 	// rootless mode even when given an explicit --address.
 	// TODO: drop --address once containerd listens on its default socket (#1040).</code></pre>
     <p>Fix: drop the cleanup code so that handlers return <code>(string, error)</code>, or say in the package doc why it stays.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5fa99d53b"><code>5fa99d53b</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args_test.go">
       <div class="finding-title" id="S4">
@@ -1458,6 +1474,7 @@ func runCleanups(cleanups []cleanupFunc) error {
       </div>
     <p>1.x&#39;s <code>command_handlers_test.go</code> covered <code>cp</code> with <code>-</code> on either side, <code>c:file d:file</code> (which falls back to treating the first argument as the container path), and flags mixed between the paths; only two <code>cp</code> cases remain. 1.x&#39;s <code>parse_args_test.go</code> unit-tested <code>parseOption</code> bunching, the parent-command fallback and <code>--</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/526" class="gh-ref" data-title="[DO-NOT-MERGE] Add rdd nerdctl: run nerdctl in the VM with Windows path translation" data-state="closed" data-type="pr">#526</a>&#39;s &quot;relative build context&quot; case went away when <code>withHostCwd</code> moved to <code>guestexec</code>. No test uses the <code>commands</code> and <code>aliases</code> test hooks in <code>commandDefinition</code> (&quot;Tests set their own&quot;) any more.</p>
     <p>Fix: restore the <code>cp</code> and <code>parseOption</code> cases, and either use the hooks or remove them.</p>
+    <p><strong>Outcome:</strong> Fixed in the port commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5ccd4db42"><code>5ccd4db42</code></a>, which drops the unused <code>commands</code> and <code>aliases</code> hooks. The 1.x cases were not restored one for one. Instead, later commits test short-option bunching, the parent-command fallback and <code>cp</code> argument counts.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/scripts/generate-nerdctl.sh">
       <div class="finding-title" id="S5">
@@ -1491,6 +1508,7 @@ else
 	trap &#39;rm -f &quot;$binary&quot;&#39; EXIT
 	GOOS=linux go build -o &quot;$binary&quot; .</code></pre>
     <p>Fix: brace the variables, capture <code>go env GOOS</code> and <code>git rev-parse</code> in their own assignments, run <code>shfmt</code>, pin <code>alpine</code> by digest, and pass <code>--user</code>.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/fd111e902"><code>fd111e902</code></a>, except that the script leaves out <code>--user</code>. The script starts the container only when the host is not Linux, and there the engine&#39;s file sharing already writes the output as the host user. Under a rootless engine, the host UID may not even own the mount.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
       <div class="finding-title" id="S6">
@@ -1531,6 +1549,7 @@ create_file() {
     # Windows view, so we end up having ghost files that can&#39;t be deleted from
     # Windows. MSYS2 writes directly to the Windows filesystem, so it&#39;s safe.</code></pre>
     <p>Fix: write the fixture with <code>create_file &quot;${dir}/file&quot; &lt;&lt;&lt;shared</code> and remove the directory in a teardown.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/667ba1719"><code>667ba1719</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="d9635b909">
       <div class="finding-title" id="S7">
@@ -1538,6 +1557,7 @@ create_file() {
       </div>
     <p>The message says the overlay &quot;adds host-path flags its --help scraping missed: container exec --env-file, builder build --secret and --output, image encrypt/decrypt --key, and image pull/push --cosign-key&quot;. The 1.x <code>registerArgHandler</code> list on rancher-desktop&#39;s main branch has all of them, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/526" class="gh-ref" data-title="[DO-NOT-MERGE] Add rdd nerdctl: run nerdctl in the VM with Windows path translation" data-state="closed" data-type="pr">#526</a>&#39;s findings went upstream in rancher-desktop#10567.</p>
     <p>Fix: say that the overlay matches 1.x&#39;s current list.</p>
+    <p><strong>Outcome:</strong> Fixed by rewording the message of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ec7f7e11"><code>6ec7f7e11</code></a>. The overlay holds 1.x&#39;s current path flags except three that nerdctl v2.1.2 does not have, and adds the short spellings <code>image load -i</code> and <code>image save -o</code> and compose&#39;s <code>--f</code>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -1545,9 +1565,9 @@ create_file() {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>(in-scope)</strong> The parser fails closed. An option missing from the table aborts the command (I1, I3, I5), while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="open" data-type="pr">#981</a>&#39;s pass-through could at worst leave a path untranslated. On an unknown option the stub could instead pass the rest of the command line through unchanged and log it at debug level, which bounds every table gap to &quot;path not rewritten&quot;. Stopping at the unknown option, instead of guessing whether it takes a value, keeps the argument shift that the design doc warns about away from later path flags. <span class="pill pill-claude">Claude Opus 5.5</span></li>
-      <li><strong>(in-scope)</strong> <code>make generate</code> now needs a container engine on macOS and Windows (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/Makefile#L351"><code>rdd/Makefile:351</code></a>), because the generate stage runs only on Linux. The Makefile keeps <code>generate-typescript</code> out of <code>generate</code> for a similar reason. <code>generate-nerdctl</code> could move to <code>verify-generate</code>, which CI runs on Linux. <span class="pill pill-claude">Claude Opus 5.5</span></li>
-      <li><strong>(future)</strong> The overlay validation only catches flags whose name or usage text looks like a path, and <code>--ssh</code> (S2) slipped past both. A bump could list every value flag that is new since the previous table, so that the classification covers all of them. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><strong>(in-scope)</strong> The parser fails closed. An option missing from the table aborts the command (I1, I3, I5), while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/981" class="gh-ref" data-title="Add the rdd nerdctl command" data-state="merged" data-type="pr">#981</a>&#39;s pass-through could at worst leave a path untranslated. On an unknown option the stub could instead pass the rest of the command line through unchanged and log it at debug level, which bounds every table gap to &quot;path not rewritten&quot;. Stopping at the unknown option, instead of guessing whether it takes a value, keeps the argument shift that the design doc warns about away from later path flags. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/db15837e6"><code>db15837e6</code></a>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/402e028be"><code>402e028be</code></a> takes a lone <code>-</code> as a positional so that it no longer ends the parse.</li>
+      <li><strong>(in-scope)</strong> <code>make generate</code> now needs a container engine on macOS and Windows (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/Makefile#L351"><code>rdd/Makefile:351</code></a>), because the generate stage runs only on Linux. The Makefile keeps <code>generate-typescript</code> out of <code>generate</code> for a similar reason. <code>generate-nerdctl</code> could move to <code>verify-generate</code>, which CI runs on Linux. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/fd111e902"><code>fd111e902</code></a>, which moves <code>generate-nerdctl</code> to <code>verify-generate</code>.</li>
+      <li><strong>(future)</strong> The overlay validation only catches flags whose name or usage text looks like a path, and <code>--ssh</code> (S2) slipped past both. A bump could list every value flag that is new since the previous table, so that the classification covers all of them. <span class="pill pill-codex">Codex GPT 6 Astra</span> <strong>Outcome:</strong> Skipped as future work; tracked in pending-work.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -1562,15 +1582,16 @@ create_file() {
     <p>At the review SHA, <code>go test ./pkg/nerdctlstub/...</code> passes on macOS and <code>GOOS=windows go vet ./pkg/nerdctlstub/...</code> is clean. CI passed 46 checks, with macOS bats-app still running. The Windows bats-app job ran and passed both new BATS tests (<code>ok 103 nerdctl bind-mounts a host directory</code>, <code>ok 104 nerdctl passes a named volume through</code>), so the basic translation works end to end on Windows.</p>
     <p>The unit tests miss every input behind I1 to I7. Each patch adds a test that fails without its fix and passes with it. Applied in order (I1, I2, I3, I4, I5, I7), the six reviewed-tree patches apply without conflicts, and the <code>nerdctlstub</code> and <code>guestexec</code> suites pass, on the review SHA and on the PR rebased onto upstream/main. That rebased tree passes with I6 applied too.</p>
     <p>Optional: the 1.x <code>cp</code> and <code>parseOption</code> cases in S4, and a mode-suffix case (<code>rdd-bats-vol:/data:ro</code>) in the named-volume BATS test.</p>
+    <p><strong>Outcome:</strong> Skipped. I2&#39;s unit tests cover mode suffixes, and the BATS test covers named-volume pass-through.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <ul>
-      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L13-L16"><code>nerdctl.md:13-16</code></a> says nothing about rooted paths, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asked for, and its <code>d:app</code> sentence holds only after the rebase (I6).</li>
-      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L36-L38"><code>nerdctl.md:36-38</code></a> lists six handler kinds; I7&#39;s patch adds a seventh and updates the sentence.</li>
-      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L50"><code>nerdctl.md:50</code></a> says cleanup handlers run after the process exits, but nothing registers one (S3).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L13-L16"><code>nerdctl.md:13-16</code></a> says nothing about rooted paths, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/504" class="gh-ref" data-title="Create nerdctl-stub forwarder" data-state="open" data-type="issue">#504</a> asked for, and its <code>d:app</code> sentence holds only after the rebase (I6). <strong>Outcome:</strong> The design doc now states the rooted-path rule from I6 (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6d38cea06"><code>6d38cea06</code></a>).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L36-L38"><code>nerdctl.md:36-38</code></a> lists six handler kinds; I7&#39;s patch adds a seventh and updates the sentence. <strong>Outcome:</strong> The design doc now lists nine handler kinds (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6d38cea06"><code>6d38cea06</code></a>).</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f64edea6159d7a81d620699e025bd52010eedf0e/rdd/docs/design/nerdctl.md#L50"><code>nerdctl.md:50</code></a> says cleanup handlers run after the process exits, but nothing registers one (S3). <strong>Outcome:</strong> The sentence was removed with the cleanup code (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5fa99d53b"><code>5fa99d53b</code></a>).</li>
     </ul>
     </div>
     <hr>
