@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Round one&#39;s fixes hold. Each covers the cases that its finding named, and the short-option walk matches pflag on generated input. But the parser still rebuilds some command lines into different commands. An explicit <code>--</code> disappears before positional arguments that a handler rewrites, a value flag at the end gains an empty value, and <code>cp</code> between two containers writes into a host directory. A generator comment also misstates where <code>extract</code> runs. Each fix is local and has a tested patch.</p>
     </div>
     <hr>
+    <h2 id="the-code-has-changed-since-this-review">The Code Has Changed Since This Review <a href="#the-code-has-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings cite lines at the review SHA. While addressing them, I squashed the prose fixes into the commits that introduced the text and added three commits for the code changes. So the cited lines and SHAs no longer match branch <code>rdd-nerdctl</code> (tip <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/22f1ffc09"><code>22f1ffc09</code></a>). Each finding below now ends with an outcome line that names the commits with the fix.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -465,6 +471,7 @@ index 496cc4d02..bceb403c3 100644
  	// compose up falls back to the compose -f handler, whose error must
  	// fail the command instead of being taken for an unknown option.</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c058ccf64"><code>c058ccf64</code></a>, which keeps the user&#39;s <code>--</code> in front of a handler&#39;s arguments and takes every <code>cp</code> argument as a path.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/command_handlers.go">
       <div class="finding-title" id="I2">
@@ -605,6 +612,7 @@ index 496cc4d02..3c019b1b9 100644
 +	}
 +}</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53ccaf7b3"><code>53ccaf7b3</code></a>. The patch above was revised twice and then replaced. The copy handler now classifies each spec on its own and rewrites one only when the other names a container, so every other pair, <code>cp c:\a d:\b</code> included, reaches nerdctl unchanged.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="I3">
@@ -769,6 +777,7 @@ index bceb403c3..64fdd8588 100644
  
  // TestTranslateCommandLineKeepsDoubleDash checks that a positional argument</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c058ccf64"><code>c058ccf64</code></a>, with a <code>compose up --file</code> case for an option found at an enclosing command.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/generate/main.go">
       <div class="finding-title" id="I4">
@@ -866,6 +875,7 @@ index 28abb1834..0d924e809 100644
  
  import (</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in the generator commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/366f1585f"><code>366f1585f</code></a>.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -905,6 +915,7 @@ var pathUsageRE = regexp.MustCompile(`(?i)(path|file|director|socket)`)
 // flag that smells like a path must be classified.
 func validateOverlay(specs map[string]*commandSpec, aliases map[string]string, overlay *overlayData) error {</code></pre>
     <p>Fix: name both next to <code>--rootfs</code> as host paths that the stub leaves alone.</p>
+    <p><strong>Outcome:</strong> Fixed in the design-doc commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7654e4801"><code>7654e4801</code></a>. It states the rule, that a host path in the value of a flag the overlay leaves out stays untranslated, with <code>seccomp=</code> and <code>log-path=</code> as examples. The overlay comments, the package doc and the <code>rdd help nerdctl</code> text no longer claim that every host path is rewritten (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/366f1585f"><code>366f1585f</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/175d68fe4"><code>175d68fe4</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3fc10dac8"><code>3fc10dac8</code></a>).</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="S2">
@@ -931,6 +942,7 @@ func streamsToStdout(arg string) bool {
 	case &quot;oci&quot;, &quot;docker&quot;:</code></pre>
     <p>With <code>strings.ToLower(key)</code> at line 163 replaced by <code>key</code>, the suite still passes. buildctl lowercases option keys, so that regression would turn <code>-o type=oci,TAR=false,dest=-</code> from a directory named <code>-</code> into stdout: a wrong result, but only for an uppercase key.</p>
     <p>Fix: add <code>&quot;type=oci,TAR=false,dest=-&quot;</code> to the list at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/94de531914d2960cfe55fc7ef61983f9f9eec0be/rdd/pkg/nerdctlstub/translate_test.go#L182"><code>translate_test.go:182</code></a>.</p>
+    <p><strong>Outcome:</strong> Declined as an optional test.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -938,10 +950,10 @@ func streamsToStdout(arg string) bool {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>(future)</strong> I1 and I3 share a cause. <code>parse</code> rebuilds the command line from parsed pieces, so it loses whatever the pieces do not record, such as the separator, a missing value, or the order around a handler&#39;s arguments. Rewriting values in place in the original argument list would rule out this whole class of defect. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
-      <li><strong>(in-scope)</strong> Dropping the cleanup code left 1.x indirection that nothing uses. <code>ParsedArgs</code> wraps one slice, <code>argHandlersType</code> and the global <code>argHandlers</code> only feed <code>kindHandlers</code> and the two positional handlers, and both handlers ignore their <code>*commandDefinition</code>. Mapping <code>kindHandlers</code> straight to the functions, and having the handlers return <code>[]string</code>, removes three types, unless staying close to 1.x matters more. <span class="pill pill-claude">Claude Opus 5.5</span></li>
-      <li><strong>(in-scope)</strong> Under MSYS2, <code>generate-nerdctl.sh</code> passes <code>--workdir /work/...</code> to a native <code>docker.exe</code> without <code>MSYS2_ARG_CONV_EXCL</code>, which <code>scripts/install-latest-ci.sh</code> and the smoke test set. MSYS2 rewrites such an argument, so the container would start in the wrong directory. Nobody has run the script on Windows, and the project&#39;s pending work already tracks it. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
-      <li><strong>(future)</strong> Host paths inside key=value flags (S1) slip past both path heuristics. The bump-time listing of every new value flag, declined in round one as future work, would cover them. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(future)</strong> I1 and I3 share a cause. <code>parse</code> rebuilds the command line from parsed pieces, so it loses whatever the pieces do not record, such as the separator, a missing value, or the order around a handler&#39;s arguments. Rewriting values in place in the original argument list would rule out this whole class of defect. <span class="pill pill-codex">Codex GPT 6 Astra</span> <strong>Outcome:</strong> Declined for now; tracked in pending-work.</li>
+      <li><strong>(in-scope)</strong> Dropping the cleanup code left 1.x indirection that nothing uses. <code>ParsedArgs</code> wraps one slice, <code>argHandlersType</code> and the global <code>argHandlers</code> only feed <code>kindHandlers</code> and the two positional handlers, and both handlers ignore their <code>*commandDefinition</code>. Mapping <code>kindHandlers</code> straight to the functions, and having the handlers return <code>[]string</code>, removes three types, unless staying close to 1.x matters more. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/22f1ffc09"><code>22f1ffc09</code></a>.</li>
+      <li><strong>(in-scope)</strong> Under MSYS2, <code>generate-nerdctl.sh</code> passes <code>--workdir /work/...</code> to a native <code>docker.exe</code> without <code>MSYS2_ARG_CONV_EXCL</code>, which <code>scripts/install-latest-ci.sh</code> and the smoke test set. MSYS2 rewrites such an argument, so the container would start in the wrong directory. Nobody has run the script on Windows, and the project&#39;s pending work already tracks it. <span class="pill pill-codex">Codex GPT 6 Astra</span> <strong>Outcome:</strong> Declined until a Windows run; tracked in pending-work.</li>
+      <li><strong>(future)</strong> Host paths inside key=value flags (S1) slip past both path heuristics. The bump-time listing of every new value flag, declined in round one as future work, would cover them. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> Declined. S1 documents these values as untranslated, and translating them is tracked in pending-work.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
