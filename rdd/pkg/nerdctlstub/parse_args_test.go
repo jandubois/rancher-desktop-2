@@ -75,6 +75,11 @@ func TestTranslateCommandLine(t *testing.T) {
 			want: []string{"--namespace", "test", "ps", "-a"},
 		},
 		{
+			name: "build context and dockerfile",
+			args: []string{"build", "-f", `C:\proj\Dockerfile`, "-t", "img", `C:\proj`},
+			want: []string{"build", "-f", "/mnt/c/proj/Dockerfile", "-t", "img", "/mnt/c/proj"},
+		},
+		{
 			name: "compose file flag",
 			args: []string{"compose", "-f", `C:\app\compose.yaml`, "up", "-d"},
 			want: []string{"compose", "-f", "/mnt/c/app/compose.yaml", "up", "-d"},
@@ -146,6 +151,10 @@ func TestTranslateCommandLineLeavesErrorsToNerdctl(t *testing.T) {
 			[]string{"run", "-v", "/mnt/c/data:/data", "--no-such-flag", "alpine"},
 		},
 		{
+			[]string{"build", `C:\ctx`, "--no-such-flag", `C:\x`},
+			[]string{"build", "/mnt/c/ctx", "--no-such-flag", `C:\x`},
+		},
+		{
 			[]string{"volume", "rm", "vol1", "--no-such-flag"},
 			[]string{"volume", "rm", "vol1", "--no-such-flag"},
 		},
@@ -173,6 +182,7 @@ func TestTranslateCommandLineLeavesErrorsToNerdctl(t *testing.T) {
 	for _, tc := range []struct {
 		args, want []string
 	}{
+		{[]string{"build", `C:\ctx`, "--output"}, []string{"build", "/mnt/c/ctx", "--output"}},
 		{[]string{"run", "-v"}, []string{"run", "-v"}},
 		{[]string{"ps", "--format"}, []string{"ps", "--format"}},
 		{[]string{"compose", "up", "-f"}, []string{"compose", "up", "-f"}},
@@ -207,6 +217,9 @@ func TestTableSanity(t *testing.T) {
 		_, ok := commandAliases[alias]
 		assert.Assert(t, ok, "alias %q must exist", alias)
 	}
+	// The overlay init must have attached the positional handlers.
+	assert.Assert(t, commands["builder build"].handler != nil)
+	assert.Assert(t, commands["builder debug"].handler != nil)
 	// Path handlers must be wired, not left as ignoredArgHandler: translate
 	// a volume argument through the live table.
 	got, err := commands["container run"].options["-v"](`C:\x:/y`)

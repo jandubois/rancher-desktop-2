@@ -18,17 +18,48 @@ const (
 	volumeArg
 	// mountArg is CSV such as type=bind,source=host-path,target=....
 	mountArg
+	// builderCacheArg is CSV with src= or source= (input) and dest= (output)
+	// paths.
+	builderCacheArg
+	// buildContextArg is name=value, where value is a path, an
+	// oci-layout:// path, a URL, or an image or target reference.
+	buildContextArg
 	// fileOrURLOrStdinArg is a path to an input file; `-` and URIs pass
 	// through.
 	fileOrURLOrStdinArg
 	// filePathListArg is a comma-separated list of input paths, which
 	// nerdctl reads as a pflag StringSlice.
 	filePathListArg
+	// builderOutputArg is builderCacheArg CSV, which nerdctl prefixes with
+	// `type=local,dest=` when it has no `type=`.
+	builderOutputArg
+	// sshArg is id=path,path,..., where each path is an SSH agent socket or
+	// a key file.
+	sshArg
 )
 
 // pathFlags classifies the nerdctl flags whose host paths the stub translates.
 // Keys are canonical command paths; aliases resolve before lookup.
 var pathFlags = map[string]map[string]argHandlerKind{
+	"builder build": {
+		"--build-context": buildContextArg,
+		"--cache-from":    builderCacheArg,
+		"--cache-to":      builderCacheArg,
+		"--file":          fileOrURLOrStdinArg,
+		"-f":              fileOrURLOrStdinArg,
+		"--iidfile":       outputPathArg,
+		"--output":        builderOutputArg,
+		"-o":              builderOutputArg,
+		// --secret is CSV with src= or source=.
+		"--secret": builderCacheArg,
+		"--ssh":    sshArg,
+	},
+	"builder debug": {
+		"--file":   filePathArg,
+		"-f":       filePathArg,
+		"--secret": builderCacheArg,
+		"--ssh":    sshArg,
+	},
 	"compose": {
 		"--env-file":          filePathArg,
 		"--file":              fileOrURLOrStdinArg,

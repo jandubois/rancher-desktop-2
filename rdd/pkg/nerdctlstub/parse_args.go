@@ -4,9 +4,10 @@
 
 // Package nerdctlstub rewrites the host paths in a nerdctl command line so
 // that they work when nerdctl runs inside the guest VM. It rewrites the
-// values of the flags that the overlay lists. The
-// parser is ported from Rancher Desktop 1.x (src/go/nerdctl-stub); the
-// command table is generated from the pinned nerdctl module by ./generate.
+// values of the flags that the overlay lists and the context argument of
+// `builder build` and `builder debug`. The parser is ported from Rancher
+// Desktop 1.x (src/go/nerdctl-stub); the command table is generated from the
+// pinned nerdctl module by ./generate.
 package nerdctlstub
 
 import (
@@ -29,6 +30,11 @@ var errMissingValue = errors.New("missing value for option")
 // argHandler is the type of a function that rewrites one argument value.
 type argHandler func(string) (string, error)
 
+// commandHandlerType is the type of commandDefinition.handler, which is used
+// to handle positional arguments. The passed-in arguments exclude any flags
+// given after positional arguments.
+type commandHandlerType func([]string) ([]string, error)
+
 type commandDefinition struct {
 	// commandPath is the arguments needed to reach this command.
 	commandPath string
@@ -41,6 +47,9 @@ type commandDefinition struct {
 	// argument, because later flags are arguments, such as the container
 	// command's in `nerdctl run image ls --color`.
 	hasForeignFlags bool
+	// handler, if set, rewrites the positional arguments; otherwise they
+	// pass through.
+	handler commandHandlerType
 }
 
 // lookupCommand finds a command definition by path, resolving aliases.
@@ -207,12 +216,14 @@ func (c commandDefinition) parse(args []string) ([]string, error) {
 	var result []string
 	var positionalArgs []string
 	var unparsedArgs []string
+	sawSeparator := false
 argLoop:
 	for argIndex := 0; argIndex < len(args); argIndex++ {
 		arg := args[argIndex]
 		switch {
 		case arg == "--":
 			// No more options, only positional arguments.
+			sawSeparator = true
 			positionalArgs = append(positionalArgs, args[argIndex+1:]...)
 			break argLoop
 		case strings.HasPrefix(arg, "-") && arg != "-":
@@ -272,12 +283,25 @@ argLoop:
 		}
 	}
 	// At this point, `result` holds the options, and `positionalArgs` the
-	// unparsed positional arguments. A `--` would turn unparsed options into
-	// positional arguments.
-	if len(positionalArgs) > 0 && len(unparsedArgs) == 0 {
-		result = slices.Concat(result, []string{"--"}, positionalArgs)
+	// unparsed positional arguments.
+	if c.handler != nil {
+		childResult, err := c.handler(positionalArgs)
+		if err != nil {
+			return nil, err
+		}
+		if sawSeparator {
+			// Keep nerdctl from taking a later positional argument, such as
+			// the `-x` in `build -- C:\ctx -x`, for an option.
+			result = append(result, "--")
+		}
+		result = append(result, childResult...)
 	} else {
-		result = append(result, positionalArgs...)
+		// A `--` would turn unparsed options into positional arguments.
+		if len(positionalArgs) > 0 && len(unparsedArgs) == 0 {
+			result = slices.Concat(result, []string{"--"}, positionalArgs)
+		} else {
+			result = append(result, positionalArgs...)
+		}
 	}
 	result = append(result, unparsedArgs...)
 	return result, nil
@@ -306,13 +330,17 @@ func kindHandlers() map[argHandlerKind]argHandler {
 		outputPathArg:       outputPathArgHandler,
 		volumeArg:           volumeArgHandler,
 		mountArg:            mountArgHandler,
+		builderCacheArg:     builderCacheArgHandler,
+		buildContextArg:     buildContextArgHandler,
 		fileOrURLOrStdinArg: fileOrURLOrStdinArgHandler,
 		filePathListArg:     filePathListArgHandler,
+		builderOutputArg:    builderOutputArgHandler,
+		sshArg:              sshArgHandler,
 	}
 }
 
 // commands is the runtime command table, built from the generated
-// commandSpecs plus the pathFlags overlay.
+// commandSpecs plus the pathFlags overlay and the positional handlers.
 var commands = map[string]commandDefinition{}
 
 func init() {
@@ -348,5 +376,19 @@ func init() {
 			}
 			def.options[name] = handlers[kind]
 		}
+	}
+
+	// Positional-argument handlers. The pinned nerdctl has no `image import`;
+	// restore the 1.x imageImportHandler when a bump brings it back.
+	for path, handler := range map[string]commandHandlerType{
+		"builder build": builderBuildHandler,
+		"builder debug": builderBuildHandler,
+	} {
+		def, ok := commands[path]
+		if !ok {
+			panic(fmt.Sprintf("command handler: unknown command %q", path))
+		}
+		def.handler = handler
+		commands[path] = def
 	}
 }

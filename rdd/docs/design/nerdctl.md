@@ -36,18 +36,25 @@ through unchanged.
 nerdctl flag, whether it consumes a value (misjudging that shifts every
 later argument) and whether to translate the value.
 
-Two tables drive the parser:
+Three tables drive the parser:
 
 | Table | Contents | Source |
 | --- | --- | --- |
 | command table | every command, its flags, whether each flag consumes a value | generated |
 | overlay | the flags whose host paths the stub translates, with a handler kind for each | hand-curated |
+| command handlers | positional-argument handlers (`builder build`, `builder debug`) | hand-written |
 
-The six handler kinds, one per nerdctl path syntax, are input path, input
-path that may also be `-` for stdin or a URI (`compose --file`,
+The ten handler kinds, one per nerdctl path syntax, are input path, input
+path that may also be `-` for stdin or a URI (`builder build --file`,
 `--cosign-key`), comma-separated list of input paths (`run --env-file`),
-output path, `--volume` (`host:container[:mode]`), and `--mount` (CSV with
-`source=`).
+output path, `--volume` (`host:container[:mode]`), `--mount` (CSV with
+`source=`), builder cache (CSV with `src=`, `source=` or `dest=`), builder
+output (builder-cache CSV, which nerdctl prefixes with `type=local,dest=`
+when it has no `type=`), build context (`name=value`), and `--ssh`
+(`id=path,...`).
+
+`builder debug` runs `buildg`, which the guest does not ship, so the command
+fails there; the stub translates its paths anyway.
 
 The stub does not translate the root filesystem that `run --rootfs` and
 `create --rootfs` take as their first positional argument, so name it by its
@@ -55,10 +62,14 @@ guest path, such as `/mnt/c/rootfs`. The same goes for a host path in the
 value of a flag that the overlay leaves out, such as
 `--security-opt seccomp=<path>` or `--log-opt log-path=<path>`.
 
-A path inside a `--mount` value cannot contain a comma, since the value is
-comma-separated and the stub splits it at every comma. The stub
-expands a relative path to an absolute one, so a relative path fails the same
-way when the working directory has a comma, such as `OneDrive - Acme, Inc`.
+nerdctl splits a `--mount` value at every comma, and buildctl splits the
+paths in an `--ssh` value the same way, so a path inside either cannot
+contain a comma. The stub expands a relative path to
+an absolute one, so a relative path in either fails the same way when the
+working directory has a comma, such as `OneDrive - Acme, Inc`. In the builder
+CSV values, the stub decodes CSV quotes as buildctl does, so a quoted path
+there can contain a comma. A relative path there works in such a working
+directory too, because the stub quotes the field that holds the expanded path.
 
 The parse ends at an option that neither the command nor an enclosing command
 lists, because the stub cannot tell whether it takes a value. From there the
