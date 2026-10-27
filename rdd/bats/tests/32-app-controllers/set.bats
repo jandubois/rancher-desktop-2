@@ -257,6 +257,50 @@ EOF
     assert_output "manual"
 }
 
+@test "rdd nerdctl fails without creating the App" {
+    delete_app
+    run -1 rdd nerdctl ps
+    assert_output --partial "the App does not exist"
+    run -0 rdd ctl get app "${APP_NAME}" --ignore-not-found -o name
+    refute_output
+}
+
+@test "rdd nerdctl fails without starting an App that uses moby" {
+    delete_app
+    rdd set --wait=false running=false containerEngine.name=moby
+    run -1 rdd nerdctl ps
+    assert_output --partial 'nerdctl needs the containerd engine, but the App uses'
+    run -0 get_app_field '.spec.running'
+    assert_output "false"
+}
+
+@test "rdd nerdctl fails without starting a stopped containerd App" {
+    delete_app
+    rdd set --wait=false running=false containerEngine.name=containerd
+    # This suite does not run the engine controller, so ContainerEngineReady
+    # is never True.
+    run -1 rdd nerdctl ps
+    assert_output --partial "the containerd engine is not ready"
+    run -0 get_app_field '.spec.running'
+    assert_output "false"
+}
+
+@test "rdd run nerdctl creates the App with the containerd engine" {
+    delete_app
+    # timeout ends rdd run's wait, as in the addPath creation test above.
+    run -124 timeout 10 rdd run nerdctl ps
+    run -0 get_app_field '.spec.containerEngine.name'
+    assert_output "containerd"
+}
+
+@test "rdd run nerdctl keeps an existing App's engine" {
+    delete_app
+    rdd set --wait=false running=false containerEngine.name=moby
+    run -124 timeout 10 rdd run nerdctl ps
+    run -0 get_app_field '.spec.containerEngine.name'
+    assert_output "moby"
+}
+
 @test "rdd set leaves an existing addPath=front alone" {
     delete_app
     rdd set --wait=false running=false application.addPath=front
