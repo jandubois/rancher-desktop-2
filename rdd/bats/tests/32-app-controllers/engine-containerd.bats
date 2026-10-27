@@ -19,6 +19,13 @@ local_setup_file() {
     export RDD_NAMESPACE
 }
 
+local_teardown() {
+    # No suite setup cleans the host home directory.
+    if [[ -n "${host_fixture_dir:-}" ]]; then
+        rm -rf "${host_fixture_dir}"
+    fi
+}
+
 @test "containerd engine reports ContainerEngineReady with reason Connected" {
     rdd ctl wait --for=condition=ContainerEngineReady app/app --timeout=60s
     run -0 rdd ctl get app app \
@@ -484,6 +491,30 @@ assert_container_pid_changed() { # <container> <previous-pid>
         "${image_ref}" --timeout=60s
 
     run_e -1 nerdctl image inspect busybox:delete-me
+}
+
+# --- Host paths ---
+
+@test "nerdctl bind-mounts a host directory" {
+    # The guest sees the host home directory through Lima's mount, or on
+    # Windows through WSL's /mnt/<drive> automount after the stub rewrites
+    # the path.
+    run -0 mktemp -d "${HOME}/rdd-bats-nerdctl.XXXXXX"
+    host_fixture_dir=${output}
+    create_file "${host_fixture_dir}/file" <<<shared
+
+    run -0 host_path "${host_fixture_dir}"
+    src=${output}
+    run_e -0 nerdctl run --rm --volume "${src}:/data" busybox cat /data/file
+    assert_output shared
+}
+
+@test "nerdctl passes a named volume through" {
+    # A volume name must reach nerdctl unrewritten; rewritten as a path, it
+    # would bind-mount a directory instead of creating the volume.
+    nerdctl run --rm --volume rdd-bats-vol:/data busybox true
+    nerdctl volume inspect rdd-bats-vol
+    nerdctl volume rm rdd-bats-vol
 }
 
 # --- Cleanup on VM stop ---
