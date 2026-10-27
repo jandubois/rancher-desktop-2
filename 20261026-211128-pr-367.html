@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This round reviews the redesigned resolver, which tries the embedded kubectl, then the cache, then a download of the patch release that <code>stable-&lt;minor&gt;.txt</code> names. The download path is sound. Three defects need fixing. The cluster probe ignores kuberc&#39;s <code>credentialPluginPolicy</code> and runs exec plugins that the user denied. The marker lookup shares the 5-minute download timeout, so a mirror that drops packets adds 30 s to every out-of-skew call. And <code>cmd_service.md</code> now calls the kubeconfig the service settings file.</p>
     </div>
     <hr>
+    <h2 id="the-code-has-changed-since-this-review">The Code Has Changed Since This Review <a href="#the-code-has-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings cite lines at the review SHA. I squashed the fixes into the PR&#39;s only commit, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> on the same base, so the cited lines no longer match branch <code>embed-kuberlr</code>. <code>parseCommandLine</code> replaced <code>parseKubeConfigFlags</code> and now parses the command line through kubectl&#39;s own command tree. Each finding below ends with an outcome line.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical" data-file="rdd/pkg/kuberlr/resolver.go">
@@ -479,6 +485,7 @@ index 15b7e82ff..ae8af1cb0 100644
 +}</code></pre>
       </details>
     <p>The patch&#39;s test skips on Windows, because its plugin is a <code>/bin/sh</code> script.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>, by a different route than the patch. The probe parses the command line through kubectl&#39;s own command tree and builds its client with <code>ToRESTConfig</code>, which applies kuberc&#39;s <code>credentialPluginPolicy</code>. The patch&#39;s <code>TestResolveHonorsKubercPluginPolicy</code> pins it.</p>
     </div>
     <hr>
     <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
@@ -612,6 +619,7 @@ index 15b7e82ff..75500e77c 100644
  	got := cachedPath(v)</code></pre>
       </details>
     <p>With the patch, each dropped-packet run takes 5 s, still on every call; remembering a failed lookup for a while, say in a marker-miss file under <code>CacheDir()</code>, would remove the repeat.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>. The marker lookup has its own 5-second timeout (<code>markerTimeout</code>), and <code>TestLatestPatchTimesOut</code> pins it. A failed lookup is not remembered, so it still repeats on every call that needs a download. <code>cmd_other.md</code> and the <code>markerTimeout</code> comment now say so, and that rdd never caches a kubectl from a mirror that answers more slowly than 5 seconds.</p>
     </div>
     <div class="card card-important" data-file="rdd/docs/design/cmd_service.md">
       <div class="finding-title" id="I2">
@@ -700,6 +708,7 @@ index 4a68008df..8862e2354 100644
  Runs `rdd service serve` to actually start the control plane in the background
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>. <code>cmd_service.md</code> names <code>args.json</code> as the service settings file, and its descriptions of <code>serve</code> and <code>start</code> (lines 77 and 86) now follow the code. Line 79&#39;s <code>config</code> map claim predates the PR and is tracked in pending-work.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -724,6 +733,7 @@ index 4a68008df..8862e2354 100644
 // manifests, plugin lists local PATH entries, options/help print text.</code></pre>
     <p>The flag set binds only kubectl&#39;s connection flags and lets pflag skip unknown ones. For an unknown shorthand with an attached value, pflag skips one character and parses the rest as more shorthands. So <code>get pods -ojson</code> sets <code>-s</code> (<code>--server</code>) to <code>on</code>, and <code>-ojsonpath={.items}</code> sets it to <code>onpath={.items}</code>; I confirmed both by calling <code>parseKubeConfigFlags</code>, and <code>-o json</code> and <code>-oyaml</code> parse correctly. The probe then fails against host <code>on</code> and the embedded kubectl runs, so <code>-ojson</code>, a common scripting form, never gets a matching kubectl. <code>isClientOnly</code> builds the same flag set.</p>
     <p>Fix: bind the value-taking shorthands that kubectl commands use (at least <code>-o</code>, <code>-l</code>, <code>-f</code>, <code>-c</code>) so pflag consumes their values, or parse with the selected kubectl command&#39;s own flags.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> by the proposal&#39;s second option. The probe now parses with the selected kubectl command&#39;s own flags, and new cases in <code>TestParseKubeConfigFlags</code> and <code>TestIsClientOnly</code> pin <code>-ojson</code> and <code>-ojsonpath</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/cache.go">
       <div class="finding-title" id="S2">
@@ -743,6 +753,7 @@ index 4a68008df..8862e2354 100644
 // acceptable patch level counts as a hit, so a cache warmed with an</code></pre>
     <p><code>os.UserCacheDir()/rancher-desktop</code> is RD1&#39;s cache directory on macOS and Linux, and RD1&#39;s whole app home on Windows (<code>%LOCALAPPDATA%\rancher-desktop</code>), per RD1&#39;s <code>src/go/rdctl/pkg/paths</code>. An RD1 factory reset or uninstall deletes it, along with this &quot;rdd-wide&quot; root that the doc invites future consumers into. <code>guestdeps.DefaultCacheDir</code> avoids the problem. Its comment asks for a directory clear of the app&#39;s cache and of every instance directory, and it uses <code>rancher-desktop.guest-deps</code>.</p>
     <p>Fix: use a dotted name such as <code>rancher-desktop.cache</code>, which <code>instance.Name()</code> cannot produce either.</p>
+    <p><strong>Outcome:</strong> declined for this PR. The cache root&#39;s location belongs to a design that also covers the Lima image and k3s caches, and <code>rdd svc paths</code> and <code>RDD_CACHE_DIR</code> already hide the location from callers. Tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/helpers/paths.bash">
       <div class="finding-title" id="S3">
@@ -764,6 +775,7 @@ else
 fi</code></pre>
     <p>The new <code>cache_dir</code> key exports <code>RDD_CACHE_DIR</code>, which <code>CacheRoot</code> also reads as an override. Under MSYS2, <code>win_to_posix_exports</code> turns it into <code>/c/Users/...</code>, and the comment above records that <code>rdd.exe</code> reads such a value as <code>\c\Users\...</code> on the current drive. Only <code>RDD_LOG_DIR</code> gets converted back, so a Windows BATS <code>rdd kubectl</code> that downloads (S4) writes its cache under <code>&lt;drive&gt;:\c\Users\...</code>. The two kuberlr test files set the variable themselves and cannot see this. This is reasoned from the code and that comment; no Windows host ran it.</p>
     <p>Fix: add <code>RDD_CACHE_DIR=$(host_path &quot;${RDD_CACHE_DIR}&quot;)</code> beside the <code>RDD_LOG_DIR</code> line.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> as proposed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/kube-context.bats">
       <div class="finding-title" id="S4">
@@ -795,6 +807,7 @@ local_setup_file() {
     run_e -0 rdd run rdd kubectl get namespace kube-system \
         -o jsonpath=&#39;{.metadata.uid}&#39;</code></pre>
     <p>Fix: say in the file that it doubles as the real-mirror test, or pick a <code>K3S_VERSION</code> that the embedded kubectl accepts.</p>
+    <p><strong>Outcome:</strong> commented in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>. A comment beside <code>K3S_VERSION</code> says when the file downloads a kubectl and from where. It also says that an unreachable dl.k8s.io falls back to the embedded kubectl, while a download that starts and then fails fails the tests.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/downloader.go">
       <div class="finding-title" id="S5">
@@ -819,6 +832,7 @@ local_setup_file() {
 	}</code></pre>
     <p>Nothing on the <code>rdd kubectl</code> path calls <code>signal.Notify</code> (only <code>cmd/download-guest-deps</code> and the hostagent do), so SIGINT ends the process without running the deferred <code>os.Remove</code>. Ctrl+C is the likely answer to a slow &quot;Downloading kubectl …&quot;, and each interrupted download leaves its partial bytes in a cache that nothing prunes. <code>TODO(eviction)</code> in <code>cache.go</code> names only SIGKILL.</p>
     <p>Fix: run the download under <code>signal.NotifyContext(ctx, os.Interrupt)</code>, as <code>cmd/download-guest-deps</code> does, so <code>streamGet</code> aborts and the deferred removal runs; at least name SIGINT in the TODO.</p>
+    <p><strong>Outcome:</strong> commented in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>, after two fixes were tried and dropped. Catching SIGINT made <code>rdd kubectl</code> exit normally instead of dying by the signal, so a calling script kept running, and it overrode a SIGINT that the caller had set to ignore. An age-based sweep of temp files misjudged live downloads across sleep. <code>TODO(eviction)</code> in <code>cache.go</code> now names every interrupt that leaks the temp file. Tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/resolver.go">
       <div class="finding-title" id="S6">
@@ -840,6 +854,7 @@ local_setup_file() {
 	if err != nil {</code></pre>
     <p>Changing line 69 to <code>if false &amp;&amp; acceptable(embedded, server)</code> leaves <code>go test ./pkg/kuberlr/</code> green, and no BATS test reaches the branch (their servers run 1.99, 1.98 and 1.32). A regression would download a kubectl for every in-skew cluster, which covers nearly every user. Round 1 declined an end-to-end test for this gap because <code>TestCompatible</code> covered the skew rule. <code>TestAcceptable</code> still covers the rule, but not this call. And a <code>Resolve</code>-level unit test does not need the end-to-end setup, so round 1&#39;s reason for declining does not apply to it.</p>
     <p>Fix: add a <code>Resolve</code> test modeled on <code>TestResolveFallsBackToEmbeddedWhenMarkerUnavailable</code>, with a v1.36 server, asserting <code>&quot;&quot;</code> and no <code>/release/</code> request.</p>
+    <p><strong>Outcome:</strong> declined; the test is optional. A regression shows as a visible &quot;Downloading kubectl&quot; line on the first in-skew call, and <code>TestAcceptable</code> covers the skew rule.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/exec_unix.go">
       <div class="finding-title" id="S7">
@@ -859,6 +874,7 @@ func Exec(_ context.Context, path string, args []string) error {
 }</code></pre>
     <p><code>multiCallArgs</code> cuts the program name at its first dot, so a cached <code>kubectl-v1.32.9</code> is read as <code>kubectl-v1</code> and never dispatches to <code>rdd kubectl</code>, and an upstream kubectl does not run <code>rdd</code> either. The variable does affect every child of the cached kubectl. A plugin or <code>$KUBE_EDITOR</code> that runs <code>kubectl</code> through the rdd shim skips resolution and gets the mismatched embedded kubectl. The <code>environment.md</code> row describes only the recursion.</p>
     <p>Fix: drop the variable and its doc row, or document that it makes kubectl&#39;s children skip resolution.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>, but not as proposed, because the guard does fire. During the probe, a credential plugin configured as <code>command: kubectl</code> (kubelogin) re-enters <code>rdd kubectl</code> through the shim, and without the guard each nested call probes and runs the plugin again. An end-to-end repro with the reviewed build recursed until a depth limit stopped it. The port set the variable only in Exec&#39;s child environment, so it missed that loop and reached kubectl&#39;s children instead. Like kuberlr, <code>Resolve</code> now sets it in its own process only while it probes. <code>TestResolveSetsRecursionGuardWhileProbing</code> pins this, and the <code>envSkipResolver</code> comment says why the guard must stay.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/exec_windows.go">
       <div class="finding-title" id="S8">
@@ -892,6 +908,7 @@ func ChildExit(err error) *Error {
 	}
 	// A signal-killed child has no exit code. ExitCode() returns -1, which</code></pre>
     <p>Fix: <code>if exitErr := cliexit.ChildExit(err); exitErr != nil { return exitErr }</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> as proposed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/helpers/paths.bash">
       <div class="finding-title" id="S9">
@@ -913,6 +930,7 @@ winpath() {
     fi</code></pre>
     <p>The repo context names <code>host_path</code> (<code>cygpath -m</code>) with <code>MSYS_NO_PATHCONV=1</code> as the settled way to hand a path to a native Windows binary, and calls a third approach a defect. <code>winpath</code> adds <code>cygpath -w</code> for the fake servers, <code>go build -o</code> and <code>RDD_CACHE_DIR</code>, all of which accept the <code>C:/...</code> form that <code>host_path</code> produces. <code>winpath</code> also has a WSL branch that <code>host_path</code> lacks, but CI runs only MSYS2. Nothing fails today.</p>
     <p>Fix: use <code>host_path</code> in <code>7-kubectl-cache.bats</code> and <code>5-paths.bats</code> and drop <code>winpath</code>; this is untested on Windows.</p>
+    <p><strong>Outcome:</strong> declined. <code>5-paths.bats</code> compares rdd&#39;s <code>filepath.Join</code> output, which uses backslashes on Windows, so it needs <code>winpath</code>&#39;s <code>cygpath -w</code> form; <code>host_path</code>&#39;s <code>C:/</code> form would break the match.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/cache.go">
       <div class="finding-title" id="S10">
@@ -930,6 +948,7 @@ winpath() {
     <p><code>parseCachedName</code> accepts <code>kubectl-v1.34.9+vendor</code> and <code>kubectl-v1.34.9-rc.1</code>, but <code>cachedPath</code> rebuilds the name from major, minor and patch alone, so <code>bestCached</code> returns <code>kubectl-v1.34.9</code>, which may not exist, and the exec fails. Only a hand-placed file triggers this; the downloader writes plain names.</p>
     <p>Fix: accept only the names that the downloader writes.</p>
       <pre><code class="language-go">	return v, err == nil &amp;&amp; len(v.Pre) == 0 &amp;&amp; len(v.Build) == 0</code></pre>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> as proposed; <code>TestBestCached</code> gained the suffixed names.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/resolver.go">
       <div class="finding-title" id="S11">
@@ -962,6 +981,7 @@ func isClientOnly(args []string) bool {
 		{&quot;config get-contexts&quot;, []string{&quot;config&quot;, &quot;get-contexts&quot;}, true},
 		{&quot;kustomize bare&quot;, []string{&quot;kustomize&quot;}, true},</code></pre>
     <p>Fix: &quot;…is safe: parsing stops at it, so it either leaves no positionals (true) or keeps <code>version</code> with <code>--client</code> unset (probe), and kubectl rejects it either way.&quot;</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> by the command-tree rewrite (the second design concern). A malformed known flag now returns a parse error wherever it appears, and <code>Resolve</code> then runs the embedded kubectl. The comment went with the old code, and <code>TestParseKubeConfigFlagsRejectsMalformedFlag</code> covers a malformed flag both after <code>version</code> and before the subcommand.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/helpers/os.bash">
       <div class="finding-title" id="S12">
@@ -983,6 +1003,7 @@ assert_process_alive() {
     <p>Fix:</p>
       <pre><code class="language-bash">    local pid=$1
     local wpid</code></pre>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a> as proposed.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -990,10 +1011,10 @@ assert_process_alive() {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>The probe runs exec credential plugins, and a cached kubectl runs them again</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — client-go v0.36.4 starts the plugin with <code>exec.Command</code> and hands it stdin when the session is interactive (<code>exec.go:457-462</code>), so the 2-second probe timeout does not bound a login prompt. An out-of-skew cluster runs the plugin twice per call, once for the probe and once in the exec&#39;d kubectl. C1&#39;s fix keeps the probe inside the user&#39;s policy but leaves this cost; setting <code>StdinUnavailable</code> on the probe&#39;s <code>ExecProvider</code> would at least keep prompts out of the probe.</li>
-      <li><strong>The resolver rebuilds part of kubectl&#39;s configuration setup</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> — C1 (kuberc policy) and S1 (shorthand parsing) both come from re-creating a subset of what kubectl derives from its own command tree. Each fix patches one piece; kuberc aliases and defaults are the next pieces that the probe would miss.</li>
-      <li><strong>Pre-GA servers warn on every call</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — on 2026-10-26, <code>stable-1.38.txt</code> returned 404 while <code>latest-1.38.txt</code> named <code>v1.38.0-alpha.2</code>. A <code>latest-</code> marker goes stale after GA (<code>latest-1.35.txt</code> still names <code>v1.35.0-rc.1</code>), so it could serve only as a fallback when <code>stable-</code> returns 404.</li>
-      <li><strong>Downloads are not retried</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — <code>rdd/pkg/guestdeps</code> and <code>scripts/lib/download.ts</code> retry transient network failures; here one reset during the 50 MB transfer exits non-zero. That suits an interactive command, but S4&#39;s test then depends on one clean transfer.</li>
+      <li><strong>The probe runs exec credential plugins, and a cached kubectl runs them again</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — client-go v0.36.4 starts the plugin with <code>exec.Command</code> and hands it stdin when the session is interactive (<code>exec.go:457-462</code>), so the 2-second probe timeout does not bound a login prompt. An out-of-skew cluster runs the plugin twice per call, once for the probe and once in the exec&#39;d kubectl. C1&#39;s fix keeps the probe inside the user&#39;s policy but leaves this cost; setting <code>StdinUnavailable</code> on the probe&#39;s <code>ExecProvider</code> would at least keep prompts out of the probe. <strong>Outcome:</strong> declined for now. Running the plugin twice costs time but breaks nothing, and handing the probe no stdin would make interactive-only plugins always fall back to the embedded kubectl. Tracked in pending-work.</li>
+      <li><strong>The resolver rebuilds part of kubectl&#39;s configuration setup</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> — C1 (kuberc policy) and S1 (shorthand parsing) both come from re-creating a subset of what kubectl derives from its own command tree. Each fix patches one piece; kuberc aliases and defaults are the next pieces that the probe would miss. <strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>. The probe parses the command line through kubectl&#39;s own command tree, so kuberc defaults, alias options and the credential plugin policy apply to it. <code>resolver.go</code> documents two limitations. The probe does not see an alias&#39;s prepended and appended args, and a kuberc that the embedded kubectl rejects stops <code>rdd kubectl</code>, even when the kubectl it would run ignores kuberc.</li>
+      <li><strong>Pre-GA servers warn on every call</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — on 2026-10-26, <code>stable-1.38.txt</code> returned 404 while <code>latest-1.38.txt</code> named <code>v1.38.0-alpha.2</code>. A <code>latest-</code> marker goes stale after GA (<code>latest-1.35.txt</code> still names <code>v1.35.0-rc.1</code>), so it could serve only as a fallback when <code>stable-</code> returns 404. <strong>Outcome:</strong> declined for now. Only pre-GA clusters hit it, and the warning names the fallback; a <code>latest-</code> marker fallback is its own change. Tracked in pending-work.</li>
+      <li><strong>Downloads are not retried</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — <code>rdd/pkg/guestdeps</code> and <code>scripts/lib/download.ts</code> retry transient network failures; here one reset during the 50 MB transfer exits non-zero. That suits an interactive command, but S4&#39;s test then depends on one clean transfer. <strong>Outcome:</strong> declined for now. An interactive command can be rerun, and a retry policy belongs with the offline-mode work in <code>TODO(offline)</code>. Tracked in pending-work.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -1011,6 +1032,7 @@ assert_process_alive() {
     <p>Round 1&#39;s fixes and the tests that pin them, as the agents cited them (not mutated): the download notice by <code>7-kubectl-cache.bats</code> test 1 (<code>assert_output --partial &#39;Downloading kubectl v1.99.5&#39;</code>), the flag parse error by <code>TestParseKubeConfigFlagsRejectsMalformedFlag</code>, and <code>k3s_config</code> by <code>5-paths.bats</code>&#39;s <code>ALL_KEYS</code>.</p>
     <p>C1 and I1 each need the regression test that their patch adds. <code>TestResolveHonorsKubercPluginPolicy</code> and <code>TestLatestPatchTimesOut</code> both fail on the reviewed code and pass with their patches; without the timeout, the lookup waits 3 s and then reports a malformed marker. With the C1 patch, its probe reports <code>plugin_runs=0</code> in both rows. An allowlist naming the plugin, <code>KUBERC=off</code> and a missing kuberc still run the plugin, while <code>--kuberc</code> with DenyAll and an allowlist naming another binary block it, as in kubectl.</p>
     <p>S6&#39;s test is optional, because a regression there shows up as a visible &quot;Downloading&quot; line. No unit test calls <code>SkipResolver</code> either <span class="pill pill-gemini">Gemini 3.5 Flash</span>; dropping <code>skipResolver ||</code> from <code>Resolve</code> leaves the package green. That test is optional too, because a regression only adds a probe of rdd&#39;s own apiserver, which the embedded kubectl always matches.</p>
+    <p><strong>Outcome:</strong> both optional tests were declined for the reasons above. The C1 and I1 regression tests went in with their fixes, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>.</p>
     <p>CI on the review SHA finished green. 48 checks passed, every BATS job on all three platforms among them, and 4 were skipped. Neither C1 nor I1 is reachable from CI, since the BATS fixtures use a plain-HTTP apiserver, a reachable mirror and no kuberc.</p>
     </div>
     <hr>
@@ -1018,12 +1040,14 @@ assert_process_alive() {
 
     <div class="card card-neutral">
     <p><code>cmd_other.md#version-selection</code> matches the code, except that it does not say how long the marker fallback can take (I1). <code>environment.md</code> gives the recursion guard a purpose that cannot arise (S7). <code>cmd_service.md</code> is wrong in five places (I2); round 1&#39;s Documentation Assessment called those renames correct.</p>
+    <p><strong>Outcome:</strong> documentation updated in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>. <code>cmd_other.md</code> says the marker lookup gives up after 5 seconds, <code>environment.md</code> describes the credential-plugin loop that the guard stops (S7), and <code>cmd_service.md</code> is fixed (I2).</p>
     </div>
     <hr>
     <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p>One commit, whose message matches the PR description. Both describe the redesign accurately, with three gaps. They call one error case &quot;binary-404&quot;, but that test 404s on the <code>.sha512</code> request, as its own comment says. They say the BATS file runs &quot;under Git Bash on Windows&quot;, while CI runs MSYS2&#39;s bash. And they leave out the <code>cmd_service.md</code> renames (I2), the new <code>winpid</code> and <code>winpath</code> helpers, and the download that <code>kube-context.bats</code> now makes (S4).</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>, whose message drops &quot;binary-404&quot; and &quot;Git Bash&quot; and covers the <code>cmd_service.md</code> fix, the <code>winpid</code> and <code>winpath</code> helpers, and the <code>kube-context.bats</code> download. The PR description now mirrors it.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
