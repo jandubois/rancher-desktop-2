@@ -364,7 +364,18 @@ func init() {
 		commands[path] = def
 	}
 
-	// Apply the path-flag overlay.
+	// The pathFlags and notPathFlags classifications must stay disjoint.
+	for path, flags := range notPathFlags {
+		for _, name := range flags {
+			if _, ok := pathFlags[path][name]; ok {
+				panic(fmt.Sprintf("flag %q of command %q is in both pathFlags and notPathFlags", name, path))
+			}
+		}
+	}
+
+	// Apply the path-flag overlay. The generator validates these entries;
+	// the panics only guard against the table and overlay going out of
+	// sync without regeneration.
 	handlers := kindHandlers()
 	for path, flags := range pathFlags {
 		def, ok := commands[path]
