@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261026-211128-pr-367</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261026-211128-pr-367</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-26 21:11</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2 (of PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/367" class="gh-ref" data-title="rdd kubectl: embed kuberlr-style version resolver" data-state="open" data-type="pr">#367</a>)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/367" class="gh-ref" data-title="rdd kubectl: embed kuberlr-style version resolver" data-state="open" data-type="pr">#367</a> — rdd kubectl: embed kuberlr-style version resolver</td></tr>
+      <tr><td>Branch</td><td><code>embed-kuberlr</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1678821a5"><code>1678821a5</code></a> rdd kubectl: embed kuberlr-style version resolver</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1678821a59a7812574b9afbe92a792a3853b220b"><code>1678821a59a7812574b9afbe92a792a3853b220b</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the cluster probe runs exec credential plugins that the user&#39;s kuberc denies, and the version-marker lookup can stall every call for 30 s</td></tr>
+      <tr><td>Wall-clock time</td><td><code>1 h 1 min 56 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This round reviews the redesigned resolver, which tries the embedded kubectl, then the cache, then a download of the patch release that <code>stable-&lt;minor&gt;.txt</code> names. The download path is sound. Three defects need fixing. The cluster probe ignores kuberc&#39;s <code>credentialPluginPolicy</code> and runs exec plugins that the user denied. The marker lookup shares the 5-minute download timeout, so a mirror that drops packets adds 30 s to every out-of-skew call. And <code>cmd_service.md</code> now calls the kubeconfig the service settings file.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical" data-file="rdd/pkg/kuberlr/resolver.go">
+      <div class="finding-title" id="C1">
+        <span class="finding-num">C1.</span> The cluster probe runs exec credential plugins that kuberc denies <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#C1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver.go#L133-L147">rdd/pkg/kuberlr/resolver.go</a></div>
+      <pre data-start="133" data-line="138-142"><code class="language-go">}
+
+// loadClientConfig builds a rest.Config from KUBECONFIG and args&#39;
+// kubectl connection flags, so the probe targets the same cluster.
+func loadClientConfig(args []string) (*rest.Config, error) {
+	cf, err := parseKubeConfigFlags(args)
+	if err != nil {
+		return nil, err
+	}
+	return cf.ToRawKubeConfigLoader().ClientConfig()
+}
+
+// parseKubeConfigFlags parses kubectl&#39;s connection-override flags into a
+// ConfigFlags. A malformed known flag returns the parse error, so the
+// caller falls through to the embedded kubectl instead of silently</code></pre>
+    <p>kubectl v1.36.4 reads the user&#39;s kuberc by default and applies its <code>credentialPluginPolicy</code> (DenyAll or an allowlist) through <code>ConfigFlags.WrapConfigFn</code> before it contacts a cluster. The probe builds its config with <code>ToRawKubeConfigLoader().ClientConfig()</code>, which skips that wrap, and client-go treats an empty policy as AllowAll (client-go <code>exec.go:582</code>). So every cluster-bound <code>rdd kubectl</code> runs the kubeconfig&#39;s exec plugin before kubectl refuses it. The policy exists to stop a kubeconfig from running arbitrary commands, and a user who set DenyAll for an untrusted kubeconfig loses that protection. At the merge-base only the embedded kubectl ran, and it honors the policy.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-kuberc-denyall.sh; run from rdd/ after `make build-rdd`:
+#   bash probe-kuberc-denyall.sh
+# Needs go. Serves /version (v1.36.0, in skew, so nothing downloads) over
+# TLS, since clientcmd reads a user&#39;s exec plugin only for TLS servers.
+# The kubeconfig&#39;s user runs an exec credential plugin that logs each run;
+# the kuberc sets credentialPluginPolicy: DenyAll. RDD_KUBECTL_RESOLVED=1
+# skips the resolver, leaving the embedded kubectl alone (merge-base).
+set -u
+T=$(mktemp -d)
+cat &gt;&quot;$T/srv.go&quot; &lt;&lt;&#39;GO&#39;
+package main
+
+import (
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+	&quot;net/http/httptest&quot;
+)
+
+func main() {
+	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+		fmt.Fprint(w, `{&quot;major&quot;:&quot;1&quot;,&quot;minor&quot;:&quot;36&quot;,&quot;gitVersion&quot;:&quot;v1.36.0&quot;}`)
+	}))
+	fmt.Println(ts.URL)
+	select {}
+}
+GO
+go build -o &quot;$T/srv&quot; &quot;$T/srv.go&quot; || exit 1
+&quot;$T/srv&quot; &gt;&quot;$T/url&quot; &amp;
+SRV=$!
+trap &#39;kill $SRV; rm -rf &quot;$T&quot;&#39; EXIT
+for _ in {1..50}; do [[ -s $T/url ]] &amp;&amp; break; sleep 0.1; done
+cat &gt;&quot;$T/plugin.sh&quot; &lt;&lt;&#39;SH&#39;
+echo ran &gt;&gt;&quot;$1&quot;
+printf &#39;%s&#39; &#39;{&quot;apiVersion&quot;:&quot;client.authentication.k8s.io/v1&quot;,&quot;kind&quot;:&quot;ExecCredential&quot;,&quot;status&quot;:{&quot;token&quot;:&quot;x&quot;}}&#39;
+SH
+cat &gt;&quot;$T/kubeconfig&quot; &lt;&lt;KC
+apiVersion: v1
+kind: Config
+clusters:
+- name: fake
+  cluster: {server: &quot;$(&lt;&quot;$T/url&quot;)&quot;, insecure-skip-tls-verify: true}
+users:
+- name: fake
+  user:
+    exec:
+      apiVersion: client.authentication.k8s.io/v1
+      command: /bin/sh
+      args: [&quot;$T/plugin.sh&quot;, &quot;$T/ran&quot;]
+      interactiveMode: Never
+contexts:
+- name: fake
+  context: {cluster: fake, user: fake}
+current-context: fake
+KC
+printf &#39;apiVersion: kubectl.config.k8s.io/v1beta1\nkind: Preference\ncredentialPluginPolicy: DenyAll\n&#39; &gt;&quot;$T/kuberc&quot;
+for guard in 1 &quot;&quot;; do
+    rm -f &quot;$T/ran&quot;
+    RDD_KUBECTL_RESOLVED=$guard KUBECONFIG=$T/kubeconfig KUBERC=$T/kuberc \
+        RDD_CACHE_DIR=$T/cache ./bin/rdd kubectl get --raw /version &gt;/dev/null 2&gt;&quot;$T/err&quot;
+    rc=$?
+    echo &quot;resolver=$([[ -n $guard ]] &amp;&amp; echo skipped || echo active) rc=$rc plugin_runs=$(cat &quot;$T/ran&quot; 2&gt;/dev/null | wc -l | tr -d &#39; &#39;)&quot;
+    grep -o &#39;plugin &quot;/bin/sh&quot; not allowed: policy set to &quot;DenyAll&quot;&#39; &quot;$T/err&quot; | head -1
+done</code></pre>
+      <pre><code class="language-text">$ bash probe-kuberc-denyall.sh
+resolver=skipped rc=1 plugin_runs=0
+plugin &quot;/bin/sh&quot; not allowed: policy set to &quot;DenyAll&quot;
+resolver=active rc=1 plugin_runs=1
+plugin &quot;/bin/sh&quot; not allowed: policy set to &quot;DenyAll&quot;</code></pre>
+      </details>
+    <p>Fix: load the kuberc policy the way kubectl does (<code>--kuberc</code>, <code>KUBERC</code>, <code>KUBECTL_KUBERC</code>), install it as a <code>WrapConfigFn</code>, and build the probe config with <code>ToRESTConfig()</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/kuberlr/resolver.go b/rdd/pkg/kuberlr/resolver.go
+index 421898fbe..5abac4af6 100644
+--- a/rdd/pkg/kuberlr/resolver.go
++++ b/rdd/pkg/kuberlr/resolver.go
+@@ -17,7 +17,10 @@ import (
+ 	&quot;k8s.io/cli-runtime/pkg/genericclioptions&quot;
+ 	&quot;k8s.io/client-go/discovery&quot;
+ 	&quot;k8s.io/client-go/rest&quot;
++	clientcmdapi &quot;k8s.io/client-go/tools/clientcmd/api&quot;
+ 	componentbasever &quot;k8s.io/component-base/version&quot;
++	cmdutil &quot;k8s.io/kubectl/pkg/cmd/util&quot;
++	&quot;k8s.io/kubectl/pkg/kuberc&quot;
+ )
+ 
+ // envSkipResolver tells Resolve to short-circuit — Exec sets it on the
+@@ -139,7 +142,7 @@ func loadClientConfig(args []string) (*rest.Config, error) {
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	return cf.ToRawKubeConfigLoader().ClientConfig()
++	return cf.ToRESTConfig()
+ }
+ 
+ // parseKubeConfigFlags parses kubectl&#39;s connection-override flags into a
+@@ -156,7 +159,36 @@ func parseKubeConfigFlags(args []string) (*genericclioptions.ConfigFlags, error)
+ 	fs.Usage = func() {}
+ 	cf := genericclioptions.NewConfigFlags(true)
+ 	cf.AddFlags(fs)
+-	return cf, fs.Parse(args)
++	var kubercPath string
++	fs.StringVar(&amp;kubercPath, &quot;kuberc&quot;, &quot;&quot;, &quot;&quot;)
++	if err := fs.Parse(args); err != nil {
++		return cf, err
++	}
++	return cf, applyKubercPluginPolicy(cf, kubercPath)
++}
++
++// applyKubercPluginPolicy gives cf&#39;s rest configs the kuberc
++// credentialPluginPolicy, as kubectl does before contacting a cluster,
++// so the probe never runs an exec plugin the user&#39;s kuberc denies.
++func applyKubercPluginPolicy(cf *genericclioptions.ConfigFlags, kubercPath string) error {
++	if cmdutil.KubeRC.IsDisabled() {
++		return nil
++	}
++	pref, err := kuberc.DefaultGetPreferences(kubercPath, io.Discard)
++	if err != nil || pref == nil {
++		return err
++	}
++	policy := clientcmdapi.PluginPolicy{PolicyType: clientcmdapi.PolicyType(pref.CredentialPluginPolicy)}
++	for _, entry := range pref.CredentialPluginAllowlist {
++		policy.Allowlist = append(policy.Allowlist, clientcmdapi.AllowlistEntry(entry))
++	}
++	cf.WithWrapConfigFn(func(c *rest.Config) *rest.Config {
++		if c.ExecProvider != nil {
++			c.ExecProvider.PluginPolicy = policy
++		}
++		return c
++	})
++	return nil
+ }
+ 
+ // clientOnlySubcommands lists kubectl subcommands that never contact a
+diff --git a/rdd/pkg/kuberlr/resolver_test.go b/rdd/pkg/kuberlr/resolver_test.go
+index 15b7e82ff..ae8af1cb0 100644
+--- a/rdd/pkg/kuberlr/resolver_test.go
++++ b/rdd/pkg/kuberlr/resolver_test.go
+@@ -395,3 +395,69 @@ func TestResolveSkipsWhenRecursionGuardSet(t *testing.T) {
+ 	assert.Equal(t, path, &quot;&quot;)
+ 	assert.Assert(t, !embeddedVersionCalled, &quot;Resolve reached embeddedVersion despite envSkipResolver&quot;)
+ }
++
++// TestResolveHonorsKubercPluginPolicy locks in that the cluster probe
++// applies the kuberc credentialPluginPolicy, as kubectl does: an exec
++// plugin the policy denies must not run, not even for the probe.
++func TestResolveHonorsKubercPluginPolicy(t *testing.T) {
++	if runtime.GOOS == &quot;windows&quot; {
++		t.Skip(&quot;the exec plugin fixture is a /bin/sh script&quot;)
++	}
++	orig := embeddedVersion
++	t.Cleanup(func() { embeddedVersion = orig })
++	embeddedVersion = func() (semver.Version, error) {
++		return semver.Version{Major: 1, Minor: 36}, nil
++	}
++
++	// clientcmd reads a user&#39;s exec plugin only for a TLS server.
++	ts := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++		w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
++		fmt.Fprint(w, `{&quot;major&quot;:&quot;1&quot;,&quot;minor&quot;:&quot;36&quot;,&quot;gitVersion&quot;:&quot;v1.36.0&quot;}`)
++	}))
++	defer ts.Close()
++
++	dir := t.TempDir()
++	marker := filepath.Join(dir, &quot;plugin-ran&quot;)
++	plugin := filepath.Join(dir, &quot;plugin.sh&quot;)
++	assert.NilError(t, os.WriteFile(plugin, []byte(`touch &quot;$1&quot;
++echo &#39;{&quot;apiVersion&quot;:&quot;client.authentication.k8s.io/v1&quot;,&quot;kind&quot;:&quot;ExecCredential&quot;,&quot;status&quot;:{&quot;token&quot;:&quot;t&quot;}}&#39;
++`), 0o600))
++	kubeconfig := filepath.Join(dir, &quot;kubeconfig&quot;)
++	config := fmt.Sprintf(`
++apiVersion: v1
++kind: Config
++clusters:
++- name: fake
++  cluster:
++    server: %s
++    insecure-skip-tls-verify: true
++users:
++- name: fake
++  user:
++    exec:
++      apiVersion: client.authentication.k8s.io/v1
++      command: /bin/sh
++      args: [%q, %q]
++      interactiveMode: Never
++contexts:
++- name: fake
++  context:
++    cluster: fake
++    user: fake
++current-context: fake
++`, ts.URL, plugin, marker)
++	assert.NilError(t, os.WriteFile(kubeconfig, []byte(config), 0o600))
++	kuberc := filepath.Join(dir, &quot;kuberc&quot;)
++	assert.NilError(t, os.WriteFile(kuberc, []byte(`apiVersion: kubectl.config.k8s.io/v1beta1
++kind: Preference
++credentialPluginPolicy: DenyAll
++`), 0o600))
++	t.Setenv(&quot;KUBECONFIG&quot;, kubeconfig)
++	t.Setenv(&quot;KUBERC&quot;, kuberc)
++
++	path, err := Resolve(context.Background(), []string{&quot;get&quot;, &quot;pods&quot;})
++	assert.NilError(t, err)
++	assert.Equal(t, path, &quot;&quot;)
++	_, err = os.Stat(marker)
++	assert.Assert(t, errors.Is(err, os.ErrNotExist), &quot;the probe ran an exec plugin that kuberc denies&quot;)
++}</code></pre>
+      </details>
+    <p>The patch&#39;s test skips on Windows, because its plugin is a <code>/bin/sh</code> script.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/kuberlr/downloader.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The version-marker lookup lacks its own timeout and repeats on every call <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/downloader.go#L58-L68">rdd/pkg/kuberlr/downloader.go</a></div>
+      <pre data-start="58" data-line="63"><code class="language-go">// (e.g. stable-1.34.txt → v1.34.9). The release CDN publishes markers
+// only for GA minors, so a pre-GA server version fails here with a 404.
+func latestPatch(ctx context.Context, server semver.Version) (semver.Version, error) {
+	url := fmt.Sprintf(&quot;%s/release/stable-%d.%d.txt&quot;, mirrorURL(), server.Major, server.Minor)
+	var sb strings.Builder
+	if err := streamGet(ctx, url, &amp;sb, maxTextBytes); err != nil {
+		return semver.Version{}, err
+	}
+	v, err := semver.ParseTolerant(strings.TrimSpace(sb.String()))
+	if err != nil {
+		return semver.Version{}, fmt.Errorf(&quot;malformed version marker from %s: %w&quot;, url, err)</code></pre>
+    <p>When the cluster is out of skew for the embedded kubectl and nothing acceptable is cached, every <code>rdd kubectl</code> fetches <code>stable-&lt;minor&gt;.txt</code> through <code>httpClient</code>, whose only limit is the 5-minute <code>downloadTimeout</code> meant for a 50 MB binary. Nothing records a failure. On a network that drops packets to the mirror, each call waits out the 30-second dial timeout in silence before the fallback warning, and a proxy that never answers stalls it for 5 minutes. Shell completion through the <code>kubectl</code> shim waits as long on every TAB. At the merge-base, the embedded kubectl ran at once.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-blackhole-mirror.sh; run from rdd/ after `make build-rdd`:
+#   bash probe-blackhole-mirror.sh
+# Needs go. Starts the PR&#39;s fake apiserver (v1.99.0, out of skew for the
+# embedded kubectl) and runs `rdd kubectl` against mirrors that refuse
+# the connection vs. silently drop it (TEST-NET-1, 192.0.2.1).
+set -u
+T=$(mktemp -d)
+(cd bats/tests/10-cli/fake-kube &amp;&amp; go build -o &quot;$T/srv&quot; ./server) || exit 1
+mkdir -p &quot;$T/mirror/release&quot;
+&quot;$T/srv&quot; --root &quot;$T/mirror&quot; --git-version v1.99.0 \
+    --port-file &quot;$T/port&quot; --log-file &quot;$T/log&quot; &amp;
+SRV=$!
+trap &#39;kill $SRV; rm -rf &quot;$T&quot;&#39; EXIT
+for _ in {1..50}; do [[ -s $T/port ]] &amp;&amp; break; sleep 0.1; done
+cat &gt;&quot;$T/kubeconfig&quot; &lt;&lt;KC
+apiVersion: v1
+kind: Config
+clusters:
+- name: fake
+  cluster: {server: &quot;http://127.0.0.1:$(&lt;&quot;$T/port&quot;)&quot;}
+contexts:
+- name: fake
+  context: {cluster: fake, user: &quot;&quot;}
+current-context: fake
+KC
+for mirror in http://127.0.0.1:1 http://192.0.2.1 http://192.0.2.1; do
+    start=$(date +%s)
+    KUBECONFIG=$T/kubeconfig RDD_CACHE_DIR=$T/cache RDD_KUBECTL_MIRROR=$mirror \
+        ./bin/rdd kubectl get --raw /version &gt;/dev/null 2&gt;&quot;$T/err&quot;
+    echo &quot;mirror=$mirror rc=$? elapsed=$(($(date +%s) - start))s&quot;
+    grep -o &#39;level=warning msg=&quot;[^&quot;]*&quot;&#39; &quot;$T/err&quot;
+done</code></pre>
+      <pre><code class="language-text">$ bash probe-blackhole-mirror.sh
+mirror=http://127.0.0.1:1 rc=0 elapsed=0s
+level=warning msg=&quot;kubectl resolver: cannot determine the latest v1.99 patch release; using embedded kubectl&quot;
+mirror=http://192.0.2.1 rc=0 elapsed=30s
+level=warning msg=&quot;kubectl resolver: cannot determine the latest v1.99 patch release; using embedded kubectl&quot;
+mirror=http://192.0.2.1 rc=0 elapsed=30s
+level=warning msg=&quot;kubectl resolver: cannot determine the latest v1.99 patch release; using embedded kubectl&quot;</code></pre>
+      </details>
+    <p>Fix: give the marker lookup its own short timeout, as the cluster probe has; the patch uses 5 seconds.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/kuberlr/downloader.go b/rdd/pkg/kuberlr/downloader.go
+index d19cacee5..57639e361 100644
+--- a/rdd/pkg/kuberlr/downloader.go
++++ b/rdd/pkg/kuberlr/downloader.go
+@@ -34,6 +34,11 @@ const envKubeMirror = &quot;RDD_KUBECTL_MIRROR&quot;
+ // ~50 MB kubectl download on slow links (~170 kB/s).
+ const downloadTimeout = 5 * time.Minute
+ 
++// markerTimeout bounds the version-marker lookup, which runs on every
++// invocation that misses the cache; a mirror that drops packets must not
++// stall each kubectl call for the dial timeout or downloadTimeout.
++var markerTimeout = 5 * time.Second
++
+ // httpClient enforces downloadTimeout, since http.DefaultClient and the
+ // cobra context impose none (a shorter request-context deadline still wins).
+ var httpClient = &amp;http.Client{Timeout: downloadTimeout}
+@@ -58,6 +63,8 @@ func mirrorURL() string {
+ // (e.g. stable-1.34.txt → v1.34.9). The release CDN publishes markers
+ // only for GA minors, so a pre-GA server version fails here with a 404.
+ func latestPatch(ctx context.Context, server semver.Version) (semver.Version, error) {
++	ctx, cancel := context.WithTimeout(ctx, markerTimeout)
++	defer cancel()
+ 	url := fmt.Sprintf(&quot;%s/release/stable-%d.%d.txt&quot;, mirrorURL(), server.Major, server.Minor)
+ 	var sb strings.Builder
+ 	if err := streamGet(ctx, url, &amp;sb, maxTextBytes); err != nil {
+diff --git a/rdd/pkg/kuberlr/resolver_test.go b/rdd/pkg/kuberlr/resolver_test.go
+index 15b7e82ff..75500e77c 100644
+--- a/rdd/pkg/kuberlr/resolver_test.go
++++ b/rdd/pkg/kuberlr/resolver_test.go
+@@ -16,6 +16,7 @@ import (
+ 	&quot;runtime&quot;
+ 	&quot;strings&quot;
+ 	&quot;testing&quot;
++	&quot;time&quot;
+ 
+ 	&quot;github.com/blang/semver/v4&quot;
+ 	&quot;github.com/sirupsen/logrus&quot;
+@@ -141,6 +142,27 @@ func TestLatestPatch(t *testing.T) {
+ 	}
+ }
+ 
++// TestLatestPatchTimesOut locks in markerTimeout: a mirror that does
++// not answer must fail the lookup after markerTimeout, not after
++// downloadTimeout.
++func TestLatestPatchTimesOut(t *testing.T) {
++	orig := markerTimeout
++	t.Cleanup(func() { markerTimeout = orig })
++	markerTimeout = 100 * time.Millisecond
++
++	ts := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
++		select {
++		case &lt;-r.Context().Done():
++		case &lt;-time.After(3 * time.Second):
++		}
++	}))
++	defer ts.Close()
++	t.Setenv(envKubeMirror, ts.URL)
++
++	_, err := latestPatch(context.Background(), semver.Version{Major: 1, Minor: 34})
++	assert.ErrorIs(t, err, context.DeadlineExceeded)
++}
++
+ func TestCachedPath(t *testing.T) {
+ 	v := semver.Version{Major: 1, Minor: 30, Patch: 5}
+ 	got := cachedPath(v)</code></pre>
+      </details>
+    <p>With the patch, each dropped-packet run takes 5 s, still on every call; remembering a failed lookup for a while, say in a marker-miss file under <code>CacheDir()</code>, would remove the repeat.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/docs/design/cmd_service.md">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>cmd_service.md</code> names the apiserver kubeconfig as the service settings file <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/docs/design/cmd_service.md#L10-L20">rdd/docs/design/cmd_service.md</a></div>
+      <pre data-start="10" data-line="15"><code class="language-markdown">
+This service directory contains the following files:
+
+| File | Description |
+| --- | --- |
+| `config.yaml` | service config settings (written by `rdd service create` or `rdd service start`)
+| `rdd.pid`     | pid of the control plane process (normally a background daemon) |
+| `rdd.sqlite3` | control plane data store |
+
+&quot;Runs `rdd service ...`&quot; means that the command performs the functionality in-progress, with the exception of `rdd service serve`, which will launch a background process.
+</code></pre>
+    <p>The PR changes five mentions of <code>config.json</code> (lines 15, 46, 77, 79 and 86) to <code>config.yaml</code>. But <code>config.yaml</code> is the apiserver kubeconfig, which <code>storeKubeConfigToDisk</code> writes and <code>rdd ctl</code> exports as <code>KUBECONFIG</code>. The settings these lines describe are in <code>args.json</code>, which <code>Create</code> writes and <code>Exists</code> tests. The old name pointed at no file; the new one points at a real file with a different job, and the page now says that no controller should read the kubeconfig. Round 1 credited these renames because the names match <code>instance.go</code>, without checking what the files hold. The text is static, so every reader gets it wrong.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-config-files.sh; run from rdd/: bash probe-config-files.sh
+# Which file holds the service settings, and which the kubeconfig?
+grep -n &#39;&quot;args.json&quot;\|&quot;config.yaml&quot;&#39; pkg/instance/instance.go
+grep -n &#39;func storeKubeConfigToDisk\|func Exists\|func Create\|instance.ArgsFile()\|WriteFile(instance.Config()&#39; pkg/service/cmd/service.go
+grep -n &#39;config.yaml&#39; docs/design/cmd_service.md</code></pre>
+      <pre><code class="language-text">$ bash probe-config-files.sh
+110:	return filepath.Join(Dir(), &quot;args.json&quot;)
+116:	return filepath.Join(Dir(), &quot;config.yaml&quot;)
+117:func storeKubeConfigToDisk(adminToken, userToken, serverURL, tlsServerName string, caCert []byte) error {
+123:	if err := os.WriteFile(instance.Config(), data, 0o600); err != nil {
+137:func Exists() bool {
+138:	_, err := os.Stat(instance.ArgsFile())
+185:func Create(args []string) error {
+200:	return os.WriteFile(instance.ArgsFile(), data, 0o600)
+590:	data, err := os.ReadFile(instance.ArgsFile())
+15:| `config.yaml` | service config settings (written by `rdd service create` or `rdd service start`)
+46:Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `config.yaml` file.
+77:Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager using the configuration found in `config.yaml`.
+79:Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `config.yaml` directly.
+86:Takes all the same options as `rdd service create` and updates `config.yaml` with latest settings.
+185:config              /Users/me/Library/Application Support/rancher-desktop-2/config.yaml</code></pre>
+      </details>
+    <p>Fix: name <code>args.json</code> on those five lines; the paths example at line 185 lists <code>config.yaml</code> correctly, under the <code>config</code> key.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/docs/design/cmd_service.md b/rdd/docs/design/cmd_service.md
+index 4a68008df..8862e2354 100644
+--- a/rdd/docs/design/cmd_service.md
++++ b/rdd/docs/design/cmd_service.md
+@@ -12,7 +12,7 @@ This service directory contains the following files:
+ 
+ | File | Description |
+ | --- | --- |
+-| `config.yaml` | service config settings (written by `rdd service create` or `rdd service start`)
++| `args.json`   | service config settings (written by `rdd service create` or `rdd service start`)
+ | `rdd.pid`     | pid of the control plane process (normally a background daemon) |
+ | `rdd.sqlite3` | control plane data store |
+ 
+@@ -43,7 +43,7 @@ It runs in a background process, which is started on demand by `rdd service serv
+ 
+ Creates the service without starting it. This will rarely be used; the `rdd service start` command will call it automatically when the service does not yet exist.
+ 
+-Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `config.yaml` file.
++Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `args.json` file.
+ 
+ Configuration options (incomplete):
+ 
+@@ -74,16 +74,16 @@ Configuration options (incomplete):
+ 
+ Backgrounds itself (fork &amp;&amp; exec) unless invoked with `--background=false` for easier debugging.
+ 
+-Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager using the configuration found in `config.yaml`.
++Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager using the configuration found in `args.json`.
+ 
+-Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `config.yaml` directly.
++Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `args.json` directly.
+ 
+ 
+ ### `rdd service start`
+ 
+ Starts the service. Calls `rdd service create` if the service does not yet exist.
+ 
+-Takes all the same options as `rdd service create` and updates `config.yaml` with latest settings.
++Takes all the same options as `rdd service create` and updates `args.json` with latest settings.
+ 
+ Runs `rdd service serve` to actually start the control plane in the background
+ </code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/resolver.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Attached shorthand values such as <code>-ojson</code> set the probe&#39;s server <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver.go#L152-L164">rdd/pkg/kuberlr/resolver.go</a></div>
+      <pre data-start="152" data-line="157-159"><code class="language-go">func parseKubeConfigFlags(args []string) (*genericclioptions.ConfigFlags, error) {
+	fs := pflag.NewFlagSet(&quot;rdd-kubectl&quot;, pflag.ContinueOnError)
+	fs.ParseErrorsAllowlist.UnknownFlags = true
+	fs.SetOutput(io.Discard)
+	fs.Usage = func() {}
+	cf := genericclioptions.NewConfigFlags(true)
+	cf.AddFlags(fs)
+	return cf, fs.Parse(args)
+}
+
+// clientOnlySubcommands lists kubectl subcommands that never contact a
+// cluster: config/completion touch local state, kustomize renders local
+// manifests, plugin lists local PATH entries, options/help print text.</code></pre>
+    <p>The flag set binds only kubectl&#39;s connection flags and lets pflag skip unknown ones. For an unknown shorthand with an attached value, pflag skips one character and parses the rest as more shorthands. So <code>get pods -ojson</code> sets <code>-s</code> (<code>--server</code>) to <code>on</code>, and <code>-ojsonpath={.items}</code> sets it to <code>onpath={.items}</code>; I confirmed both by calling <code>parseKubeConfigFlags</code>, and <code>-o json</code> and <code>-oyaml</code> parse correctly. The probe then fails against host <code>on</code> and the embedded kubectl runs, so <code>-ojson</code>, a common scripting form, never gets a matching kubectl. <code>isClientOnly</code> builds the same flag set.</p>
+    <p>Fix: bind the value-taking shorthands that kubectl commands use (at least <code>-o</code>, <code>-l</code>, <code>-f</code>, <code>-c</code>) so pflag consumes their values, or parse with the selected kubectl command&#39;s own flags.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/cache.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The cache root is classic Rancher Desktop&#39;s own directory <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/cache.go#L46-L56">rdd/pkg/kuberlr/cache.go</a></div>
+      <pre data-start="46" data-line="51"><code class="language-go">	}
+	cache, err := os.UserCacheDir()
+	if err != nil {
+		panic(fmt.Errorf(&quot;could not determine user cache directory: %w&quot;, err))
+	}
+	return filepath.Join(cache, &quot;rancher-desktop&quot;)
+}
+
+// bestCached returns the path of the highest-versioned cached kubectl
+// acceptable for server; ok is false when none qualifies. Any
+// acceptable patch level counts as a hit, so a cache warmed with an</code></pre>
+    <p><code>os.UserCacheDir()/rancher-desktop</code> is RD1&#39;s cache directory on macOS and Linux, and RD1&#39;s whole app home on Windows (<code>%LOCALAPPDATA%\rancher-desktop</code>), per RD1&#39;s <code>src/go/rdctl/pkg/paths</code>. An RD1 factory reset or uninstall deletes it, along with this &quot;rdd-wide&quot; root that the doc invites future consumers into. <code>guestdeps.DefaultCacheDir</code> avoids the problem. Its comment asks for a directory clear of the app&#39;s cache and of every instance directory, and it uses <code>rancher-desktop.guest-deps</code>.</p>
+    <p>Fix: use a dotted name such as <code>rancher-desktop.cache</code>, which <code>instance.Name()</code> cannot produce either.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/helpers/paths.bash">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> Windows BATS exports <code>RDD_CACHE_DIR</code> in <code>/c/...</code> form <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/bats/helpers/paths.bash#L44-L56">rdd/bats/helpers/paths.bash</a></div>
+      <pre data-start="44" data-line="49-52"><code class="language-bash">
+# Get instance paths from rdd (single source of truth).
+# shellcheck disable=SC1090
+if is_windows; then
+    source &lt;(&quot;${PATH_REPO_ROOT}/bin/rdd.exe&quot; svc paths --output=shell | win_to_posix_exports)
+    if is_msys; then
+        # rdd.exe honors RDD_LOG_DIR as an override and would read /c/Users/...
+        # as \c\Users\... on the current drive, so hand it C:/Users/... instead.
+        RDD_LOG_DIR=$(host_path &quot;${RDD_LOG_DIR}&quot;)
+    fi
+else
+    source &lt;(&quot;${PATH_REPO_ROOT}/bin/rdd&quot; svc paths --output=shell)
+fi</code></pre>
+    <p>The new <code>cache_dir</code> key exports <code>RDD_CACHE_DIR</code>, which <code>CacheRoot</code> also reads as an override. Under MSYS2, <code>win_to_posix_exports</code> turns it into <code>/c/Users/...</code>, and the comment above records that <code>rdd.exe</code> reads such a value as <code>\c\Users\...</code> on the current drive. Only <code>RDD_LOG_DIR</code> gets converted back, so a Windows BATS <code>rdd kubectl</code> that downloads (S4) writes its cache under <code>&lt;drive&gt;:\c\Users\...</code>. The two kuberlr test files set the variable themselves and cannot see this. This is reasoned from the code and that comment; no Windows host ran it.</p>
+    <p>Fix: add <code>RDD_CACHE_DIR=$(host_path &quot;${RDD_CACHE_DIR}&quot;)</code> beside the <code>RDD_LOG_DIR</code> line.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/kube-context.bats">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> <code>kube-context.bats</code> now downloads a kubectl from dl.k8s.io <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/bats/tests/32-app-controllers/kube-context.bats#L8-L18">rdd/bats/tests/32-app-controllers/kube-context.bats</a></div>
+      <pre data-start="8" data-line="13"><code class="language-bash"># creates and cleans up the rancher-desktop-{instance} context in
+# ~/.kube/config, sets current-context when appropriate, and reports the
+# KubernetesReady condition on the App resource.
+
+APP_NAME=&quot;app&quot;
+K3S_VERSION=&quot;1.32.0&quot;
+CONTEXT_NAME=&quot;rancher-desktop-${RDD_INSTANCE}&quot;
+
+local_setup_file() {
+    # Isolate ~/.kube/config so tests never touch the developer&#39;s real kubeconfig.
+    # Set KUBECONFIG before starting the service so the controller process inherits</code></pre>
+    <p>The embedded kubectl is v1.36.4 and <code>acceptable</code> rejects a 1.32 server, so, on a runner with an empty cache, the file&#39;s first <code>rdd kubectl --context</code> fetches <code>stable-1.32.txt</code> and a 1.32 kubectl. A dl.k8s.io outage then fails the test, under the PR&#39;s error policy, and a local run fills the developer&#39;s real cache. The <code>run</code> → <code>run_e</code> edits at lines 133 and 192 keep the &quot;Downloading&quot; line out of <code>$output</code>. The CI log cannot confirm the download, because BATS shows a test&#39;s stderr only when the test fails.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/bats/tests/32-app-controllers/kube-context.bats#L128-L138">rdd/bats/tests/32-app-controllers/kube-context.bats</a></div>
+      <pre data-start="128" data-line="133"><code class="language-bash">    # current-context (above) proves the maintained kubeconfig names the
+    # instance, not that it reaches the right cluster. The kube-system
+    # namespace UID is a stable per-cluster identity: read it through the
+    # known-good shared context and through rdd run&#39;s maintained config, and
+    # require the two to match.
+    run_e -0 rdd kubectl --context &quot;${CONTEXT_NAME}&quot; \
+        get namespace kube-system -o jsonpath=&#39;{.metadata.uid}&#39;
+    expected_uid=${output}
+
+    run_e -0 rdd run rdd kubectl get namespace kube-system \
+        -o jsonpath=&#39;{.metadata.uid}&#39;</code></pre>
+    <p>Fix: say in the file that it doubles as the real-mirror test, or pick a <code>K3S_VERSION</code> that the embedded kubectl accepts.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/downloader.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> Ctrl+C during a download leaks the <code>.kubectl-*</code> temp file <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/downloader.go#L112-L127">rdd/pkg/kuberlr/downloader.go</a></div>
+      <pre data-start="112" data-line="117-122"><code class="language-go">	}
+	want, err := fetchSha512(ctx, base+&quot;.sha512&quot;)
+	if err != nil {
+		return fmt.Errorf(&quot;fetching checksum: %w&quot;, err)
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(dst), &quot;.kubectl-*&quot;)
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	defer os.Remove(tmpName)
+	h := sha512.New()
+	if err := streamGet(ctx, base, io.MultiWriter(tmp, h), maxKubectlBytes); err != nil {
+		tmp.Close()
+		return fmt.Errorf(&quot;downloading %s: %w&quot;, base, err)
+	}</code></pre>
+    <p>Nothing on the <code>rdd kubectl</code> path calls <code>signal.Notify</code> (only <code>cmd/download-guest-deps</code> and the hostagent do), so SIGINT ends the process without running the deferred <code>os.Remove</code>. Ctrl+C is the likely answer to a slow &quot;Downloading kubectl …&quot;, and each interrupted download leaves its partial bytes in a cache that nothing prunes. <code>TODO(eviction)</code> in <code>cache.go</code> names only SIGKILL.</p>
+    <p>Fix: run the download under <code>signal.NotifyContext(ctx, os.Interrupt)</code>, as <code>cmd/download-guest-deps</code> does, so <code>streamGet</code> aborts and the deferred removal runs; at least name SIGINT in the TODO.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/resolver.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> No test pins the embedded-first step <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver.go#L64-L76">rdd/pkg/kuberlr/resolver.go</a></div>
+      <pre data-start="64" data-line="69-71"><code class="language-go">	}
+	server, ok := serverVersion(args)
+	if !ok {
+		return &quot;&quot;, nil
+	}
+	if acceptable(embedded, server) {
+		return &quot;&quot;, nil
+	}
+	if path, ok := bestCached(server); ok {
+		return path, nil
+	}
+	want, err := latestPatch(ctx, server)
+	if err != nil {</code></pre>
+    <p>Changing line 69 to <code>if false &amp;&amp; acceptable(embedded, server)</code> leaves <code>go test ./pkg/kuberlr/</code> green, and no BATS test reaches the branch (their servers run 1.99, 1.98 and 1.32). A regression would download a kubectl for every in-skew cluster, which covers nearly every user. Round 1 declined an end-to-end test for this gap because <code>TestCompatible</code> covered the skew rule. <code>TestAcceptable</code> still covers the rule, but not this call. And a <code>Resolve</code>-level unit test does not need the end-to-end setup, so round 1&#39;s reason for declining does not apply to it.</p>
+    <p>Fix: add a <code>Resolve</code> test modeled on <code>TestResolveFallsBackToEmbeddedWhenMarkerUnavailable</code>, with a v1.36 server, asserting <code>&quot;&quot;</code> and no <code>/release/</code> request.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/exec_unix.go">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> The recursion guard cannot fire, but it changes what kubectl&#39;s children run <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/exec_unix.go#L15-L25">rdd/pkg/kuberlr/exec_unix.go</a></div>
+      <pre data-start="15" data-line="20"><code class="language-go">
+// Exec replaces the current process with kubectl plus a recursion
+// guard, so the shell sees kubectl&#39;s exit status directly. ctx is
+// unused (signature parity with the Windows variant only).
+func Exec(_ context.Context, path string, args []string) error {
+	env := append(os.Environ(), envSkipResolver+&quot;=1&quot;)
+	if err := syscall.Exec(path, append([]string{path}, args...), env); err != nil {
+		return fmt.Errorf(&quot;exec %s: %w&quot;, path, err)
+	}
+	return nil
+}</code></pre>
+    <p><code>multiCallArgs</code> cuts the program name at its first dot, so a cached <code>kubectl-v1.32.9</code> is read as <code>kubectl-v1</code> and never dispatches to <code>rdd kubectl</code>, and an upstream kubectl does not run <code>rdd</code> either. The variable does affect every child of the cached kubectl. A plugin or <code>$KUBE_EDITOR</code> that runs <code>kubectl</code> through the rdd shim skips resolution and gets the mismatched embedded kubectl. The <code>environment.md</code> row describes only the recursion.</p>
+    <p>Fix: drop the variable and its doc row, or document that it makes kubectl&#39;s children skip resolution.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/exec_windows.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> <code>exec_windows.go</code> re-implements <code>cliexit.ChildExit</code> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/exec_windows.go#L27-L39">rdd/pkg/kuberlr/exec_windows.go</a></div>
+      <pre data-start="27" data-line="32-34"><code class="language-go">	cmd.Env = append(os.Environ(), envSkipResolver+&quot;=1&quot;)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	var exitErr *exec.ExitError
+	if errors.As(err, &amp;exitErr) {
+		return &amp;cliexit.Error{Code: exitErr.ExitCode()}
+	}
+	if err != nil {
+		return fmt.Errorf(&quot;running %s: %w&quot;, path, err)
+	}
+	return nil</code></pre>
+    <p><code>cliexit.ChildExit</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/cli/exit/exit.go#L74"><code>rdd/pkg/cli/exit/exit.go:74</code></a>) does exactly this, and <code>run.go</code> and <code>limavm_shell.go</code> use it. It reached <code>main</code> on 2026-10-06, after this code was written.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/cli/exit/exit.go#L69-L79">rdd/pkg/cli/exit/exit.go</a></div>
+      <pre data-start="69" data-line="74"><code class="language-go">}
+
+// ChildExit returns an *Error that makes main exit with the exit code of a
+// child process that failed, or nil when err does not wrap an [exec.ExitError].
+// The *Error has no message, because the child has reported its own failure.
+func ChildExit(err error) *Error {
+	exitErr, ok := errors.AsType[*exec.ExitError](err)
+	if !ok {
+		return nil
+	}
+	// A signal-killed child has no exit code. ExitCode() returns -1, which</code></pre>
+    <p>Fix: <code>if exitErr := cliexit.ChildExit(err); exitErr != nil { return exitErr }</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/helpers/paths.bash">
+      <div class="finding-title" id="S9">
+        <span class="finding-num">S9.</span> <code>winpath</code> duplicates <code>host_path</code> <span class="pill pill-gemini">Gemini 3.1 Pro</span><a href="#S9" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/bats/helpers/paths.bash#L7-L19">rdd/bats/helpers/paths.bash</a></div>
+      <pre data-start="7" data-line="12-14"><code class="language-bash">}
+
+# winpath converts a POSIX path to its Windows-native path (e.g.
+# /tmp/x -&gt; C:\msys64\tmp\x on MSYS), for args reaching a native binary
+# outside rdd()&#39;s own conversions.
+winpath() {
+    if is_msys; then
+        cygpath -w &quot;$1&quot;
+    elif is_windows &amp;&amp; using_windows_exe; then
+        wslpath -w &quot;$1&quot;
+    else
+        printf &#39;%s&#39; &quot;$1&quot;
+    fi</code></pre>
+    <p>The repo context names <code>host_path</code> (<code>cygpath -m</code>) with <code>MSYS_NO_PATHCONV=1</code> as the settled way to hand a path to a native Windows binary, and calls a third approach a defect. <code>winpath</code> adds <code>cygpath -w</code> for the fake servers, <code>go build -o</code> and <code>RDD_CACHE_DIR</code>, all of which accept the <code>C:/...</code> form that <code>host_path</code> produces. <code>winpath</code> also has a WSL branch that <code>host_path</code> lacks, but CI runs only MSYS2. Nothing fails today.</p>
+    <p>Fix: use <code>host_path</code> in <code>7-kubectl-cache.bats</code> and <code>5-paths.bats</code> and drop <code>winpath</code>; this is untested on Windows.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/cache.go">
+      <div class="finding-title" id="S10">
+        <span class="finding-num">S10.</span> Cache names with a pre-release or build suffix do not round-trip <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S10" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/cache.go#L90-L97">rdd/pkg/kuberlr/cache.go</a></div>
+      <pre data-start="90" data-line="95-96"><code class="language-go">	}
+	rest, found := strings.CutPrefix(name, &quot;kubectl-v&quot;)
+	if !found {
+		return semver.Version{}, false
+	}
+	v, err := semver.Parse(rest)
+	return v, err == nil
+}</code></pre>
+    <p><code>parseCachedName</code> accepts <code>kubectl-v1.34.9+vendor</code> and <code>kubectl-v1.34.9-rc.1</code>, but <code>cachedPath</code> rebuilds the name from major, minor and patch alone, so <code>bestCached</code> returns <code>kubectl-v1.34.9</code>, which may not exist, and the exec fails. Only a hand-placed file triggers this; the downloader writes plain names.</p>
+    <p>Fix: accept only the names that the downloader writes.</p>
+      <pre><code class="language-go">	return v, err == nil &amp;&amp; len(v.Pre) == 0 &amp;&amp; len(v.Build) == 0</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/resolver.go">
+      <div class="finding-title" id="S11">
+        <span class="finding-num">S11.</span> The <code>isClientOnly</code> comment covers one position of a malformed bool <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S11" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver.go#L173-L184">rdd/pkg/kuberlr/resolver.go</a></div>
+      <pre data-start="173" data-line="178-179"><code class="language-go">
+// isClientOnly reports whether args need no cluster probe. When unsure
+// it defaults to false (probe), to avoid running a mismatched kubectl.
+//
+// Klog flags (--v, ...) stay unbound to avoid leaking into klog&#39;s
+// process-global state. A malformed bool like --client=garbage is safe:
+// it lands in the empty-args (true) branch, and kubectl rejects it too.
+func isClientOnly(args []string) bool {
+	if len(args) == 0 {
+		return true
+	}
+	fs := pflag.NewFlagSet(&quot;rdd-kubectl&quot;, pflag.ContinueOnError)</code></pre>
+    <p>After <code>version</code>, pflag stops at <code>--client=garbage</code> with <code>version</code> already collected, so the result is <code>false</code> (probe), as the case at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver_test.go#L270"><code>resolver_test.go:270</code></a> asserts. The empty-args branch applies only when the flag comes first. The conclusion that the input is safe still holds.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver_test.go#L265-L275">rdd/pkg/kuberlr/resolver_test.go</a></div>
+      <pre data-start="265" data-line="270"><code class="language-go">		{&quot;version --client=true&quot;, []string{&quot;version&quot;, &quot;--client=true&quot;}, true},
+		{&quot;version --client=false&quot;, []string{&quot;version&quot;, &quot;--client=false&quot;}, false},
+		{&quot;version --client=1&quot;, []string{&quot;version&quot;, &quot;--client=1&quot;}, true},
+		{&quot;version --client then --client=false (last wins)&quot;, []string{&quot;version&quot;, &quot;--client&quot;, &quot;--client=false&quot;}, false},
+		{&quot;version --client=false then --client (last wins)&quot;, []string{&quot;version&quot;, &quot;--client=false&quot;, &quot;--client&quot;}, true},
+		{&quot;version --client=garbage stays false&quot;, []string{&quot;version&quot;, &quot;--client=garbage&quot;}, false},
+		{&quot;version without --client&quot;, []string{&quot;version&quot;}, false},
+		{&quot;completion bash&quot;, []string{&quot;completion&quot;, &quot;bash&quot;}, true},
+		{&quot;config view&quot;, []string{&quot;config&quot;, &quot;view&quot;}, true},
+		{&quot;config get-contexts&quot;, []string{&quot;config&quot;, &quot;get-contexts&quot;}, true},
+		{&quot;kustomize bare&quot;, []string{&quot;kustomize&quot;}, true},</code></pre>
+    <p>Fix: &quot;…is safe: parsing stops at it, so it either leaves no positionals (true) or keeps <code>version</code> with <code>--client</code> unset (probe), and kubectl rejects it either way.&quot;</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/helpers/os.bash">
+      <div class="finding-title" id="S12">
+        <span class="finding-num">S12.</span> Two variables per <code>local</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S12" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/bats/helpers/os.bash#L120-L130">rdd/bats/helpers/os.bash</a></div>
+      <pre data-start="120" data-line="125"><code class="language-bash">    fi
+}
+
+# Check if a process is alive. Returns 0 if alive, non-zero otherwise.
+assert_process_alive() {
+    local pid wpid
+    pid=$1
+    if is_windows; then
+        wpid=$(winpid &quot;${pid}&quot;)
+        MSYS_NO_PATHCONV=1 tasklist.exe /FI &quot;PID eq ${wpid}&quot; /NH 2&gt;/dev/null | grep -qw &quot;${wpid}&quot;
+    else</code></pre>
+    <p>The repo context asks for one variable per <code>local</code>; lines 125 and 137 declare two.</p>
+    <p>Fix:</p>
+      <pre><code class="language-bash">    local pid=$1
+    local wpid</code></pre>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The probe runs exec credential plugins, and a cached kubectl runs them again</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — client-go v0.36.4 starts the plugin with <code>exec.Command</code> and hands it stdin when the session is interactive (<code>exec.go:457-462</code>), so the 2-second probe timeout does not bound a login prompt. An out-of-skew cluster runs the plugin twice per call, once for the probe and once in the exec&#39;d kubectl. C1&#39;s fix keeps the probe inside the user&#39;s policy but leaves this cost; setting <code>StdinUnavailable</code> on the probe&#39;s <code>ExecProvider</code> would at least keep prompts out of the probe.</li>
+      <li><strong>The resolver rebuilds part of kubectl&#39;s configuration setup</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> — C1 (kuberc policy) and S1 (shorthand parsing) both come from re-creating a subset of what kubectl derives from its own command tree. Each fix patches one piece; kuberc aliases and defaults are the next pieces that the probe would miss.</li>
+      <li><strong>Pre-GA servers warn on every call</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — on 2026-10-26, <code>stable-1.38.txt</code> returned 404 while <code>latest-1.38.txt</code> named <code>v1.38.0-alpha.2</code>. A <code>latest-</code> marker goes stale after GA (<code>latest-1.35.txt</code> still names <code>v1.35.0-rc.1</code>), so it could serve only as a fallback when <code>stable-</code> returns 404.</li>
+      <li><strong>Downloads are not retried</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — <code>rdd/pkg/guestdeps</code> and <code>scripts/lib/download.ts</code> retry transient network failures; here one reset during the 50 MB transfer exits non-zero. That suits an interactive command, but S4&#39;s test then depends on one clean transfer.</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The redesign closes round 1&#39;s vendor-patch concern</strong> <code>(in-scope)</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> — <code>latestPatch</code> works from the server&#39;s minor, so a <code>v1.34.7-gke.500</code> server resolves through <code>stable-1.34.txt</code> to a published patch; Codex ran that case.</li>
+      <li><em></em><code>rdd ctl</code> skips the probe<em></em> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> — <code>ctlAction</code> calls <code>SkipResolver()</code> before <code>kubectlAction</code>, so the embedded control plane path stays off the network.</li>
+      <li><strong>Download verification</strong> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> — streaming sha512 with size limits, a temp-file-then-rename publish, and a check that the marker&#39;s major and minor match the server&#39;s.</li>
+      <li><strong>The fake mirror logs request paths</strong> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — the BATS tests assert which URLs the resolver fetched, not only the outcome.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran <code>go test ./pkg/kuberlr/</code> (pass) and <code>golangci-lint</code> on the package (0 issues), built <code>bin/rdd</code> with <code>make build-rdd</code>, and ran <code>7-kubectl-cache.bats</code> and <code>5-paths.bats</code> under a scratch instance: 14 of 14 pass, on the reviewed code and again with the three patches applied. The three patches apply in order (C1, I1, I2) and the package tests pass with all of them.</p>
+    <p>Round 1&#39;s fixes and the tests that pin them, as the agents cited them (not mutated): the download notice by <code>7-kubectl-cache.bats</code> test 1 (<code>assert_output --partial &#39;Downloading kubectl v1.99.5&#39;</code>), the flag parse error by <code>TestParseKubeConfigFlagsRejectsMalformedFlag</code>, and <code>k3s_config</code> by <code>5-paths.bats</code>&#39;s <code>ALL_KEYS</code>.</p>
+    <p>C1 and I1 each need the regression test that their patch adds. <code>TestResolveHonorsKubercPluginPolicy</code> and <code>TestLatestPatchTimesOut</code> both fail on the reviewed code and pass with their patches; without the timeout, the lookup waits 3 s and then reports a malformed marker. With the C1 patch, its probe reports <code>plugin_runs=0</code> in both rows. An allowlist naming the plugin, <code>KUBERC=off</code> and a missing kuberc still run the plugin, while <code>--kuberc</code> with DenyAll and an allowlist naming another binary block it, as in kubectl.</p>
+    <p>S6&#39;s test is optional, because a regression there shows up as a visible &quot;Downloading&quot; line. No unit test calls <code>SkipResolver</code> either <span class="pill pill-gemini">Gemini 3.5 Flash</span>; dropping <code>skipResolver ||</code> from <code>Resolve</code> leaves the package green. That test is optional too, because a regression only adds a probe of rdd&#39;s own apiserver, which the embedded kubectl always matches.</p>
+    <p>CI on the review SHA finished green. 48 checks passed, every BATS job on all three platforms among them, and 4 were skipped. Neither C1 nor I1 is reachable from CI, since the BATS fixtures use a plain-HTTP apiserver, a reachable mirror and no kuberc.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><code>cmd_other.md#version-selection</code> matches the code, except that it does not say how long the marker fallback can take (I1). <code>environment.md</code> gives the recursion guard a purpose that cannot arise (S7). <code>cmd_service.md</code> is wrong in five places (I2); round 1&#39;s Documentation Assessment called those renames correct.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>One commit, whose message matches the PR description. Both describe the redesign accurately, with three gaps. They call one error case &quot;binary-404&quot;, but that test 404s on the <code>.sha512</code> request, as its own comment says. They say the BATS file runs &quot;under Git Bash on Windows&quot;, while CI runs MSYS2&#39;s bash. And they leave out the <code>cmd_service.md</code> renames (I2), the new <code>winpid</code> and <code>winpath</code> helpers, and the download that <code>kube-context.bats</code> now makes (S4).</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Declined in prior rounds:</p>
+    <ul>
+      <li><em></em>Windows <code>os.Rename</code> cache-publish race<em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/downloader.go#L138"><code>downloader.go:138</code></a>): declined across PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/348" class="gh-ref" data-title="rdd kubectl: embed kuberlr-style version resolver" data-state="closed" data-type="pr">#348</a> and round 1. Go&#39;s Windows <code>os.Rename</code> replaces an existing file (<code>MOVEFILE_REPLACE_EXISTING</code>), so the second rename fails only when the first copy is already running. The code is unchanged.</li>
+      <li><em></em><code>CacheRoot</code> panics when <code>os.UserCacheDir</code> fails<em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/cache.go#L49"><code>cache.go:49</code></a>): declined repeatedly; unchanged, and <code>rdd svc paths</code> reaches it.</li>
+      <li><strong>No test for concurrent first-time downloads</strong>: declined in round 1; unchanged.</li>
+      <li>Round 1 S3 (the probe overrides <code>--request-timeout</code>): the comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/resolver.go#L114"><code>resolver.go:114</code></a> is present.</li>
+      <li>Round 1 S4 (the dependabot entry for <code>fake-kube</code>): the comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/.github/dependabot.yml#L143"><code>dependabot.yml:143</code></a> is present.</li>
+    </ul>
+    <p>Documented in code as follow-ups: <code>TODO(eviction)</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/cache.go#L34"><code>cache.go:34</code></a>, which S5 extends), <code>TODO(offline)</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/downloader.go#L47"><code>downloader.go:47</code></a>, separate from I1&#39;s cost), truncation reported as a checksum mismatch (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/downloader.go#L141-L144"><code>downloader.go:141-144</code></a>), the Windows <code>Exec</code> hard-kill on context cancel (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1678821a59a7812574b9afbe92a792a3853b220b/rdd/pkg/kuberlr/exec_windows.go#L23-L25"><code>exec_windows.go:23-25</code></a>), and <code>local_teardown_file</code> in <code>7-kubectl-cache.bats</code> (lines 100-106).</p>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><strong>[Claude Opus 5.5]</strong> found the most defects this round, among them the marker stall (I1), with a measured 30-second blackhole run, the <code>cmd_service.md</code> renames (I2) that round 1 had credited, and nine of the twelve suggestions, including the embedded-first mutation (S6) and the Windows <code>RDD_CACHE_DIR</code> trap (S3). It missed C1, even though it read client-go&#39;s exec-plugin code for its design concern about interactive prompts: it saw that the probe runs plugins but never asked what policy governs them. It said that its RD1 cache-path claim came from memory; RD1&#39;s <code>rdctl</code> path code confirms it. Its reproducer for I1 was a Go test asserting elapsed time, so the report uses an end-to-end probe instead and a patch test that checks the error.</p>
+    <p><strong>[Codex GPT 6 Astra]</strong> found the round&#39;s only Critical, the kuberc <code>credentialPluginPolicy</code> bypass. Its reproducer ran <code>Resolve</code> beside a hand-built kubectl pipeline with DenyAll and AllowAll controls, which made the claim checkable at once; I confirmed it end to end with the real <code>bin/rdd</code>. It also found the <code>-ojson</code> misparse (S1) and the suffixed cache names (S10), and shared I2 with Claude. Its version of I1 concerned the missing progress line during the wait, and it merged into Claude&#39;s finding. Its <code>t.Context()</code> suggestion was dropped, because the repo&#39;s linter passes on the current tests and they use both forms. It left C1 and I1 without production patches, calling the timeout a product choice, so the patches in this report are mine.</p>
+    <p><strong>[Gemini 3.1 Pro]</strong> contributed the cache-root overlap with RD1 (S2), which Claude raised as a design concern and RD1&#39;s own path code confirms, though Gemini&#39;s snippet quoted a <code>panic</code> message that is not in the file. Its other findings did not hold as written. Its I2 asked to move the download notice back to <code>logrus.Infof</code>, which would restore the silent download that round 1 fixed, and its S2 asked to trim trailing slashes that <code>mirrorURL</code> already trims. Its I1, <code>winpath</code> duplicating <code>host_path</code>, is real, but nothing fails because of it, so it became S9. Its session log shows 14 read-only commands and no read of the kuberlr sources; it reviewed from <code>diff.patch</code>.</p>
+    <p><strong>[Gemini 3.5 Flash]</strong> stalled on its first launch. Its session log ends at 21:28 on a tool result with no reply, so it was stopped and relaunched once. The retry found the Windows <code>RDD_CACHE_DIR</code> trap (S3), which it rated Important with an <code>Unproven:</code> line, and the suffixed cache names (S10), with a fix that keeps each entry&#39;s real name. Its S3 and half of its S2 rested on SC2250 flagging an unbraced <code>$1</code>; shellcheck 0.11 does not flag positional parameters, and the repo&#39;s <code>Lint BATS</code> job passed. It found that no unit test calls <code>SkipResolver</code>, which a mutation confirmed. It marked <code>resolver.go</code>, <code>downloader.go</code> and <code>cmd_service.md</code> clean and missed all three defects in them. The Gemini CLI&#39;s policy denied several of its shell commands (compound <code>cd … &amp;&amp;</code>, <code>go build</code>, <code>rm</code>). The two Gemini models did not raise any finding in common.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>17m 28s</td><td>19m 17s</td><td>6m 34s</td><td>11m 39s</td></tr>
+        <tr><td>Findings</td><td>2I 9S</td><td>1C 2I 4S</td><td>2S</td><td>3S</td></tr>
+        <tr><td>Tool calls</td><td>67 (Bash 60, Read 7)</td><td>38 (shell 30, stdin 8)</td><td>14 (run<em>shell</em>command 14)</td><td>78 (read<em>file 31, run</em>shell<em>command 24, grep</em>search 14)</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>4</td><td>1</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>2</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>6</td><td>2</td><td>1</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>22</td><td>22</td><td>22</td><td>22</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>2</td><td>3</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 9S</strong></td><td><strong>1C 2I 4S</strong></td><td><strong>2S</strong></td><td><strong>3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>1</td><td>2</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reconciliation.</strong> Gemini 3.1 Pro I1 (<code>winpath</code>): Important → Suggestion S9, since nothing fails. Gemini 3.1 Pro I2 (stderr notice) and S2 (trailing slash): dropped as false positives. Codex S5 (<code>t.Context()</code> in tests): dropped, as no repo rule or linter asks for it. Claude&#39;s design concern about the RD1 cache root merged into S2. Gemini 3.5 Flash I1 (<code>RDD_CACHE_DIR</code> on MSYS2): Important → Suggestion S3, since no test or user path fails. Gemini 3.5 Flash S3 (unbraced <code>$1</code>): dropped as a false positive, and the SC2250 half of its S2 with it.</p>
+    <p>Codex and Claude found nearly everything this round. Codex found the one security defect and proved it with controls; Claude found the most defects and caught the round-1 credit that I2 overturns. The Gemini models each added one item that no other agent raised (S9 and the <code>SkipResolver</code> test gap), and three false positives between them.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When code re-creates part of a library&#39;s or tool&#39;s setup instead of calling its constructor (building a client from parsed flags, a config loader, a transport), list what the full setup applies, such as config wrappers, user preferences and policy hooks, and check which of them the partial copy drops. A dropped security policy costs the most, and nothing in the copied code shows its absence.</li>
+      <li>When a doc or comment change renames a file or identifier, check what the named target holds, not only that it exists. A reference that resolves to a real file with a different purpose passes a name check and misleads more than a dangling one.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] The pinned kubectl applies kuberc preferences by default (<code>KUBECTL_KUBERC</code> gate, beta), including <code>credentialPluginPolicy</code>, which it installs through <code>ConfigFlags.WithWrapConfigFn</code>. Code that builds a <code>rest.Config</code> from <code>genericclioptions.ConfigFlags</code> outside kubectl&#39;s own command constructor must apply that policy and call <code>ToRESTConfig()</code>; <code>ToRawKubeConfigLoader().ClientConfig()</code> skips the wrap, and client-go then runs any exec plugin.</li>
+      <li>[repo] clientcmd reads a user&#39;s auth info, exec credential plugins included, only for TLS servers (<code>IsConfigTransportTLS</code>). A test or probe that serves plain HTTP never exercises credential handling, so a fixture for an auth-related claim needs <code>httptest.NewTLSServer</code>.</li>
+      <li>[repo] <code>os.UserCacheDir()/rancher-desktop</code> is classic Rancher Desktop&#39;s cache directory on macOS and Linux and its app home on Windows (<code>%LOCALAPPDATA%\rancher-desktop</code>), which an RD1 factory reset or uninstall deletes. Flag new rdd paths under it; rdd&#39;s own shared caches use a dotted name such as <code>rancher-desktop.guest-deps</code>.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
