@@ -42,7 +42,7 @@ Three tables drive the parser:
 | --- | --- | --- |
 | command table | every command, its flags, whether each flag consumes a value | generated |
 | overlay | the flags whose host paths the stub translates, with a handler kind for each | hand-curated |
-| command handlers | positional-argument handlers (`builder build`, `builder debug`) | hand-written |
+| command handlers | positional-argument handlers (`container cp`, `compose cp`, `builder build`, `builder debug`) | hand-written |
 
 The ten handler kinds, one per nerdctl path syntax, are input path, input
 path that may also be `-` for stdin or a URI (`builder build --file`,
@@ -60,7 +60,11 @@ The stub does not translate the root filesystem that `run --rootfs` and
 `create --rootfs` take as their first positional argument, so name it by its
 guest path, such as `/mnt/c/rootfs`. The same goes for a host path in the
 value of a flag that the overlay leaves out, such as
-`--security-opt seccomp=<path>` or `--log-opt log-path=<path>`.
+`--security-opt seccomp=<path>` or `--log-opt log-path=<path>`. In
+`container cp` and `compose cp`, a
+container ID prefix or service name of one letter looks like a drive, so
+start the host path with a drive and a backslash, as in `C:\src`, or with
+`.`.
 
 nerdctl splits a `--mount` value at every comma, and buildctl splits the
 paths in an `--ssh` value the same way, so a path inside either cannot

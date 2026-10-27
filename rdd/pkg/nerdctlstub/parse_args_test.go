@@ -7,6 +7,7 @@ package nerdctlstub
 import (
 	"errors"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -73,6 +74,16 @@ func TestTranslateCommandLine(t *testing.T) {
 			name: "global flag before subcommand",
 			args: []string{"--namespace", "test", "ps", "-a"},
 			want: []string{"--namespace", "test", "ps", "-a"},
+		},
+		{
+			name: "container cp positional host path",
+			args: []string{"cp", `C:\host.txt`, "ctr:/tmp/x"},
+			want: []string{"cp", "/mnt/c/host.txt", "ctr:/tmp/x"},
+		},
+		{
+			name: "container cp from container",
+			args: []string{"container", "cp", "ctr:/tmp/x", `C:\out`},
+			want: []string{"container", "cp", "ctr:/tmp/x", "/mnt/c/out"},
 		},
 		{
 			name: "build context and dockerfile",
@@ -178,6 +189,11 @@ func TestTranslateCommandLineLeavesErrorsToNerdctl(t *testing.T) {
 		})
 	}
 
+	// nerdctl reports a wrong argument count itself.
+	got, err := TranslateCommandLine([]string{"container", "cp", "onlyone"})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, got, []string{"container", "cp", "onlyone"})
+
 	// nerdctl reports a missing option value itself.
 	for _, tc := range []struct {
 		args, want []string
@@ -191,6 +207,53 @@ func TestTranslateCommandLineLeavesErrorsToNerdctl(t *testing.T) {
 		got, err := TranslateCommandLine(tc.args)
 		assert.NilError(t, err, "%q", tc.args)
 		assert.DeepEqual(t, got, tc.want)
+	}
+}
+
+// TestTranslateCommandLineKeepsDoubleDash checks that a positional argument
+// after `--` stays positional when it starts with `-`.
+func TestTranslateCommandLineKeepsDoubleDash(t *testing.T) {
+	got, err := TranslateCommandLine([]string{"cp", "--", "--help", "ctr:/tmp/x"})
+	assert.NilError(t, err)
+	assert.Equal(t, len(got), 4, "%q", got)
+	assert.DeepEqual(t, got[:2], []string{"cp", "--"})
+	assert.Assert(t, strings.HasSuffix(got[2], "/--help"), "%q", got)
+	assert.Equal(t, got[3], "ctr:/tmp/x")
+}
+
+// TestTranslateCommandLineCopyPair checks which of the two `cp` specs is
+// taken as the host path; a pair in which the stub cannot pick one host path
+// reaches nerdctl unchanged.
+func TestTranslateCommandLineCopyPair(t *testing.T) {
+	relative, err := guestexec.TranslateHostPath(`.\a:b`)
+	assert.NilError(t, err)
+	cases := []struct {
+		specs []string
+		want  []string
+	}{
+		{[]string{"web1:/a", "web2:/b"}, []string{"web1:/a", "web2:/b"}},
+		{[]string{":x", "ctr:/y"}, []string{":x", "ctr:/y"}},
+		{[]string{`c:\a`, `d:\b`}, []string{`c:\a`, `d:\b`}},
+		{[]string{`\\?\C:\src`, `d:\b`}, []string{`\\?\C:\src`, `d:\b`}},
+		{[]string{"c:/a", "d:/b"}, []string{"c:/a", "d:/b"}},
+		{[]string{"-", "web:/b"}, []string{"-", "web:/b"}},
+		{[]string{"web:/a", "1:/b"}, []string{"web:/a", "1:/b"}},
+		{[]string{`C:\a`, "web:/b"}, []string{"/mnt/c/a", "web:/b"}},
+		{[]string{"web:/b", `C:\a`}, []string{"web:/b", "/mnt/c/a"}},
+		{[]string{"C:/src", "web:/dst"}, []string{"/mnt/c/src", "web:/dst"}},
+		{[]string{`C:\src\f`, "a:/dst"}, []string{"/mnt/c/src/f", "a:/dst"}},
+		{[]string{`C:/src\f`, "a:/dst"}, []string{"/mnt/c/src/f", "a:/dst"}},
+		{[]string{`.\a:b`, "web:/dst"}, []string{relative, "web:/dst"}},
+	}
+	for _, command := range [][]string{{"cp"}, {"compose", "cp"}} {
+		for _, tc := range cases {
+			args := append(slices.Clone(command), tc.specs...)
+			t.Run(strings.Join(args, " "), func(t *testing.T) {
+				got, err := TranslateCommandLine(args)
+				assert.NilError(t, err)
+				assert.DeepEqual(t, got, append(slices.Clone(command), tc.want...))
+			})
+		}
 	}
 }
 
@@ -218,6 +281,7 @@ func TestTableSanity(t *testing.T) {
 		assert.Assert(t, ok, "alias %q must exist", alias)
 	}
 	// The overlay init must have attached the positional handlers.
+	assert.Assert(t, commands["container cp"].handler != nil)
 	assert.Assert(t, commands["builder build"].handler != nil)
 	assert.Assert(t, commands["builder debug"].handler != nil)
 	// Path handlers must be wired, not left as ignoredArgHandler: translate

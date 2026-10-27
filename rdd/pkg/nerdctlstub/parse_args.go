@@ -4,10 +4,11 @@
 
 // Package nerdctlstub rewrites the host paths in a nerdctl command line so
 // that they work when nerdctl runs inside the guest VM. It rewrites the
-// values of the flags that the overlay lists and the context argument of
-// `builder build` and `builder debug`. The parser is ported from Rancher
-// Desktop 1.x (src/go/nerdctl-stub); the command table is generated from the
-// pinned nerdctl module by ./generate.
+// values of the flags that the overlay lists, the host paths of `container
+// cp` and `compose cp`, and the context argument of `builder build` and
+// `builder debug`. The parser is ported from Rancher Desktop 1.x
+// (src/go/nerdctl-stub); the command table is generated from the pinned
+// nerdctl module by ./generate.
 package nerdctlstub
 
 import (
@@ -383,6 +384,8 @@ func init() {
 	for path, handler := range map[string]commandHandlerType{
 		"builder build": builderBuildHandler,
 		"builder debug": builderBuildHandler,
+		"compose cp":    containerCopyHandler,
+		"container cp":  containerCopyHandler,
 	} {
 		def, ok := commands[path]
 		if !ok {
