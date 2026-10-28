@@ -12,7 +12,7 @@ This service directory contains the following files:
 
 | File | Description |
 | --- | --- |
-| `config.json` | service config settings (written by `rdd service create` or `rdd service start`)
+| `args.json`   | service config settings (written by `rdd service create` or `rdd service start`)
 | `rdd.pid`     | pid of the control plane process (normally a background daemon) |
 | `rdd.sqlite3` | control plane data store |
 
@@ -43,7 +43,7 @@ It runs in a background process, which is started on demand by `rdd service serv
 
 Creates the service without starting it. This will rarely be used; the `rdd service start` command will call it automatically when the service does not yet exist.
 
-Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `config.json` file.
+Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `args.json` file.
 
 Configuration options (incomplete):
 
@@ -74,16 +74,16 @@ Configuration options (incomplete):
 
 Backgrounds itself (fork && exec) unless invoked with `--background=false` for easier debugging.
 
-Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager using the configuration found in `config.json`.
+Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager with the options on its command line.
 
-Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `config.json` directly.
+Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `args.json` directly.
 
 
 ### `rdd service start`
 
 Starts the service. Calls `rdd service create` if the service does not yet exist.
 
-Takes all the same options as `rdd service create` and updates `config.json` with latest settings.
+Passes `rdd service serve` the options saved in `args.json`, then its own. `start` saves its arguments only when it creates the service, and never saves the `--controllers` or `--secure-port` values passed to it, which apply to this session only.
 
 Runs `rdd service serve` to actually start the control plane in the background
 
