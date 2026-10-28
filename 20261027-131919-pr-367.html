@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This round replaces the hand-built flag parser with kubectl&#39;s own command tree and limits the recursion guard to the probe. Both changes hold, and each round-2 fix to the resolver&#39;s behavior has a test that fails without it. But two client-only paths still reach the resolver. <code>kubectl kuberc</code> runs in a downloaded kubectl that predates the command, and TAB completion of <code>config</code> commands probes the cluster. And no test pins the Password clearing that keeps the probe off stdin.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings below cite the reviewed commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/93ab61186"><code>93ab61186</code></a>. Their fixes were amended into it as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a>, so the cited lines have moved. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -376,6 +382,7 @@ index 37260b03c..db1799d66 100644
  		{&quot;help subcommand&quot;, []string{&quot;help&quot;, &quot;get&quot;}, true},
  		{&quot;get pods&quot;, []string{&quot;get&quot;, &quot;pods&quot;}, false},</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a>. <code>kuberc</code> joined <code>clientOnlySubcommands</code>, with <code>TestIsClientOnly</code> rows for <code>view</code> and <code>set</code>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/kuberlr/resolver.go">
       <div class="finding-title" id="I2">
@@ -485,6 +492,7 @@ index 37260b03c..f7581d093 100644
  	for _, tc := range cases {
  		t.Run(tc.name, func(t *testing.T) {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a> by a different approach. Three revisions built on this patch (strip the request word, then also the word being completed, then treat a completion&#39;s parse error as client-only) each misrouted another case, such as the <code>=</code> form and version-dependent flag values. Instead, a command line that kubectl&#39;s tree cannot find (a completion request, a top-level plugin, an unknown command) now runs the embedded kubectl without a probe.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/kuberlr/resolver.go">
       <div class="finding-title" id="I3">
@@ -588,6 +596,7 @@ index 37260b03c..990508b2d 100644
 +}</code></pre>
       </details>
     <p>The three patches apply in sequence, in the order I1, I2, I3, and the package&#39;s tests pass with all of them.</p>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a>. <code>TestResolveLeavesStdinAlone</code> fails when <code>Password</code> stays bound.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -627,6 +636,7 @@ When the cluster is unreachable, and for client-only commands (`kubectl config`,
 		return false, nil, err
 	}</code></pre>
     <p>Fix: say &quot;the cluster that kubectl&#39;s flags and kuberc select&quot;, and name plugin arguments beside the alias limitation in the <code>parseCommandLine</code> comment.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a>. <code>cmd_other.md</code> and the commit message now say what the probe reads and where it can measure a different cluster (the arguments a kuberc alias adds, a kuberc default that an older kubectl ignores). Top-level plugins no longer probe, so their arguments never reach the probe&#39;s flags.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/exec_windows.go">
       <div class="finding-title" id="S2">
@@ -648,6 +658,7 @@ When the cluster is unreachable, and for client-only commands (`kubectl config`,
 }</code></pre>
     <p>Round 2 moved this conversion into <code>cliexit.ChildExit</code>, and no test covers the exit code that <code>Exec</code> returns: <code>pkg/cli/exit</code> has no test file, and the fake kubectl in <code>7-kubectl-cache.bats</code> always exits 0. Without the conversion, every failing kubectl on Windows would exit 1 behind a <code>running …: exit status N</code> message, so a script could no longer tell <code>kubectl diff</code>&#39;s exit 1 (differences found) from its exit 2 (an error). The message names the cause, so the test is optional. The Windows <code>test-rdd</code> job runs this package&#39;s unit tests, so a Windows-only test that runs <code>cmd /c exit 3</code> through <code>Exec</code> does not need new setup.</p>
     <p>Fix: add that test, asserting a <code>*cliexit.Error</code> with code 3.</p>
+    <p><strong>Outcome:</strong> declined. Optional test: a lost exit code still prints an error naming the child&#39;s exit status, and Windows CI runs <code>Exec</code> through <code>7-kubectl-cache.bats</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/kuberlr/resolver_test.go">
       <div class="finding-title" id="S3">
@@ -679,6 +690,7 @@ func TestParseKubeConfigFlagsRejectsMalformedFlag(t *testing.T) {
 		{&quot;version&quot;, &quot;--client=garbage&quot;},
 		{&quot;--help=garbage&quot;, &quot;get&quot;, &quot;pods&quot;},</code></pre>
     <p>Fix: rename them to <code>TestParseCommandLine</code> and <code>TestParseCommandLineRejectsMalformedFlag</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -686,8 +698,8 @@ func TestParseKubeConfigFlagsRejectsMalformedFlag(t *testing.T) {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>A cluster-bound completion can download a kubectl out of sight</strong> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — With I2&#39;s patch, <code>kubectl get pods &lt;TAB&gt;</code> still probes, which is right, because the matching kubectl completes it. But against a skewed cluster with an empty cache, that TAB starts the 50 MB download, and cobra&#39;s bash and zsh scripts discard its stderr (<code>2&gt;/dev/null</code>), so the shell hangs with no notice for as long as the download takes. Completion could use only the cache, and fall back to the embedded kubectl on a miss.</li>
-      <li><strong>A credential plugin that calls kubectl runs once more per call</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — This round stopped passing the recursion guard to the cached kubectl&#39;s children, as round 2 asked. So when the cached kubectl runs a kubelogin plugin (<code>kubectl oidc-login get-token</code>), that call re-enters <code>rdd kubectl</code>, finds <code>oidc-login</code> unknown, probes, and runs the plugin a third time. It adds to the declined double-run item below.</li>
+      <li><strong>A cluster-bound completion can download a kubectl out of sight</strong> <code>(in-scope)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — With I2&#39;s patch, <code>kubectl get pods &lt;TAB&gt;</code> still probes, which is right, because the matching kubectl completes it. But against a skewed cluster with an empty cache, that TAB starts the 50 MB download, and cobra&#39;s bash and zsh scripts discard its stderr (<code>2&gt;/dev/null</code>), so the shell hangs with no notice for as long as the download takes. Completion could use only the cache, and fall back to the embedded kubectl on a miss. <strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1851a6cde"><code>1851a6cde</code></a>. Completion requests no longer probe, so they cannot start a download.</li>
+      <li><strong>A credential plugin that calls kubectl runs once more per call</strong> <code>(future)</code> <span class="pill pill-claude">Claude Opus 5.5</span> — This round stopped passing the recursion guard to the cached kubectl&#39;s children, as round 2 asked. So when the cached kubectl runs a kubelogin plugin (<code>kubectl oidc-login get-token</code>), that call re-enters <code>rdd kubectl</code>, finds <code>oidc-login</code> unknown, probes, and runs the plugin a third time. It adds to the declined double-run item below. <strong>Outcome:</strong> declined as future work, then resolved by I2&#39;s change. kubelogin&#39;s <code>kubectl oidc-login</code> is a top-level plugin, and plugins no longer probe.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -704,12 +716,14 @@ func TestParseKubeConfigFlagsRejectsMalformedFlag(t *testing.T) {
     <p>Round-2 fixes and the tests that pin them, which Claude and Codex each checked by reverting the fix: C1 by <code>TestResolveHonorsKubercPluginPolicy</code>, I1 by <code>TestLatestPatchTimesOut</code>, S1 by the <code>-ojson</code> rows in <code>TestParseKubeConfigFlags</code> and <code>TestIsClientOnly</code>, S7 by <code>TestResolveSetsRecursionGuardWhileProbing</code>, S10 by <code>TestBestCached</code>, and S11 by <code>TestParseKubeConfigFlagsRejectsMalformedFlag</code>. I repeated the C1 and S10 reverts with the same result. No test pins S3 (the MSYS2 <code>RDD_CACHE_DIR</code> conversion), S8 (S2 above) or S12, which are Windows or BATS style only.</p>
     <p>I3 is the required gap this round. <code>TestResolveHonorsKubercPluginPolicy</code> also lacks a positive control, so it would pass even if the probe never ran. <code>TestResolveSetsRecursionGuardWhileProbing</code> shows that the same kind of fixture does run its plugin, so this is optional <span class="pill pill-claude">Claude Opus 5.5</span>.</p>
     <p>CI for this SHA, at the time of writing: on Jan&#39;s fork, <code>bats-others</code> (which runs <code>7-kubectl-cache.bats</code>), <code>bats-lima</code> and <code>bats-docker</code> passed on macOS, Linux and Windows; <code>bats-app</code> (<code>kube-context.bats</code>) passed on Linux and was still running on the other two; and UI E2E passed. The upstream PR&#39;s own workflows had not started; DCO passed. No CI fixture reaches I1, I2 or I3.</p>
+    <p><strong>Outcome:</strong> I3&#39;s test was written. The optional positive control for <code>TestResolveHonorsKubercPluginPolicy</code> and a test of the MSYS2 <code>RDD_CACHE_DIR</code> conversion were declined.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/93ab61186ec768875377dd7924d754dc05cbe6d5/rdd/docs/design/cmd_other.md#L23"><code>cmd_other.md:23</code></a> says client-only commands run the embedded kubectl; I1 and I2 contradict it until they are fixed, and S1 covers the probe sentence above it. <code>environment.md</code>&#39;s <code>RDD_KUBECTL_RESOLVED</code> row matches <code>probeServerVersion</code>. The <code>instancePaths</code> doc comment (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/93ab61186ec768875377dd7924d754dc05cbe6d5/rdd/cmd/rdd/service_paths.go#L21"><code>service_paths.go:21</code></a>) says it maps each key to an instance path, which no longer fits the shared <code>cache_dir</code> and <code>kubectl_cache</code> keys <span class="pill pill-claude">Claude Opus 5.5</span>. The commit message accounts for the round&#39;s changes and repeats S1&#39;s wording.</p>
+    <p><strong>Outcome:</strong> the <code>instancePaths</code> comment was rewritten and the function renamed <code>servicePaths</code>. The <code>Short</code> help, <code>cmd_service.md</code>, <code>environment.md</code> and <code>paths.bash</code> got the same correction, and <code>cmd_other.md</code> now matches I1, I2 and S1.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
