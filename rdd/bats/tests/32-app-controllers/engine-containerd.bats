@@ -26,6 +26,28 @@ local_teardown() {
     fi
 }
 
+# Create host_fixture_dir with "file" in it, under the home directory because
+# the guest sees it. host_fixture_src is that directory as host_path prints it.
+create_host_fixture() {
+    run -0 mktemp -d "${HOME}/rdd-bats-nerdctl.XXXXXX"
+    host_fixture_dir=${output}
+    create_file "${host_fixture_dir}/file" <<<shared
+    run -0 host_path "${host_fixture_dir}"
+    host_fixture_src=${output}
+}
+
+# Print where the guest sees a host path, /mnt/<drive>/... on Windows.
+guest_path() { # <host-path>
+    if is_windows; then
+        local path
+        path=$(cygpath -m "$1")
+        local drive=${path:0:1}
+        printf '/mnt/%s%s\n' "${drive,,}" "${path:2}"
+    else
+        printf '%s\n' "$1"
+    fi
+}
+
 @test "containerd engine reports ContainerEngineReady with reason Connected" {
     rdd ctl wait --for=condition=ContainerEngineReady app/app --timeout=60s
     run -0 rdd ctl get app app \
@@ -499,13 +521,8 @@ assert_container_pid_changed() { # <container> <previous-pid>
     # The guest sees the host home directory through Lima's mount, or on
     # Windows through WSL's /mnt/<drive> automount after the stub rewrites
     # the path.
-    run -0 mktemp -d "${HOME}/rdd-bats-nerdctl.XXXXXX"
-    host_fixture_dir=${output}
-    create_file "${host_fixture_dir}/file" <<<shared
-
-    run -0 host_path "${host_fixture_dir}"
-    src=${output}
-    run_e -0 nerdctl run --rm --volume "${src}:/data" busybox cat /data/file
+    create_host_fixture
+    run_e -0 nerdctl run --rm --volume "${host_fixture_src}:/data" busybox cat /data/file
     assert_output shared
 }
 
@@ -515,6 +532,127 @@ assert_container_pid_changed() { # <container> <previous-pid>
     nerdctl run --rm --volume rdd-bats-vol:/data busybox true
     nerdctl volume inspect rdd-bats-vol
     nerdctl volume rm rdd-bats-vol
+}
+
+@test "nerdctl bind-mounts a host directory given as a backslash path" {
+    skip_on_unix
+    create_host_fixture
+    run -0 cygpath -w "${host_fixture_dir}"
+    backslash_dir=${output}
+    run_e -0 nerdctl run --rm --volume "${backslash_dir}:/data" busybox cat /data/file
+    assert_output shared
+}
+
+@test "nerdctl bind-mounts the working directory" {
+    create_host_fixture
+    cd "${host_fixture_dir}"
+    run_e -0 nerdctl run --rm --volume .:/data busybox cat /data/file
+    assert_output shared
+}
+
+@test "nerdctl bind-mounts a rooted path on the working directory's drive" {
+    skip_on_unix
+    create_host_fixture
+    cd "${host_fixture_dir}"
+    run -0 cygpath -w "${host_fixture_dir}"
+    rooted=${output:2}
+    run_e -0 nerdctl run --rm --volume "${rooted}:/data" busybox cat /data/file
+    assert_output shared
+}
+
+@test "nerdctl keeps a bind mount's mode" {
+    create_host_fixture
+    run -1 nerdctl run --rm --volume "${host_fixture_src}:/data:ro" busybox touch /data/x
+    assert_output --partial "Read-only file system"
+    assert_file_not_exists "${host_fixture_dir}/x"
+}
+
+@test "nerdctl bind-mounts a host directory given with --mount" {
+    create_host_fixture
+    run_e -0 nerdctl run --rm --mount "type=bind,source=${host_fixture_src},target=/data" busybox cat /data/file
+    assert_output shared
+}
+
+@test "nerdctl passes an anonymous volume through" {
+    run_e -0 nerdctl run --rm --volume /data busybox ls -d /data
+    assert_output /data
+}
+
+@test "nerdctl rejects a drive path without a container path" {
+    skip_on_unix
+    create_host_fixture
+    cd "${host_fixture_dir}"
+    run -1 nerdctl run --rm --volume C:/data busybox true
+    assert_output --partial "invalid volume mount C:/data: expected source:container-path"
+    # Passed through, C:/data would make nerdctl bind-mount a "C" directory,
+    # which it creates in the working directory.
+    assert_not_exists "${host_fixture_dir}/C"
+}
+
+@test "nerdctl reads env files from the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/env" <<<GREETING=hi
+    create_file "${host_fixture_dir}/env2" <<<NAME=bats
+    run_e -0 nerdctl run --rm --env-file "${host_fixture_src}/env" busybox printenv GREETING
+    assert_output hi
+    run_e -0 nerdctl run --rm --env-file "${host_fixture_src}/env,${host_fixture_src}/env2" busybox printenv GREETING NAME
+    assert_output $'hi\nbats'
+}
+
+@test "nerdctl reads a label file relative to the working directory" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/labels" <<<com.example.test=yes
+    cd "${host_fixture_dir}"
+    nerdctl run --name rdd-bats-labels --label-file labels busybox true
+    run_e -0 nerdctl container inspect --format '{{index .Config.Labels "com.example.test"}}' rdd-bats-labels
+    assert_output yes
+    nerdctl rm rdd-bats-labels
+}
+
+@test "nerdctl writes a cidfile on the host" {
+    create_host_fixture
+    nerdctl run --rm --cidfile "${host_fixture_src}/cid" busybox true
+    run -0 cat "${host_fixture_dir}/cid"
+    assert_output --regexp '^[0-9a-f]{64}$'
+}
+
+@test "nerdctl exec reads an env file from the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/env" <<<GREETING=hi
+    nerdctl run --detach --name rdd-bats-exec busybox sleep 300
+    run_e -0 nerdctl exec --env-file "${host_fixture_src}/env" rdd-bats-exec printenv GREETING
+    assert_output hi
+    nerdctl rm --force rdd-bats-exec
+}
+
+@test "nerdctl saves and loads an image through a host file" {
+    create_host_fixture
+    nerdctl image save --output "${host_fixture_src}/busybox.tar" busybox
+    assert_file_not_empty "${host_fixture_dir}/busybox.tar"
+    run_e -0 nerdctl image load --input "${host_fixture_src}/busybox.tar"
+    assert_output --partial "Loaded image"
+}
+
+@test "nerdctl compose resolves paths against a compose file in another directory" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/compose.yaml" <<'EOF'
+services:
+  hello:
+    image: busybox
+    volumes:
+      - ./file:/data/file
+    command: cat /data/file
+EOF
+    cd "${HOME}"
+    run -0 guest_path "${host_fixture_dir}"
+    guest_dir=${output}
+    run_e -0 nerdctl compose --file "${host_fixture_src}/compose.yaml" config
+    assert_line --partial "source: ${guest_dir}/file"
+    # compose run allocates a TTY whenever --interactive is on, and a bats run
+    # does not have a terminal. Without a TTY, compose prefixes the output.
+    run_e -0 nerdctl compose --file "${host_fixture_src}/compose.yaml" run --rm --interactive=false hello
+    assert_line --regexp 'shared$'
+    nerdctl compose --file "${host_fixture_src}/compose.yaml" down
 }
 
 # --- Cleanup on VM stop ---
