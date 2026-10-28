@@ -3,7 +3,6 @@
  */
 import childProcess from 'node:child_process';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { rootCertificates } from 'node:tls';
 import util from 'node:util';
@@ -12,6 +11,7 @@ import { expect, _electron, ElectronApplication, TestInfo } from '@playwright/te
 import _, { GetFieldType } from 'lodash';
 import { Page } from 'playwright-core';
 import { Agent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
+import yaml from 'yaml';
 
 import packageMeta from '@/package.json' with { type: 'json' };
 import { defaultSettings, Settings } from '@pkg/config/settings';
@@ -314,6 +314,32 @@ export interface startRancherDesktopOptions {
   timeout?:    number;
   /** A suffix to be added to the log file, for variants. */
   logVariant?: string;
+  /** If set, do not avoid triggering first-run logic. */
+  firstRun?:   boolean;
+}
+
+/**
+ * Wait for all of the API resources specified in the (mock controller) CRDs to
+ * be registered.
+ * @param rdd The path to the Rancher Desktop executable.
+ * @param env The environment variables to use when running the command.
+ */
+async function waitForAPIResources(rdd: string, env: Record<string, string>) {
+  const crdPath = path.resolve(import.meta.dirname, '../../rdd/pkg/controllers/mock/crd.yaml');
+  const crdContents = await fs.promises.readFile(crdPath, 'utf-8');
+  const rawNames = yaml.parseAllDocuments(crdContents).map(doc => doc.getIn(['metadata', 'name']));
+  const names = new Set(rawNames.filter(v => typeof v === 'string'));
+  await retry(async() => {
+    const { stdout } = await spawnFile(rdd, ['ctl', 'api-resources', '--output=name'], { env, stdio: 'pipe' });
+    const actual = new Set(stdout.split(/\s+/));
+    const missing = names.difference(actual);
+    if (missing.size > 3) {
+      throw new Error(`Missing ${ missing.size } API resources (e.g. ${ missing.values().next().value })`);
+    }
+    if (missing.size > 0) {
+      throw new Error(`Missing API resources: ${ Array.from(missing).sort().join(', ') }`);
+    }
+  });
 }
 
 /**
@@ -335,6 +361,7 @@ export async function startRancherDesktop(testInfo: TestInfo, options: startRanc
     file: testInfo.file, options, startTime: Date.now(),
   };
   const topSrcDir = path.join(import.meta.dirname, '../..');
+  const rdd = path.join(topSrcDir, 'rdd', 'bin', exeName('rdd'));
   const logsDir = reportAsset(testInfo, 'log');
   await fs.promises.rm(logsDir, {
     recursive: true, force: true, maxRetries: 3,
@@ -352,13 +379,9 @@ export async function startRancherDesktop(testInfo: TestInfo, options: startRanc
   // We need to manually launch RDD, to force the use of the mock backend.
   const rddLogs = (await fs.promises.open(path.join(logsDir, 'rdd-exec.log'), 'a')).createWriteStream();
   try {
-    await spawnFile(
-      path.join(topSrcDir, 'rdd', 'bin', exeName('rdd')),
-      ['service', 'delete'],
+    await spawnFile(rdd, ['service', 'delete'],
       { env, stdio: ['ignore', rddLogs, rddLogs] });
-    await spawnFile(
-      path.join(topSrcDir, 'rdd', 'bin', exeName('rdd')),
-      ['service', 'start', '--controllers=', '--wait=false'],
+    await spawnFile(rdd, ['service', 'start', '--controllers=', '--wait=false'],
       { env, stdio: ['ignore', rddLogs, rddLogs] });
   } finally {
     await expect(util.promisify(rddLogs.close.bind(rddLogs))(), 'failed to close RDD logs')
@@ -373,6 +396,17 @@ export async function startRancherDesktop(testInfo: TestInfo, options: startRanc
   // Stash controller PID so we can kill it in teardown().
   currentTest.mockController = controller;
   controller.unref(); // Don't block test if we fail to clean up.
+
+  // Wait for the CRD to be registered first, since that is done by the mock
+  // controller asynchronously from control plane readiness.
+  await waitForAPIResources(rdd, env);
+
+  if (!options?.firstRun) {
+    // When not doing first-run, create the `app` manually.  Since we're using
+    // the mock controller, the app will not initially settle. Create the app
+    // without waiting for it to settle.
+    await retry(() => spawnFile(rdd, ['set', 'running=false', '--wait=false'], { env, stdio: 'pipe' }));
+  }
 
   const args = [
     path.join(topSrcDir, packageMeta.main),

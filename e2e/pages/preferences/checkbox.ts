@@ -3,9 +3,12 @@ import type { Locator } from '@playwright/test';
 /**
  * RDCheckbox returns a locator suitable for a <rd-checkbox>.
  */
-export default function RDCheckbox(locator: Locator): Locator {
+export default function RDCheckbox(locator: Locator): Locator & { checkbox: Locator } {
   const l = locator.locator('input[type="checkbox"]');
   return Object.create(l, {
+    checkbox: {
+      value: l,
+    },
     // Override `check` to always use force, as Playwright detects that the
     // clicks are handled by a different element.
     check: {

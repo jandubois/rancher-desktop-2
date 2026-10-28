@@ -151,6 +151,27 @@ jq_raw() {
     return "${status}"
 }
 
+# assert_jq_raw [<expr> <value>]... <JSON>
+# Given a JSON object in the last argument, assert that for pairs of expr and
+# value given in the arguments, the expression must evaluate to the given value.
+# It does not distinguish between types; for example, null and "null" (a string)
+# are interchangable.
+assert_jq_raw() {
+    if (($# % 2 == 0)); then
+        echo "Invalid number of arguments ($#) for assert_jq_raw" >&2
+        return 1
+    fi
+    local json=${!#}
+    local expr expected actual
+    while (($# > 1)); do
+        expr=$1
+        expected=$2
+        shift 2
+        actual=$(jq --raw-output "${expr} | tostring" <<<"${json}") || return 1
+        assert_equal "${expr} = ${actual}" "${expr} = ${expected}"
+    done
+}
+
 # Run jq_raw on the current $output
 jq_output() {
     jq_raw "$@" "${output}"

@@ -149,8 +149,56 @@ check_truthiness() {
 
 get_json_test_data() {
     # The run/assert silliness is because shellcheck gets confused by direct assignment to $output
-    run echo '{"String":"string", "False":false, "Null":null}'
+    run echo '{"String":"string", "False":false, "Null":null, "NullString":"null", "Container":{ "Child": 3 }}'
     assert_success
+}
+
+@test 'assert_jq_raw checks one key-value pair' {
+    get_json_test_data
+    assert_jq_raw .String string "${output}"
+}
+
+@test 'assert_jq_raw checks multiple key-value pairs' {
+    get_json_test_data
+    assert_jq_raw .String string .False false .Null null "${output}"
+}
+
+@test 'assert_jq_raw checks nested values' {
+    get_json_test_data
+    assert_jq_raw .Container.Child 3 "${output}"
+}
+
+@test 'assert_jq_raw cannot distinguish null string from null' {
+    get_json_test_data
+    assert_jq_raw .Null null .NullString null "${output}"
+}
+
+@test 'assert_jq_raw succeeds with no key-value pairs given' {
+    get_json_test_data
+    assert_jq_raw "${output}"
+}
+
+@test 'assert_jq_raw checks incorrect key-value pair' {
+    get_json_test_data
+    run -1 assert_jq_raw .String number "${output}"
+}
+
+@test 'assert_jq_raw checks incorrect nested values' {
+    get_json_test_data
+    run -1 assert_jq_raw .Container.Child wrong "${output}"
+}
+
+@test 'assert_jq_raw prints out details on failure' {
+    get_json_test_data
+    run -1 assert_jq_raw .String hello "${output}"
+    assert_output --regexp "expected.*\.String.*hello"
+    assert_output --regexp "actual.*\.String.*string"
+}
+
+@test 'assert_jq_raw rejects missing values' {
+    get_json_test_data
+    run -1 assert_jq_raw .String "${output}"
+    assert_output --partial "Invalid number of arguments"
 }
 
 @test 'jq_output extracts string value' {

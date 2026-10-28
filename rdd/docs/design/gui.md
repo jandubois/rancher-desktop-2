@@ -2,26 +2,26 @@
 
 ## Startup sequence
 
-The GUI will only run an external process once to get the kube config for the rdd control plane[^RDX].
+The GUI will avoid interacting with the host machine, outside of calling `rdd`
+to get its configuration, including both relevant paths and how to connect to
+the control plane.  It may also need to interact with RDX extensions.
 
-[^RDX]: The only exception is running external processes for RDX extensions.
+1.  Run `rdd service paths` to determine paths (where to store the logs,
+    GUI-specific data, etc.).
 
-1.  Run `rdd service config`.
-    This will create the rdd instance (with default settings) if it doesn't exist yet.
-    It will also make sure the control plane is running and accepting requests before returning.
+2.  Run `rdd ctl get app` to determine whether first-run is needed.
+    This will make sure the control plane is running and accepting requests before returning.
 
-2.  Setup a watch on `diagnostics` in the `rdd-system` namespace.
+3.  Run `rdd service config`.
+    This is used to configure the GUI to be able to communicate to the control plane.
+
+4.  Create and setup a watch on the `app`.
     This will also make sure that the control plane will not be stopped due to the idle-timeout.
-
-3.  Setup a watch on the `app`.
-
-4.  If there is no app instance, then display the first-run dialog.
-    Create the new instance with the specified settings (in "Running" state).
-    Then setup the watch on the app again; this time it must succeed.
 
 ## Stopped App Instance
 
-The GUI can remain running even when the app is in stopped state, so we need a UI mechanism to start/stop the app instance. For example this will be possible purely from the GUI:
+The GUI can remain running even when the app is in stopped state, so long as the control plane stays running.
+For example this will be possible purely from the GUI:
 
 1. Stop the app
 2. Create a snapshot
@@ -30,9 +30,13 @@ The GUI can remain running even when the app is in stopped state, so we need a U
 
 This saves one VM restart cycle because there is not a forced start after taking the snapshot.
 
-There will be 3 auto-start app settings (and one auto-stop one):
+There will be settings to control control plane lifetime independent of the GUI:
+- Start the Rancher Desktop service on login.
+  - This implies that the Rancher Desktop service will persist when the GUI is closed.
+- Start the container engine when Rancher Desktop service starts.
+- Start the Rancher Desktop GUI on login.
 
-1. Start Rancher Desktop service on login
-2. Start Rancher Desktop GUI on login
-3. Start Rancher Desktop service when the GUI is launched (redundant when #1 is set)
-4. Stop Rancher Desktop service when the GUI is closed
+## Stopped control plane
+
+The GUI assumes that the control plane does *not* restart for the duration of its lifetime.
+If the control plane needs to restart for any reason, the app must quit.
