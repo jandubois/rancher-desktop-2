@@ -6,6 +6,7 @@ require (
 	al.essio.dev/pkg/shellescape v1.6.1
 	github.com/MakeNowJust/heredoc v1.0.0
 	github.com/Microsoft/go-winio v0.6.4
+	github.com/blang/semver/v4 v4.0.0
 	github.com/containerd/containerd/api v1.12.0
 	github.com/containerd/containerd/v2 v2.4.2
 	github.com/containerd/errdefs v1.0.0
@@ -47,6 +48,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.37.0
 	k8s.io/apimachinery v0.37.0
 	k8s.io/apiserver v0.37.0
+	k8s.io/cli-runtime v0.36.4
 	k8s.io/client-go v0.37.0
 	k8s.io/component-base v0.37.0
 	k8s.io/klog/v2 v2.140.0
@@ -113,7 +115,6 @@ require (
 	github.com/balajiv113/fd v0.0.0-20230330094840-143eec500f3e // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bkielbasa/cyclop v1.2.3 // indirect
-	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/blizzy78/varnamelen v0.8.0 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.7.1 // indirect
 	github.com/bombsimon/wsl/v4 v4.7.0 // indirect
@@ -465,7 +466,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gvisor.dev/gvisor v0.0.0-20260413194555-9680d69bf798 // indirect
 	honnef.co/go/tools v0.8.2 // indirect
-	k8s.io/cli-runtime v0.36.4 // indirect
 	k8s.io/cloud-provider v0.36.4 // indirect
 	k8s.io/cluster-bootstrap v0.36.4 // indirect
 	k8s.io/code-generator v0.37.0 // indirect

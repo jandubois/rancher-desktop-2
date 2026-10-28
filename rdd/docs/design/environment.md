@@ -14,6 +14,8 @@ These variables control RDD behavior. Set them before running `rdd` commands.
 | `RDD_LOG_DIR` | Override the logging directory; usually used for tests. | unset |
 | `RDD_LOG_LEVEL` | Sets the log level (`fatal`, `error`, `warn`, `info`, `debug`, `trace`). Overridden by `--log-level` flag. When unset, defaults to `debug` in developer mode, `warn` otherwise. | unset |
 | `RDD_LOG_TITLE` | When set, writes this string as the first line of each new log file. Useful for identifying log files from specific test runs or sessions. | unset |
+| `RDD_CACHE_DIR` | Overrides the rdd-wide cache root. The kubectl resolver appends `kubectl/<os>-<arch>/` inside it. | `os.UserCacheDir()`/`rancher-desktop` (e.g. `~/Library/Caches/rancher-desktop` on macOS) |
+| `RDD_KUBECTL_MIRROR` | Overrides the Kubernetes release mirror for kubectl downloads. Must serve both the release binaries and the `stable-<major>.<minor>.txt` version markers (see [Version selection](cmd_other.md#version-selection)). | `https://dl.k8s.io` |
 | `RDD_TRACE_PACKETS` | Adds `--trace-packets` to the guest vm-switch network setup, logging every packet sent or received. Requires `RDD_KEEP_LOGS`, and affects throughput and timing, so use it only when diagnosing network failures. | unset |
 | `RDD_VM_CPUS` | Overrides the app VM's CPU count (the Lima template default is 2). Intended for CI, where runner sizing differs from user machines. A set-but-invalid value is an error, not a fallback. To be replaced by an App spec property. | unset |
 
@@ -28,6 +30,14 @@ These variables configure the BATS test framework. They have no effect on `rdd` 
 | `RDD_VM_TYPE` | Lima VM type for tests that boot a VM (`qemu` or `vz`). Useful for reproducing QEMU-specific failures on macOS. | Lima's default (`vz` on macOS, `qemu` on Linux) |
 | `RDD_CONTAINER_ENGINE` | Container engine the docker test suite drives (`moby` or `containerd`). | `moby` |
 | `RDD_KEEP_RUNNING` | Keeps the control plane running between test files instead of stopping it in `teardown_file`, so a VM-booting suite boots once per run. | unset |
+
+### Internal Variables
+
+`rdd` sets these variables itself; users should leave them alone. They appear here so a developer reading a process tree or strace output can identify them.
+
+| Variable | Description |
+| --- | --- |
+| `RDD_KUBECTL_RESOLVED` | Recursion guard for the kubectl version resolver. `rdd kubectl` sets it while it probes the cluster's version, so a `kubectl` command that a credential plugin runs skips resolution. The probe runs the credential plugin even for some command lines that kubectl runs without credentials, such as a kuberc alias of `config view`; without the guard, a credential plugin that runs such a command would probe and run itself again, without end. A credential plugin run as a top-level kubectl plugin, such as kubelogin's `kubectl oidc-login get-token`, never probes. `rdd ctl` skips resolution through the in-process `kuberlr.SkipResolver()` helper and does not set it. |
 
 ## Path Variables
 
