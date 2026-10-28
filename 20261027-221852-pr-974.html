@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This round reviews the recut PR on its own. It holds the parser, the generated table and the overlay of volume, mount and file options. Round two&#39;s fixes hold. Three parser defects remain, each with a tested patch. A typo in a short-option bunch turns into a different command, a comma-separated list of env files drops an entry or leaves one untranslated, and splitting <code>--opt=value</code> hides the subcommand from cobra. One comment still describes positional handlers that moved out.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code Changed Since This Review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings cite <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d21401ab0"><code>d21401ab0</code></a>. Their fixes were amended into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/87e52c503"><code>87e52c503</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c72c96265"><code>c72c96265</code></a> on <code>rdd-nerdctl</code>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1118" class="gh-ref" data-title="Translate build paths in rdd nerdctl" data-state="open" data-type="pr">#1118</a> to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1120" class="gh-ref" data-title="Add the nerdctl parse-table generator" data-state="open" data-type="pr">#1120</a> were rebuilt on top, so the cited lines and the patches below no longer match the branch. The line at the end of each finding says what happened to it.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -371,6 +377,7 @@ index 504d564fa..ab28d061a 100644
  		t.Run(strings.Join(tc.args, &quot; &quot;), func(t *testing.T) {
  			got, err := TranslateCommandLine(tc.args)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed as proposed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/87e52c503"><code>87e52c503</code></a>, with a comment that gives the reason: a retry at the parent skips this command&#39;s own flags.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/overlay.go">
       <div class="finding-title" id="I2">
@@ -616,6 +623,7 @@ index 402f5feb2..4e52d1ade 100644
  		t.Run(strings.Join(tc.args, &quot; &quot;), func(t *testing.T) {
  			got, err := TranslateCommandLine(tc.args)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/87e52c503"><code>87e52c503</code></a> with the proposed list kind. The handler also reads its output back with <code>csv.Reader</code>, and a list that csv.Writer cannot write so that pflag reads the same entries (a lone <code>&quot;&quot;</code>, or an entry with CR LF) fails with <code>invalid path list</code>. The patch as proposed passed such a list on changed.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="I3">
@@ -779,6 +787,7 @@ index ab28d061a..81bb5b1fa 100644
  	}
  	for _, tc := range cases {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed as proposed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/87e52c503"><code>87e52c503</code></a>. The comment names <code>--certs</code> as an example and no longer states a rule about cobra&#39;s traversal. The patch had turned the bunch-split, <code>=</code>-separator and root-option rows into identity checks, so path-valued rows put those checks back, one per parser mutant that the old rows caught.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="I4">
@@ -898,6 +907,7 @@ index 4e52d1ade..58d0797ca 100644
  		args, want []string
  	}{</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed as proposed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/87e52c503"><code>87e52c503</code></a>, with the test comment reworded. The rebuilt <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1118" class="gh-ref" data-title="Translate build paths in rdd nerdctl" data-state="open" data-type="pr">#1118</a> restores the positional-handler clause and a comment that covers an empty <code>--output</code>.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -949,6 +959,7 @@ value of a flag that the overlay leaves out, such as
 A path inside a `--mount` value cannot contain a comma, since the value is
 comma-separated and the stub splits it at every comma. The stub</code></pre>
     <p>Fix: write &quot;compose&#39;s --file&quot; in the help text, and name build contexts, build file options and <code>cp</code> paths as untranslated in both texts until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1118" class="gh-ref" data-title="Translate build paths in rdd nerdctl" data-state="open" data-type="pr">#1118</a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1119" class="gh-ref" data-title="Translate cp host paths in rdd nerdctl" data-state="open" data-type="pr">#1119</a> merge.</p>
+    <p><strong>Outcome:</strong> fixed in the help text only, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c72c96265"><code>c72c96265</code></a>. Its examples are now <code>-v</code>, <code>--mount</code> and <code>--env-file</code>, which stay true at every point in the stack. The design doc is unchanged, because <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1118" class="gh-ref" data-title="Translate build paths in rdd nerdctl" data-state="open" data-type="pr">#1118</a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1119" class="gh-ref" data-title="Translate cp host paths in rdd nerdctl" data-state="open" data-type="pr">#1119</a> add the build and <code>cp</code> translations it describes.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -956,8 +967,8 @@ comma-separated and the stub splits it at every comma. The stub</code></pre>
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>(future)</strong> Round two declined rewriting values in place, because &quot;the I1 and I3 fixes cover every case found so far&quot;. Rewriting in place would rule out the class of defect where rebuilding the command line changes its meaning. I1 and I3 of this round are two more cases of that class, so the reason no longer holds. Claude&#39;s cobra oracle over random command lines did not find another divergence in 30,000 lines once I1&#39;s fix was in, apart from <code>--help</code> cases that it judged harmless; I did not repeat that run. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
-      <li><strong>(in-scope)</strong> A <code>-v</code> source rooted without a drive now names the working directory&#39;s drive. With the working directory on C:, <code>-v /run/foo:/x</code> mounts <code>C:\run\foo</code>, and nerdctl creates the directory when it is missing (<code>run_mount.go:99</code> passes <code>createDir</code>). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d21401ab0a8aa307c77c2cd72071cb9dcc782f13/rdd/docs/design/nerdctl.md#L24-L29"><code>nerdctl.md:24-29</code></a> documents the rule, but <code>rdd help nerdctl</code> does not, and it does not list the rewritten options either. So a user who writes <code>/mnt/c/...</code> in a rewritten option, as the help text advises for other options, gets <code>/mnt/c/mnt/c/...</code>. Listing the rewritten options in the help text, or pointing it at <code>nerdctl.md</code>, would cover both. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(future)</strong> Round two declined rewriting values in place, because &quot;the I1 and I3 fixes cover every case found so far&quot;. Rewriting in place would rule out the class of defect where rebuilding the command line changes its meaning. I1 and I3 of this round are two more cases of that class, so the reason no longer holds. Claude&#39;s cobra oracle over random command lines did not find another divergence in 30,000 lines once I1&#39;s fix was in, apart from <code>--help</code> cases that it judged harmless; I did not repeat that run. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <strong>Outcome:</strong> declined; the pending-work entry already records this round&#39;s two cases.</li>
+      <li><strong>(in-scope)</strong> A <code>-v</code> source rooted without a drive now names the working directory&#39;s drive. With the working directory on C:, <code>-v /run/foo:/x</code> mounts <code>C:\run\foo</code>, and nerdctl creates the directory when it is missing (<code>run_mount.go:99</code> passes <code>createDir</code>). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/d21401ab0a8aa307c77c2cd72071cb9dcc782f13/rdd/docs/design/nerdctl.md#L24-L29"><code>nerdctl.md:24-29</code></a> documents the rule, but <code>rdd help nerdctl</code> does not, and it does not list the rewritten options either. So a user who writes <code>/mnt/c/...</code> in a rewritten option, as the help text advises for other options, gets <code>/mnt/c/mnt/c/...</code>. Listing the rewritten options in the help text, or pointing it at <code>nerdctl.md</code>, would cover both. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c72c96265"><code>c72c96265</code></a>. <code>rdd help nerdctl</code> now says that rdd resolves a host path such as <code>/mnt/c/data</code> under the working directory&#39;s root, and gives the C: example.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
