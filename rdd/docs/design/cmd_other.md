@@ -15,7 +15,7 @@ There is also the [rdd ctl](cmd_service.md#rdd-ctl) command that automatically s
 For an invocation that may contact a cluster, apart from the exceptions described below, `rdd kubectl` probes the server version (with a 2-second timeout) and picks the first acceptable kubectl from:
 
 1. The embedded kubectl.
-2. The highest version in the download cache.
+2. The highest version in the download cache (`rdd svc paths kubectl_cache`).
 3. A fresh download of the latest patch release of the server's minor version, looked up via the mirror's `stable-<major>.<minor>.txt` marker (e.g. `stable-1.34.txt` → `v1.34.9`), sha512-verified, and stored in the cache.
 
 The probe parses the command line through kubectl's own command tree, so it reads connection flags, kuberc defaults and the kuberc credential plugin policy the way the embedded kubectl does. A separate flag parser in rdd would get attached shorthand values such as `-ojson` wrong and would not see kuberc. In exchange, `rdd kubectl` stops on a kuberc that the embedded kubectl rejects, even when the kubectl it would run is older and ignores kuberc.

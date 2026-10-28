@@ -16,11 +16,14 @@ import (
 
 	cliflag "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/flag"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/kuberlr"
 )
 
-// instancePaths maps each `rdd svc paths` key to an instance path, so bats
-// tests and the app read the paths rdd uses instead of building their own.
-func instancePaths() map[string]string {
+// servicePaths maps each `rdd svc paths` key to a path that rdd uses, so
+// bats tests and the app read the paths instead of building their own.
+// Most paths belong to the instance, but all instances share some, such as
+// the caches.
+func servicePaths() map[string]string {
 	return map[string]string{
 		"dir":                instance.Dir(),
 		"log_dir":            instance.LogDir(),
@@ -38,6 +41,8 @@ func instancePaths() map[string]string {
 		"docker_socket":      instance.DockerSocket(),
 		"containerd_socket":  instance.ContainerdSocket(),
 		"docker_cli_plugins": instance.DockerCliPluginsDir(),
+		"cache_dir":          kuberlr.CacheRoot(),
+		"kubectl_cache":      kuberlr.CacheDir(),
 	}
 }
 
@@ -51,7 +56,7 @@ func newServicePathsCommand() *cobra.Command {
 	output := cliflag.NewEnumValue(outputTable, outputJSON, outputShell)
 	command := &cobra.Command{
 		Use:   "paths [key]",
-		Short: "Print instance paths",
+		Short: "Print instance and cache paths",
 		Args:  cobra.MaximumNArgs(1),
 		RunE:  servicePathsAction,
 	}
@@ -60,7 +65,7 @@ func newServicePathsCommand() *cobra.Command {
 }
 
 func servicePathsAction(cmd *cobra.Command, args []string) error {
-	paths := instancePaths()
+	paths := servicePaths()
 	keys := slices.Sorted(maps.Keys(paths))
 	output := cmd.Flags().Lookup("output").Value.String()
 

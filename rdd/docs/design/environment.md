@@ -41,7 +41,7 @@ These variables configure the BATS test framework. They have no effect on `rdd` 
 
 ## Path Variables
 
-`rdd svc paths --output=shell` exports these variables. They reflect the paths RDD uses for the current instance; setting them has no effect on RDD's behavior, other than `RDD_LOG_DIR` as listed above.
+`rdd svc paths --output=shell` exports these variables. They reflect the paths RDD uses for the current instance and the caches that all instances share; setting them has no effect on RDD's behavior, other than `RDD_LOG_DIR` and `RDD_CACHE_DIR` as listed above.
 
 ```shell
 source <(rdd svc paths --output=shell)
@@ -51,12 +51,14 @@ source <(rdd svc paths --output=shell)
 | --- | --- | --- |
 | `RDD_ARGS_FILE` | Saved startup arguments | `~/Library/Application Support/rancher-desktop-2/args.json` |
 | `RDD_BIN_DIR` | Instance bin directory of user-facing executables | `~/.rd2/bin` |
+| `RDD_CACHE_DIR` | rdd-wide cache root (shared across instances) | `~/Library/Caches/rancher-desktop` |
 | `RDD_CONFIG` | RDD control plane kubeconfig | `~/Library/Application Support/rancher-desktop-2/config.yaml` |
 | `RDD_CONTAINERD_SOCKET` | containerd socket (a named pipe on Windows) | `~/.rd2/containerd.sock` |
 | `RDD_DIR` | Service instance directory | `~/Library/Application Support/rancher-desktop-2` |
 | `RDD_DOCKER_CLI_PLUGINS` | Directory of the bundled Docker CLI plugins | `~/.rd2/docker-cli-plugins` |
 | `RDD_DOCKER_SOCKET` | Docker socket (a named pipe on Windows) | `~/.rd2/docker.sock` |
 | `RDD_K3S_CONFIG` | Mirror of the in-VM k3s kubeconfig | `~/Library/Application Support/rancher-desktop-2/k3s.yaml` |
+| `RDD_KUBECTL_CACHE` | Cache directory for downloaded kubectl binaries (shared across instances) | `~/Library/Caches/rancher-desktop/kubectl/darwin-arm64` |
 | `RDD_LIMA_HOME` | Lima home directory | `~/.rd2/lima` |
 | `RDD_LOG_DIR` | Log directory | `~/Library/Logs/rancher-desktop-2` |
 | `RDD_PATH_MARKER` | File that records that rdd added the bin directory to the Windows user Path | `~/.rd2/.path-managed` |

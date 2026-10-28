@@ -157,7 +157,7 @@ Show control plane logs.
 
 ## `rdd service paths`
 
-Prints instance directory and file paths. Accepts an optional key argument to print a single path.
+Prints the directory and file paths that rdd uses. Most belong to the instance, but all instances share some, such as the caches. Accepts an optional key argument to print a single path.
 
 | Key | Description |
 | --- | --- |
@@ -177,6 +177,8 @@ Prints instance directory and file paths. Accepts an optional key argument to pr
 | `docker_socket` | Docker socket (`$short_dir/docker.sock`, a named pipe on Windows) |
 | `containerd_socket` | containerd socket (`$short_dir/containerd.sock`, a named pipe on Windows) |
 | `docker_cli_plugins` | Directory of the bundled Docker CLI plugins (`$short_dir/docker-cli-plugins`) |
+| `cache_dir` | rdd-wide cache root (shared across instances) |
+| `kubectl_cache` | Cache directory for downloaded kubectl binaries (shared across instances) |
 
 Output formats (`--output`, `-o`):
 
@@ -194,12 +196,14 @@ Examples:
 $ rdd svc paths
 args_file           /Users/me/Library/Application Support/rancher-desktop-2/args.json
 bin_dir             /Users/me/.rd2/bin
+cache_dir           /Users/me/Library/Caches/rancher-desktop
 config              /Users/me/Library/Application Support/rancher-desktop-2/config.yaml
 containerd_socket   /Users/me/.rd2/containerd.sock
 dir                 /Users/me/Library/Application Support/rancher-desktop-2
 docker_cli_plugins  /Users/me/.rd2/docker-cli-plugins
 docker_socket       /Users/me/.rd2/docker.sock
 k3s_config          /Users/me/Library/Application Support/rancher-desktop-2/k3s.yaml
+kubectl_cache       /Users/me/Library/Caches/rancher-desktop/kubectl/darwin-arm64
 lima_home           /Users/me/.rd2/lima
 log_dir             /Users/me/Library/Logs/rancher-desktop-2
 path_marker         /Users/me/.rd2/.path-managed

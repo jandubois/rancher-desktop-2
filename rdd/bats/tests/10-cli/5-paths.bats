@@ -1,6 +1,6 @@
 load '../../helpers/load'
 
-ALL_KEYS="args_file bin_dir config containerd_socket dir docker_cli_plugins docker_socket k3s_config lima_home log_dir path_marker pid_file short_dir stderr_log stdout_log tls_dir"
+ALL_KEYS="args_file bin_dir cache_dir config containerd_socket dir docker_cli_plugins docker_socket k3s_config kubectl_cache lima_home log_dir path_marker pid_file short_dir stderr_log stdout_log tls_dir"
 
 @test 'rdd svc paths prints all keys in table format' {
     run -0 rdd svc paths
@@ -37,4 +37,15 @@ ALL_KEYS="args_file bin_dir config containerd_socket dir docker_cli_plugins dock
     assert_output --partial 'unknown key'
     assert_output --partial 'no_such_key'
     assert_output --partial 'valid keys'
+}
+
+@test 'rdd svc paths honors RDD_CACHE_DIR override' {
+    cache_override=$(winpath "${BATS_TEST_TMPDIR}/cache-override")
+
+    RDD_CACHE_DIR="${cache_override}" run -0 rdd svc paths cache_dir
+    assert_output "${cache_override}"
+
+    RDD_CACHE_DIR="${cache_override}" run -0 rdd svc paths kubectl_cache
+    assert_output --partial "${cache_override}"
+    assert_output --regexp 'kubectl[/\\][a-z0-9]+-[a-z0-9]+$'
 }
