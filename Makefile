@@ -38,6 +38,14 @@ test-wix-helper:
 	( cd src/go/wix-helper && go$(EXE) test ./... )
 .PHONY: test-wix-helper
 
+test-i18n-report:
+	( cd src/go/i18n-report && go$(EXE) test ./... )
+.PHONY: test-i18n-report
+
+check-translations:
+	( cd src/go/i18n-report && go$(EXE) tool i18n-report check --locale=all )
+.PHONY: check-translations
+
 lint: lint-rdd lint-bats lint-shell lint-startup-profile lint-wix-helper
 .PHONY: lint
 
@@ -74,5 +82,5 @@ lint-shell-fix:
 	go -C rdd tool shfmt --indent=4 --write $(foreach f,$(SHELL_FILES),../$(f))
 .PHONY: lint-shell-fix
 
-check: spelling check-ltag
+check: spelling check-ltag test-i18n-report check-translations
 .PHONY: check
