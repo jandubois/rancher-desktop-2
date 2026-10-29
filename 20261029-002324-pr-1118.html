@@ -227,7 +227,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
       <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
       <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1118" class="gh-ref" data-title="Translate build paths in rdd nerdctl" data-state="open" data-type="pr">#1118</a> — Translate build paths in rdd nerdctl</td></tr>
       <tr><td>Branch</td><td><code>nerdctl-build-paths</code></td></tr>
-      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a> Translate build paths in the nerdctl stub (the head commit; the four <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a> commits below it were out of scope)</td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a> Translate build paths in the nerdctl stub (the head commit; the four <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a> commits below it were out of scope)</td></tr>
       <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfcfc58c26a66ac846c6606f6c9653bca1"><code>1e6f43bfcfc58c26a66ac846c6606f6c9653bca1</code></a></td></tr>
       <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
       <tr><td>Verdict</td><td><span class="verdict">Merge as-is</span> &mdash; every round-1 fix holds, and only optional suggestions remain</td></tr>
@@ -241,6 +241,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
 
     <div class="card card-neutral">
     <p>The head commit translates Windows host paths in <code>nerdctl build</code> and <code>builder debug</code>. This round checked the amended fixes for round 1&#39;s three Important findings and six Suggestions against the guest&#39;s nerdctl and buildctl sources and CI, and each fix holds. This round converged, with no Critical or Important finding left. The four optional Suggestions cover a test for <code>build -f .</code>, the cause that the doc gives for the comma limit, the commit message, and a redundant condition.</p>
+    </div>
+    <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The fixes were amended into the PR&#39;s commit, which is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d35b3f180"><code>d35b3f180</code></a> instead of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a>, after a rebase onto <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s merge, so the code cited below has changed since the review ran. Each finding ends with its outcome.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -294,6 +300,7 @@ func keepDirSuffix(arg, guestPath string) string {
     <p>Fix: add a bare <code>.</code> case to <code>TestKeepDirSuffix</code>.</p>
       <pre><code class="language-diff"> 		{&quot;d:&quot;, &quot;/mnt/d/&quot;, &quot;/mnt/d/.&quot;},
 +		{&quot;.&quot;, &quot;/mnt/c/w&quot;, &quot;/mnt/c/w/.&quot;},</code></pre>
+    <p><strong>Outcome:</strong> fixed as proposed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d35b3f180"><code>d35b3f180</code></a>. The row fails with the <code>slashed == &quot;.&quot;</code> clause deleted.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/nerdctl.md">
       <div class="finding-title" id="S2">
@@ -318,13 +325,15 @@ directory too, because the stub quotes the field that holds the expanded path.</
 comma, so a path inside one cannot contain a comma. The stub expands a
 relative path to an absolute one, so a relative path in them fails the same
 way when the working directory has a comma, such as `OneDrive - Acme, Inc`.</code></pre>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d35b3f180"><code>d35b3f180</code></a>, worded as &quot;nerdctl splits a <code>--mount</code> value at every comma, and buildctl splits the paths in an <code>--ssh</code> value the same way&quot;, with &quot;a relative path in either&quot; in the next sentence.</p>
     </div>
     <div class="card card-suggestion" data-file="1e6f43bfc">
       <div class="finding-title" id="S3">
         <span class="finding-num">S3.</span> The commit message leaves out how far the directory-form change reaches, and the new dependency <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
       </div>
-    <p>The message describes the build options alone. But <code>keepDirSuffix</code> runs inside the shared <code>filePathArgHandler</code>, so it changes every path that the stub rewrites through that handler. Those include the <code>--mount</code> source, <code>--cidfile</code>, <code>--pidfile</code>, <code>--env-file</code>, <code>--label-file</code>, compose&#39;s <code>--file</code> and <code>--project-directory</code>, <code>image load -i</code>, <code>image save -o</code>, <code>image encrypt --key</code> and <code>--cosign-key</code>. A file named with a trailing separator, such as <code>--cidfile C:\x\</code>, now fails, as it does under nerdctl itself. Before this commit, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a>&#39;s handler cleaned that path to a file named <code>x</code>. This commit merges after <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a>, so its message is where a reader of the log learns that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a>&#39;s handlers changed. The message also omits that <code>github.com/tonistiigi/go-csvvalue</code> becomes a direct dependency.</p>
+    <p>The message describes the build options alone. But <code>keepDirSuffix</code> runs inside the shared <code>filePathArgHandler</code>, so it changes every path that the stub rewrites through that handler. Those include the <code>--mount</code> source, <code>--cidfile</code>, <code>--pidfile</code>, <code>--env-file</code>, <code>--label-file</code>, compose&#39;s <code>--file</code> and <code>--project-directory</code>, <code>image load -i</code>, <code>image save -o</code>, <code>image encrypt --key</code> and <code>--cosign-key</code>. A file named with a trailing separator, such as <code>--cidfile C:\x\</code>, now fails, as it does under nerdctl itself. Before this commit, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s handler cleaned that path to a file named <code>x</code>. This commit merges after <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>, so its message is where a reader of the log learns that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s handlers changed. The message also omits that <code>github.com/tonistiigi/go-csvvalue</code> becomes a direct dependency.</p>
     <p>Fix: add a sentence on each, saying that every rewritten path keeps its directory form and that buildctl&#39;s own CSV parser, go-csvvalue, now reads the builder CSV values.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d35b3f180"><code>d35b3f180</code></a>. The message says that most rewritten paths keep their directory form, since the <code>-v</code> source, <code>--ssh</code> and <code>--build-context</code> handlers call <code>TranslateHostPath</code> directly and skip <code>keepDirSuffix</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="S4">
@@ -362,6 +371,7 @@ lists, because the stub cannot tell whether it takes a value. From there the
 stub passes the option and every later argument through unchanged, logs that
 at debug level, and leaves nerdctl to accept or reject the option.</code></pre>
     <p>Fix: drop <code>!ok</code> and say in the comment that a quoted <code>dest=</code> field leaves <code>type=local</code> in the value, or keep it and add a <code>t.Chdir</code> case for a directory named <code>a,b</code> beside the existing <code>type=x</code> case.</p>
+    <p><strong>Outcome:</strong> fixed by the second option in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d35b3f180"><code>d35b3f180</code></a>. <code>!ok</code> stays, and <code>TestBuilderOutputAndSecret</code> runs <code>-o out</code> and <code>--secret id=s,src=s.txt</code> from a working directory named <code>a,b</code> and expects both path fields quoted.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -371,6 +381,7 @@ at debug level, and leaves nerdctl to accept or reject the option.</code></pre>
     <ul>
       <li>(future) For <code>--ssh</code>, and for a <code>--mount</code> source written with a <code>./</code> prefix so that nerdctl does not take it for a volume name, the stub could leave a relative path relative and convert only its separators. nerdctl runs in the guest path of the host working directory (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1e6f43bfcfc58c26a66ac846c6606f6c9653bca1/rdd/docs/design/nerdctl.md#L80-L88"><code>rdd/docs/design/nerdctl.md:80-88</code></a>), so the guest finds the same file, and the comma failure that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1e6f43bfcfc58c26a66ac846c6606f6c9653bca1/rdd/docs/design/nerdctl.md#L66-L68"><code>nerdctl.md:66-68</code></a> describes goes away for those values. Drive-relative and rooted paths would still need resolving. This is reasoned from the code, not run. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p><strong>Outcome:</strong> declined for this PR and tracked in pending-work.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>(in-scope) The stub parses the builder CSV values with go-csvvalue at the version that buildkit v0.21.1 pins, so it splits fields exactly where buildctl does. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
