@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261029-124719-pr-1120</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261029-124719-pr-1120</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-29 12:47</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 of this PR; the generator&#39;s code had two earlier rounds in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s reviews before the recut</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1120" class="gh-ref" data-title="Add the nerdctl parse-table generator" data-state="open" data-type="pr">#1120</a> — Add the nerdctl parse-table generator</td></tr>
+      <tr><td>Branch</td><td><code>nerdctl-generator</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2fcadb1b3"><code>2fcadb1b3</code></a> Translate cp host paths in the nerdctl stub (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1119" class="gh-ref" data-title="Translate cp host paths in rdd nerdctl" data-state="open" data-type="pr">#1119</a>&#39;s commit, reviewed there)<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b3a13c7c3"><code>b3a13c7c3</code></a> Add the nerdctl parse-table generator<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9959a3e63"><code>9959a3e63</code></a> Wire nerdctl table generation into make verify-generate</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9959a3e63c8275a59f1b836a7ab12d5662561f6e"><code>9959a3e63c8275a59f1b836a7ab12d5662561f6e</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default); Gemini 3.1 Pro (effort: default) ran out of quota and did not return a review</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge as-is</span> &mdash; no Critical or Important finding survived; each defect below fails loudly, needs a future nerdctl release, or concerns the next bump</td></tr>
+      <tr><td>Wall-clock time</td><td><code>30 min 10 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>PR 1120 adds a two-stage generator that rebuilds the nerdctl stub&#39;s parse table from nerdctl v2.1.2&#39;s cobra tree, checks the path overlay against that tree, and joins <code>make verify-generate</code>. It reproduces the checked-in table byte for byte. No Critical or Important finding survived, so this round converged and the suggestions are optional. At the next bump, v2.4.1 adds <code>image import</code>, and nothing flags its host-file argument (S1). The root-flag check also has gaps that no release through v2.4.1 triggers.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/docs/design/nerdctl.md">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> The next bump adds <code>image import</code>, and nothing prompts its positional handler <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/docs/design/nerdctl.md#L138-L147">rdd/docs/design/nerdctl.md</a></div>
+      <pre data-start="138" data-line="143-147"><code class="language-markdown">  removal upstream fails generation.
+- Every value-consuming flag whose name or usage text suggests a path must
+  appear in the overlay or in an acknowledged list of flags that the stub
+  leaves alone; a new suspect fails generation with a message naming it.
+
+A nerdctl bump therefore takes four steps. Raise `MAX_VERSION` in the
+repository&#39;s top-level `scripts/dependencies/nerdctl.ts`, so that rddepman
+moves `dependencies.yaml`.
+Move `generate/go.mod` to the same version, along with the `tigron` pin that
+its comment describes. Rerun the generator, and classify whatever it names.</code></pre>
+    <p>The bump steps end with &quot;classify whatever it names&quot;, but the generator names only flags. nerdctl v2.4.1, the current release, adds <code>image import</code> and a root <code>import</code> (<code>cmd/nerdctl/main.go:320</code> at v2.4.1). Its usage is <code>import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]</code>, and its only flags are <code>--message</code> and <code>--platform</code>, so the overlay check stays quiet. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/parse_args.go#L393-L394"><code>parse_args.go:393-394</code></a> already says to restore the 1.x <code>imageImportHandler</code> when a bump brings the command back, but nothing makes the person bumping read that comment. If they follow the documented steps, the generator and <code>verify-generate</code> pass, and <code>rdd nerdctl import C:\images\app.tar</code> reaches the guest untranslated.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/parse_args.go#L388-L399">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="388" data-line="393-394"><code class="language-go">			}
+			def.options[name] = handlers[kind]
+		}
+	}
+
+	// Positional-argument handlers. The pinned nerdctl has no `image import`;
+	// restore the 1.x imageImportHandler when a bump brings it back.
+	for path, handler := range map[string]commandHandlerType{
+		&quot;builder build&quot;: builderBuildHandler,
+		&quot;builder debug&quot;: builderBuildHandler,
+		&quot;compose cp&quot;:    containerCopyHandler,
+		&quot;container cp&quot;:  containerCopyHandler,</code></pre>
+    <p>Fix: add a bump step that checks each command that the regenerated table adds for positional host paths, and name <code>image import</code> there as the known case.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/generate/extract/main.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The root-flag check misses some registration shapes and every type change <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L272-L290">rdd/pkg/nerdctlstub/generate/extract/main.go</a></div>
+      <pre data-start="272" data-line="277-285"><code class="language-go">				}
+				ex.rootFlags = append(ex.rootFlags, aliases...)
+			}
+			return true
+		}
+		switch sel.Sel.Name {
+		case &quot;RegisterFlagCompletionFunc&quot;, &quot;NewFlagSet&quot;,
+			&quot;Flags&quot;, &quot;PersistentFlags&quot;, &quot;LocalFlags&quot;:
+			return true // registers no flag itself
+		}
+		if strings.Contains(sel.Sel.Name, &quot;Flag&quot;) {
+			inspectErr = fmt.Errorf(&quot;unhandled flag registration %s in initRootCmdFlags&quot;, sel.Sel.Name)
+			return false
+		}
+		return true
+	})
+	return inspectErr
+}
+</code></pre>
+    <p>The header comment says &quot;Any unrecognized registration shape in those files is a fatal error&quot;, but the fallback at line 282 fires only for method names that contain <code>Flag</code>. A root flag registered through <code>StringVar</code>, <code>Uint</code> or another pflag method whose name lacks <code>Flag</code> and that <code>pflagConstructors</code> does not list drops out of <code>expectedRootFlags</code> without an error, so the replica never gets it and the check passes. <code>verifyRootFlags</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L94-L105"><code>main.go:94-105</code></a>) compares names only, so a flag that upstream turns from Bool into String stays a bool in the table. No nerdctl release through v2.4.1 does either, which keeps this a Suggestion.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L89-L110">rdd/pkg/nerdctlstub/generate/extract/main.go</a></div>
+      <pre data-start="89" data-line="94-105"><code class="language-go">// nerdctlModuleInfo resolves the pinned module&#39;s source directory and version
+// through the enclosing generator module.
+func nerdctlModuleInfo() (dir, version string, err error) {
+	out, err := exec.Command(&quot;go&quot;, &quot;list&quot;, &quot;-m&quot;, &quot;-f&quot;, &quot;{{.Dir}} {{.Version}}&quot;, nerdctlModule).Output()
+	if err != nil {
+		return &quot;&quot;, &quot;&quot;, fmt.Errorf(&quot;go list -m %s: %w&quot;, nerdctlModule, err)
+	}
+	fields := strings.Fields(string(out))
+	if len(fields) != 2 {
+		return &quot;&quot;, &quot;&quot;, fmt.Errorf(&quot;unexpected go list output %q&quot;, out)
+	}
+	return fields[0], fields[1], nil
+}
+
+func (ex *extracted) parseFile(filename string) error {
+	file, err := parser.ParseFile(token.NewFileSet(), filename, nil, 0)
+	if err != nil {
+		return err
+	}
+	imports := importMap(file)
+	var inspectErr error
+	ast.Inspect(file, func(n ast.Node) bool {</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-rootflags.sh in the repository root; run: bash probe-rootflags.sh
+# Needs Go. Feeds extract&#39;s collectRootFlags one initRootCmdFlags body per shape.
+set -o errexit -o nounset
+dir=$(mktemp -d)
+trap &#39;rm -rf &quot;${dir:?}&quot;&#39; EXIT
+cp rdd/pkg/nerdctlstub/generate/extract/main.go &quot;${dir}/main.go&quot;
+printf &#39;module extractprobe\n\ngo 1.26\n&#39; &gt;&quot;${dir}/go.mod&quot;
+cat &gt;&quot;${dir}/probe_test.go&quot; &lt;&lt;&#39;GO&#39;
+package main
+
+import (
+	&quot;go/ast&quot;
+	&quot;go/parser&quot;
+	&quot;go/token&quot;
+	&quot;testing&quot;
+)
+
+func collect(t *testing.T, body string) {
+	src := &quot;package main\nfunc initRootCmdFlags(rootCmd *cobra.Command) {\n&quot; + body + &quot;\n}&quot;
+	file, err := parser.ParseFile(token.NewFileSet(), &quot;main.go&quot;, src, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ex := &amp;extracted{}
+	for _, d := range file.Decls {
+		if fn, ok := d.(*ast.FuncDecl); ok {
+			err = ex.collectRootFlags(fn)
+		}
+	}
+	t.Logf(&quot;%s =&gt; err=%v rootFlags=%q&quot;, body, err, ex.rootFlags)
+}
+
+func TestProbe(t *testing.T) {
+	collect(t, `rootCmd.PersistentFlags().Bool(&quot;debug&quot;, false, &quot;&quot;)`)
+	collect(t, `rootCmd.PersistentFlags().StringVar(&amp;root, &quot;data-root&quot;, &quot;&quot;, &quot;&quot;)`)
+	collect(t, `rootCmd.PersistentFlags().Uint(&quot;max-retries&quot;, 3, &quot;&quot;)`)
+	collect(t, `rootCmd.PersistentFlags().AddFlag(f)`)
+}
+GO
+cd &quot;${dir}&quot; &amp;&amp; go test -run TestProbe -v | grep --fixed-strings &#39;=&gt;&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-rootflags.sh
+    probe_test.go:22: rootCmd.PersistentFlags().Bool(&quot;debug&quot;, false, &quot;&quot;) =&gt; err=&lt;nil&gt; rootFlags=[&quot;debug&quot;]
+    probe_test.go:22: rootCmd.PersistentFlags().StringVar(&amp;root, &quot;data-root&quot;, &quot;&quot;, &quot;&quot;) =&gt; err=&lt;nil&gt; rootFlags=[]
+    probe_test.go:22: rootCmd.PersistentFlags().Uint(&quot;max-retries&quot;, 3, &quot;&quot;) =&gt; err=&lt;nil&gt; rootFlags=[]
+    probe_test.go:22: rootCmd.PersistentFlags().AddFlag(f) =&gt; err=unhandled flag registration AddFlag in initRootCmdFlags rootFlags=[]</code></pre>
+      </details>
+    <p>Fix: in <code>collectRootFlags</code>, treat any method called on a <code>Flags()</code>, <code>PersistentFlags()</code> or <code>LocalFlags()</code> result as a registration and fail on one that <code>pflagConstructors</code> lacks; record whether each name is a bool and have <code>verifyRootFlags</code> compare it with <code>f.NoOptDefVal != &quot;&quot;</code>. Otherwise narrow the three comments to names.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/overlay.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>notPathFlags</code> calls <code>--gpg-homedir</code> guest-side, but the same commands translate <code>--key</code><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/overlay.go#L205-L219">rdd/pkg/nerdctlstub/overlay.go</a></div>
+      <pre data-start="205" data-line="210-214"><code class="language-go">		&quot;--nydus-builder-path&quot;, // guest-side
+		&quot;--nydus-prefetch-patterns&quot;,
+		&quot;--nydus-work-dir&quot;, // guest-side
+		&quot;--overlaybd-fs-type&quot;,
+	},
+	&quot;image decrypt&quot;: {
+		&quot;--gpg-homedir&quot;, // guest-side
+	},
+	&quot;image encrypt&quot;: {
+		&quot;--gpg-homedir&quot;, // guest-side
+		// --recipient takes prefix:value where value may be a key file
+		// (jwe:/path/to/key.pem); such paths stay untranslated, so use a
+		// guest path (/mnt/c/...) explicitly if needed.
+		&quot;--recipient&quot;,
+	},</code></pre>
+    <p><code>image encrypt</code> and <code>image decrypt</code> read the user&#39;s key material through two flags. <code>pathFlags</code> translates <code>--key</code>, a list of key files, as host paths (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/overlay.go#L105-L110"><code>overlay.go:105-110</code></a>), but these new entries mark <code>--gpg-homedir</code>, the GnuPG directory that holds the keys, as guest-side. A Windows user who names a host GnuPG directory there gets the <code>C:\...</code> path passed to the guest unchanged. The project&#39;s pending work lists <code>--gpg-homedir</code> as a host path that needs a <code>filePathArg</code> entry, so the comment records the opposite decision.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/overlay.go#L100-L115">rdd/pkg/nerdctlstub/overlay.go</a></div>
+      <pre data-start="100" data-line="105-110"><code class="language-go">	},
+	&quot;image convert&quot;: {
+		&quot;--estargz-record-in&quot;:     filePathArg,
+		&quot;--zstdchunked-record-in&quot;: filePathArg,
+	},
+	&quot;image decrypt&quot;: {
+		&quot;--key&quot;: filePathListArg,
+	},
+	&quot;image encrypt&quot;: {
+		&quot;--key&quot;: filePathListArg,
+	},
+	&quot;image load&quot;: {
+		&quot;--input&quot;: filePathArg,
+		&quot;-i&quot;:      filePathArg,
+	},
+	&quot;image pull&quot;: {</code></pre>
+    <p>Fix: move both entries to <code>pathFlags</code> as <code>filePathArg</code>, or, if the guest&#39;s own keyring is the target, say so in the comment and close the pending item.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/scripts/generate-nerdctl.sh">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The script lets a cross-build GOOS reach <code>go run</code> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/scripts/generate-nerdctl.sh#L16-L34">rdd/scripts/generate-nerdctl.sh</a></div>
+      <pre data-start="16" data-line="21-29"><code class="language-bash"># which is empty until the module has been downloaded — building extract
+# alone does not pull it in, since extract reads the source and never
+# imports it.
+go mod download
+
+go run ./extract
+
+goos=$(go env GOOS)
+if [[ ${goos} == &quot;linux&quot; ]]; then
+    go run .
+else
+    binary=generate-nerdctl.tmp
+    trap &#39;rm -f &quot;${binary}&quot;&#39; EXIT
+    GOOS=linux go build -o &quot;${binary}&quot; .
+    toplevel=$(git rev-parse --show-toplevel)
+    # This runs without --user. Off Linux the engine&#39;s file sharing writes
+    # the output as the host user anyway, and under a rootless engine the
+    # host UID may not own the mounted directory.
+    &quot;${CONTAINER_ENGINE:-docker}&quot; run --rm \</code></pre>
+    <p>The recipes that run a host tool pass <code>GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH)</code>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/Makefile#L169-L172"><code>rdd/Makefile:169-172</code></a> says why. Without the pin, a GOOS from the make command line, or one saved with <code>go env -w</code>, reaches <code>go run</code>. The <code>generate-nerdctl</code> recipe and this script leave the pin out. With <code>make GOOS=windows</code>, the cross-build form that <code>Makefile:55-60</code> documents, extract builds a Windows executable and fails before the branch on <code>go env GOOS</code> is reached.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/Makefile#L164-L177">rdd/Makefile</a></div>
+      <pre data-start="164" data-line="169-172"><code class="language-makefile">.INTERMEDIATE: $(GUESTAGENT_BINARY)
+
+# The downloader runs on every build, because the staged file names have no
+# architecture in them and only a rerun notices a build for a different one. It
+# leaves up-to-date files untouched, so make does not redo the overlay.
+# Naming the host makes `go run` build the tool for this machine; an empty
+# GOOS or GOARCH would fall back to a target saved with `go env -w`.
+$(PRISTINE_DISTRO): FORCE
+	WSLENV=${WSLENV}:GOOS:GOARCH GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH) \
+	go$(EXE) run ./cmd/download-guest-deps --os $(TARGET_OS) --arch $(TARGET_ARCH) \
+		--dest $(OVERLAY_BUILD) $(if $(STAGE_DISTRO),--stage &#39;distro=$(STAGE_DISTRO)&#39;)
+
+# That same run stages these, so they have no recipe of their own.
+$(MKCERT) $(NERDCTL_TARBALL): $(PRISTINE_DISTRO) ;</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-host-goos.sh in the repository root; run: bash probe-host-goos.sh
+# Needs Go and make. CONTAINER_ENGINE=echo prints the container command
+# instead of starting a container.
+cd rdd || exit 1
+echo &#39;--- no GOOS on the command line&#39;
+CONTAINER_ENGINE=echo make generate-nerdctl 2&gt;&amp;1 | tail -n 1
+echo &#39;--- make GOOS=windows&#39;
+CONTAINER_ENGINE=echo make GOOS=windows generate-nerdctl 2&gt;&amp;1 | tail -n 2</code></pre>
+      <pre><code class="language-text">$ bash probe-host-goos.sh
+--- no GOOS on the command line
+run --rm --volume /private/var/folders/s2/9q03h0c11_s4fdw169wqz3qc0000gn/T/review-lead-267849687:/work --workdir /work/rdd/pkg/nerdctlstub/generate alpine:3.24@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a ./generate-nerdctl.tmp
+--- make GOOS=windows
+fork/exec /Users/jan/Library/Caches/go-build/f1/f1cd945e37b98a2b8685536d2867c0c2673a610b55d1fb42ee13c3292243f919-d/extract.exe: exec format error
+make: *** [generate-nerdctl] Error 1</code></pre>
+      </details>
+    <p>Fix: pass <code>GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH)</code> to the script from the recipe, as the other host-tool recipes do, and build the generate stage with <code>CGO_ENABLED=0 GOOS=linux</code>, as the Makefile&#39;s own Linux builds do (<code>Makefile:156-157</code>).</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/generate/extract/main.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> A module cache path with a space stops extract <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L87-L105">rdd/pkg/nerdctlstub/generate/extract/main.go</a></div>
+      <pre data-start="87" data-line="92-100"><code class="language-go">}
+
+// nerdctlModuleInfo resolves the pinned module&#39;s source directory and version
+// through the enclosing generator module.
+func nerdctlModuleInfo() (dir, version string, err error) {
+	out, err := exec.Command(&quot;go&quot;, &quot;list&quot;, &quot;-m&quot;, &quot;-f&quot;, &quot;{{.Dir}} {{.Version}}&quot;, nerdctlModule).Output()
+	if err != nil {
+		return &quot;&quot;, &quot;&quot;, fmt.Errorf(&quot;go list -m %s: %w&quot;, nerdctlModule, err)
+	}
+	fields := strings.Fields(string(out))
+	if len(fields) != 2 {
+		return &quot;&quot;, &quot;&quot;, fmt.Errorf(&quot;unexpected go list output %q&quot;, out)
+	}
+	return fields[0], fields[1], nil
+}
+
+func (ex *extracted) parseFile(filename string) error {
+	file, err := parser.ParseFile(token.NewFileSet(), filename, nil, 0)
+	if err != nil {</code></pre>
+    <p>The template separates the directory and version with a space, and <code>strings.Fields</code> then splits a directory such as <code>C:\Users\First Last\go\pkg\mod\...</code> into extra fields, so extract exits with <code>unexpected go list output</code>. The failure is loud. It needs a module cache under a path with a space, which on Windows means any profile name with one, since the default cache is under the profile directory.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-modcache-space.sh in the repository root; run: bash probe-modcache-space.sh
+# Needs Go and nerdctl v2.1.2 in the default module cache (run
+# `go mod download` in rdd/pkg/nerdctlstub/generate first). Fills a module
+# cache whose path has a space from the default cache, offline.
+cd rdd/pkg/nerdctlstub/generate || exit 1
+tmp=$(mktemp -d)
+trap &#39;rm -rf &quot;${tmp:?}&quot;&#39; EXIT
+proxy=&quot;file://$(go env GOMODCACHE)/cache/download&quot;
+echo &#39;--- GOMODCACHE with a space&#39;
+GOMODCACHE=&quot;${tmp}/mod cache&quot; GOPROXY=&quot;${proxy}&quot; GOFLAGS=-modcacherw \
+    sh -c &#39;go mod download github.com/containerd/nerdctl/v2 &amp;&amp; go run ./extract&#39; 2&gt;&amp;1 |
+    sed &quot;s|${tmp}|&lt;tmp&gt;|&quot;
+echo &#39;--- default GOMODCACHE&#39;
+go run ./extract 2&gt;&amp;1</code></pre>
+      <pre><code class="language-text">$ bash probe-modcache-space.sh
+--- GOMODCACHE with a space
+extract: unexpected go list output &quot;&lt;tmp&gt;/mod cache/github.com/containerd/nerdctl/v2@v2.1.2 v2.1.2\n&quot;
+exit status 1
+--- default GOMODCACHE
+extract: wrote zz_generated_commands.go
+extract: wrote zz_generated_rootflags.go</code></pre>
+      </details>
+    <p>Fix: ask for <code>go list -m -json</code> and decode <code>Dir</code> and <code>Version</code>, or print the two on separate lines and split on the newline.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/Makefile">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> <code>verify-generate</code> off Linux now needs a running container engine <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/Makefile#L351-L361">rdd/Makefile</a></div>
+      <pre data-start="351" data-line="356"><code class="language-make">.PHONY: generate-typescript
+
+generate: generate-deepcopy generate-crds
+.PHONY: generate
+
+verify-generate: generate generate-nerdctl generate-typescript
+	@if [ -n &quot;$$(git diff --name-only)&quot; ]; then \
+		printf &quot;ERROR: Generated files are out of date. Run &#39;%s&#39; and commit the result.\n&quot; \
+			&quot;make generate generate-nerdctl generate-typescript&quot; &gt;&amp;2; \
+		git diff --stat; \
+		exit 1; \</code></pre>
+    <p>Round one of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s review noted that <code>make generate</code> now needed a container engine, so <code>generate-nerdctl</code> moved from <code>generate</code> into <code>verify-generate</code>. But <code>check</code> (line 397) runs <code>verify-generate</code>. When no engine answers, <code>generate-typescript</code> in the same target starts rdd with moby and runs <code>rdd run docker</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/scripts/generate-rdd-client.sh#L129-L135"><code>scripts/generate-rdd-client.sh:129-135</code></a>). <code>generate-nerdctl</code> does not fall back, so it fails at <code>docker run</code>. The comment at lines 341-342 explains why <code>generate</code> leaves the step out, but it says nothing about <code>check</code> or <code>verify-generate</code>.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/scripts/generate-rdd-client.sh#L124-L140">scripts/generate-rdd-client.sh</a></div>
+      <pre data-start="124" data-line="129-135"><code class="language-bash">    local tag
+    tag=$(sha256 &quot;${BASH_SOURCE[0]}&quot;)
+
+    local python_image_name=&quot;rdd-client-gen-python:${tag}&quot;
+
+    # Ensure we can run docker.
+    # shellcheck disable=SC2310 # run_docker is a single command.
+    if ! run_docker system info &amp;&gt;/dev/null; then
+        &quot;${RDD_PATH}&quot; set running=true containerEngine.name=moby
+        run_docker() {
+            &quot;${RDD_PATH}&quot; run docker &quot;$@&quot;
+        }
+    fi
+
+    local has_python_image
+    # If `docker images` fails here, either the image does not exist, or the
+    # docker daemon is not working; either way, we can try to build the image.</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/Makefile#L336-L347">rdd/Makefile</a></div>
+      <pre data-start="336" data-line="341-342"><code class="language-makefile">
+generate-crds:
+	scripts/generate-crds.sh
+.PHONY: generate-crds
+
+# We do not run this as part of `make generate`, because off Linux it needs a
+# container engine.
+generate-nerdctl:
+	scripts/generate-nerdctl.sh
+.PHONY: generate-nerdctl
+
+# We do not run this as part of `make generate` as this requires the service</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/Makefile#L392-L402">rdd/Makefile</a></div>
+      <pre data-start="392" data-line="397"><code class="language-makefile">BATS_TARGETS := $(shell MAKEFLAGS= $(MAKE) -C bats --print-data-base --question --no-builtin-variables | awk -F: &#39;$$1 ~ /^bats-/ { print $$1 }&#39;)
+$(BATS_TARGETS): bin/rdd$(EXE)
+	@$(MAKE) -C bats $@
+.PHONY: $(BATS_TARGETS)
+
+check: test lint verify-generate
+.PHONY: check
+
+clean:
+	-rm -r bin
+	-rm pkg/guestagent/lima-guestagent.*</code></pre>
+    <p>Fix: give the script the same fallback, or say in the comment that <code>verify-generate</code> and <code>check</code> need a container engine off Linux.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/generate/main.go">
+      <div class="finding-title" id="S7">
+        <span class="finding-num">S7.</span> cobra command aliases never reach the alias map <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S7" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/main.go#L136-L150">rdd/pkg/nerdctlstub/generate/main.go</a></div>
+      <pre data-start="136" data-line="141-145"><code class="language-go">			}
+		} else {
+			spec.boolFlags = append(spec.boolFlags, names...)
+		}
+	})
+	for _, sub := range cmd.Commands() {
+		subPath := joinPath(path, sub.Name())
+		spec.subcommands = append(spec.subcommands, sub.Name())
+		walk(sub, subPath, specs)
+	}
+	slices.Sort(spec.valueFlags)
+	slices.Sort(spec.boolFlags)
+	slices.Sort(spec.subcommands)
+	specs[path] = spec
+}</code></pre>
+    <p><code>walk</code> records <code>sub.Name()</code> but not <code>sub.Aliases</code>, so <code>detectAliases</code> finds only commands built twice from one constructor. nerdctl v2.1.2 declares eight cobra aliases (<code>ns</code>, <code>namespace list</code>, <code>namespace rm</code>, <code>network list</code>, <code>network remove</code>, <code>volume list</code>, <code>volume remove</code>, <code>apparmor list</code>), and the stub passes each through unparsed. None of those commands takes a path flag, so nothing breaks today. An alias on a command with path flags would turn off translation for that spelling, and the overlay check would not notice.</p>
+    <p>Fix: for each entry in <code>sub.Aliases</code>, add <code>joinPath(path, alias)</code> to <code>commandAliases</code>, pointing at the canonical path that <code>detectAliases</code> settles on.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/generate/main.go">
+      <div class="finding-title" id="S8">
+        <span class="finding-num">S8.</span> A flag in both overlay lists fails at test time, not at generation <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S8" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/main.go#L304-L323">rdd/pkg/nerdctlstub/generate/main.go</a></div>
+      <pre data-start="304" data-line="309-318"><code class="language-go">				} else {
+					problems = append(problems, fmt.Sprintf(&quot;overlay entry %q: no such command&quot;, command))
+				}
+				continue
+			}
+			for _, name := range flags {
+				if !slices.Contains(spec.valueFlags, name) {
+					problems = append(problems, fmt.Sprintf(&quot;overlay entry %q %s: no such value flag&quot;, command, name))
+					continue
+				}
+				if classified[command] == nil {
+					classified[command] = map[string]bool{}
+				}
+				classified[command][name] = true
+			}
+		}
+	}
+	for _, command := range slices.Sorted(maps.Keys(specs)) {
+		spec := specs[command]
+		for _, name := range spec.valueFlags {</code></pre>
+    <p><code>validateOverlay</code> marks a flag classified without checking whether the other list already did, so a flag in both <code>pathFlags</code> and <code>notPathFlags</code> passes generation. The <code>init</code> check that this PR adds at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/parse_args.go#L367-L374"><code>parse_args.go:367-374</code></a> panics on it, and every <code>go test ./pkg/nerdctlstub/</code> run trips that panic. Adding <code>--volume</code> to <code>notPathFlags</code> under <code>container create</code> and <code>container run</code> failed the package with <code>panic: flag &quot;--volume&quot; of command &quot;container create&quot; is in both pathFlags and notPathFlags</code>. CI catches it, one step later than the generator could.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/parse_args.go#L362-L379">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="362" data-line="367-374"><code class="language-go">			def.options[name] = nil
+		}
+		commands[path] = def
+	}
+
+	// The pathFlags and notPathFlags classifications must stay disjoint.
+	for path, flags := range notPathFlags {
+		for _, name := range flags {
+			if _, ok := pathFlags[path][name]; ok {
+				panic(fmt.Sprintf(&quot;flag %q of command %q is in both pathFlags and notPathFlags&quot;, name, path))
+			}
+		}
+	}
+
+	// Apply the path-flag overlay. The generator validates these entries;
+	// the panics only guard against the table and overlay going out of
+	// sync without regeneration.
+	handlers := kindHandlers()</code></pre>
+    <p>Fix: report a flag that is already classified as a problem before marking it.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/generate/go.mod">
+      <div class="finding-title" id="S9">
+        <span class="finding-num">S9.</span> No CI job lints the generator module <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S9" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/go.mod#L1-L6">rdd/pkg/nerdctlstub/generate/go.mod</a></div>
+      <pre data-start="1" data-line="1"><code class="language-text">module github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub/generate
+
+go 1.26.4
+
+require (
+	github.com/containerd/nerdctl/v2 v2.1.2</code></pre>
+    <p><code>make lint-rdd</code> and <code>make test</code> work on the <code>rdd</code> module, and <code>./...</code> stops at a nested <code>go.mod</code>, so CI only builds and runs the generator. The other nested modules have lint jobs of their own (<code>Lint Startup Profile</code> and <code>Lint Wix Helper</code> in <code>.github/workflows/lint.yaml</code>).</p>
+    <p>Fix: add a lint target that runs golangci-lint on the module with <code>GOOS=linux</code>, because the generate stage builds only on Linux.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/generate/extract/main.go">
+      <div class="finding-title" id="S10">
+        <span class="finding-num">S10.</span> <code>writeCommands</code> drops the names that imports were used under <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S10" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L329-L341">rdd/pkg/nerdctlstub/generate/extract/main.go</a></div>
+      <pre data-start="329" data-line="334-336"><code class="language-go">	}
+	var buf bytes.Buffer
+	fmt.Fprintf(&amp;buf, &quot;// Code generated by ./extract from %s@%s; DO NOT EDIT.\n\n&quot;, nerdctlModule, ex.version)
+	buf.WriteString(&quot;//go:build linux\n\n&quot;)
+	buf.WriteString(&quot;package main\n\nimport (\n\t\&quot;github.com/spf13/cobra\&quot;\n\n&quot;)
+	for _, name := range slices.Sorted(maps.Keys(pkgPaths)) {
+		fmt.Fprintf(&amp;buf, &quot;\t%q\n&quot;, pkgPaths[name])
+	}
+	buf.WriteString(&quot;)\n\n&quot;)
+	buf.WriteString(&quot;// addExtractedCommands adds every subcommand that nerdctl&#39;s newApp adds.\n&quot;)
+	buf.WriteString(&quot;func addExtractedCommands(rootCmd *cobra.Command) {\n\trootCmd.AddCommand(\n&quot;)
+	for _, c := range ex.constructors {
+		fmt.Fprintf(&amp;buf, &quot;\t\t%s.%s(),\n&quot;, c.pkgName, c.funName)</code></pre>
+    <p><code>importMap</code> keys each import by its alias, or by <code>path.Base</code> of its path, and the generated calls use that key, but the emitted import lines contain only the path. If nerdctl&#39;s <code>main.go</code> ever imports a command package under an alias, <code>zz_generated_commands.go</code> stops compiling. The failure is loud, at the generate stage&#39;s build.</p>
+    <p>Fix: emit <code>name &quot;path&quot;</code> whenever the name differs from <code>path.Base</code> of the path.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>The generator reproduces the shipped table</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span>: CI&#39;s full run on Linux and extract on macOS both leave the checked-in files byte-identical, so the generator matches the table that an earlier PR shipped.</li>
+      <li><strong>The overlay check runs both ways</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>: a stale entry fails, an alias key fails with the canonical name, and an unclassified flag that looks like a path fails. nerdctl v2.4.1&#39;s new root <code>--log-file</code>, a host path, is the kind of flag it stops on at the next bump.</li>
+      <li><strong>Extract fails loudly on command-list changes</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span>: a new <code>AddCommand</code> argument shape or a package-main constructor that <code>replica.go</code> lacks stops generation.</li>
+      <li><strong>A separate module keeps nerdctl&#39;s dependencies out of rdd</strong> (in-scope) <span class="pill pill-codex">Codex GPT 6 Astra</span>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The generator module does not have tests, and <code>make test</code> would not run them anyway, because <code>./...</code> in <code>rdd/</code> stops at the module boundary (S9). The checks that exist cover the output. I ran these at the review SHA:</p>
+    <ul>
+      <li><code>go run ./extract</code> on macOS rewrote both <code>zz_generated_*</code> files with no diff.</li>
+      <li><code>GOOS=linux go build .</code> and <code>GOOS=linux go vet ./...</code> of the module passed.</li>
+      <li><code>go test ./pkg/nerdctlstub/...</code> passed.</li>
+    </ul>
+    <p>CI&#39;s <code>Verify generated files</code> job also passed at the review SHA after running the whole generator on Ubuntu. When I finished, 46 checks had passed and 3 were skipped. <code>BATS (windows-latest, bats-app)</code>, the only leg that runs the stub&#39;s host-path translation, was still running, as was <code>BATS (macos-15-intel, bats-app)</code>. These two commits do not change translation code, so that leg matters more to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1119" class="gh-ref" data-title="Translate cp host paths in rdd nerdctl" data-state="open" data-type="pr">#1119</a>&#39;s review. Extract does not have a build tag, so a unit test for <code>collectRootFlags</code> such as the S2 probe would run on any OS once the module has a test target.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/docs/design/nerdctl.md#L117-L119"><code>nerdctl.md:117-119</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/replica.go#L23-L25"><code>replica.go:23-25</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L17-L18"><code>extract/main.go:17-18</code></a> promise that any root-flag change fails generation. S2 shows two kinds of change that do not. One is a flag registered through a pflag method whose name lacks <code>Flag</code> and that <code>pflagConstructors</code> does not list, and the other is a flag whose type changes.</li>
+      <li>The bump steps at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/docs/design/nerdctl.md#L143-L147"><code>nerdctl.md:143-147</code></a> cover flags only (S1).</li>
+      <li>Checked and correct: <code>TestTableMatchesGuestNerdctl</code> exists (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/parse_args_test.go#L299"><code>parse_args_test.go:299</code></a>), <code>MAX_VERSION</code> is at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/scripts/dependencies/nerdctl.ts#L21"><code>scripts/dependencies/nerdctl.ts:21</code></a>, the tigron pin and its comment are at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/go.mod#L145-L148"><code>generate/go.mod:145-148</code></a>, and nerdctl v2.1.2 leaves <code>container cp</code> and <code>apparmor</code> out of non-Linux builds.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><em></em><code>HiddenPersistentStringArrayFlag</code> in <code>helperNameArg</code><em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L223"><code>extract/main.go:223</code></a>): nerdctl v2.1.2 does not have that helper, but v2.2.0 through v2.4.1 call it three times in <code>initRootCmdFlags</code>, with the flag name as argument 1. The entry is ready for the next bump; do not re-suggest deleting it.</li>
+      <li><em></em><code>--recipient</code> key files stay untranslated<em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/overlay.go#L215-L217"><code>overlay.go:215-217</code></a>), as its comment says.</li>
+      <li><strong>Commands from nerdctl&#39;s internal packages stay out of the table</strong> and pass through unparsed (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/extract/main.go#L184-L186"><code>extract/main.go:184-186</code></a>).</li>
+      <li><em></em>Nothing checks the replica&#39;s <code>version</code> subcommand<em></em> against upstream (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/pkg/nerdctlstub/generate/replica.go#L25-L26"><code>replica.go:25-26</code></a>).</li>
+      <li><em></em>MSYS2 would rewrite <code>--workdir</code> for a native <code>docker.exe</code><em></em> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/scripts/generate-nerdctl.sh#L36"><code>generate-nerdctl.sh:36</code></a>). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s second round declined this until someone runs the script on Windows, and the project&#39;s pending work tracks it. All three reviewers raised it again. The <code>--volume</code> mount takes <code>git rev-parse --show-toplevel</code>, which Git for Windows prints as <code>C:/...</code>, so do not re-suggest a <code>cygpath</code> conversion without a Windows run that shows the mount failing.</li>
+      <li><em></em>Host paths inside <code>key=value</code> values stay untranslated<em></em>, such as <code>--security-opt seccomp=&lt;path&gt;</code> and <code>--log-opt log-path=&lt;path&gt;</code>. The path heuristics read only a flag&#39;s name and usage text, so they cannot see these values, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/9959a3e63c8275a59f1b836a7ab12d5662561f6e/rdd/docs/design/nerdctl.md#L62-L63"><code>nerdctl.md:62-63</code></a> tells users to write guest paths there. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s second round declined translating them, and the project&#39;s pending work tracks that. Listing these flags in <code>notPathFlags</code> belongs to that work.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude wrote the fullest review and the only finding about the next bump&#39;s positional gap (S1), plus the lint gap (S9). It merged the extract shape gap and the type gap into one Important, which consolidation lowered because no nerdctl release through v2.4.1 triggers either half. It proposed deleting <code>HiddenPersistentStringArrayFlag</code> as dead after checking only the pinned v2.1.2, which later releases call. Its session log shows the probes that it reported, and it counted nine cobra aliases where nerdctl declares eight. It said it had not checked the alpine digest; the digest is the multi-arch index for <code>alpine:3.24</code>. Its MSYS2 suggestion and its <code>notPathFlags</code> suggestion for <code>--security-opt</code> and <code>--log-opt</code> repeat items that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s review had declined. The prompt did not include those rounds, so the omission is mine, not the agent&#39;s.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex raised three suggestions and the alias concern. All but the MSYS2 one survived, and that one repeats an item that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s review had declined, which the prompt did not mention. It found the module-cache space bug with a probe, and it rated the root-flag type gap a Suggestion because only a future release can trigger it, which matched the final severity. It missed the extract shape gap that the other two caught, the <code>check</code> consequence in the Makefile, and the next bump&#39;s positional gap. It also marked <code>rdd/Makefile</code>, <code>go.mod</code> and <code>overlay.go</code> as reviewed with no issues, and nobody else caught the <code>--gpg-homedir</code> classification in <code>overlay.go</code> either (S3).</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash raised the most findings and three that no other agent found (S4, S8, S10). It rated three of its findings Important for mechanisms that fail loudly or only on Windows, and it labelled every finding a regression in new code. Its session log holds 47 shell commands and no <code>go test</code> or <code>go run</code>, so neither of its <code>repro-output</code> blocks was ever run. Its <code>shellcheck</code> call errored, yet it reported an SC2250 hit that <code>shellcheck --enable=all</code> does not produce. Its GOHOSTOS point was half right. A cross-build GOOS does reach the script, but the probe shows extract breaking before the branch that it named. It also proposed deleting <code>HiddenPersistentStringArrayFlag</code>.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro hit its quota on its first request (&quot;Your quota will reset after 4h17m32s&quot;). Its CLI slept instead of exiting, so the liveness monitor reported it stalled after 15 minutes. By then every other agent had finished. Waiting four hours for the quota to reset would have held up the whole review, so I dropped it without output.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>10m 11s</td><td>6m 25s</td><td>0m 01s</td><td>13m 07s</td></tr>
+        <tr><td>Findings</td><td>5S</td><td>3S</td><td>—</td><td>6S</td></tr>
+        <tr><td>Tool calls</td><td>55 (Bash 54, Read 1)</td><td>12 (shell 11, stdin 1)</td><td>—</td><td>102 (run<em>shell</em>command 47, read<em>file 42, grep</em>search 10)</td></tr>
+        <tr><td>Design observations</td><td>5</td><td>4</td><td>—</td><td>3</td></tr>
+        <tr><td>False positives</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>0</td><td>0</td><td>3</td></tr>
+        <tr><td>Files reviewed</td><td>12</td><td>12</td><td>—</td><td>12</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>3</td><td>—</td><td>3</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>5S</strong></td><td><strong>3S</strong></td><td><strong>none</strong></td><td><strong>6S</strong></td></tr>
+        <tr><td>Downgraded</td><td>1</td><td>0</td><td>0</td><td>2</td></tr>
+        <tr><td>Dropped</td><td>2</td><td>1</td><td>0</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Claude gave the most value, with the only next-bump gap and the widest coverage. Codex was the best calibrated. Flash found real edge cases, but its severities need lowering and its reproducer output needs rerunning before anyone relies on it.</p>
+    <p><strong>Reconciliation:</strong> Claude pass 1 I1, the root-flag guard: important → suggestion S2. Claude pass 1 S1, Codex pass 1 S2 and Flash pass 1 I2 (MSYS2 conversion): dropped as declined in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s second round, now under Acknowledged Limitations. Claude pass 1 S3 (<code>notPathFlags</code> missing <code>--security-opt</code> and <code>--log-opt</code>) and its <code>key=path</code> design concern: dropped as declined in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="merged" data-type="pr">#974</a>&#39;s second round, now under Acknowledged Limitations. Flash pass 1 I1, overlay disjointness: important → suggestion S8. Flash pass 1 I3, module cache with a space: important → suggestion S5. Flash pass 1 S5, the replica&#39;s missing <code>version</code> Short text: dropped, because the Short text changes nothing in the output. Claude pass 1 S5 and Flash pass 1 S6, deleting <code>HiddenPersistentStringArrayFlag</code>, are counted as false positives, because nerdctl v2.2.0 and later call it (see Acknowledged Limitations).</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When the code under review exists to keep working across dependency bumps (a generator, a drift check, a compatibility table), stage the dependency&#39;s latest release beside the pinned one and check the code against both. The pinned version alone cannot separate dead code from code written for the next release, and only the next release shows which of the promised failures fire.</li>
+      <li>Before launching agents, search the earlier review reports for the files that the PR changes. When another PR&#39;s review already covered the same code, as happens when a branch is recut into a stack, load those reports as prior rounds, with their declined items and do-not-re-suggest notes, even when the PR body does not mention them. A round counter keyed on the PR number misses them, and the agents then re-raise what the earlier rounds settled.</li>
+      <li>When a liveness monitor reports an agent stalled, read its stderr before relaunching it. A CLI that sleeps on a quota retry prints the quota message to stderr once and then goes quiet, so it looks hung, and a relaunch hits the same quota.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] A recipe or script that runs a host Go tool with <code>go run</code> must pin <code>GOOS=$(HOST_OS) GOARCH=$(HOST_ARCH)</code>, as <code>rdd/Makefile</code> explains above its download recipe; otherwise a GOOS set on the make command line, or saved with <code>go env -w</code>, builds the tool for another OS. Flag a new host-tool invocation that leaves the pin out.</li>
+      <li>[repo] A nested Go module under <code>rdd/</code> is outside <code>./...</code>, so <code>make test</code> and <code>make lint-rdd</code> never reach it. For each such module, check which CI job builds, tests or lints it before calling it covered.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+Prism.languages.makefile={comment:{pattern:/(^|[^\\])#(?:\\(?:\r\n|[\s\S])|[^\\\r\n])*/,lookbehind:!0},string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"builtin-target":{pattern:/\.[A-Z][^:#=\s]+(?=\s*:(?!=))/,alias:"builtin"},target:{pattern:/^(?:[^:=\s]|[ \t]+(?![\s:]))+(?=\s*:(?!=))/m,alias:"symbol",inside:{variable:/\$+(?:(?!\$)[^(){}:#=\s]+|(?=[({]))/}},variable:/\$+(?:(?!\$)[^(){}:#=\s]+|\([@*%<^+?][DF]\)|(?=[({]))/,keyword:/-include\b|\b(?:define|else|endef|endif|export|ifn?def|ifn?eq|include|override|private|sinclude|undefine|unexport|vpath)\b/,function:{pattern:/(\()(?:abspath|addsuffix|and|basename|call|dir|error|eval|file|filter(?:-out)?|findstring|firstword|flavor|foreach|guile|if|info|join|lastword|load|notdir|or|origin|patsubst|realpath|shell|sort|strip|subst|suffix|value|warning|wildcard|word(?:list|s)?)(?=[ \t])/,lookbehind:!0},operator:/(?:::|[?:+!])?=|[|@]/,punctuation:/[:;(){}]/};
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>

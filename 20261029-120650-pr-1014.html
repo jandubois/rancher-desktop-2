@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261029-120650-pr-1014</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261029-120650-pr-1014</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-29 12:06</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1014" class="gh-ref" data-title="Port RD1&#39;s delete confirmations and the translated Standalone Containers label" data-state="open" data-type="pr">#1014</a> — Port RD1&#39;s delete confirmations and the translated Standalone Containers label</td></tr>
+      <tr><td>Branch</td><td><code>delete-confirmations</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6a4e6e1ef"><code>6a4e6e1ef</code></a> Confirm before deleting containers and volumes<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a652ed4f2"><code>a652ed4f2</code></a> Use the imperative for confirmation dialog titles<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/fca142501"><code>fca142501</code></a> Translate the delete-confirmation strings<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/359fe59ba"><code>359fe59ba</code></a> Place the delete confirmations&#39; buttons by named index<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f79e9fb48"><code>f79e9fb48</code></a> Give the delete confirmations an access key<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/fb46ca850"><code>fb46ca850</code></a> Explain the Chinese plural branches and the Italian titles<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/462f29860"><code>462f29860</code></a> Fold an empty bulk selection back to the row<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/13aa28f0a"><code>13aa28f0a</code></a> Test that a bulk delete asks before deleting<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/33c9689a2"><code>33c9689a2</code></a> Share the delete confirmation between the two pages<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/614a1dd5f"><code>614a1dd5f</code></a> Note that waitForTableToLoad waits only for the table<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/25469dec6"><code>25469dec6</code></a> Translate the new delete confirmations into Vietnamese<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/64d2fd113"><code>64d2fd113</code></a> Translate the Standalone Containers group label</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/64d2fd1133ad81e0da686308caa79119111159c3"><code>64d2fd1133ad81e0da686308caa79119111159c3</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default); Gemini 3.1 Pro (effort: default) was dropped with no output after its quota ran out</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the port is faithful, but the Volumes row menu still never opens and a context-menu delete can silently do nothing; both fixes are a few lines</td></tr>
+      <tr><td>Wall-clock time</td><td><code>1 h 1 min 52 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR ports RD1&#39;s delete confirmations for the Containers and Volumes pages, the access key on Delete, and the translated Standalone Containers label. The port matches its RD1 source, and the translations pass i18n-report. Two defects need fixing first. The Volumes table keys rows on a <code>Name</code> field that RD2&#39;s rows lack, so the row menu never opens, and the PR&#39;s delete fix cannot run. And a refresh while the dialog is open makes a confirmed context-menu delete do nothing.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/Volumes.vue">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> The Volumes row menu never opens, so the row-menu delete fix cannot run <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Volumes.vue#L10-L20">pkg/rancher-desktop/pages/Volumes.vue</a></div>
+      <pre data-start="10" data-line="15"><code class="language-vue">    &lt;/banner&gt;
+    &lt;SortableTable
+      class=&quot;volumesTable&quot;
+      data-testid=&quot;volumes-table&quot;
+      :headers=&quot;headers&quot;
+      key-field=&quot;Name&quot;
+      :rows=&quot;rows&quot;
+      no-rows-key=&quot;volumes.sortableTables.noRows&quot;
+      :row-actions=&quot;true&quot;
+      :paging=&quot;true&quot;
+      :rows-per-page=&quot;10&quot;</code></pre>
+    <p>SortableTable finds a clicked row by matching its <code>data-node-id</code> against <code>get(row, keyField)</code>. RD2&#39;s volume rows have <code>metadata</code> and <code>status</code> but no <code>Name</code>, so no row gets an id and <code>nodeForRow</code> returns nothing. The row menu, row selection and the context menu all stop there, and only select-all reaches <code>deleteVolume</code>.</p>
+    <p>See <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L203-L225"><code>pkg/rancher-desktop/components/SortableTable/selection.js:203-225</code></a> for the lookup.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L198-L230">pkg/rancher-desktop/components/SortableTable/selection.js</a></div>
+      <pre data-start="198" data-line="203-225"><code class="language-javascript">      const tgtRow = e.target.closest(&#39;TR&#39;);
+
+      return this.nodeForRow(tgtRow);
+    },
+
+    nodeForRow(tgtRow) {
+      if ( tgtRow?.classList.contains(&#39;separator-row&#39;) ) {
+        return;
+      }
+
+      while ( tgtRow &amp;&amp; !tgtRow.classList.contains(&#39;main-row&#39;) ) {
+        tgtRow = tgtRow.previousElementSibling;
+      }
+
+      if ( !tgtRow ) {
+        return;
+      }
+
+      const nodeId = tgtRow.dataset.nodeId;
+
+      if ( !nodeId ) {
+        return;
+      }
+
+      const node = this.pagedRows.find( (x) =&gt; get(x, this.keyField) === nodeId );
+
+      return node;
+    },
+
+    async onRowClick(e) {
+      const node = this.nodeForEvent(e);
+      const td = e.target.closest(&#39;TD&#39;);
+      const skipSelect = td?.classList.contains(&#39;skip-select&#39;);</code></pre>
+    <p>The key line predates this PR (2025-07-02). But the PR body and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6a4e6e1ef"><code>6a4e6e1ef</code></a> say this rewrite fixes deleting a volume from its row menu.</p>
+    <p>The table also reads <code>row[keyField]</code> and matches selections by <code>_key</code>, so a dotted <code>metadata.name</code> would not be enough.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-ts">// Save as .scratch/volumes-row-key.spec.ts in the repo root (after yarn install); run:
+// npx cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --rootDir . .scratch/volumes-row-key.spec.ts
+import { jest } from &#39;@jest/globals&#39;;
+import { mount } from &#39;@vue/test-utils&#39;;
+
+const { default: SortableTable } = await import(&#39;@pkg/components/SortableTable/index.vue&#39;);
+
+// Rows shaped like Volumes.vue&#39;s rows(): a Volume mirror plus row helpers, with no `Name`.
+// `_key` is the field the fix adds.
+const rows = [&#39;one&#39;, &#39;two&#39;].map(name =&gt; ({
+  _key:             name,
+  metadata:         { name, namespace: &#39;rancher-desktop&#39; },
+  status:           { name, driver: &#39;local&#39;, mountpoint: `/v/${ name }`, scope: &#39;local&#39; },
+  availableActions: [{ label: &#39;Delete&#39;, action: &#39;deleteVolume&#39;, enabled: true, bulkable: true, bulkAction: &#39;deleteVolume&#39; }],
+}));
+
+describe.each([&#39;Name&#39;, &#39;_key&#39;])(&#39;SortableTable with key-field %s&#39;, (keyField) =&gt; {
+  it(&#39;resolves a clicked row to its volume&#39;, () =&gt; {
+    const wrapper = mount(SortableTable as any, {
+      props:  { headers: [{ name: &#39;Name&#39;, label: &#39;Name&#39;, value: &#39;status.name&#39; }], rows, keyField, rowActions: true, tableActions: true, paging: false },
+      global: {
+        mocks: {
+          $store: {
+            getters: { &#39;i18n/t&#39;: (k: string) =&gt; k, &#39;prefs/get&#39;: () =&gt; 10, &#39;action-menu/isSelected&#39;: () =&gt; false },
+            commit:  jest.fn(),
+          },
+          t: (k: string) =&gt; k,
+        },
+        directives: { tooltip: {}, cleanHtml: {}, cleanTooltip: {}, trimWhitespace: {}, closePopper: {} },
+      },
+    });
+    const row = wrapper.find(&#39;tr.main-row&#39;);
+
+    // onRowClick and onRowContext (SortableTable/selection.js) return early when this is undefined.
+    expect(row.attributes(&#39;data-node-id&#39;)).toBe(&#39;one&#39;);
+    expect((wrapper.vm as any).nodeForRow(row.element)?.status.name).toBe(&#39;one&#39;);
+  });
+});</code></pre>
+      <pre><code class="language-text">$ npx cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --rootDir . .scratch/volumes-row-key.spec.ts 2&gt;&amp;1 | grep -E &#39;●|Expected|Received|Tests:&#39;
+  ● SortableTable with key-field Name › resolves a clicked row to its volume
+    Expected: &quot;one&quot;
+    Received: undefined
+Tests:       1 failed, 1 passed, 2 total</code></pre>
+      </details>
+    <p>Fix: give each row a top-level <code>_key</code> holding the engine&#39;s volume name, as <code>Images.vue</code> does; <code>e2e/pages/volumes-page.ts</code> looks rows up by that name. The patch adds a <code>Volumes.spec.ts</code> test that mounts the page and checks every row has the table&#39;s key.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/pages/Volumes.vue b/pkg/rancher-desktop/pages/Volumes.vue
+index 455ec1f56..579a7292e 100644
+--- a/pkg/rancher-desktop/pages/Volumes.vue
++++ b/pkg/rancher-desktop/pages/Volumes.vue
+@@ -12,7 +12,7 @@
+       class=&quot;volumesTable&quot;
+       data-testid=&quot;volumes-table&quot;
+       :headers=&quot;headers&quot;
+-      key-field=&quot;Name&quot;
++      key-field=&quot;_key&quot;
+       :rows=&quot;rows&quot;
+       no-rows-key=&quot;volumes.sortableTables.noRows&quot;
+       :row-actions=&quot;true&quot;
+@@ -89,6 +89,7 @@ const MAX_PATH_LENGTH = 40;
+  * The RowItem type describes the type of one row.
+  */
+ type RowItem = Volume &amp; Required&lt;Pick&lt;Volume, &#39;status&#39; | &#39;metadata&#39;&gt;&gt; &amp; {
++  _key:             string;
+   createdText:      string;
+   availableActions: {
+     label:       string;
+@@ -141,6 +142,7 @@ export default defineComponent({
+         .filter(hasField(&#39;status&#39;))
+         .sort((a, b) =&gt; a.status.name.localeCompare(b.status.name))
+         .map(volume =&gt; merge({}, volume, {
++          _key:                 volume.status.name,
+           createdText:          volume.status.createdAt ? new Date(volume.status.createdAt).toLocaleDateString() : &#39;&#39;,
+           availableActions: [
+             {
+diff --git a/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts b/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts
+index f09c5bd3a..2a907c55e 100644
+--- a/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts
++++ b/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts
+@@ -1,15 +1,17 @@
+ import { jest } from &#39;@jest/globals&#39;;
++import { mount } from &#39;@vue/test-utils&#39;;
+ 
+ import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+ import { t } from &#39;@pkg/utils/testUtils/translations&#39;;
+ import { IoRancherdesktopContainersV1alpha1Volume as Volume } from &#39;@rdd-client&#39;;
+ 
+ const componentStub = { template: &#39;&lt;div /&gt;&#39; };
++const tableStub = { template: &#39;&lt;div /&gt;&#39; };
+ const showMessageBox = jest.fn&lt;(channel: string, options: any) =&gt; Promise&lt;{ response: number }&gt;&gt;();
+ 
+ mockModules({
+   &#39;@pkg/components/Banner.vue&#39;:    componentStub,
+-  &#39;@pkg/components/SortableTable&#39;: componentStub,
++  &#39;@pkg/components/SortableTable&#39;: tableStub,
+   &#39;@pkg/entry/store&#39;:              {
+     mapTypedActions:   jest.fn(() =&gt; ({})),
+     mapTypedGetters:   jest.fn(() =&gt; ({})),
+@@ -70,6 +72,25 @@ describe(&#39;Volumes methods&#39;, () =&gt; {
+       .resolves.toBe(true);
+   });
+ 
++  it(&#39;keys each table row by its volume name&#39;, () =&gt; {
++    const wrapper = mount(Volumes, {
++      global: {
++        directives: { tooltip: {} },
++        mocks:      {
++          t,
++          error:          null,
++          volumes:        [volume(&#39;one&#39;), volume(&#39;two&#39;)],
++          watchResources: () =&gt; Promise.resolve(),
++          setHeader:      jest.fn(),
++        },
++      },
++    });
++    const { &#39;key-field&#39;: keyField, rows } = wrapper.findComponent(tableStub).vm.$attrs;
++
++    // SortableTable reads the key as row[keyField], so it must be a top-level field.
++    expect(rows.map((row: any) =&gt; row[keyField])).toEqual([&#39;one&#39;, &#39;two&#39;]);
++  });
++
+   describe(&#39;deletion&#39;, () =&gt; {
+     /** Build the row SortableTable would render for a single volume. */
+     function rowFor(item: Volume, context: any) {</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/Containers.vue">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> A refresh while the dialog is open makes a confirmed context-menu delete do nothing <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Containers.vue#L259-L273">pkg/rancher-desktop/pages/Containers.vue</a></div>
+      <pre data-start="259" data-line="264-268"><code class="language-ts">            stopContainer:    () =&gt; this.containerRequestAction({ container, state: &#39;stop&#39; }),
+            pauseContainer:   () =&gt; this.containerRequestAction({ container, state: &#39;pause&#39; }),
+            unpauseContainer: () =&gt; this.containerRequestAction({ container, state: &#39;unpause&#39; }),
+            restartContainer: () =&gt; this.containerRequestAction({ container, state: &#39;restart&#39; }),
+            deleteContainer:  async(args?: Container[]) =&gt; {
+              const targets = args?.length ? args : [container];
+
+              if (await this.confirmDelete(targets)) {
+                await Promise.all(targets.map(target =&gt; this.containerDelete({ container: target })));
+              }
+            },
+            viewInfo:         () =&gt; this.viewInfo(container),
+            portList,
+            portsSortKey:     portList.map(([hostPort]) =&gt; hostPort).sort((a, b) =&gt; a - b),
+          };</code></pre>
+    <p>With several rows selected, the right-click menu hands the bulk handler the table&#39;s own <code>selectedRows</code> array. The toolbar&#39;s Delete filters that array into a copy first, so only the context menu is affected.</p>
+    <p>See <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L330-L338"><code>pkg/rancher-desktop/components/SortableTable/selection.js:330-338</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/store/action-menu.js#L214-L218"><code>pkg/rancher-desktop/store/action-menu.js:214-218</code></a> for that path.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L325-L343">pkg/rancher-desktop/components/SortableTable/selection.js</a></div>
+      <pre data-start="325" data-line="330-338"><code class="language-javascript">
+      if ( !isSelected ) {
+        this.update([node], this.selectedRows.slice());
+      }
+
+      let resources = this.selectedRows;
+
+      if ( this.mangleActionResources ) {
+        resources = await this.mangleActionResources(resources);
+      }
+
+      this.$store.commit(`action-menu/show`, {
+        resources,
+        event: e,
+      });
+    },
+
+    keySelectRow(row, more = false) {
+      const node = this.nodeForRow(row);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/store/action-menu.js#L209-L223">pkg/rancher-desktop/store/action-menu.js</a></div>
+      <pre data-start="209" data-line="214-218"><code class="language-javascript">  return out;
+}
+
+function _execute(resources, action, args, opts = {}) {
+  args = args || [];
+  if ( resources.length &gt; 1 &amp;&amp; action.bulkAction &amp;&amp; !opts.alt ) {
+    const fn = resources[0][action.bulkAction];
+
+    if ( fn ) {
+      return fn.call(resources[0], resources, ...args);
+    }
+  }
+
+  const promises = [];
+</code></pre>
+    <p>The container store is watch-driven, so any change in the namespace rebuilds the rows while the dialog waits. The <code>pagedRows</code> watcher then splices the stale rows out of that same array. The user confirms, <code>targets</code> is empty, and nothing is deleted or reported.</p>
+    <p>See <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L122-L136"><code>pkg/rancher-desktop/components/SortableTable/selection.js:122-136</code></a> for the watcher.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L117-L141">pkg/rancher-desktop/components/SortableTable/selection.js</a></div>
+      <pre data-start="117" data-line="122-136"><code class="language-javascript">      prevNode:     null,
+    };
+  },
+
+  watch: {
+    // On page change
+    pagedRows() {
+      // When the table contents changes:
+      // - Remove items that are in the selection but no longer in the table.
+
+      const content = this.pagedRows;
+      const toRemove = [];
+
+      for (const node of this.selectedRows) {
+        if (!content.includes(node) ) {
+          toRemove.push(node);
+        }
+      }
+
+      this.update([], toRemove);
+    },
+  },
+
+  methods: {
+    onToggleAll(value) {</code></pre>
+    <p>Before this PR, the handlers dispatched at once, so the <code>await</code> opens the window. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Volumes.vue#L161"><code>Volumes.vue:161</code></a> keeps the same alias. RD1&#39;s <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11007" class="gh-ref">#11007</a>, not yet ported, refills the selection after a refresh.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Volumes.vue#L156-L166">pkg/rancher-desktop/pages/Volumes.vue</a></div>
+      <pre data-start="156" data-line="161"><code class="language-markup">              bulkable:   true,
+              bulkAction: &#39;deleteVolume&#39;,
+            },
+          ],
+          deleteVolume: async(args?: Volume[]) =&gt; {
+            const targets = args?.length ? args : [volume];
+
+            if (await this.confirmDelete(targets)) {
+              await Promise.all(targets.map(target =&gt; this.volumeDelete({ volume: target })));
+            }
+          },</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-ts">// Save as .scratch/delete-selection.spec.ts in the repo root (after yarn install); run:
+// npx cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --rootDir . .scratch/delete-selection.spec.ts
+
+import { jest } from &#39;@jest/globals&#39;;
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+
+const stub = { template: &#39;&lt;div /&gt;&#39; };
+mockModules({
+  &#39;@pkg/components/Banner.vue&#39;: stub,
+  &#39;@pkg/components/ContainerStatusBadge.vue&#39;: stub,
+  &#39;@pkg/components/SortableTable&#39;: stub,
+  &#39;@pkg/entry/store&#39;: {
+    mapTypedActions: () =&gt; ({}), mapTypedGetters: () =&gt; ({}),
+    mapTypedMutations: () =&gt; ({}), mapTypedState: () =&gt; ({}),
+  },
+  &#39;@pkg/utils/ipcRenderer&#39;: { ipcRenderer: {} },
+  electron: undefined,
+});
+const { default: Containers } = await import(&#39;@pkg/pages/Containers.vue&#39;);
+const { default: Volumes } = await import(&#39;@pkg/pages/Volumes.vue&#39;);
+const { default: selection } = await import(&#39;@pkg/components/SortableTable/selection&#39;);
+const { actions } = await import(&#39;@pkg/store/action-menu&#39;);
+
+it.each([
+  [&#39;containers&#39;, Containers, &#39;deleteContainer&#39;, &#39;containerDelete&#39;],
+  [&#39;volumes&#39;, Volumes, &#39;deleteVolume&#39;, &#39;volumeDelete&#39;],
+])(&#39;keeps confirmed %s after a table refresh&#39;, async(_, Page, action, storeAction) =&gt; {
+  let answer!: (confirmed: boolean) =&gt; void;
+  const shown: string[][] = [];
+  const remove = jest.fn();
+  const items = [&#39;one&#39;, &#39;two&#39;].map(name =&gt; ({
+    metadata: { name, namespace: &#39;default&#39; },
+    status: {
+      id: name, name, namespace: &#39;default&#39;,
+      image: &#39;scratch&#39;, path: &#39;&#39;, status: &#39;exited&#39;,
+    },
+  }));
+  const context = {
+    ...(Page as any).methods,
+    containers: items, volumes: items, supportsNamespaces: true,
+    t: (key: string) =&gt; key,
+    [storeAction]: remove,
+    confirmDelete: (targets: typeof items) =&gt; {
+      shown.push(targets.map(target =&gt; target.metadata.name));
+      return new Promise&lt;boolean&gt;(resolve =&gt; { answer = resolve; });
+    },
+  };
+  const makeRows = () =&gt; (Page as any).computed.rows.call(context);
+  const selectedRows = makeRows();
+  const pending = actions.execute({ state: { resources: selectedRows } }, {
+    action: selectedRows[0].availableActions.find((entry: any) =&gt; entry.action === action),
+  });
+  expect(shown).toEqual([[&#39;one&#39;, &#39;two&#39;]]);
+  selection.watch.pagedRows.call({
+    selectedRows, pagedRows: makeRows(),
+    update: selection.methods.update, $nextTick: () =&gt; {},
+  });
+  expect(selectedRows).toHaveLength(0);
+  answer(true);
+  await pending;
+  expect(remove).toHaveBeenCalledTimes(2);
+});</code></pre>
+      <pre><code class="language-text">$ npx cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --rootDir . .scratch/delete-selection.spec.ts 2&gt;&amp;1 | grep -E &#39;●|Expected|Received|Tests:&#39;
+  ● keeps confirmed containers after a table refresh
+    Expected number of calls: 2
+    Received number of calls: 0
+  ● keeps confirmed volumes after a table refresh
+    Expected number of calls: 2
+    Received number of calls: 0
+Tests:       2 failed, 2 total
+$ git apply patch-i2.diff  # the patch below
+$ npx cross-env BROWSERSLIST_IGNORE_OLD_DATA=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --rootDir . .scratch/delete-selection.spec.ts 2&gt;&amp;1 | grep -E &#39;●|Expected|Received|Tests:&#39;
+Tests:       2 passed, 2 total</code></pre>
+      </details>
+    <p>Fix: copy the selection before awaiting the dialog, on both pages. The patch adds a test to each page spec that empties the caller&#39;s array while the dialog is pending.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/pages/Containers.vue b/pkg/rancher-desktop/pages/Containers.vue
+index 6465bfd96..85c6d7391 100644
+--- a/pkg/rancher-desktop/pages/Containers.vue
++++ b/pkg/rancher-desktop/pages/Containers.vue
+@@ -261,7 +261,9 @@ export default defineComponent({
+             unpauseContainer: () =&gt; this.containerRequestAction({ container, state: &#39;unpause&#39; }),
+             restartContainer: () =&gt; this.containerRequestAction({ container, state: &#39;restart&#39; }),
+             deleteContainer:  async(args?: Container[]) =&gt; {
+-              const targets = args?.length ? args : [container];
++              // The context menu passes the table&#39;s live selection, which a
++              // refresh can empty while the dialog is open, so copy it first.
++              const targets = args?.length ? [...args] : [container];
+ 
+               if (await this.confirmDelete(targets)) {
+                 await Promise.all(targets.map(target =&gt; this.containerDelete({ container: target })));
+diff --git a/pkg/rancher-desktop/pages/Volumes.vue b/pkg/rancher-desktop/pages/Volumes.vue
+index 455ec1f56..7b3e318f1 100644
+--- a/pkg/rancher-desktop/pages/Volumes.vue
++++ b/pkg/rancher-desktop/pages/Volumes.vue
+@@ -158,7 +158,9 @@ export default defineComponent({
+             },
+           ],
+           deleteVolume: async(args?: Volume[]) =&gt; {
+-            const targets = args?.length ? args : [volume];
++            // The context menu passes the table&#39;s live selection, which a
++            // refresh can empty while the dialog is open, so copy it first.
++            const targets = args?.length ? [...args] : [volume];
+ 
+             if (await this.confirmDelete(targets)) {
+               await Promise.all(targets.map(target =&gt; this.volumeDelete({ volume: target })));
+diff --git a/pkg/rancher-desktop/pages/__tests__/Containers.spec.ts b/pkg/rancher-desktop/pages/__tests__/Containers.spec.ts
+index e7fe6c210..c42ec85b6 100644
+--- a/pkg/rancher-desktop/pages/__tests__/Containers.spec.ts
++++ b/pkg/rancher-desktop/pages/__tests__/Containers.spec.ts
+@@ -233,6 +233,24 @@ describe(&#39;Containers methods&#39;, () =&gt; {
+       expect(containerDelete.mock.calls).toEqual(doomed.map(target =&gt; [{ container: target }]));
+     });
+ 
++    it(&#39;deletes what the user confirmed after a refresh empties the selection&#39;, async() =&gt; {
++      const containerDelete = jest.fn();
++      const selection = [container(&#39;one&#39;), container(&#39;two&#39;)];
++      const doomed = [...selection];
++      const row = rowFor(selection[0], {
++        containerDelete,
++        // A refresh while the dialog is open drops the stale rows from the table&#39;s selection.
++        confirmDelete: () =&gt; {
++          selection.splice(0);
++
++          return Promise.resolve(true);
++        },
++      });
++
++      await row.deleteContainer(selection);
++      expect(containerDelete.mock.calls).toEqual(doomed.map(target =&gt; [{ container: target }]));
++    });
++
+     it(&#39;leaves the container alone when the user cancels&#39;, async() =&gt; {
+       const containerDelete = jest.fn();
+       const row = rowFor(container(&#39;spared&#39;), { containerDelete, confirmDelete: () =&gt; Promise.resolve(false) });
+diff --git a/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts b/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts
+index f09c5bd3a..eb74f4ad6 100644
+--- a/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts
++++ b/pkg/rancher-desktop/pages/__tests__/Volumes.spec.ts
+@@ -102,6 +102,24 @@ describe(&#39;Volumes methods&#39;, () =&gt; {
+       expect(volumeDelete.mock.calls).toEqual(doomed.map(target =&gt; [{ volume: target }]));
+     });
+ 
++    it(&#39;deletes what the user confirmed after a refresh empties the selection&#39;, async() =&gt; {
++      const volumeDelete = jest.fn();
++      const selection = [volume(&#39;one&#39;), volume(&#39;two&#39;)];
++      const doomed = [...selection];
++      const row = rowFor(selection[0], {
++        volumeDelete,
++        // A refresh while the dialog is open drops the stale rows from the table&#39;s selection.
++        confirmDelete: () =&gt; {
++          selection.splice(0);
++
++          return Promise.resolve(true);
++        },
++      });
++
++      await row.deleteVolume(selection);
++      expect(volumeDelete.mock.calls).toEqual(doomed.map(target =&gt; [{ volume: target }]));
++    });
++
+     it.each([
+       [&#39;an empty bulk selection&#39;, []],
+       [&#39;no selection, as the row menu passes&#39;, undefined],</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/Containers.vue">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> No test pins the Containers <code>bulkAction</code> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Containers.vue#L355-L365">pkg/rancher-desktop/pages/Containers.vue</a></div>
+      <pre data-start="355" data-line="360"><code class="language-ts">        {
+          label:      this.t(&#39;images.manager.table.action.delete&#39;),
+          action:     &#39;deleteContainer&#39;,
+          enabled:    this.isStopped(container),
+          bulkable:   true,
+          bulkAction: &#39;deleteContainer&#39;,
+        },
+      ];
+    },
+    clearDropDownPosition(event: Event) {
+      const target = event.target as HTMLElement;</code></pre>
+    <p>Deleting this line leaves all 13 <code>Containers.spec.ts</code> tests green; I ran that mutation during consolidation. Without the line, the table calls each selected row&#39;s handler separately, so a bulk delete opens one &quot;Delete 1 container?&quot; dialog per container, all at once. The specs call <code>row.deleteContainer(doomed)</code> directly and never check the delete action&#39;s entry.</p>
+    <p>Fix: assert the entry in the existing <code>getContainerActions</code> test, which already builds a stopped container.</p>
+      <pre><code class="language-ts">expect(wrapper.vm.getContainerActions(stopped)).toContainEqual(expect.objectContaining({
+  action: &#39;deleteContainer&#39;, bulkAction: &#39;deleteContainer&#39;, enabled: true,
+}));</code></pre>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/Containers.vue">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> A confirmed delete force-removes a container that started while the dialog was open <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Containers.vue#L262-L272">pkg/rancher-desktop/pages/Containers.vue</a></div>
+      <pre data-start="262" data-line="267"><code class="language-ts">            restartContainer: () =&gt; this.containerRequestAction({ container, state: &#39;restart&#39; }),
+            deleteContainer:  async(args?: Container[]) =&gt; {
+              const targets = args?.length ? args : [container];
+
+              if (await this.confirmDelete(targets)) {
+                await Promise.all(targets.map(target =&gt; this.containerDelete({ container: target })));
+              }
+            },
+            viewInfo:         () =&gt; this.viewInfo(container),
+            portList,
+            portsSortKey:     portList.map(([hostPort]) =&gt; hostPort).sort((a, b) =&gt; a - b),</code></pre>
+    <p>Delete is offered only for stopped containers (<code>isStopped</code>, line 358), checked when the user clicks. Deleting a Container mirror force-removes the engine&#39;s container, and containerd kills a running task first. The dialog stretches the gap between that check and the delete from milliseconds to however long the user takes. A container started meanwhile, from the CLI or by compose, gets killed and removed. That is unlikely, but nothing undoes it.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Containers.vue#L353-L363">pkg/rancher-desktop/pages/Containers.vue</a></div>
+      <pre data-start="353" data-line="358"><code class="language-markup">          bulkable:   true,
+        },
+        {
+          label:      this.t(&#39;images.manager.table.action.delete&#39;),
+          action:     &#39;deleteContainer&#39;,
+          enabled:    this.isStopped(container),
+          bulkable:   true,
+          bulkAction: &#39;deleteContainer&#39;,
+        },
+      ];
+    },</code></pre>
+    <p>See <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/rdd/pkg/controllers/app/engine/controllers/docker_watcher.go#L503"><code>rdd/pkg/controllers/app/engine/controllers/docker_watcher.go:503</code></a> for the forced removal.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/rdd/pkg/controllers/app/engine/controllers/docker_watcher.go#L498-L508">rdd/pkg/controllers/app/engine/controllers/docker_watcher.go</a></div>
+      <pre data-start="498" data-line="503"><code class="language-go">//
+// Force: true expresses user intent: a K8s-side delete of a Container
+// mirror means &quot;remove this container&quot;, so Docker stops it first if
+// running. Images use Force: false so in-use images are kept and the
+// finalizer retries until the last consumer goes away.
+func (w *dockerWatcher) deleteContainer(ctx context.Context, c *containersv1alpha1.Container) error {
+	_, err := w.cli.ContainerRemove(ctx, c.Name, mobyclient.ContainerRemoveOptions{Force: true})
+	if errdefs.IsNotFound(err) {
+		return nil
+	}
+	return err</code></pre>
+    <p>Fix: after the user confirms, delete only the targets whose current state in <code>this.containers</code> is still stopped.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/__tests__/Containers.spec.ts">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The new <code>container()</code> fixture omits the required <code>status.id</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/__tests__/Containers.spec.ts#L61-L78">pkg/rancher-desktop/pages/__tests__/Containers.spec.ts</a></div>
+      <pre data-start="61" data-line="66-73"><code class="language-ts">  const { methods } = Containers as any;
+
+  function container(name: string, labels: Record&lt;string, string&gt; = {}): Container {
+    return {
+      metadata: { name: `${ name }-id`, namespace: &#39;default&#39; },
+      status:   {
+        image:     &#39;scratch&#39;,
+        namespace: &#39;default&#39;,
+        name,
+        path:      &#39;/bin/false&#39;,
+        status:    ContainerStatus.Exited,
+        labels,
+      },
+    };
+  }
+
+  /** Build the row SortableTable would render for a single container. */
+  function rowFor(item: Container, context: any) {</code></pre>
+    <p>The generated <code>IoRancherdesktopContainersV1alpha1ContainerStatus</code> requires <code>id</code>, and <code>tsc</code> reports TS2741 on this line, new in this PR. No CI job type-checks spec files, so nothing else catches it.</p>
+    <p>Fix: add <code>id: \</code>${ name }-id\<code>,</code> to <code>status</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/__tests__/Containers.spec.ts">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The port dropped RD1&#39;s empty-selection case from the Containers spec <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/__tests__/Containers.spec.ts#L207-L217">pkg/rancher-desktop/pages/__tests__/Containers.spec.ts</a></div>
+      <pre data-start="207" data-line="212"><code class="language-ts">    it(&#39;deletes the container once the user confirms&#39;, async() =&gt; {
+      const containerDelete = jest.fn();
+      const doomed = container(&#39;doomed&#39;);
+      const row = rowFor(doomed, { containerDelete, confirmDelete: () =&gt; Promise.resolve(true) });
+
+      await row.deleteContainer();
+      expect(containerDelete).toHaveBeenCalledWith({ container: doomed });
+    });
+
+    it(&#39;confirms the whole bulk selection, and deletes none of it when cancelled&#39;, async() =&gt; {
+      const containerDelete = jest.fn();</code></pre>
+    <p>RD1&#39;s spec tested <code>containerCommandTarget(running, [])</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/da81244a0"><code>da81244a0</code></a>). RD2 inlines that fold into <code>deleteContainer</code>, and its spec now calls it only with no argument. <code>Volumes.spec.ts</code> already covers both <code>[]</code> and <code>undefined</code>. The table never passes an empty array today, because <code>_execute</code> takes the bulk path only when more than one row is selected. So this is coverage that the port lost, and no user can reach the bug.</p>
+    <p>Fix: run the test over <code>undefined</code> and <code>[]</code>, as <code>Volumes.spec.ts</code> does.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/index.ts">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> The access-key comment names <code>imageEvents.ts</code>, which RD2 never runs <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/window/index.ts#L696-L707">pkg/rancher-desktop/window/index.ts</a></div>
+      <pre data-start="696" data-line="701-702"><code class="language-ts">
+export async function showMessageBox(options: Electron.MessageBoxOptions, couldBeModal = false) {
+  const mainWindow = couldBeModal ? getWindow(&#39;main&#39;) : null;
+
+  // On macOS, normalizeAccessKeys removes only the &quot;&amp;&quot;, which would leave &quot;削除(D)&quot;.
+  // Only dialogs shown through this function get the strip; imageEvents.ts
+  // and window/preferences.ts call Electron&#39;s dialog API directly.
+  if (options.normalizeAccessKeys &amp;&amp; process.platform === &#39;darwin&#39;) {
+    options = { ...options, buttons: options.buttons?.map(removeParenthesizedAccessKey) };
+  }
+
+  return await (mainWindow ? Electron.dialog.showMessageBox(mainWindow, options) : Electron.dialog.showMessageBox(options));</code></pre>
+    <p>Every handler in <code>main/imageEvents.ts</code> is inside a block comment (lines 29-183), and nothing imports the module. The Images confirmations reach this function by IPC (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/Images.vue#L405"><code>components/Images.vue:405</code></a>), so the comment points at a direct dialog call that does not exist.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/Images.vue#L400-L410">pkg/rancher-desktop/components/Images.vue</a></div>
+      <pre data-start="400" data-line="405"><code class="language-markup">        defaultId: 1,
+        title:     this.t(&#39;images.confirmDelete.title&#39;),
+        cancelId:  1,
+      };
+
+      const result = await ipcRenderer.invoke(&#39;show-message-box&#39;, options);
+
+      if (result.response === 1) {
+        return;
+      }
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/window/index.ts#L24-L188">pkg/rancher-desktop/window/index.ts</a></div>
+      <pre data-start="24" data-line="29-183"><code class="language-typescript"> */
+export const windowMapping: Record&lt;string, number&gt; = {};
+
+export const webRoot = `app://${ isDevBuild ? &#39;&#39; : &#39;.&#39; }`;
+
+/**
+ * Restore or focus a window if it is already open
+ * @param window The Electron Browser window to show or restore
+ * @returns Boolean: True if the browser window is shown or restored
+ */
+export const restoreWindow = (window: Electron.BrowserWindow | null): window is Electron.BrowserWindow =&gt; {
+  if (window) {
+    if (!window.isFocused()) {
+      if (window.isMinimized()) {
+        window.restore();
+      }
+      window.show();
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
+/**
+ * Return an existing window of the given ID.
+ */
+export function getWindow(name: string): Electron.BrowserWindow | null {
+  return (name in windowMapping) ? BrowserWindow.fromId(windowMapping[name]) : null;
+}
+
+function isInternalURL(url: string) {
+  return url.startsWith(`${ webRoot }/`) || url.startsWith(&#39;x-rd-extension://&#39;);
+}
+
+/**
+ * Open a given window; if it is already open, focus it.
+ * @param name The window identifier; this controls window re-use.
+ * @param url The URL to load into the window.
+ * @param options A hash of options used by `new BrowserWindow(options)`
+ */
+export function createWindow(name: string, url: string, options: Electron.BrowserWindowConstructorOptions) {
+  let window = getWindow(name);
+
+  if (restoreWindow(window)) {
+    return window;
+  }
+
+  window = new BrowserWindow(options);
+  window.webContents.on(&#39;console-message&#39;, (event) =&gt; {
+    const { level, sourceId, lineNumber, message } = event;
+    const method = level === &#39;warning&#39; ? &#39;warn&#39; : level;
+
+    Logging[`window_${ name }`][method](`${ sourceId }@${ lineNumber }: ${ message }`);
+  });
+  window.webContents.on(&#39;will-navigate&#39;, (event, input) =&gt; {
+    if (isInternalURL(input)) {
+      return;
+    }
+    shell.openExternal(input);
+    event.preventDefault();
+  });
+  window.webContents.setWindowOpenHandler((details) =&gt; {
+    if (isInternalURL(details.url)) {
+      window?.webContents.loadURL(details.url);
+    } else {
+      shell.openExternal(details.url);
+    }
+
+    return { action: &#39;deny&#39; };
+  });
+  window.webContents.on(&#39;did-fail-load&#39;, (event, errorCode, errorDescription, url) =&gt; {
+    Logging[`window_${ name }`].error(`Failed to load ${ url }: ${ errorCode } (${ errorDescription })`, event);
+  });
+  console.debug(&#39;createWindow() name:&#39;, name, &#39; url:&#39;, url);
+  window.loadURL(url);
+  windowMapping[name] = window.id;
+
+  return window;
+}
+
+const mainUrl = process.env.RD_ENV_PLUGINS_DEV ? &#39;https://localhost:8888&#39; : `${ webRoot }/index.html`;
+
+/**
+ * Open the main window; if it is already open, focus it.
+ */
+export function openMain() {
+  console.debug(&#39;openMain() webRoot:&#39;, webRoot);
+
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
+
+  const defaultWidth = Math.min(Math.trunc(width * 0.8), 1280);
+  const defaultHeight = Math.min(Math.trunc(height * 0.8), 720);
+
+  const window = createWindow(
+    &#39;main&#39;,
+    mainUrl,
+    {
+      width:          defaultWidth,
+      height:         defaultHeight,
+      resizable:      !process.env.RD_MOCK_FOR_SCREENSHOTS, // remove window&#39;s shadows while taking screenshots
+      icon:           path.join(paths.resources, &#39;icons&#39;, &#39;logo-square-512.png&#39;),
+      webPreferences: {
+        devTools:         !app.isPackaged,
+        nodeIntegration:  true,
+        contextIsolation: false,
+      },
+    });
+
+  if (!Shortcuts.isRegistered(window)) {
+    Shortcuts.register(
+      window,
+      {
+        ...CommandOrControl,
+        key: &#39;,&#39;,
+      },
+      () =&gt; openPreferences(),
+      &#39;open preferences&#39;,
+    );
+
+    mainRoutes.forEach(({ route }, index) =&gt; {
+      Shortcuts.register(
+        window,
+        {
+          ...CommandOrControl,
+          key: index + 1,
+        },
+        () =&gt; window.webContents.send(&#39;route&#39;, { path: route }),
+        `switch main tabs ${ route }`,
+      );
+    });
+
+    Shortcuts.register(
+      window,
+      {
+        ...CommandOrControl,
+        key: &#39;]&#39;,
+      },
+      () =&gt; window.webContents.send(&#39;route&#39;, { direction: &#39;forward&#39; }),
+      &#39;switch preferences tabs by cycle [forward]&#39;,
+    );
+
+    Shortcuts.register(
+      window,
+      {
+        ...CommandOrControl,
+        key: &#39;[&#39;,
+      },
+      () =&gt; window.webContents.send(&#39;route&#39;, { direction: &#39;back&#39; }),
+      &#39;switch preferences tabs by cycle [back]&#39;,
+    );
+  }
+
+  window.on(&#39;closed&#39;, () =&gt; {
+    const cfg = getSettings();
+
+    if (cfg.application.window.quitOnClose) {
+      BrowserWindow.getAllWindows().forEach((window) =&gt; {
+        window.close();
+      });
+      app.quit();
+    }
+  });
+</code></pre>
+    <p>Fix: name only <code>window/preferences.ts</code>, whose <code>dialog.showMessageBoxSync</code> call at line 114 does skip the strip.</p>
+    </div>
+    <div class="card card-suggestion" data-file="13aa28f0a">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/13aa28f0a"><code>13aa28f0a</code></a> says the volumes e2e bulk case ran <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <pre><code class="language-text">The container deletion tests drove the single-row branch, and the
+volumes e2e bulk case ran with the stub answering confirm.</code></pre>
+    <p>That holds for RD1. In RD2, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/e2e/volumes.e2e.spec.ts#L35"><code>e2e/volumes.e2e.spec.ts:35</code></a> has been <code>test.describe.fixme</code> since 2026-02-06, so the bulk case never ran, and nothing tested the Volumes delete handler until this PR&#39;s unit spec. The PR body says the suite does not run, and the commit message tells a later reader the opposite.</p>
+    <p>Fix: say that no test covered the Volumes wiring, because its e2e suite is <code>fixme</code>.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>(future)</strong> <code>selection.update()</code> finds the row to deselect by <code>_key</code>, whatever the table&#39;s <code>key-field</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L444"><code>pkg/rancher-desktop/components/SortableTable/selection.js:444</code></a>). Containers rows lack <code>_key</code>, so every lookup matches the first selected row. Select rows a and b, uncheck b, and the selection holds b while the checkboxes show a. A bulk action then runs on the row that the user unchecked. A probe run during consolidation left <code>[&#39;b&#39;]</code> with <code>key-field=&quot;id&quot;</code> and <code>[&#39;a&#39;]</code> with <code>_key</code>. RD1 fixed this in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11007" class="gh-ref">#11007</a>, and its port is already tracked. This PR&#39;s dialog, which names its targets, is where a user would now notice the wrong row. Found during consolidation; no reviewer raised it.</li>
+      <li><strong>(future)</strong> <code>components/Images.vue</code> still builds its own confirmation, without <code>showDeleteConfirmation</code> or an access key. The translations README records the exception (line 86). Routing Images through the helper would leave one dialog definition and one access-key rule. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(future)</strong> The Volumes header <code>sort</code> keys (<code>Name</code>, <code>Driver</code>, <code>Mountpoint</code>, <code>Created</code>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Volumes.vue#L114-L129"><code>Volumes.vue:114-129</code></a>) name RD1 fields that RD2&#39;s rows lack, so the column sort compares undefined values. The rows arrive pre-sorted by name, which hides it. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li><strong>(in-scope)</strong> <code>showDeleteConfirmation</code> takes the strings the pages resolve, so the <code>t()</code> keys stay literal where i18n-report can find them. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><strong>(in-scope)</strong> Cancel is both the default and the cancel button, so Esc, Enter and closing the dialog all back out. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><strong>(in-scope)</strong> The standalone group keeps its English key for grouping and sorting, and only the header shows the translated label. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><strong>(in-scope)</strong> The macOS strip of parenthesized access keys applies only to dialogs that pass <code>normalizeAccessKeys</code>. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>I ran the suite in a lead worktree at the review SHA, with dependencies installed from its <code>yarn.lock</code>. The three specs that the PR adds or changes pass (23 tests), ESLint is clean on the 11 changed source files, and <code>tsc</code> reports one new error (S3). On the head commit, 48 CI checks passed, 3 were skipped and none failed. The reviewers&#39; runs of the i18n-report <code>check</code> and <code>drift</code> commands (Claude) and of <code>make check-translations</code> and <code>make test-i18n-report</code> (Flash) all passed.</p>
+    <ul>
+      <li><strong>I1 (required):</strong> a one-row Volumes delete fails with no message, so it needs a test. <code>Volumes.spec.ts</code> calls the row handler directly and cannot see the table wiring, which is why the patch mounts the page.</li>
+      <li><strong>I2 (required):</strong> a confirmed delete that does nothing goes unnoticed until the user looks again. The existing tests resolve the dialog at once and never hold it open.</li>
+      <li><strong>S1 (optional):</strong> a missing <code>bulkAction</code> shows several dialogs, which the user sees.</li>
+      <li><strong>S4 (optional):</strong> the table cannot hand the handler an empty array today.</li>
+    </ul>
+    <p>Each patch&#39;s tests fail without its fix and pass with it. The I1 and I2 patches both touch <code>Volumes.vue</code> and <code>Volumes.spec.ts</code>, and they apply cleanly in either order. With both applied, the three suites in <code>pages/__tests__</code> (Containers, Volumes and FirstRun) pass with 24 tests and ESLint is clean.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The translations README&#39;s access-key section matches the code. Only these two dialogs pass <code>normalizeAccessKeys</code>, and the CJK labels use half-width <code>(&amp;X)</code> as the menus do. The PR body&#39;s claim that row-menu deletion of a volume now works needs I1&#39;s fix to hold. S5 and S6 correct a code comment and a commit message that describe RD1 rather than RD2.</p>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The 12 commits map one to one onto RD1&#39;s 11 commits in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/10957" class="gh-ref">#10957</a> and its single commit in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11078" class="gh-ref">#11078</a>, in RD1&#39;s order. Today&#39;s force-push rebased onto <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ea1eeb18e"><code>ea1eeb18e</code></a>, dropped the migration-title hunks that main had already removed, trimmed the second commit&#39;s message to match, and inserted the Vietnamese commit. Two messages do not hold for RD2&#39;s tree. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6a4e6e1ef"><code>6a4e6e1ef</code></a> says it fixes the row-menu delete that I1 blocks, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/13aa28f0a"><code>13aa28f0a</code></a> says the volumes e2e ran (S6). Every other message holds.</p>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The volumes e2e suite is <code>test.describe.fixme</code>, so its new assertions do not run. The PR body says so.</li>
+      <li>A volume&#39;s name in the dialog falls back to <code>&#39;&#39;</code>, where Containers falls back to <code>metadata.name</code>. <code>status.name</code> is a required field and <code>rows</code> already dereferences it in its sort, so a <code>metadata.name</code> fallback would guard a case that cannot occur. Do not re-suggest it.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found I1, the headline. Its mounted-table reproducer showed that the Volumes rows never resolve. Its proposed <code>key-field=&quot;metadata.name&quot;</code> would have fixed the lookup and left the bracket-access uses of the key undefined, so the report&#39;s patch uses <code>_key</code> instead. It filed the stale commit message (S6) as Important; a wrong commit message is a suggestion. Its two other suggestions held up. The <code>bulkAction</code> mutation survived the spec run, and rdd&#39;s moby delete does pass <code>Force: true</code>. It ran <code>i18n-report check</code> and <code>drift</code> for all nine locales, which no other reviewer did.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex alone found I2, with a probe that drove the real selection watcher and action-menu dispatch and checked the merge-base as a control. It also traced the Volumes row-key defect but filed it as a design concern instead of a finding. It proposed a top-level <code>_key</code>, which matches the fix that this report applies. It rated the stale <code>imageEvents.ts</code> comment Important; a misleading comment is a suggestion. Its coverage table was the most useful of the three, because it named the blocks that Codex read in each file.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash returned three suggestions and no defect: S3 and S4 overlap with the others, and the third, a name fallback, guards a case that cannot occur. It marked <code>Containers.vue</code> and <code>Volumes.vue</code> reviewed while both held an Important finding. It re-ran the Jest specs that the prompt said were already run. Its Acknowledged Limitations say <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/983" class="gh-ref" data-title="Port RD1&#39;s delete confirmations and the translated Standalone Containers label" data-state="open" data-type="issue">#983</a> defers a limit on dialog items to a later port of RD1 <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/10958" class="gh-ref">#10958</a>. But <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/983" class="gh-ref" data-title="Port RD1&#39;s delete confirmations and the translated Standalone Containers label" data-state="open" data-type="issue">#983</a> leaves <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/10958" class="gh-ref">#10958</a> out because that PR changes table rows and no text.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro read the diff, then hit its quota on its next model call: &quot;Your quota will reset after 4h56m38s&quot;. The CLI slept for the reset, so the agent produced nothing and was dropped at 52 minutes. The liveness monitor missed the stall for two reasons. Its glob summed every Gemini review log on the machine, and a concurrent review&#39;s log grew inside its sample window. And the Monitor tool kills a monitor at 30 minutes, which left time for only one 15-minute sample. Commit <code>d70e0399</code> in <code>~/.claude</code> fixes both. The table&#39;s 0m 07s is the span of its session log, which stopped at 12:11.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>9m 30s</td><td>13m 47s</td><td>0m 07s</td><td>11m 35s</td></tr>
+        <tr><td>Findings</td><td>1I 4S</td><td>2I 3S</td><td>—</td><td>2S</td></tr>
+        <tr><td>Tool calls</td><td>69 (Bash 61, Read 6, Write 2)</td><td>37 (shell 30, stdin 7)</td><td>1 (read_file 1)</td><td>115 (grep<em>search 39, read</em>file 39, run<em>shell</em>command 29)</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>3</td><td>—</td><td>1</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>2</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>22</td><td>22</td><td>—</td><td>22</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>—</td><td>2</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 4S</strong></td><td><strong>2I 3S</strong></td><td><strong>none</strong></td><td><strong>2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p>Claude found I1, and Codex found both Important defects, though it filed I1 as a design concern. Only I2, the race, needed a reviewer to model timing across an <code>await</code>. Both verified their claims with probes. Flash added nothing beyond them this round.</p>
+    <p><strong>Reconciliation:</strong> Claude, pass 1, stale commit message: important → suggestion S6. Codex, pass 1, <code>imageEvents.ts</code> comment: important → suggestion S5. Codex, pass 1, the Volumes row-key design concern: merged into I1. Gemini 3.5 Flash, pass 1, volume name fallback: dropped as a false positive.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a change inserts an <code>await</code> (a dialog, a network call) between receiving a caller-owned collection and using it, check whether the caller can mutate that collection meanwhile, and whether the handler should copy it first. A synchronous handler never exposed that window, so the diff alone does not show the new risk.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] SortableTable finds a clicked row with <code>get(row, keyField)</code> and keys <code>v-for</code> rows and row expansion with <code>row[keyField]</code>. Flag a page whose <code>key-field</code> is a dotted path or names a field that its row objects lack, because row clicks, row menus and the context menu then do nothing and nothing reports an error.</li>
+      <li>[repo] SortableTable&#39;s context menu passes bulk handlers the table&#39;s live <code>selectedRows</code> array. Every store watch event rebuilds the rows, and the <code>pagedRows</code> watcher then splices the stale rows out of that array. So a bulk handler that awaits before using its argument must copy it first.</li>
+    </ul>
+    <h3 id="citation-lint">Citation lint <a href="#citation-lint" class="pilcrow">&#182;</a></h3>
+    <p>S6 is about a commit message, so it cites the short SHA <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/13aa28f0a"><code>13aa28f0a</code></a> and keeps the unresolved-reference warning that the citation lint raises for it.</p>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){e.languages.typescript=e.languages.extend("javascript",{"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,lookbehind:!0,greedy:!0,inside:null},builtin:/\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/}),e.languages.typescript.keyword.push(/\b(?:abstract|declare|is|keyof|readonly|require)\b/,/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,/\btype\b(?=\s*(?:[\{*]|$))/),delete e.languages.typescript.parameter,delete e.languages.typescript["literal-property"];var s=e.languages.extend("typescript",{});delete s["class-name"],e.languages.typescript["class-name"].inside=s,e.languages.insertBefore("typescript","function",{decorator:{pattern:/@[$\w\xA0-\uFFFF]+/,inside:{at:{pattern:/^@/,alias:"operator"},function:/^[\s\S]+/}},"generic-function":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,greedy:!0,inside:{function:/^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,generic:{pattern:/<[\s\S]+/,alias:"class-name",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
