@@ -104,9 +104,7 @@ describe('getPaths', () => {
     ...rddPaths,
     rdd:              'rdd',
     resources:        path.join(process.cwd(), 'resources'),
-    binDir:           path.join(process.cwd(), 'resources', resourcesPlatformDir(), 'bin'),
     internalDir:      path.join(process.cwd(), 'resources', 'internal'),
-    dockerPluginsDir: path.join(process.cwd(), 'resources', resourcesPlatformDir(), 'docker-cli-plugins'),
     cache:            path.join(rddPaths.dir, 'cache'),
   };
   beforeEach(() => {
@@ -143,7 +141,7 @@ describe('getPaths', () => {
         dir:       path.join(os.tmpdir(), 'rancher-desktop'),
         cache:     path.join(os.tmpdir(), 'rancher-desktop', 'cache'),
         log_dir:   path.join(os.tmpdir(), 'rancher-desktop', 'log_dir'),
-        ...pick(expected, 'resources', 'binDir', 'internalDir', 'dockerPluginsDir', 'rdd'),
+        ...pick(expected, 'resources', 'internalDir', 'rdd'),
       };
       const actual = getPaths(expected.rdd, TEST_PLATFORM as any);
       for (const untypedKey of Object.keys(expected)) {
