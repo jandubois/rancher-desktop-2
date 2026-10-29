@@ -66,6 +66,7 @@ describe('Containers methods', () => {
     return {
       metadata: { name: `${ name }-id`, namespace: 'default' },
       status:   {
+        id:        `${ name }-id`,
         image:     'scratch',
         namespace: 'default',
         name,
@@ -98,6 +99,7 @@ describe('Containers methods', () => {
     const wrapper = mount(Containers, { global: sortableTableGlobal() });
     const running: Container = {
       status: {
+        id:        'running-id',
         image:     'scratch',
         namespace: 'default',
         name:      'stopped-container',
@@ -107,6 +109,7 @@ describe('Containers methods', () => {
     };
     const stopped: Container = {
       status: {
+        id:        'stopped-id',
         image:     'scratch',
         namespace: 'default',
         name:      'stopped-container',
@@ -212,12 +215,15 @@ describe('Containers methods', () => {
       }));
     });
 
-    it('deletes the container once the user confirms', async() => {
+    it.each([
+      ['an empty bulk selection', []],
+      ['no selection, as the row menu passes', undefined],
+    ])('deletes the row\'s container given %s', async(_, selection) => {
       const containerDelete = jest.fn();
       const doomed = container('doomed');
       const row = rowFor(doomed, { containerDelete, confirmDelete: () => Promise.resolve(true) });
 
-      await row.deleteContainer();
+      await row.deleteContainer(selection);
       expect(containerDelete).toHaveBeenCalledWith({ container: doomed });
     });
 
