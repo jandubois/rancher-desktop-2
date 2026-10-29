@@ -810,6 +810,75 @@ EOF
     nerdctl rmi rdd-bats-build-ssh
 }
 
+@test "nerdctl cp copies a host file into a container" {
+    create_host_fixture
+    nerdctl run --detach --name rdd-bats-cp-in busybox sleep 300
+    nerdctl cp "${host_fixture_src}/file" rdd-bats-cp-in:/file
+    run_e -0 nerdctl exec rdd-bats-cp-in cat /file
+    assert_output shared
+    nerdctl rm --force rdd-bats-cp-in
+}
+
+@test "nerdctl cp copies a container file to the host" {
+    create_host_fixture
+    nerdctl run --detach --name rdd-bats-cp-out busybox sleep 300
+    nerdctl exec rdd-bats-cp-out sh -c 'echo inside >/file'
+    nerdctl cp rdd-bats-cp-out:/file "${host_fixture_src}/out"
+    run -0 cat "${host_fixture_dir}/out"
+    assert_output inside
+    nerdctl rm --force rdd-bats-cp-out
+}
+
+@test "nerdctl cp copies a host path relative to the working directory" {
+    create_host_fixture
+    cd "${host_fixture_dir}"
+    nerdctl run --detach --name rdd-bats-cp-cwd busybox sleep 300
+    nerdctl cp file rdd-bats-cp-cwd:/file
+    run_e -0 nerdctl exec rdd-bats-cp-cwd cat /file
+    assert_output shared
+    nerdctl rm --force rdd-bats-cp-cwd
+}
+
+@test "nerdctl compose cp copies to and from a one-letter service" {
+    # On Windows c:/file could name drive C: or the service c. When the other
+    # argument is a host path, the stub rewrites only that one, and nerdctl
+    # reads c:/file as the service.
+    create_host_fixture
+    create_file "${host_fixture_dir}/compose.yaml" <<'EOF'
+services:
+  c:
+    image: busybox
+    command: sleep 300
+EOF
+    cd "${host_fixture_dir}"
+    nerdctl compose up --detach
+    nerdctl compose cp ./file c:/file
+    nerdctl compose cp c:/file ./back
+    run -0 cat "${host_fixture_dir}/back"
+    assert_output shared
+    nerdctl compose down
+}
+
+@test "nerdctl compose cp takes a backslash path as the host side" {
+    skip_on_unix
+    create_host_fixture
+    create_file "${host_fixture_dir}/compose.yaml" <<'EOF'
+services:
+  c:
+    image: busybox
+    command: sleep 300
+EOF
+    cd "${host_fixture_dir}"
+    run -0 cygpath -w "${host_fixture_dir}"
+    backslash_file=${output}\\file
+    nerdctl compose up --detach
+    nerdctl compose cp "${backslash_file}" c:/file
+    nerdctl compose cp c:/file ./back
+    run -0 cat "${host_fixture_dir}/back"
+    assert_output shared
+    nerdctl compose down
+}
+
 # --- Cleanup on VM stop ---
 # These run last: they stop and restart the VM, which sweeps every mirror.
 

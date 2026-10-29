@@ -36,13 +36,17 @@ func newNerdctlCommand() *cobra.Command {
 
 All arguments pass through to nerdctl. On Windows, rdd rewrites host paths
 to the /mnt/<drive> locations where the guest mounts them. It rewrites them
-in options such as -v, --mount, and --env-file, and in the build context
-and path options of nerdctl build. In all of these, rdd resolves a host
-path such as /mnt/c/data under the working directory's root. With the
-working directory on C:, -v /mnt/c/data:/data mounts C:\mnt\c\data. Write
-a host path anywhere else, such as in --security-opt seccomp=PATH, as
-/mnt/<drive>/... yourself. Rancher Desktop must already be running with
-the containerd engine; "rdd run nerdctl" starts it first.`,
+in options such as -v, --mount, and --env-file, in the host paths of
+nerdctl cp and compose cp, and in the build context and path options of
+nerdctl build. In all of these, rdd resolves a host path such as
+/mnt/c/data under the working directory's root. With the working
+directory on C:, -v /mnt/c/data:/data mounts C:\mnt\c\data. Write a host
+path anywhere else, such as in --security-opt seccomp=PATH, as
+/mnt/<drive>/... yourself. In nerdctl cp and compose cp, a one-letter
+container ID prefix or compose service name looks like a drive, so start
+the host path with a drive and a backslash or with a dot, as in
+C:\src or .\src. Rancher Desktop must already be running with the
+containerd engine; "rdd run nerdctl" starts it first.`,
 		Args: cobra.ArbitraryArgs,
 		// A nerdctl link turns "nerdctl --help" into "rdd nerdctl --help", so
 		// --help must reach the guest nerdctl. "rdd help nerdctl" shows the Long text.
