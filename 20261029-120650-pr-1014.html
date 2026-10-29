@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR ports RD1&#39;s delete confirmations for the Containers and Volumes pages, the access key on Delete, and the translated Standalone Containers label. The port matches its RD1 source, and the translations pass i18n-report. Two defects need fixing first. The Volumes table keys rows on a <code>Name</code> field that RD2&#39;s rows lack, so the row menu never opens, and the PR&#39;s delete fix cannot run. And a refresh while the dialog is open makes a confirmed context-menu delete do nothing.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since this review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The branch was rebuilt after this review ran. Two of the twelve ported commits have reworded messages, and seven commits on top fix the findings marked fixed below, so the commit SHAs and the cited line numbers no longer match the branch. The links still point at the review SHA.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -433,6 +439,7 @@ index f09c5bd3a..2a907c55e 100644
      /** Build the row SortableTable would render for a single volume. */
      function rowFor(item: Volume, context: any) {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a96d7a745"><code>a96d7a745</code></a>: each row has a top-level <code>_key</code>, and the spec mounts the real table.</p>
     </div>
     <div class="card card-important" data-file="pkg/rancher-desktop/pages/Containers.vue">
       <div class="finding-title" id="I2">
@@ -701,6 +708,7 @@ index f09c5bd3a..eb74f4ad6 100644
        [&#39;an empty bulk selection&#39;, []],
        [&#39;no selection, as the row menu passes&#39;, undefined],</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/18a895602"><code>18a895602</code></a>: both handlers copy the selection before the dialog, with a test per page. The same race in <code>components/Images.vue</code>, outside this diff, was fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7ddedf6c7"><code>7ddedf6c7</code></a>.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -726,6 +734,7 @@ index f09c5bd3a..eb74f4ad6 100644
       <pre><code class="language-ts">expect(wrapper.vm.getContainerActions(stopped)).toContainEqual(expect.objectContaining({
   action: &#39;deleteContainer&#39;, bulkAction: &#39;deleteContainer&#39;, enabled: true,
 }));</code></pre>
+    <p><strong>Outcome:</strong> declined. Optional test: a missing bulkAction opens one dialog per container, which the user sees at once.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/Containers.vue">
       <div class="finding-title" id="S2">
@@ -770,6 +779,7 @@ func (w *dockerWatcher) deleteContainer(ctx context.Context, c *containersv1alph
 	}
 	return err</code></pre>
     <p>Fix: after the user confirms, delete only the targets whose current state in <code>this.containers</code> is still stopped.</p>
+    <p><strong>Outcome:</strong> declined. The user confirmed this container by name, rdd&#39;s Force: true removes it by design, and a recheck would silently skip what they confirmed.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/__tests__/Containers.spec.ts">
       <div class="finding-title" id="S3">
@@ -796,6 +806,7 @@ func (w *dockerWatcher) deleteContainer(ctx context.Context, c *containersv1alph
   function rowFor(item: Container, context: any) {</code></pre>
     <p>The generated <code>IoRancherdesktopContainersV1alpha1ContainerStatus</code> requires <code>id</code>, and <code>tsc</code> reports TS2741 on this line, new in this PR. No CI job type-checks spec files, so nothing else catches it.</p>
     <p>Fix: add <code>id: \</code>${ name }-id\<code>,</code> to <code>status</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/50afa7c43"><code>50afa7c43</code></a>, together with the two older fixtures that lacked the same field.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/__tests__/Containers.spec.ts">
       <div class="finding-title" id="S4">
@@ -815,6 +826,7 @@ func (w *dockerWatcher) deleteContainer(ctx context.Context, c *containersv1alph
       const containerDelete = jest.fn();</code></pre>
     <p>RD1&#39;s spec tested <code>containerCommandTarget(running, [])</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/da81244a0"><code>da81244a0</code></a>). RD2 inlines that fold into <code>deleteContainer</code>, and its spec now calls it only with no argument. <code>Volumes.spec.ts</code> already covers both <code>[]</code> and <code>undefined</code>. The table never passes an empty array today, because <code>_execute</code> takes the bulk path only when more than one row is selected. So this is coverage that the port lost, and no user can reach the bug.</p>
     <p>Fix: run the test over <code>undefined</code> and <code>[]</code>, as <code>Volumes.spec.ts</code> does.</p>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/50afa7c43"><code>50afa7c43</code></a>; the test runs over both <code>undefined</code> and <code>[]</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/index.ts">
       <div class="finding-title" id="S5">
@@ -1013,6 +1025,7 @@ export function openMain() {
   });
 </code></pre>
     <p>Fix: name only <code>window/preferences.ts</code>, whose <code>dialog.showMessageBoxSync</code> call at line 114 does skip the strip.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/91dc2e4d3"><code>91dc2e4d3</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="13aa28f0a">
       <div class="finding-title" id="S6">
@@ -1022,6 +1035,7 @@ export function openMain() {
 volumes e2e bulk case ran with the stub answering confirm.</code></pre>
     <p>That holds for RD1. In RD2, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/e2e/volumes.e2e.spec.ts#L35"><code>e2e/volumes.e2e.spec.ts:35</code></a> has been <code>test.describe.fixme</code> since 2026-02-06, so the bulk case never ran, and nothing tested the Volumes delete handler until this PR&#39;s unit spec. The PR body says the suite does not run, and the commit message tells a later reader the opposite.</p>
     <p>Fix: say that no test covered the Volumes wiring, because its e2e suite is <code>fixme</code>.</p>
+    <p><strong>Outcome:</strong> the message was reworded; the commit is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cabd5db3c"><code>cabd5db3c</code></a>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -1029,9 +1043,9 @@ volumes e2e bulk case ran with the stub answering confirm.</code></pre>
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>(future)</strong> <code>selection.update()</code> finds the row to deselect by <code>_key</code>, whatever the table&#39;s <code>key-field</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L444"><code>pkg/rancher-desktop/components/SortableTable/selection.js:444</code></a>). Containers rows lack <code>_key</code>, so every lookup matches the first selected row. Select rows a and b, uncheck b, and the selection holds b while the checkboxes show a. A bulk action then runs on the row that the user unchecked. A probe run during consolidation left <code>[&#39;b&#39;]</code> with <code>key-field=&quot;id&quot;</code> and <code>[&#39;a&#39;]</code> with <code>_key</code>. RD1 fixed this in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11007" class="gh-ref">#11007</a>, and its port is already tracked. This PR&#39;s dialog, which names its targets, is where a user would now notice the wrong row. Found during consolidation; no reviewer raised it.</li>
-      <li><strong>(future)</strong> <code>components/Images.vue</code> still builds its own confirmation, without <code>showDeleteConfirmation</code> or an access key. The translations README records the exception (line 86). Routing Images through the helper would leave one dialog definition and one access-key rule. <span class="pill pill-claude">Claude Opus 5.5</span></li>
-      <li><strong>(future)</strong> The Volumes header <code>sort</code> keys (<code>Name</code>, <code>Driver</code>, <code>Mountpoint</code>, <code>Created</code>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Volumes.vue#L114-L129"><code>Volumes.vue:114-129</code></a>) name RD1 fields that RD2&#39;s rows lack, so the column sort compares undefined values. The rows arrive pre-sorted by name, which hides it. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(future)</strong> <code>selection.update()</code> finds the row to deselect by <code>_key</code>, whatever the table&#39;s <code>key-field</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/components/SortableTable/selection.js#L444"><code>pkg/rancher-desktop/components/SortableTable/selection.js:444</code></a>). Containers rows lack <code>_key</code>, so every lookup matches the first selected row. Select rows a and b, uncheck b, and the selection holds b while the checkboxes show a. A bulk action then runs on the row that the user unchecked. A probe run during consolidation left <code>[&#39;b&#39;]</code> with <code>key-field=&quot;id&quot;</code> and <code>[&#39;a&#39;]</code> with <code>_key</code>. RD1 fixed this in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11007" class="gh-ref">#11007</a>, and its port is already tracked. This PR&#39;s dialog, which names its targets, is where a user would now notice the wrong row. Found during consolidation; no reviewer raised it. <strong>Outcome:</strong> declined; the tracked port of RD1 <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11007" class="gh-ref">#11007</a> fixes it.</li>
+      <li><strong>(future)</strong> <code>components/Images.vue</code> still builds its own confirmation, without <code>showDeleteConfirmation</code> or an access key. The translations README records the exception (line 86). Routing Images through the helper would leave one dialog definition and one access-key rule. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> declined as a separate refactor; tracked in pending-work.</li>
+      <li><strong>(future)</strong> The Volumes header <code>sort</code> keys (<code>Name</code>, <code>Driver</code>, <code>Mountpoint</code>, <code>Created</code>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/64d2fd1133ad81e0da686308caa79119111159c3/pkg/rancher-desktop/pages/Volumes.vue#L114-L129"><code>Volumes.vue:114-129</code></a>) name RD1 fields that RD2&#39;s rows lack, so the column sort compares undefined values. The rows arrive pre-sorted by name, which hides it. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1b12d37b3"><code>1b12d37b3</code></a>, together with the search keys: any search emptied the Volumes table, and a container&#39;s name, state or ports never matched. Sorting on dates also needed <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6a65622d6"><code>6a65622d6</code></a>, which stores watch events in <code>pkg/rdd-client</code> with the same types as list items.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -1065,6 +1079,7 @@ volumes e2e bulk case ran with the stub answering confirm.</code></pre>
 
     <div class="card card-neutral">
     <p>The 12 commits map one to one onto RD1&#39;s 11 commits in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/10957" class="gh-ref">#10957</a> and its single commit in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11078" class="gh-ref">#11078</a>, in RD1&#39;s order. Today&#39;s force-push rebased onto <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ea1eeb18e"><code>ea1eeb18e</code></a>, dropped the migration-title hunks that main had already removed, trimmed the second commit&#39;s message to match, and inserted the Vietnamese commit. Two messages do not hold for RD2&#39;s tree. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6a4e6e1ef"><code>6a4e6e1ef</code></a> says it fixes the row-menu delete that I1 blocks, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/13aa28f0a"><code>13aa28f0a</code></a> says the volumes e2e ran (S6). Every other message holds.</p>
+    <p><strong>Outcome:</strong> both messages were reworded; the commits are now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e4f2116c6"><code>e4f2116c6</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cabd5db3c"><code>cabd5db3c</code></a>.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
