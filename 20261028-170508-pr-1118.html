@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The head commit translates Windows host paths in <code>nerdctl build</code> and <code>builder debug</code>, and its handlers match nerdctl v2.1.2 and buildctl v0.21.1 for every unquoted form. Three things need fixing. Two new BATS tests fail the required Ubuntu bats-app job, because buildctl cannot set file owners on the guest&#39;s host mount. A <code>--file</code> that names a directory, <code>sub/</code> or <code>.</code>, loses its trailing slash. A quoted <code>type=</code> field turns stdout or an env secret&#39;s name into a path.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The fixes were amended into the PR&#39;s commit, which is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a> instead of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f3838762a"><code>f3838762a</code></a>, so the code cited below has changed since the review ran. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -308,6 +314,7 @@ ok 127 nerdctl build reads a named build context from the host in 1504ms
 ok 128 nerdctl build forwards an ssh key file from the host in 1019ms</code></pre>
       </details>
     <p>Fix: skip both tests on Linux, with a comment that the QEMU guest&#39;s home mount refuses <code>lchown</code>. Exporting the typed test as <code>type=tar</code> would keep it on every runner. Not run: either change needs a live VM on the Ubuntu runner.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a>. Both tests skip on Linux through <code>skip_local_export_on_linux</code>, whose skip message names <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1129" class="gh-ref" data-title="`rdd nerdctl build` cannot export a local output into the home directory on Linux" data-state="open" data-type="issue">#1129</a>.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/overlay.go">
       <div class="finding-title" id="I2">
@@ -485,6 +492,7 @@ index 48ff45830..fecce8e80 100644
  		t.Run(strings.Join(tc.args, &quot; &quot;), func(t *testing.T) {
  			got, err := TranslateCommandLine(tc.args)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a> with this patch, extended so that a drive&#39;s current directory (<code>d:</code>, <code>d:.</code>) keeps the suffix too and an <code>image encrypt --key k.pem:.</code> value keeps its password. <code>TestKeepDirSuffix</code> covers both.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="I3">
@@ -686,6 +694,7 @@ index 48ff45830..ef1b02513 100644
  		t.Run(tc.flag+&quot; &quot;+tc.arg, func(t *testing.T) {
  			got, err := TranslateCommandLine([]string{&quot;build&quot;, tc.flag, tc.arg, `C:\ctx`})</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e6f43bfc"><code>1e6f43bfc</code></a>, parsing with buildctl&#39;s own parser, <code>go-csvvalue</code> (a new direct dependency), instead of <code>encoding/csv</code>. Verification also found that a relative <code>-o</code> in a working directory whose path contains <code>type=</code> lost nerdctl&#39;s wrapper; that is fixed and tested. A trailing line break in an <code>--output</code> value is now dropped; no Windows path ends in one.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -761,6 +770,7 @@ output path, `--volume` (`host:container[:mode]`), `--mount` (CSV with</code></p
 	assert.NilError(t, err)
 	assert.Equal(t, got, &quot;/mnt/c/x:/y&quot;)</code></pre>
     <p>Fix: drop the <code>builder debug</code> entries until the guest ships buildg, or keep them, say in <code>nerdctl.md</code> that the guest does not ship buildg, and assert both handlers in <code>TestTableSanity</code>.</p>
+    <p><strong>Outcome:</strong> kept. <code>nerdctl.md</code> says the guest does not ship <code>buildg</code>, and <code>TestTableSanity</code> asserts the <code>builder debug</code> handler.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="S2">
@@ -807,6 +817,7 @@ func sshArgHandler(arg string) (string, error) {
 		if err != nil {
 			return &quot;&quot;, err</code></pre>
     <p>Fix: name the buildctl version that reads <code>raw=</code> in the comment, or drop the branch and its test until the guest&#39;s buildctl reads it.</p>
+    <p><strong>Outcome:</strong> the comment names buildctl v0.23.0, the first release that reads <code>raw=</code>; the branch and its test stay.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
       <div class="finding-title" id="S3">
@@ -853,6 +864,7 @@ func sshArgHandler(arg string) (string, error) {
 	fileOrURLOrStdinArg
 	// filePathListArg is a comma-separated list of input paths, which</code></pre>
     <p>Fix: return <code>arg, nil</code> when the value does not contain <code>=</code>, and rename <code>urnPrefixes</code> to <code>passThroughPrefixes</code>.</p>
+    <p><strong>Outcome:</strong> fixed as proposed, and the overlay comment also names <code>oci-layout://</code> paths.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="S4">
@@ -899,6 +911,7 @@ import (</code></pre>
 			if subcommandPath != &quot;&quot; {
 				subcommandPath += &quot; &quot;</code></pre>
     <p>Fix: &quot;handler, if set, rewrites the positional arguments; otherwise they pass through.&quot; Name <code>builder debug</code> in the package comment, and reflow it.</p>
+    <p><strong>Outcome:</strong> fixed as proposed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
       <div class="finding-title" id="S5">
@@ -921,6 +934,7 @@ import (</code></pre>
 		if len(positionalArgs) &gt; 0 &amp;&amp; len(unparsedArgs) == 0 {</code></pre>
     <p>Changing <code>if sawSeparator {</code> to <code>if false &amp;&amp; sawSeparator {</code> leaves <code>go test ./pkg/nerdctlstub/</code> green. The comment&#39;s example does not need the <code>--</code> either, because <code>builderBuildHandler</code> turns a context named <code>-file</code> into an absolute <code>/mnt/...</code> path. Only the positional arguments after the context, which nerdctl ignores, can still start with <code>-</code>, and without the <code>--</code> nerdctl rejects one as an unknown option.</p>
     <p>Fix: add <code>build -- C:\ctx -x</code>, expecting <code>build -- /mnt/c/ctx -x</code>, to <code>TestTranslateCommandLinePathForms</code>, and use such an extra argument as the comment&#39;s example.</p>
+    <p><strong>Outcome:</strong> fixed as proposed.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/rdd/nerdctl.go">
       <div class="finding-title" id="S6">
@@ -940,6 +954,7 @@ else, such as in --security-opt seccomp=PATH, as /mnt/&lt;drive&gt;/...
 yourself. Rancher Desktop must already be running with the containerd</code></pre>
     <p>The stub passes <code>--build-arg</code> values through untranslated, but a reader who knows <code>nerdctl build</code> takes &quot;build arguments&quot; to mean that option.</p>
     <p>Fix: &quot;...and in the build context and path options of nerdctl build.&quot;</p>
+    <p><strong>Outcome:</strong> fixed, with &quot;In all of these&quot; in place of &quot;In those options&quot;, so the next sentence still covers <code>-v</code>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -947,8 +962,8 @@ yourself. Rancher Desktop must already be running with the containerd</code></pr
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li>(future) An env-type <code>--secret</code>, <code>--ssh default</code> and a value-less <code>--build-arg NAME</code> read buildctl&#39;s environment, and buildctl runs in the guest under <code>sudo</code> with no host variables forwarded. The stub passes them through correctly, but they resolve against the guest&#39;s environment on every OS. Forwarding the named variables would take <code>rdd nerdctl</code> sending them and <code>sudo --preserve-env</code>. This is reasoned from <code>limaVMGuestExec</code>, not run. <span class="pill pill-claude">Claude Opus 5.5</span></li>
-      <li>(future) On Linux, <code>rdd nerdctl build --output type=local,dest=...</code> into the home directory fails for users the same way as I1&#39;s tests, because the QEMU guest&#39;s 9p mount refuses <code>lchown</code> by root. The stub translates paths only on Windows, so the limitation predates this PR. Exporting into a directory outside the mount avoids it, and so should a tar export, which buildctl writes with <code>os.Create</code> and no owner change (<code>cmd/buildctl/build/output.go:97-106</code>; not run). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1129" class="gh-ref" data-title="`rdd nerdctl build` cannot export a local output into the home directory on Linux" data-state="open" data-type="issue">#1129</a> tracks it.</li>
+      <li>(future) An env-type <code>--secret</code>, <code>--ssh default</code> and a value-less <code>--build-arg NAME</code> read buildctl&#39;s environment, and buildctl runs in the guest under <code>sudo</code> with no host variables forwarded. The stub passes them through correctly, but they resolve against the guest&#39;s environment on every OS. Forwarding the named variables would take <code>rdd nerdctl</code> sending them and <code>sudo --preserve-env</code>. This is reasoned from <code>limaVMGuestExec</code>, not run. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> skipped; tracked in pending-work.</li>
+      <li>(future) On Linux, <code>rdd nerdctl build --output type=local,dest=...</code> into the home directory fails for users the same way as I1&#39;s tests, because the QEMU guest&#39;s 9p mount refuses <code>lchown</code> by root. The stub translates paths only on Windows, so the limitation predates this PR. Exporting into a directory outside the mount avoids it, and so should a tar export, which buildctl writes with <code>os.Create</code> and no owner change (<code>cmd/buildctl/build/output.go:97-106</code>; not run). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1129" class="gh-ref" data-title="`rdd nerdctl build` cannot export a local output into the home directory on Linux" data-state="open" data-type="issue">#1129</a> tracks it. <strong>Outcome:</strong> skipped; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1129" class="gh-ref" data-title="`rdd nerdctl build` cannot export a local output into the home directory on Linux" data-state="open" data-type="issue">#1129</a> is now a sub-issue of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/934" class="gh-ref" data-title="Epic: containerd engine support" data-state="open" data-type="issue">#934</a> (Alpha 3).</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
