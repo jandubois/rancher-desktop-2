@@ -129,6 +129,24 @@ describe('Volumes methods', () => {
       expect(volumeDelete.mock.calls).toEqual(doomed.map(target => [{ volume: target }]));
     });
 
+    it('deletes what the user confirmed after a refresh empties the selection', async() => {
+      const volumeDelete = jest.fn();
+      const selection = [volume('one'), volume('two')];
+      const doomed = [...selection];
+      const row = rowFor(selection[0], {
+        volumeDelete,
+        // A refresh while the dialog is open drops the stale rows from the table's selection.
+        confirmDelete: () => {
+          selection.splice(0);
+
+          return Promise.resolve(true);
+        },
+      });
+
+      await row.deleteVolume(selection);
+      expect(volumeDelete.mock.calls).toEqual(doomed.map(target => [{ volume: target }]));
+    });
+
     it.each([
       ['an empty bulk selection', []],
       ['no selection, as the row menu passes', undefined],

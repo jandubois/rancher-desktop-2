@@ -261,7 +261,9 @@ export default defineComponent({
             unpauseContainer: () => this.containerRequestAction({ container, state: 'unpause' }),
             restartContainer: () => this.containerRequestAction({ container, state: 'restart' }),
             deleteContainer:  async(args?: Container[]) => {
-              const targets = args?.length ? args : [container];
+              // The context menu passes the table's live selection, which a
+              // refresh can empty while the dialog is open, so copy it first.
+              const targets = args?.length ? [...args] : [container];
 
               if (await this.confirmDelete(targets)) {
                 await Promise.all(targets.map(target => this.containerDelete({ container: target })));

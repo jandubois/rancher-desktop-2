@@ -160,7 +160,9 @@ export default defineComponent({
             },
           ],
           deleteVolume: async(args?: Volume[]) => {
-            const targets = args?.length ? args : [volume];
+            // The context menu passes the table's live selection, which a
+            // refresh can empty while the dialog is open, so copy it first.
+            const targets = args?.length ? [...args] : [volume];
 
             if (await this.confirmDelete(targets)) {
               await Promise.all(targets.map(target => this.volumeDelete({ volume: target })));
