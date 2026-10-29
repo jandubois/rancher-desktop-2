@@ -82,5 +82,5 @@ lint-shell-fix:
 	go -C rdd tool shfmt --indent=4 --write $(foreach f,$(SHELL_FILES),../$(f))
 .PHONY: lint-shell-fix
 
-check: spelling check-ltag
+check: spelling check-ltag test-i18n-report check-translations
 .PHONY: check
