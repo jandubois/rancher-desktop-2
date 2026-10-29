@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1c26f3ce9"><code>1c26f3ce9</code></a> makes <code>rdd nerdctl</code> rewrite the host side of <code>cp</code> and <code>compose cp</code> on Windows, and it passes any pair that it cannot settle to nerdctl unchanged. Probes against nerdctl v2.1.2&#39;s own parsers did not find a command whose meaning changes. The one Important finding concerns prose. A test comment, a code comment and the commit body justify the drive-and-backslash rule by claiming that a container path never has a backslash, which is false. Six Suggestions follow.</p>
     </div>
     <hr>
+    <h2 id="after-this-review">After This Review <a href="#after-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>An amend folded the fixes into the reviewed commit, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>, so the code cited below has changed since the review ran. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -403,6 +409,7 @@ index 122f65e83..180e59993 100644
  			[]string{&quot;compose&quot;, &quot;cp&quot;, &quot;/mnt/c/src/f&quot;, &quot;a:/dst&quot;},
  		},</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>. The classifier comment and the commit body now state the rule as a convention (a Linux file name rarely contains a backslash), and S4 removed the test comment.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -459,6 +466,7 @@ FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub	0.422s
 FAIL</code></pre>
       </details>
     <p>Fix: test for a backslash anywhere, with <code>strings.Contains(p, `\`)</code> in place of <code>p[2] == &#39;\\&#39;</code>. With that change the probe and the package suite pass. I1&#39;s reworded comment then says &quot;rarely contains a backslash&quot;.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>, and a pair-table row for <code>C:/src\f a:/dst</code> pins it. The author accepted the wider trade-off. A one-letter container whose path contains a backslash now reads as a host path, so <code>cp c:/a\b D:\dst</code> reaches nerdctl unchanged and <code>cp c:/a\b d:/dst</code> copies in reverse, as <code>c:\a d:/dst</code> already did. Do not re-suggest the index-2 test.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/command_handlers.go">
       <div class="finding-title" id="S2">
@@ -503,6 +511,7 @@ func isDriveLetter(c byte) bool {
 +	case windowsDrive.MatchString(p) &amp;&amp; strings.HasPrefix(p[2:], `\`):
 -	case colon == 1 &amp;&amp; isASCIILetter(p[0]):
 +	case windowsDrive.MatchString(p):</code></pre>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>. Both cases use <code>windowsDrive</code>, and <code>isASCIILetter</code> is gone.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/command_handlers.go">
       <div class="finding-title" id="S3">
@@ -523,6 +532,7 @@ func isDriveLetter(c byte) bool {
 	case colon == 1 &amp;&amp; len(p) &gt; 2 &amp;&amp; p[2] == &#39;\\&#39; &amp;&amp; isASCIILetter(p[0]):</code></pre>
     <p>With these two lines deleted, <code>go test ./pkg/nerdctlstub/</code> stays green. <code>:x</code> then counts as a container, and the <code>{&quot;:x&quot;, &quot;ctr:/y&quot;}</code> row still passes through unchanged. The rule matters in <code>compose cp</code>, where <code>splitCpArg</code> reads <code>:x</code> as the local path <code>x</code>. Without it, <code>compose cp :x c:/a</code> rewrites <code>c:/a</code> and fails with &quot;unknown copy direction&quot; instead of copying into service <code>c</code>. The input is rare and the failure loud, so the test is optional.</p>
     <p>Fix: add <code>{[]string{&quot;:x&quot;, &quot;c:/a&quot;}, []string{&quot;:x&quot;, &quot;c:/a&quot;}}</code> to <code>TestTranslateCommandLineCopyPair</code>. I checked that the row fails under both <code>cp</code> and <code>compose cp</code> with the rule deleted, and passes with it.</p>
+    <p><strong>Outcome:</strong> Declined. The test is optional, since <code>:x</code> opposite a one-letter spec is rare and a regression fails loudly under both commands.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate_test.go">
       <div class="finding-title" id="S4">
@@ -598,6 +608,7 @@ func TestTranslateCommandLineCopyPair(t *testing.T) {
 			[]string{&quot;pull&quot;, &quot;--cosign-key&quot;, &quot;pkcs11:token=tok;object=key&quot;, &quot;--&quot;, &quot;alpine&quot;},
 		},</code></pre>
     <p>Fix: delete the three <code>translate_test.go</code> additions, so that the pair table is the one place for <code>cp</code> cases. This also deletes the comment that I1 rewrites.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>. The commit no longer changes <code>translate_test.go</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/rdd/nerdctl.go">
       <div class="finding-title" id="S5">
@@ -634,6 +645,7 @@ paths in an `--ssh` value the same way, so a path inside either cannot
 contain a comma. The stub expands a relative path to
 an absolute one, so a relative path in either fails the same way when the</code></pre>
     <p>Fix: add one sentence to the Long text, such as &quot;In cp, write a host path as C:\src or .\src when the container or service name is one letter.&quot;</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>. The help text now names <code>compose cp</code> beside <code>nerdctl cp</code> and tells users to write <code>C:\src</code> or <code>.\src</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
       <div class="finding-title" id="S6">
@@ -656,6 +668,7 @@ an absolute one, so a relative path in either fails the same way when the</code>
       <pre><code class="language-diff">-    nerdctl run --detach --name rdd-bats-cp-out busybox sh -c &#39;echo inside &gt;/file; sleep 300&#39;
 +    nerdctl run --detach --name rdd-bats-cp-out busybox sleep 300
 +    nerdctl exec rdd-bats-cp-out sh -c &#39;echo inside &gt;/file&#39;</code></pre>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/134f74e64"><code>134f74e64</code></a>. The test writes <code>/file</code> with <code>nerdctl exec</code> before the copy.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -663,7 +676,7 @@ an absolute one, so a relative path in either fails the same way when the</code>
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li>(future) In <code>container cp</code>, a one-letter spec can name a container only as an ID prefix from <code>a</code> to <code>f</code>. nerdctl v2.1.2 requires names of at least two characters (<code>pkg/identifiers/validate.go:27-29</code>) and matches lowercase hex IDs with the case-sensitive filter <code>id~=^%s.*$</code> (<code>pkg/idutil/containerwalker/containerwalker.go:53</code>). So <code>C:/src</code> and <code>g:/x</code> can only be drives there, and only <code>compose cp</code> needs the full ambiguity. A rule per command would settle more pairs, but the classifier would then depend on the command, and the pairs that it leaves unsettled already fail loudly. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(future) In <code>container cp</code>, a one-letter spec can name a container only as an ID prefix from <code>a</code> to <code>f</code>. nerdctl v2.1.2 requires names of at least two characters (<code>pkg/identifiers/validate.go:27-29</code>) and matches lowercase hex IDs with the case-sensitive filter <code>id~=^%s.*$</code> (<code>pkg/idutil/containerwalker/containerwalker.go:53</code>). So <code>C:/src</code> and <code>g:/x</code> can only be drives there, and only <code>compose cp</code> needs the full ambiguity. A rule per command would settle more pairs, but the classifier would then depend on the command, and the pairs that it leaves unsettled already fail loudly. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> Declined for now and kept as future work.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -689,6 +702,7 @@ an absolute one, so a relative path in either fails the same way when the</code>
 
     <div class="card card-neutral">
     <p>The help text, the handler table, the package comment and the new <code>cp</code> paragraph in the design doc match the code. Two comments and the commit body give a false reason for the backslash rule (I1). The help text leaves out the one-letter caveat (S5). The new paragraph at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1c26f3ce9f4aa5b940481c58529f53cacd304e42/rdd/docs/design/nerdctl.md#L63-L67"><code>nerdctl.md:63-67</code></a> breaks its lines unevenly (&quot;In&quot; ends one line and &quot;a&quot; the next), which does not change the rendered page.</p>
+    <p><strong>Outcome:</strong> I1 and S5 are fixed. The uneven line breaks stay, since reflowing them changes only whitespace.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
