@@ -1,6 +1,8 @@
 import { jest } from '@jest/globals';
+import { mount } from '@vue/test-utils';
 
 import mockModules from '@pkg/utils/testUtils/mockModules';
+import { sortableTableGlobal } from '@pkg/utils/testUtils/sortableTable';
 import { t } from '@pkg/utils/testUtils/translations';
 import { IoRancherdesktopContainersV1alpha1Volume as Volume } from '@rdd-client';
 
@@ -8,9 +10,8 @@ const componentStub = { template: '<div />' };
 const showMessageBox = jest.fn<(channel: string, options: any) => Promise<{ response: number }>>();
 
 mockModules({
-  '@pkg/components/Banner.vue':    componentStub,
-  '@pkg/components/SortableTable': componentStub,
-  '@pkg/entry/store':              {
+  '@pkg/components/Banner.vue': componentStub,
+  '@pkg/entry/store':           {
     mapTypedActions:   jest.fn(() => ({})),
     mapTypedGetters:   jest.fn(() => ({})),
     mapTypedMutations: jest.fn(() => ({})),
@@ -68,6 +69,32 @@ describe('Volumes methods', () => {
     showMessageBox.mockResolvedValue({ response: deleteButton });
     await expect((Volumes as any).methods.confirmDelete.call({ t }, [volume('one')]))
       .resolves.toBe(true);
+  });
+
+  describe('table', () => {
+    /** Mount the page with the given volumes, and return its table. */
+    function mountTable(volumes: Volume[]) {
+      const wrapper = mount(Volumes, {
+        global: sortableTableGlobal({
+          error:              null,
+          supportsNamespaces: false,
+          volumes,
+          watchResources:     () => Promise.resolve(),
+          setHeader:          jest.fn(),
+        }),
+      });
+
+      return wrapper.findComponent({ name: 'SortableTable' });
+    }
+
+    it('keys each row by its volume name', () => {
+      const { keyField, rows } = mountTable([volume('one'), volume('two')]).props();
+
+      // SortableTable reads the key as row[keyField], and its selection matches rows by _key.
+      expect(rows.map((row: any) => row[keyField])).toEqual(['one', 'two']);
+      expect(rows.map((row: any) => row._key)).toEqual(['one', 'two']);
+    });
+
   });
 
   describe('deletion', () => {
