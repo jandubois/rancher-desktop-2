@@ -45,17 +45,13 @@ interface RDDPaths {
  */
 interface RDAPaths {
   /** RDA: path to the RDD executable. */
-  readonly rdd:              string;
+  readonly rdd:         string;
   /** RDA: resources directory. */
-  readonly resources:        string;
-  /** RDA: user-facing executables directory. */
-  readonly binDir:           string;
+  readonly resources:   string;
   /** RDA: internal executables directory. */
-  readonly internalDir:      string;
-  /** RDA: Docker CLI plugins directory. */
-  readonly dockerPluginsDir: string;
+  readonly internalDir: string;
   /** RDA: cache directory. */
-  readonly cache:            string;
+  readonly cache:       string;
 }
 
 export interface Paths extends RDDPaths, RDAPaths { }
@@ -109,7 +105,7 @@ export function getRDDPath(useCached = true): string {
 }
 
 type PlatformSpecificPaths = Pick<RDAPaths, 'cache'>;
-type PlatformAgnosticPaths = Pick<RDAPaths, 'resources' | 'binDir' | 'internalDir' | 'dockerPluginsDir'>;
+type PlatformAgnosticPaths = Pick<RDAPaths, 'resources' | 'internalDir'>;
 
 /**
  * TEST_PLATFORM is a special platform name for testing.
@@ -169,14 +165,8 @@ const platformAgnosticPaths: PlatformAgnosticPaths = {
     // platforms); we need to use the project directory instead.
     return path.join(process.cwd(), 'resources');
   },
-  get binDir() {
-    return path.join(this.resources, resourcesPlatformDir(), 'bin');
-  },
   get internalDir() {
     return path.join(this.resources, 'internal');
-  },
-  get dockerPluginsDir() {
-    return path.join(this.resources, resourcesPlatformDir(), 'docker-cli-plugins');
   },
 };
 
