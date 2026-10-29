@@ -108,27 +108,32 @@ export default defineComponent({
   data() {
     return {
       settings:       undefined as Settings | undefined,
+      // Without a `search` key, the table searches the row field named after the column.
       headers:        [
         {
-          name:  'Name',
-          label: this.t('volumes.manage.table.header.volumeName'),
-          sort:  ['Name'],
+          name:   'Name',
+          label:  this.t('volumes.manage.table.header.volumeName'),
+          search: 'status.name',
+          sort:   ['status.name'],
         },
         {
-          name:  'Driver',
-          label: this.t('volumes.manage.table.header.driver'),
-          sort:  ['Driver', 'Name'],
+          name:   'Driver',
+          label:  this.t('volumes.manage.table.header.driver'),
+          search: 'status.driver',
+          sort:   ['status.driver', 'status.name'],
         },
         {
-          name:  'Mountpoint',
-          label: this.t('volumes.manage.table.header.mountpoint'),
-          sort:  ['Mountpoint', 'Name'],
+          name:   'Mountpoint',
+          label:  this.t('volumes.manage.table.header.mountpoint'),
+          search: 'status.mountpoint',
+          sort:   ['status.mountpoint', 'status.name'],
         },
         {
-          name:  'Created',
-          label: this.t('volumes.manage.table.header.created'),
-          sort:  ['Created', 'Name'],
-          width: 120,
+          name:   'Created',
+          label:  this.t('volumes.manage.table.header.created'),
+          search: 'createdText',
+          sort:   ['status.createdAt', 'status.name'],
+          width:  120,
         },
       ],
     };

@@ -182,15 +182,18 @@ export default defineComponent({
       // The type cast is necessary to correctly type `collapsed`.
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       collapsed: {} as Record<string, boolean>,
+      // Without a `search` key, the table searches the row field named after the column.
       headers:   [
         {
-          name:  'containerState',
-          label: this.t('containers.manage.table.header.state'),
+          name:   'containerState',
+          label:  this.t('containers.manage.table.header.state'),
+          search: 'status.status',
         },
         {
-          name:  'containerName',
-          label: this.t('containers.manage.table.header.containerName'),
-          sort:  ['status.name', 'imageName'],
+          name:   'containerName',
+          label:  this.t('containers.manage.table.header.containerName'),
+          search: 'status.name',
+          sort:   ['status.name', 'imageName'],
         },
         {
           name:  'imageName',
@@ -198,9 +201,11 @@ export default defineComponent({
           sort:  ['imageName', 'status.name'],
         },
         {
-          name:  'ports',
-          label: this.t('containers.manage.table.header.ports'),
-          sort:  ['portsSortKey', 'status.name', 'imageName'],
+          name:   'ports',
+          label:  this.t('containers.manage.table.header.ports'),
+          // Search the host:container pairs that the column shows.
+          search: [(row: RowItem) => row.portList.map(([hostPort, containerPort]) => `${ hostPort }:${ containerPort }`)],
+          sort:   ['portsSortKey', 'status.name', 'imageName'],
         },
         {
           name:  'uptime',

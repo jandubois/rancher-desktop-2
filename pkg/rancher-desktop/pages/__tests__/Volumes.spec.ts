@@ -34,14 +34,14 @@ describe('Volumes methods', () => {
     showMessageBox.mockReset();
   });
 
-  function volume(name: string): Volume {
+  function volume(name: string, driver = 'local', mountpoint = `/var/lib/docker/volumes/${ name }/_data`): Volume {
     return {
       metadata: { name: `${ name }-id`, namespace: 'default' },
       status:   {
         name,
         namespace:  'default',
-        driver:     'local',
-        mountpoint: `/var/lib/docker/volumes/${ name }/_data`,
+        driver,
+        mountpoint,
         scope:      'local',
       },
     };
@@ -95,6 +95,24 @@ describe('Volumes methods', () => {
       expect(rows.map((row: any) => row._key)).toEqual(['one', 'two']);
     });
 
+    it.each([
+      ['name', 'two'],
+      ['driver', 'zfs'],
+      ['mountpoint', 'data7'],
+    ])('finds a volume by its %s', (_, query) => {
+      // Each query matches only the one field that the test names.
+      const table = mountTable([volume('one'), volume('two', 'zfs', '/mnt/data7')]).vm;
+
+      table.searchQuery = query;
+      expect(table.filteredRows.map((row: any) => row.status.name)).toEqual(['two']);
+    });
+
+    it('sorts by driver', () => {
+      const table = mountTable([volume('one', 'zfs'), volume('two', 'local')]).vm;
+
+      table.sortBy = 'Driver';
+      expect(table.arrangedRows.map((row: any) => row.status.name)).toEqual(['two', 'one']);
+    });
   });
 
   describe('deletion', () => {

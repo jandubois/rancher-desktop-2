@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { mount } from '@vue/test-utils';
 
 import mockModules from '@pkg/utils/testUtils/mockModules';
+import { sortableTableGlobal } from '@pkg/utils/testUtils/sortableTable';
 import { t } from '@pkg/utils/testUtils/translations';
 import {
   IoRancherdesktopContainersV1alpha1Container as Container,
@@ -56,6 +57,7 @@ mockModules({
 });
 
 const { default: Containers } = await import('@pkg/pages/Containers.vue');
+const { default: SortableTable } = await import('@pkg/components/SortableTable/index.vue');
 
 describe('Containers methods', () => {
   const { methods } = Containers as any;
@@ -74,45 +76,26 @@ describe('Containers methods', () => {
     };
   }
 
-  /** Build the row SortableTable would render for a single container. */
-  function rowFor(item: Container, context: any) {
+  /** Build the rows SortableTable would render for the given containers. */
+  function rowsFor(items: Container[], context: any) {
     const self = {
-      containers:          [item],
+      containers:          items,
       supportsNamespaces:  true,
       getContainerActions: () => [],
       getPortList:         () => [],
       ...context,
     };
 
-    return (Containers as any).computed.rows.call(self)[0];
+    return (Containers as any).computed.rows.call(self);
+  }
+
+  /** Build the row SortableTable would render for a single container. */
+  function rowFor(item: Container, context: any) {
+    return rowsFor([item], context)[0];
   }
 
   it('adds restart actions for running containers', () => {
-    const wrapper = mount(Containers, {
-      global: {
-        directives: {
-          'clean-html':      {},
-          'clean-tooltip':   {},
-          'close-popper':    {},
-          shortkey:          {},
-          tooltip:           {},
-          'trim-whitespace': {},
-        },
-        mocks: {
-          $store: {
-            getters:  {
-              'resource-fetch/isTooManyItemsToAutoUpdate': false,
-            },
-            commit:   jest.fn(),
-            dispatch: jest.fn(),
-          },
-          t,
-        },
-        stubs: {
-          T: { template: '<span></span>' },
-        },
-      },
-    });
+    const wrapper = mount(Containers, { global: sortableTableGlobal() });
     const running: Container = {
       status: {
         image:     'scratch',
@@ -173,6 +156,31 @@ describe('Containers methods', () => {
 
     it.each(['shop', 'default/web-0'])('shows the %s group name as is', (group) => {
       expect(methods.groupLabel.call(marked, group)).toBe(group);
+    });
+  });
+
+  describe('search', () => {
+    it.each([
+      ['name', 'web'],
+      ['state', 'running'],
+      ['port, as the column shows it', '8080:80'],
+    ])('finds a container by its %s', (_, query) => {
+      const web = container('web');
+
+      web.status!.status = ContainerStatus.Running;
+      web.status!.ports = [{ name: '80/tcp', bindings: [{ hostIP: '0.0.0.0', hostPort: '8080' }] }];
+      const table = mount(SortableTable, {
+        global: sortableTableGlobal(),
+        props:  {
+          headers:     (Containers as any).data.call({ t }).headers,
+          rows:        rowsFor([web, container('db')], { getPortList: methods.getPortList }),
+          keyField:    'id',
+          rowsPerPage: 10,
+        },
+      }).vm;
+
+      table.searchQuery = query;
+      expect(table.filteredRows.map((row: any) => row.status.name)).toEqual(['web']);
     });
   });
 
