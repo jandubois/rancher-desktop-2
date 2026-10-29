@@ -655,6 +655,161 @@ EOF
     nerdctl compose --file "${host_fixture_src}/compose.yaml" down
 }
 
+@test "nerdctl builds a context directory on the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+COPY file /file
+EOF
+    nerdctl build --tag rdd-bats-build "${host_fixture_src}"
+    run_e -0 nerdctl run --rm rdd-bats-build cat /file
+    assert_output shared
+    nerdctl rmi rdd-bats-build
+}
+
+@test "nerdctl builds a context given as a backslash path" {
+    skip_on_unix
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+COPY file /file
+EOF
+    run -0 cygpath -w "${host_fixture_dir}"
+    backslash_dir=${output}
+    nerdctl build --tag rdd-bats-build-backslash "${backslash_dir}"
+    run_e -0 nerdctl run --rm rdd-bats-build-backslash cat /file
+    assert_output shared
+    nerdctl rmi rdd-bats-build-backslash
+}
+
+@test "nerdctl builds the working directory" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+COPY file /file
+EOF
+    cd "${host_fixture_dir}"
+    nerdctl build --tag rdd-bats-build-cwd .
+    run_e -0 nerdctl run --rm rdd-bats-build-cwd cat /file
+    assert_output shared
+    nerdctl rmi rdd-bats-build-cwd
+}
+
+@test "nerdctl builds with a Dockerfile outside the context" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/context/file" <<<shared
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+COPY file /file
+EOF
+    nerdctl build --tag rdd-bats-build-file --file "${host_fixture_src}/Dockerfile" \
+        "${host_fixture_src}/context"
+    run_e -0 nerdctl run --rm rdd-bats-build-file cat /file
+    assert_output shared
+    nerdctl rmi rdd-bats-build-file
+}
+
+@test "nerdctl build writes an iidfile on the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<<'FROM busybox'
+    nerdctl build --tag rdd-bats-build-iid --iidfile "${host_fixture_src}/iid" "${host_fixture_src}"
+    run -0 cat "${host_fixture_dir}/iid"
+    assert_output --regexp '^sha256:[0-9a-f]{64}$'
+    nerdctl rmi rdd-bats-build-iid
+}
+
+# On Linux the guest's mount of the home directory refuses the lchown that
+# buildctl, running as root, makes on every file it exports (#1129).
+skip_local_export_on_linux() {
+    if is_linux; then
+        skip "the guest's home mount refuses lchown from buildctl (#1129)"
+    fi
+}
+
+@test "nerdctl build exports a local output to the host" {
+    skip_local_export_on_linux
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM scratch
+COPY file /file
+EOF
+    nerdctl build --output "type=local,dest=${host_fixture_src}/out" "${host_fixture_src}"
+    run -0 cat "${host_fixture_dir}/out/file"
+    assert_output shared
+}
+
+@test "nerdctl build exports to a host directory given without a type" {
+    # nerdctl wraps a bare --output value as type=local,dest=<value>.
+    skip_local_export_on_linux
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM scratch
+COPY file /file
+EOF
+    nerdctl build --output "${host_fixture_src}/out" "${host_fixture_src}"
+    run -0 cat "${host_fixture_dir}/out/file"
+    assert_output shared
+}
+
+@test "nerdctl build writes and reads a local cache on the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+COPY file /file
+EOF
+    nerdctl build --tag rdd-bats-build-cache \
+        --cache-to "type=local,dest=${host_fixture_src}/cache" "${host_fixture_src}"
+    assert_file_exists "${host_fixture_dir}/cache/index.json"
+    # buildkit only warns when it cannot read the --cache-from directory, and
+    # its local cache from the first build marks the steps CACHED anyway. Only
+    # the import line shows that it read the host directory.
+    run -0 nerdctl build --progress=plain --tag rdd-bats-build-cache \
+        --cache-from "type=local,src=${host_fixture_src}/cache" "${host_fixture_src}"
+    assert_output --partial "importing cache manifest from"
+    nerdctl rmi rdd-bats-build-cache
+}
+
+@test "nerdctl build reads a secret from the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+RUN --mount=type=secret,id=rdd-bats cp /run/secrets/rdd-bats /secret
+EOF
+    nerdctl build --tag rdd-bats-build-secret \
+        --secret "id=rdd-bats,src=${host_fixture_src}/file" "${host_fixture_src}"
+    run_e -0 nerdctl run --rm rdd-bats-build-secret cat /secret
+    assert_output shared
+    nerdctl rmi rdd-bats-build-secret
+}
+
+@test "nerdctl build reads a named build context from the host" {
+    create_host_fixture
+    create_file "${host_fixture_dir}/named/file" <<<named
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+COPY --from=extra file /file
+EOF
+    nerdctl build --tag rdd-bats-build-context \
+        --build-context "extra=${host_fixture_src}/named" "${host_fixture_src}"
+    run_e -0 nerdctl run --rm rdd-bats-build-context cat /file
+    assert_output named
+    nerdctl rmi rdd-bats-build-context
+}
+
+@test "nerdctl build forwards an ssh key file from the host" {
+    # buildctl reads the key file in the guest, so the build fails when the
+    # guest cannot reach the path.
+    create_host_fixture
+    ssh-keygen -q -t ed25519 -N '' -f "${host_fixture_dir}/key"
+    create_file "${host_fixture_dir}/Dockerfile" <<'EOF'
+FROM busybox
+RUN --mount=type=ssh,id=rdd-bats,target=/ssh.sock test -S /ssh.sock
+EOF
+    nerdctl build --tag rdd-bats-build-ssh \
+        --ssh "rdd-bats=${host_fixture_src}/key" "${host_fixture_src}"
+    nerdctl rmi rdd-bats-build-ssh
+}
+
 # --- Cleanup on VM stop ---
 # These run last: they stop and restart the VM, which sweeps every mirror.
 
