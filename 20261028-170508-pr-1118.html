@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261028-170508-pr-1118</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261028-170508-pr-1118</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-28 17:05</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>1 (of pr-1118)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1118" class="gh-ref" data-title="Translate build paths in rdd nerdctl" data-state="open" data-type="pr">#1118</a> — Translate build paths in rdd nerdctl</td></tr>
+      <tr><td>Branch</td><td><code>nerdctl-build-paths</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f3838762a"><code>f3838762a</code></a> Translate build paths in the nerdctl stub (the head commit; the four <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a> commits below it were out of scope)</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f3838762a20b327ced659140d735c3347db48ce1"><code>f3838762a20b327ced659140d735c3347db48ce1</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.1 Pro</span> (effort: default), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; two new BATS tests fail a required check, and <code>--file</code> directories and quoted CSV fields regress; both regressions have tested patches</td></tr>
+      <tr><td>Wall-clock time</td><td><code>39 min 1 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The head commit translates Windows host paths in <code>nerdctl build</code> and <code>builder debug</code>, and its handlers match nerdctl v2.1.2 and buildctl v0.21.1 for every unquoted form. Three things need fixing. Two new BATS tests fail the required Ubuntu bats-app job, because buildctl cannot set file owners on the guest&#39;s host mount. A <code>--file</code> that names a directory, <code>sub/</code> or <code>.</code>, loses its trailing slash. A quoted <code>type=</code> field turns stdout or an env secret&#39;s name into a path.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/bats/tests/32-app-controllers/engine-containerd.bats">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> Two new <code>--output</code> BATS tests fail the required Ubuntu bats-app job<a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L722-L733">rdd/bats/tests/32-app-controllers/engine-containerd.bats</a></div>
+      <pre data-start="722" data-line="727-728"><code class="language-bash">    create_host_fixture
+    create_file &quot;${host_fixture_dir}/Dockerfile&quot; &lt;&lt;&#39;EOF&#39;
+FROM scratch
+COPY file /file
+EOF
+    nerdctl build --output &quot;type=local,dest=${host_fixture_src}/out&quot; &quot;${host_fixture_src}&quot;
+    run -0 cat &quot;${host_fixture_dir}/out/file&quot;
+    assert_output shared
+}
+
+@test &quot;nerdctl build exports to a host directory given without a type&quot; {
+    # nerdctl wraps a bare --output value as type=local,dest=&lt;value&gt;.</code></pre>
+    <p>On <code>BATS (ubuntu-latest, bats-app)</code> at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f3838762a"><code>f3838762a</code></a>, this test and the bare <code>--output</code> test at line 739 fail in buildctl&#39;s local exporter. buildctl runs as root in the guest and sets each exported file&#39;s owner, and the guest&#39;s mount of the host home directory refuses <code>lchown</code>. On the same mount, the <code>--iidfile</code> and <code>--cache-to type=local</code> tests write host files without setting owners, and they pass. Both failing tests pass on the Windows and macOS bats-app jobs. The pinned Lima mounts a QEMU guest&#39;s home with 9p and security model <code>none</code> (<code>pkg/driver/qemu/qemu_driver.go:321-322</code>, <code>pkg/limayaml/defaults.go:44</code>). The job is one of main&#39;s required checks, so the PR cannot merge.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/bats/tests/32-app-controllers/engine-containerd.bats#L734-L744">rdd/bats/tests/32-app-controllers/engine-containerd.bats</a></div>
+      <pre data-start="734" data-line="739"><code class="language-bash">    create_host_fixture
+    create_file &quot;${host_fixture_dir}/Dockerfile&quot; &lt;&lt;&#39;EOF&#39;
+FROM scratch
+COPY file /file
+EOF
+    nerdctl build --output &quot;${host_fixture_src}/out&quot; &quot;${host_fixture_src}&quot;
+    run -0 cat &quot;${host_fixture_dir}/out/file&quot;
+    assert_output shared
+}
+
+@test &quot;nerdctl build writes and reads a local cache on the host&quot; {</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-ci-lchown.sh; run: bash probe-ci-lchown.sh
+# Needs gh with read access to rancher-sandbox/rancher-desktop-2. Prints the
+# build tests of BATS (ubuntu-latest, bats-app) on f3838762a and the exporter
+# error of each failure.
+set -o errexit -o nounset -o pipefail
+log=$(gh api --allow-escape-sequences \
+    repos/rancher-sandbox/rancher-desktop-2/actions/jobs/123175370579/logs)
+grep -a -E &#39;^\S+ (ok|not ok) 1(1[89]|2[0-8]) |#5 ERROR&#39; &lt;&lt;&lt;&quot;${log}&quot; | cut -d&#39; &#39; -f2-</code></pre>
+      <pre><code class="language-text">$ bash probe-ci-lchown.sh
+ok 118 nerdctl builds a context directory on the host in 1964ms
+ok 119 nerdctl builds a context given as a backslash path in 19ms # skip This test is not applicable on macOS/Linux.
+ok 120 nerdctl builds the working directory in 1420ms
+ok 121 nerdctl builds with a Dockerfile outside the context in 1432ms
+ok 122 nerdctl build writes an iidfile on the host in 830ms
+not ok 123 nerdctl build exports a local output to the host in 358ms
+# #5 ERROR: error from receiver: error setting metadata for /home/runner/rdd-bats-nerdctl.pWhAoo/out/file: lchown /home/runner/rdd-bats-nerdctl.pWhAoo/out/file: operation not permitted
+not ok 124 nerdctl build exports to a host directory given without a type in 340ms
+# #5 ERROR: error from receiver: error setting metadata for /home/runner/rdd-bats-nerdctl.1JIFSL/out/file: lchown /home/runner/rdd-bats-nerdctl.1JIFSL/out/file: operation not permitted
+ok 125 nerdctl build writes and reads a local cache on the host in 1960ms
+ok 126 nerdctl build reads a secret from the host in 2465ms
+ok 127 nerdctl build reads a named build context from the host in 1504ms
+ok 128 nerdctl build forwards an ssh key file from the host in 1019ms</code></pre>
+      </details>
+    <p>Fix: skip both tests on Linux, with a comment that the QEMU guest&#39;s home mount refuses <code>lchown</code>. Exporting the typed test as <code>type=tar</code> would keep it on every runner. Not run: either change needs a live VM on the Ubuntu runner.</p>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/overlay.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> A <code>--file</code> that names a directory loses its trailing slash <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/overlay.go#L42-L53">rdd/pkg/nerdctlstub/overlay.go</a></div>
+      <pre data-start="42" data-line="47-48"><code class="language-go">var pathFlags = map[string]map[string]argHandlerKind{
+	&quot;builder build&quot;: {
+		&quot;--build-context&quot;: buildContextArg,
+		&quot;--cache-from&quot;:    builderCacheArg,
+		&quot;--cache-to&quot;:      builderCacheArg,
+		&quot;--file&quot;:          fileOrURLOrStdinArg,
+		&quot;-f&quot;:              fileOrURLOrStdinArg,
+		&quot;--iidfile&quot;:       outputPathArg,
+		&quot;--output&quot;:        builderOutputArg,
+		&quot;-o&quot;:              builderOutputArg,
+		// --secret is CSV with src= or source=.
+		&quot;--secret&quot;: builderCacheArg,</code></pre>
+    <p>nerdctl v2.1.2 splits <code>--file</code> with <code>filepath.Split</code>, and <code>buildkitutil.BuildKitFile</code> reads an empty or <code>.</code> file name as <code>Dockerfile</code>. On Windows the guest runs nerdctl in the translated working directory (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/cmd/rdd/limavm_shell.go#L83-L91"><code>cmd/rdd/limavm_shell.go:83-91</code></a>), so before this commit <code>-f sub/</code> and <code>-f .</code> reached nerdctl unchanged and built <code>sub/Dockerfile</code> and <code>./Dockerfile</code>. Now <code>TranslateHostPath</code> cleans them to <code>/mnt/c/w/sub</code> and <code>/mnt/c/w</code>, nerdctl takes the directory for the Dockerfile, and the build fails.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/cmd/rdd/limavm_shell.go#L78-L96">rdd/cmd/rdd/limavm_shell.go</a></div>
+      <pre data-start="78" data-line="83-91"><code class="language-go">
+	// Build working directory change command
+	var changeDirCmd string
+	if workDir != &quot;&quot; {
+		changeDirCmd = fmt.Sprintf(&quot;cd %s || exit 1&quot;, shellescape.Quote(workDir))
+	} else if len(inst.Config.Mounts) &gt; 0 || runtime.GOOS == &quot;windows&quot; {
+		// The WSL2 guest sees every host drive under /mnt, whatever the
+		// template&#39;s mounts say.
+		hostCurrentDir, err := os.Getwd()
+		if err == nil {
+			hostCurrentDir, err = guestDir(hostCurrentDir)
+		}
+		if err == nil {
+			changeDirCmd = fmt.Sprintf(&quot;cd %s&quot;, shellescape.Quote(hostCurrentDir))
+		} else {
+			changeDirCmd = &quot;false&quot;
+			logrus.WithError(err).Warn(&quot;failed to get the current directory&quot;)
+		}
+		hostHomeDir, err := os.UserHomeDir()</code></pre>
+    <p>The patch restores the suffix in <code>filePathArgHandler</code>. <code>builder debug --file</code> goes through it, and so does <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1119" class="gh-ref" data-title="Translate cp host paths in rdd nerdctl" data-state="open" data-type="pr">#1119</a>&#39;s <code>cp</code>, where <code>src/.</code> means the directory&#39;s contents. <code>TranslateHostPath</code> also computes the guest&#39;s working directory, and its tests pin the cleaned form, so the patch leaves it alone.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-build-file.sh; run from the repository root: bash probe-build-file.sh
+# Needs Go. Adds two throwaway test files to rdd/pkg/guestexec and removes them.
+set -o errexit -o nounset -o pipefail
+dir=rdd/pkg/guestexec
+trap &#39;rm -f &quot;${dir}/zz_export_probe_test.go&quot; &quot;${dir}/zz_build_file_probe_test.go&quot;&#39; EXIT
+
+cat &gt;&quot;${dir}/zz_export_probe_test.go&quot; &lt;&lt;&#39;GO&#39;
+package guestexec
+
+// SetHostCwd lets the external probe test pick a Windows working directory.
+func SetHostCwd(cwd string) func() {
+	saved := hostCwd
+	hostCwd = func() (string, error) { return cwd, nil }
+	return func() { hostCwd = saved }
+}
+GO
+
+cat &gt;&quot;${dir}/zz_build_file_probe_test.go&quot; &lt;&lt;&#39;GO&#39;
+package guestexec_test
+
+import (
+	&quot;path&quot;
+	&quot;testing&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub&quot;
+)
+
+// nerdctlDockerfile is the file name nerdctl v2.1.2 builds from: build.go
+// splits --file with filepath.Split, and buildkitutil.BuildKitFile reads an
+// empty or &quot;.&quot; file name as Dockerfile.
+func nerdctlDockerfile(file string) string {
+	_, name := path.Split(file)
+	if name == &quot;&quot; || name == &quot;.&quot; {
+		return &quot;Dockerfile&quot;
+	}
+	return name
+}
+
+func TestBuildFileProbe(t *testing.T) {
+	defer guestexec.SetHostCwd(`C:\w`)()
+	for _, file := range []string{&quot;sub/&quot;, &quot;.&quot;, &quot;sub/Dockerfile&quot;} {
+		got, err := nerdctlstub.TranslateCommandLine([]string{&quot;build&quot;, &quot;-f&quot;, file, &quot;.&quot;})
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf(&quot;-f %-16q reaches nerdctl as %-24q nerdctl builds %q&quot;, file, got[2], nerdctlDockerfile(got[2]))
+	}
+}
+GO
+
+go -C rdd test -count=1 -run &#39;^TestBuildFileProbe$&#39; -v ./pkg/guestexec/ | grep -E &#39;reaches|^(ok|FAIL)&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-build-file.sh   # f3838762a (HEAD)
+    zz_build_file_probe_test.go:29: -f &quot;sub/&quot;           reaches nerdctl as &quot;/mnt/c/w/sub&quot;           nerdctl builds &quot;sub&quot;
+    zz_build_file_probe_test.go:29: -f &quot;.&quot;              reaches nerdctl as &quot;/mnt/c/w&quot;               nerdctl builds &quot;w&quot;
+    zz_build_file_probe_test.go:29: -f &quot;sub/Dockerfile&quot; reaches nerdctl as &quot;/mnt/c/w/sub/Dockerfile&quot; nerdctl builds &quot;Dockerfile&quot;
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec	0.497s
+$ bash probe-build-file.sh   # f30e64a13 (parent)
+    zz_build_file_probe_test.go:29: -f &quot;sub/&quot;           reaches nerdctl as &quot;sub/&quot;                   nerdctl builds &quot;Dockerfile&quot;
+    zz_build_file_probe_test.go:29: -f &quot;.&quot;              reaches nerdctl as &quot;.&quot;                      nerdctl builds &quot;Dockerfile&quot;
+    zz_build_file_probe_test.go:29: -f &quot;sub/Dockerfile&quot; reaches nerdctl as &quot;sub/Dockerfile&quot;         nerdctl builds &quot;Dockerfile&quot;
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec	0.506s
+$ bash probe-build-file.sh   # HEAD with the patch below
+    zz_build_file_probe_test.go:29: -f &quot;sub/&quot;           reaches nerdctl as &quot;/mnt/c/w/sub/&quot;          nerdctl builds &quot;Dockerfile&quot;
+    zz_build_file_probe_test.go:29: -f &quot;.&quot;              reaches nerdctl as &quot;/mnt/c/w/.&quot;             nerdctl builds &quot;Dockerfile&quot;
+    zz_build_file_probe_test.go:29: -f &quot;sub/Dockerfile&quot; reaches nerdctl as &quot;/mnt/c/w/sub/Dockerfile&quot; nerdctl builds &quot;Dockerfile&quot;
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec	0.495s</code></pre>
+      </details>
+    <p>Fix: keep a trailing <code>/</code> or <code>/.</code> of the host path in <code>filePathArgHandler</code>. The new cases cover absolute paths; only the reproducer reaches relative ones, which need a host working directory that the nerdctlstub tests cannot set.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/nerdctlstub/translate.go b/rdd/pkg/nerdctlstub/translate.go
+index 0f138c86f..79a1c3582 100644
+--- a/rdd/pkg/nerdctlstub/translate.go
++++ b/rdd/pkg/nerdctlstub/translate.go
+@@ -126,7 +126,33 @@ func filePathArgHandler(arg string) (string, error) {
+ 		// directory, the guest&#39;s view of the host one.
+ 		return arg, nil
+ 	}
+-	return guestexec.TranslateHostPath(arg)
++	guestPath, err := guestexec.TranslateHostPath(arg)
++	if err != nil {
++		return &quot;&quot;, err
++	}
++	return keepDirSuffix(arg, guestPath), nil
++}
++
++// keepDirSuffix restores the trailing `/` or `/.` of the host path arg that
++// TranslateHostPath cleans away from guestPath. nerdctl reads
++// `build --file sub/` and `build --file .` as the Dockerfile in that directory.
++func keepDirSuffix(arg, guestPath string) string {
++	slashed := strings.ReplaceAll(arg, `\`, &quot;/&quot;)
++	suffix := &quot;&quot;
++	switch {
++	case slashed == &quot;.&quot; || strings.HasSuffix(slashed, &quot;/.&quot;) || strings.HasSuffix(slashed, &quot;:.&quot;):
++		suffix = &quot;/.&quot;
++	case strings.HasSuffix(slashed, &quot;/&quot;):
++		suffix = &quot;/&quot;
++	}
++	switch {
++	case strings.HasSuffix(guestPath, suffix):
++		return guestPath
++	case strings.HasSuffix(guestPath, &quot;/&quot;):
++		// A drive root such as /mnt/d/ keeps its slash.
++		return guestPath + strings.TrimPrefix(suffix, &quot;/&quot;)
++	}
++	return guestPath + suffix
+ }
+ 
+ // filePathListArgHandler handles a comma-separated list of input paths. It
+diff --git a/rdd/pkg/nerdctlstub/translate_test.go b/rdd/pkg/nerdctlstub/translate_test.go
+index 48ff45830..fecce8e80 100644
+--- a/rdd/pkg/nerdctlstub/translate_test.go
++++ b/rdd/pkg/nerdctlstub/translate_test.go
+@@ -311,6 +311,18 @@ func TestTranslateCommandLinePathForms(t *testing.T) {
+ 			[]string{&quot;builder&quot;, &quot;debug&quot;, &quot;--ssh&quot;, `id=C:\key`, `C:\ctx`},
+ 			[]string{&quot;builder&quot;, &quot;debug&quot;, &quot;--ssh&quot;, &quot;id=/mnt/c/key&quot;, &quot;/mnt/c/ctx&quot;},
+ 		},
++		{
++			[]string{&quot;build&quot;, &quot;-f&quot;, `C:\ctx\sub\`, `C:\ctx`},
++			[]string{&quot;build&quot;, &quot;-f&quot;, &quot;/mnt/c/ctx/sub/&quot;, &quot;/mnt/c/ctx&quot;},
++		},
++		{
++			[]string{&quot;build&quot;, &quot;-f&quot;, `C:\ctx\.`, `C:\ctx`},
++			[]string{&quot;build&quot;, &quot;-f&quot;, &quot;/mnt/c/ctx/.&quot;, &quot;/mnt/c/ctx&quot;},
++		},
++		{
++			[]string{&quot;build&quot;, &quot;-f&quot;, `D:\.`, `C:\ctx`},
++			[]string{&quot;build&quot;, &quot;-f&quot;, &quot;/mnt/d/.&quot;, &quot;/mnt/c/ctx&quot;},
++		},
+ 	} {
+ 		t.Run(strings.Join(tc.args, &quot; &quot;), func(t *testing.T) {
+ 			got, err := TranslateCommandLine(tc.args)</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/nerdctlstub/translate.go">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> A quoted <code>type=</code> field turns stdout and an env secret&#39;s name into paths <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate.go#L214-L224">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="214" data-line="219"><code class="language-go">// reads, such as `--cache-to=`, `--output=` with a `type=`, and `--secret=`.
+func builderCacheArgHandler(arg string) (string, error) {
+	// The arg is comma-separated, with `src=` and `source=` values as inputs
+	// and `dest=` values as outputs; everything else passes through. Like
+	// buildctl, match keys in any case.
+	parts := strings.Split(arg, &quot;,&quot;)
+	secretType, envName := &quot;&quot;, &quot;&quot;
+	for _, part := range parts {
+		key, value, _ := strings.Cut(part, &quot;=&quot;)
+		switch strings.ToLower(key) {
+		case &quot;type&quot;:</code></pre>
+    <p>buildctl v0.21.1 decodes the values of <code>--output</code>, <code>--secret</code>, <code>--import-cache</code> and <code>--export-cache</code> as CSV (<code>csvvalue.Fields</code> in <code>cmd/buildctl/build/</code>). The stub splits at commas and keeps the quote in the key, so it never finds the <code>type</code> in <code>&quot;type=tar&quot;,dest=-</code>. <code>streamsToStdout</code> then reports a file, and <code>dest=-</code> becomes a file named <code>-</code> in the working directory. In <code>&quot;type=env&quot;,id=s,src=MY_TOKEN</code> the variable name becomes a path. Before this commit both values passed through, and buildctl streamed the tar to stdout and read the variable. Nobody needs to quote a <code>type=</code> field, so the trigger is rare. But decoding the CSV also lets a quoted path keep its comma, which <code>nerdctl.md</code> lists as unsupported. The probe runs on macOS, so its relative paths resolve against the probe&#39;s directory.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash">#!/usr/bin/env bash
+# Save as probe-quoted-csv.sh; run from the repository root: bash probe-quoted-csv.sh
+# Needs Go. Adds a throwaway test file to rdd/pkg/nerdctlstub and removes it.
+set -o errexit -o nounset -o pipefail
+file=rdd/pkg/nerdctlstub/zz_quoted_csv_probe_test.go
+trap &#39;rm -f &quot;${file}&quot;&#39; EXIT
+
+cat &gt;&quot;${file}&quot; &lt;&lt;&#39;GO&#39;
+package nerdctlstub
+
+import &quot;testing&quot;
+
+func TestQuotedCSVProbe(t *testing.T) {
+	for _, tc := range [][2]string{
+		{&quot;--output&quot;, `type=tar,dest=-`},
+		{&quot;--output&quot;, `&quot;type=tar&quot;,dest=-`},
+		{&quot;--secret&quot;, `type=env,id=s,src=MY_TOKEN`},
+		{&quot;--secret&quot;, `&quot;type=env&quot;,id=s,src=MY_TOKEN`},
+	} {
+		got, err := TranslateCommandLine([]string{&quot;build&quot;, tc[0], tc[1], `C:\ctx`})
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf(&quot;%s %-30s -&gt; %s&quot;, tc[0], tc[1], got[2])
+	}
+}
+GO
+
+go -C rdd test -count=1 -run &#39;^TestQuotedCSVProbe$&#39; -v ./pkg/nerdctlstub/ | grep -E &#39; -&gt; |^(ok|FAIL)&#39; | sed &quot;s|$(pwd -P)|&lt;repo&gt;|&quot;</code></pre>
+      <pre><code class="language-text">$ bash probe-quoted-csv.sh   # f3838762a (HEAD)
+    zz_quoted_csv_probe_test.go:16: --output type=tar,dest=-                -&gt; type=tar,dest=-
+    zz_quoted_csv_probe_test.go:16: --output &quot;type=tar&quot;,dest=-              -&gt; &quot;type=tar&quot;,dest=&lt;repo&gt;/rdd/pkg/nerdctlstub/-
+    zz_quoted_csv_probe_test.go:16: --secret type=env,id=s,src=MY_TOKEN     -&gt; type=env,id=s,src=MY_TOKEN
+    zz_quoted_csv_probe_test.go:16: --secret &quot;type=env&quot;,id=s,src=MY_TOKEN   -&gt; &quot;type=env&quot;,id=s,src=&lt;repo&gt;/rdd/pkg/nerdctlstub/MY_TOKEN
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub	0.513s
+$ bash probe-quoted-csv.sh   # f30e64a13 (parent)
+    zz_quoted_csv_probe_test.go:16: --output type=tar,dest=-                -&gt; type=tar,dest=-
+    zz_quoted_csv_probe_test.go:16: --output &quot;type=tar&quot;,dest=-              -&gt; &quot;type=tar&quot;,dest=-
+    zz_quoted_csv_probe_test.go:16: --secret type=env,id=s,src=MY_TOKEN     -&gt; type=env,id=s,src=MY_TOKEN
+    zz_quoted_csv_probe_test.go:16: --secret &quot;type=env&quot;,id=s,src=MY_TOKEN   -&gt; &quot;type=env&quot;,id=s,src=MY_TOKEN
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub	0.507s
+$ bash probe-quoted-csv.sh   # HEAD with the patch below
+    zz_quoted_csv_probe_test.go:16: --output type=tar,dest=-                -&gt; type=tar,dest=-
+    zz_quoted_csv_probe_test.go:16: --output &quot;type=tar&quot;,dest=-              -&gt; &quot;type=tar&quot;,dest=-
+    zz_quoted_csv_probe_test.go:16: --secret type=env,id=s,src=MY_TOKEN     -&gt; type=env,id=s,src=MY_TOKEN
+    zz_quoted_csv_probe_test.go:16: --secret &quot;type=env&quot;,id=s,src=MY_TOKEN   -&gt; &quot;type=env&quot;,id=s,src=MY_TOKEN
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub	0.503s</code></pre>
+      </details>
+    <p>Fix: decode the value with <code>encoding/csv</code>, as <code>filePathListArgHandler</code> does, translate the decoded fields, and re-encode only when a path changed. The patch also rewrites the comma paragraph in <code>nerdctl.md</code>.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/docs/design/nerdctl.md b/rdd/docs/design/nerdctl.md
+index a8d828f29..9935fae8e 100644
+--- a/rdd/docs/design/nerdctl.md
++++ b/rdd/docs/design/nerdctl.md
+@@ -59,11 +59,12 @@ guest path, such as `/mnt/c/rootfs`. The same goes for a host path in the
+ value of a flag that the overlay leaves out, such as
+ `--security-opt seccomp=&lt;path&gt;` or `--log-opt log-path=&lt;path&gt;`.
+ 
+-A path inside a comma-separated value, such as a `--mount`, `--ssh` or
+-builder CSV value, cannot contain a comma. buildctl reads CSV quotes in the
+-builder values, but the stub splits those at every comma as well. The stub
+-expands a relative path to an absolute one, so a relative path fails the same
+-way when the working directory has a comma, such as `OneDrive - Acme, Inc`.
++A path inside a `--mount` or `--ssh` value cannot contain a comma, since the
++stub splits those values at every comma. The stub expands a relative path to
++an absolute one, so a relative path in them fails the same way when the
++working directory has a comma, such as `OneDrive - Acme, Inc`. The stub reads
++the builder CSV values with their quotes, as buildctl does, and quotes a guest
++path that contains a comma.
+ 
+ The parse ends at an option that neither the command nor an enclosing command
+ lists, because the stub cannot tell whether it takes a value. From there the
+diff --git a/rdd/pkg/nerdctlstub/translate.go b/rdd/pkg/nerdctlstub/translate.go
+index 0f138c86f..51ac2cf01 100644
+--- a/rdd/pkg/nerdctlstub/translate.go
++++ b/rdd/pkg/nerdctlstub/translate.go
+@@ -184,14 +184,14 @@ func fileOrURLOrStdinArgHandler(arg string) (string, error) {
+ 	return filePathArgHandler(arg)
+ }
+ 
+-// streamsToStdout reports whether the builder CSV value arg exports a single
++// streamsToStdout reports whether the builder CSV fields export a single
+ // file, for which `dest=-` means stdout instead of a file named `-`. It
+ // follows buildctl&#39;s resolveExporterDest. The tar exporter always writes a
+ // file, and the oci and docker exporters do unless the last `tar=` value
+ // parses as false.
+-func streamsToStdout(arg string) bool {
++func streamsToStdout(parts []string) bool {
+ 	exporter, tar := &quot;&quot;, &quot;&quot;
+-	for _, part := range strings.Split(arg, &quot;,&quot;) {
++	for _, part := range parts {
+ 		key, value, _ := strings.Cut(part, &quot;=&quot;)
+ 		switch strings.ToLower(key) {
+ 		case &quot;type&quot;:
+@@ -213,10 +213,14 @@ func streamsToStdout(arg string) bool {
+ // builderCacheArgHandler handles the builder CSV values that buildctl
+ // reads, such as `--cache-to=`, `--output=` with a `type=`, and `--secret=`.
+ func builderCacheArgHandler(arg string) (string, error) {
+-	// The arg is comma-separated, with `src=` and `source=` values as inputs
+-	// and `dest=` values as outputs; everything else passes through. Like
+-	// buildctl, match keys in any case.
+-	parts := strings.Split(arg, &quot;,&quot;)
++	// The arg is CSV, with `src=` and `source=` values as inputs and `dest=`
++	// values as outputs; everything else passes through. Like buildctl,
++	// decode CSV quotes and match keys in any case.
++	parts, err := csv.NewReader(strings.NewReader(arg)).Read()
++	if err != nil {
++		// buildctl rejects the value too, and reports it.
++		return arg, nil
++	}
+ 	secretType, envName := &quot;&quot;, &quot;&quot;
+ 	for _, part := range parts {
+ 		key, value, _ := strings.Cut(part, &quot;=&quot;)
+@@ -230,6 +234,7 @@ func builderCacheArgHandler(arg string) (string, error) {
+ 	// buildctl reads the source of a secret whose last `type=` is env as the
+ 	// name of an environment variable, unless the last `env=` names one.
+ 	envSecret := secretType == &quot;env&quot; &amp;&amp; envName == &quot;&quot;
++	changed := false
+ 	for i, part := range parts {
+ 		key, value, ok := strings.Cut(part, &quot;=&quot;)
+ 		if !ok {
+@@ -243,7 +248,7 @@ func builderCacheArgHandler(arg string) (string, error) {
+ 			}
+ 			handler = filePathArgHandler
+ 		case &quot;dest&quot;:
+-			if value == &quot;-&quot; &amp;&amp; streamsToStdout(arg) {
++			if value == &quot;-&quot; &amp;&amp; streamsToStdout(parts) {
+ 				continue
+ 			}
+ 			handler = outputPathArgHandler
+@@ -254,9 +259,21 @@ func builderCacheArgHandler(arg string) (string, error) {
+ 		if err != nil {
+ 			return &quot;&quot;, err
+ 		}
+-		parts[i] = key + &quot;=&quot; + fixedPath
++		if fixedPath != value {
++			parts[i] = key + &quot;=&quot; + fixedPath
++			changed = true
++		}
+ 	}
+-	return strings.Join(parts, &quot;,&quot;), nil
++	if !changed {
++		return arg, nil
++	}
++	var b strings.Builder
++	w := csv.NewWriter(&amp;b)
++	if err := w.Write(parts); err != nil {
++		return &quot;&quot;, err
++	}
++	w.Flush()
++	return strings.TrimSuffix(b.String(), &quot;\n&quot;), nil
+ }
+ 
+ // builderOutputArgHandler handles `nerdctl builder build --output=`.
+@@ -266,7 +283,8 @@ func builderOutputArgHandler(arg string) (string, error) {
+ 	}
+ 	// nerdctl passes a value without `type=` on as `type=local,dest=&lt;value&gt;`,
+ 	// and buildctl parses that as CSV, so a comma in the value starts another
+-	// field that buildctl reads too.
++	// field that buildctl reads too. A guest path that needs CSV quotes keeps
++	// the wrapper, and nerdctl passes the wrapped value on unchanged.
+ 	const wrapper = &quot;type=local,dest=&quot;
+ 	result, err := builderCacheArgHandler(wrapper + arg)
+ 	if err != nil {
+diff --git a/rdd/pkg/nerdctlstub/translate_test.go b/rdd/pkg/nerdctlstub/translate_test.go
+index 48ff45830..ef1b02513 100644
+--- a/rdd/pkg/nerdctlstub/translate_test.go
++++ b/rdd/pkg/nerdctlstub/translate_test.go
+@@ -223,6 +223,10 @@ func TestBuilderOutputAndSecret(t *testing.T) {
+ 		// and the last `env=` is empty or missing.
+ 		{&quot;--secret&quot;, `id=s,type=env,env=FOO,src=C:\f.txt`, &quot;id=s,type=env,env=FOO,src=/mnt/c/f.txt&quot;},
+ 		{&quot;--secret&quot;, `id=s,type=env,type=file,src=C:\f.txt`, &quot;id=s,type=env,type=file,src=/mnt/c/f.txt&quot;},
++		// buildctl decodes CSV quotes.
++		{&quot;--output&quot;, `&quot;type=tar&quot;,dest=-`, `&quot;type=tar&quot;,dest=-`},
++		{&quot;--secret&quot;, `&quot;type=env&quot;,id=s,src=MY_SECRET`, `&quot;type=env&quot;,id=s,src=MY_SECRET`},
++		{&quot;--output&quot;, `type=local,&quot;dest=C:\a,b&quot;`, `type=local,&quot;dest=/mnt/c/a,b&quot;`},
+ 	} {
+ 		t.Run(tc.flag+&quot; &quot;+tc.arg, func(t *testing.T) {
+ 			got, err := TranslateCommandLine([]string{&quot;build&quot;, tc.flag, tc.arg, `C:\ctx`})</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/overlay.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> <code>builder debug</code> translation cannot run in the guest <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/overlay.go#L51-L66">rdd/pkg/nerdctlstub/overlay.go</a></div>
+      <pre data-start="51" data-line="56-61"><code class="language-go">		&quot;-o&quot;:              builderOutputArg,
+		// --secret is CSV with src= or source=.
+		&quot;--secret&quot;: builderCacheArg,
+		&quot;--ssh&quot;:    sshArg,
+	},
+	&quot;builder debug&quot;: {
+		&quot;--file&quot;:   filePathArg,
+		&quot;-f&quot;:       filePathArg,
+		&quot;--secret&quot;: builderCacheArg,
+		&quot;--ssh&quot;:    sshArg,
+	},
+	&quot;compose&quot;: {
+		&quot;--env-file&quot;:          filePathArg,
+		&quot;--file&quot;:              fileOrURLOrStdinArg,
+		&quot;--f&quot;:                 fileOrURLOrStdinArg, // long-form spelling of the -f alias
+		&quot;-f&quot;:                  fileOrURLOrStdinArg,</code></pre>
+    <p>nerdctl v2.1.2&#39;s <code>builder debug</code> requires experimental mode and execs <code>buildg</code> (<code>cmd/nerdctl/builder/builder.go:139,163</code>). The guest gets only <code>buildctl</code>, <code>buildkitd</code> and <code>nerdctl</code> from the nerdctl-full tarball (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/Makefile#L186"><code>rdd/Makefile:186</code></a>), and nothing else in the repo installs buildg, so <code>builder debug</code> fails before it reads a path. The overlay entries, the handler registration at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args.go#L385"><code>parse_args.go:385</code></a> and the design doc&#39;s command-handlers row (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/docs/design/nerdctl.md#L45"><code>nerdctl.md:45</code></a>) cover a command the guest cannot run. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1116" class="gh-ref" data-title="`rdd nerdctl`: translate Windows host paths in build options" data-state="open" data-type="issue">#1116</a> lists <code>builder debug</code>, so keeping them is a scope call. If they stay, <code>TestTableSanity</code> should assert the <code>builder debug</code> handler too, since it asserts only the <code>builder build</code> one (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args_test.go#L221"><code>parse_args_test.go:221</code></a>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/Makefile#L181-L191">rdd/Makefile</a></div>
+      <pre data-start="181" data-line="186"><code class="language-makefile"># timestamps, which predate the download, so without the touch make unpacks
+# the tarball again on every build.
+$(NERDCTL_DIR)/bin/nerdctl: $(NERDCTL_TARBALL)
+	mkdir -p $(NERDCTL_DIR)
+	tar --extract --gzip --file=$&lt; --directory=$(NERDCTL_DIR) \
+		bin/buildctl bin/buildkitd bin/nerdctl
+	touch $(NERDCTL_BINARIES)
+
+$(NERDCTL_DIR)/bin/buildctl $(NERDCTL_DIR)/bin/buildkitd: $(NERDCTL_DIR)/bin/nerdctl ;
+
+# The guest binaries run inside the distro, so they cross-compile for its</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args.go#L380-L390">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="380" data-line="385"><code class="language-go">
+	// Positional-argument handlers. The pinned nerdctl has no `image import`;
+	// restore the 1.x imageImportHandler when a bump brings it back.
+	for path, handler := range map[string]commandHandlerType{
+		&quot;builder build&quot;: builderBuildHandler,
+		&quot;builder debug&quot;: builderBuildHandler,
+	} {
+		def, ok := commands[path]
+		if !ok {
+			panic(fmt.Sprintf(&quot;command handler: unknown command %q&quot;, path))
+		}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/docs/design/nerdctl.md#L40-L50">rdd/docs/design/nerdctl.md</a></div>
+      <pre data-start="40" data-line="45"><code class="language-markdown">
+| Table | Contents | Source |
+| --- | --- | --- |
+| command table | every command, its flags, whether each flag consumes a value | generated |
+| overlay | the flags whose host paths the stub translates, with a handler kind for each | hand-curated |
+| command handlers | positional-argument handlers (`builder build`, `builder debug`) | hand-written |
+
+The ten handler kinds, one per nerdctl path syntax, are input path, input
+path that may also be `-` for stdin or a URI (`builder build --file`,
+`--cosign-key`), comma-separated list of input paths (`run --env-file`),
+output path, `--volume` (`host:container[:mode]`), `--mount` (CSV with</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args_test.go#L216-L226">rdd/pkg/nerdctlstub/parse_args_test.go</a></div>
+      <pre data-start="216" data-line="221"><code class="language-go">	for _, alias := range []string{&quot;run&quot;, &quot;build&quot;, &quot;cp&quot;} {
+		_, ok := commandAliases[alias]
+		assert.Assert(t, ok, &quot;alias %q must exist&quot;, alias)
+	}
+	// The overlay init must have attached the positional handlers.
+	assert.Assert(t, commands[&quot;builder build&quot;].handler != nil)
+	// Path handlers must be wired, not left as ignoredArgHandler: translate
+	// a volume argument through the live table.
+	got, err := commands[&quot;container run&quot;].options[&quot;-v&quot;](`C:\x:/y`)
+	assert.NilError(t, err)
+	assert.Equal(t, got, &quot;/mnt/c/x:/y&quot;)</code></pre>
+    <p>Fix: drop the <code>builder debug</code> entries until the guest ships buildg, or keep them, say in <code>nerdctl.md</code> that the guest does not ship buildg, and assert both handlers in <code>TestTableSanity</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The <code>raw=</code> branch in <code>sshArgHandler</code> follows a buildctl the guest does not run <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate.go#L273-L286">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="273" data-line="278-281"><code class="language-go">		return &quot;&quot;, err
+	}
+	return strings.TrimPrefix(result, wrapper), nil
+}
+
+// sshArgHandler handles `nerdctl builder build --ssh=` and `builder debug
+// --ssh=`, which take `id=path,path,...` like buildctl. Recent buildctl
+// versions read an element `raw=&lt;bool&gt;` as an option instead of a path, so
+// it passes through.
+func sshArgHandler(arg string) (string, error) {
+	id, value, ok := strings.Cut(arg, &quot;=&quot;)
+	if !ok {
+		// A bare ID such as `default` does not name a path.
+		return arg, nil</code></pre>
+    <p>The guest&#39;s buildctl v0.21.1 splits every <code>--ssh</code> element as a path (<code>cmd/buildctl/build/ssh.go</code>); buildctl v0.29.0 reads <code>raw=</code> as an option. In the guest, <code>raw=true</code> stays a relative path, and the mapped working directory resolves it to the file that translating it would name. So the branch at line 291 changes nothing today, and the test at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate_test.go#L307"><code>translate_test.go:307</code></a> encodes a later buildctl&#39;s behaviour.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate_test.go#L302-L312">rdd/pkg/nerdctlstub/translate_test.go</a></div>
+      <pre data-start="302" data-line="307"><code class="language-go">		{
+			[]string{&quot;build&quot;, &quot;--ssh&quot;, `default=C:\key1,C:\key2`, `C:\ctx`},
+			[]string{&quot;build&quot;, &quot;--ssh&quot;, &quot;default=/mnt/c/key1,/mnt/c/key2&quot;, &quot;/mnt/c/ctx&quot;},
+		},
+		{
+			[]string{&quot;build&quot;, &quot;--ssh&quot;, `agent=C:\agent.sock,raw=true`, `C:\ctx`},
+			[]string{&quot;build&quot;, &quot;--ssh&quot;, &quot;agent=/mnt/c/agent.sock,raw=true&quot;, &quot;/mnt/c/ctx&quot;},
+		},
+		{
+			[]string{&quot;builder&quot;, &quot;debug&quot;, &quot;--ssh&quot;, `id=C:\key`, `C:\ctx`},
+			[]string{&quot;builder&quot;, &quot;debug&quot;, &quot;--ssh&quot;, &quot;id=/mnt/c/key&quot;, &quot;/mnt/c/ctx&quot;},</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate.go#L286-L296">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="286" data-line="291"><code class="language-go">		return arg, nil
+	}
+	paths := strings.Split(value, &quot;,&quot;)
+	for i, p := range paths {
+		// buildkit takes a lone empty path like a bare ID.
+		if p == &quot;&quot; || strings.HasPrefix(p, &quot;raw=&quot;) {
+			continue
+		}
+		guestPath, err := guestexec.TranslateHostPath(p)
+		if err != nil {
+			return &quot;&quot;, err</code></pre>
+    <p>Fix: name the buildctl version that reads <code>raw=</code> in the comment, or drop the branch and its test until the guest&#39;s buildctl reads it.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/translate.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <code>--build-context</code> without <code>=</code> gets the stub&#39;s error, not nerdctl&#39;s <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate.go#L304-L317">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="304" data-line="309-312"><code class="language-go">func buildContextArgHandler(arg string) (string, error) {
+	// Like nerdctl&#39;s parseContextNames, split once at `=`. A value with a
+	// URL, image, or target prefix passes through; any other value is a
+	// path, after an optional oci-layout:// prefix.
+	name, value, ok := strings.Cut(arg, &quot;=&quot;)
+	if !ok {
+		return &quot;&quot;, fmt.Errorf(&quot;failed to parse context value %q (expected key=value)&quot;, arg)
+	}
+	urnPrefixes := []string{&quot;https://&quot;, &quot;http://&quot;, &quot;docker-image://&quot;, &quot;target:&quot;}
+	matchesPrefix := func(prefix string) bool {
+		return strings.HasPrefix(value, prefix)
+	}
+	if slices.ContainsFunc(urnPrefixes, matchesPrefix) {
+		return arg, nil</code></pre>
+    <p>Elsewhere the package leaves a malformed value for nerdctl to reject (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate.go#L141"><code>translate.go:141</code></a>), and nerdctl&#39;s <code>parseContextNames</code> reports this case as <code>invalid context value: foo, expected key=value</code>. The stub fails first, in its own wording. The name <code>urnPrefixes</code>, and &quot;URN&quot; in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/overlay.go#L24"><code>overlay.go:24</code></a>, cover URLs, image references and <code>target:</code>, none of which is a URN.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/translate.go#L136-L146">rdd/pkg/nerdctlstub/translate.go</a></div>
+      <pre data-start="136" data-line="141"><code class="language-go">	if arg == &quot;&quot; {
+		return arg, nil
+	}
+	paths, err := csv.NewReader(strings.NewReader(arg)).Read()
+	if err != nil {
+		// nerdctl rejects the value too, and reports it.
+		return arg, nil
+	}
+	for i, p := range paths {
+		if paths[i], err = filePathArgHandler(p); err != nil {
+			return &quot;&quot;, err</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/overlay.go#L19-L29">rdd/pkg/nerdctlstub/overlay.go</a></div>
+      <pre data-start="19" data-line="24"><code class="language-go">	// mountArg is CSV such as type=bind,source=host-path,target=....
+	mountArg
+	// builderCacheArg is CSV with src= or source= (input) and dest= (output)
+	// paths.
+	builderCacheArg
+	// buildContextArg is name=value, where value may be a path or a URN.
+	buildContextArg
+	// fileOrURLOrStdinArg is a path to an input file; `-` and URIs pass
+	// through.
+	fileOrURLOrStdinArg
+	// filePathListArg is a comma-separated list of input paths, which</code></pre>
+    <p>Fix: return <code>arg, nil</code> when the value does not contain <code>=</code>, and rename <code>urnPrefixes</code> to <code>passThroughPrefixes</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The <code>handler</code> comment implies that a handler replaces subcommand lookup <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args.go#L45-L56">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="45" data-line="50-51"><code class="language-go">	options map[string]argHandler
+	// hasForeignFlags means option parsing stops at the first positional
+	// argument, because later flags are arguments, such as the container
+	// command&#39;s in `nerdctl run image ls --color`.
+	hasForeignFlags bool
+	// handler for any positional arguments. If this is nil, subcommands
+	// are looked up and other positional arguments pass through.
+	handler commandHandlerType
+}
+
+// lookupCommand finds a command definition by path, resolving aliases.
+func lookupCommand(path string) (commandDefinition, bool) {</code></pre>
+    <p>The subcommand case at line 253 runs before the handler, whatever the handler is, so a handler on a command with subcommands would never see a positional argument. Neither builder command has subcommands, so nothing breaks today. The package comment at lines 6-8 names only <code>build</code>&#39;s positional paths, though <code>builder debug</code> has the same handler. The comment also wraps early, leaving <code>// build. The</code> alone on line 8.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args.go#L1-L13">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="1" data-line="6-8"><code class="language-go">// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-FileCopyrightText: The Rancher Desktop Authors
+
+// Package nerdctlstub rewrites the host paths in a nerdctl command line so
+// that they work when nerdctl runs inside the guest VM. It rewrites the
+// values of the flags that the overlay lists and the positional paths of
+// build. The
+// parser is ported from Rancher Desktop 1.x (src/go/nerdctl-stub); the
+// command table is generated from the pinned nerdctl module by ./generate.
+package nerdctlstub
+
+import (</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args.go#L248-L258">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="248" data-line="253"><code class="language-go">			}
+			result = append(result, newArgs...)
+			if consumed {
+				argIndex++
+			}
+		case len(c.subcommands) &gt; 0:
+			// This command has subcommands; assume any non-flag argument is
+			// a subcommand and hand off parsing to it.
+			subcommandPath := c.commandPath
+			if subcommandPath != &quot;&quot; {
+				subcommandPath += &quot; &quot;</code></pre>
+    <p>Fix: &quot;handler, if set, rewrites the positional arguments; otherwise they pass through.&quot; Name <code>builder debug</code> in the package comment, and reflow it.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/nerdctlstub/parse_args.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> No test reaches the <code>--</code> that a handled command re-emits<a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/pkg/nerdctlstub/parse_args.go#L287-L300">rdd/pkg/nerdctlstub/parse_args.go</a></div>
+      <pre data-start="287" data-line="292-295"><code class="language-go">	if c.handler != nil {
+		childResult, err := c.handler(positionalArgs)
+		if err != nil {
+			return nil, err
+		}
+		if sawSeparator {
+			// Keep nerdctl from taking a positional argument such as `-file`
+			// for an option.
+			result = append(result, &quot;--&quot;)
+		}
+		result = append(result, childResult...)
+	} else {
+		// A `--` would turn unparsed options into positional arguments.
+		if len(positionalArgs) &gt; 0 &amp;&amp; len(unparsedArgs) == 0 {</code></pre>
+    <p>Changing <code>if sawSeparator {</code> to <code>if false &amp;&amp; sawSeparator {</code> leaves <code>go test ./pkg/nerdctlstub/</code> green. The comment&#39;s example does not need the <code>--</code> either, because <code>builderBuildHandler</code> turns a context named <code>-file</code> into an absolute <code>/mnt/...</code> path. Only the positional arguments after the context, which nerdctl ignores, can still start with <code>-</code>, and without the <code>--</code> nerdctl rejects one as an unknown option.</p>
+    <p>Fix: add <code>build -- C:\ctx -x</code>, expecting <code>build -- /mnt/c/ctx -x</code>, to <code>TestTranslateCommandLinePathForms</code>, and use such an extra argument as the comment&#39;s example.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/cmd/rdd/nerdctl.go">
+      <div class="finding-title" id="S6">
+        <span class="finding-num">S6.</span> The help text&#39;s &quot;build arguments&quot; reads as <code>--build-arg</code> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S6" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/cmd/rdd/nerdctl.go#L34-L44">rdd/cmd/rdd/nerdctl.go</a></div>
+      <pre data-start="34" data-line="39"><code class="language-go">		Short: &quot;Run nerdctl inside the Rancher Desktop VM&quot;,
+		Long: `Run nerdctl inside the Rancher Desktop VM.
+
+All arguments pass through to nerdctl. On Windows, rdd rewrites host paths
+to the /mnt/&lt;drive&gt; locations where the guest mounts them. It rewrites them
+in options such as -v, --mount, and --env-file, and in build arguments.
+In those options, rdd resolves a host path such as /mnt/c/data under the
+working directory&#39;s root. With the working directory on C:,
+-v /mnt/c/data:/data mounts C:\mnt\c\data. Write a host path anywhere
+else, such as in --security-opt seccomp=PATH, as /mnt/&lt;drive&gt;/...
+yourself. Rancher Desktop must already be running with the containerd</code></pre>
+    <p>The stub passes <code>--build-arg</code> values through untranslated, but a reader who knows <code>nerdctl build</code> takes &quot;build arguments&quot; to mean that option.</p>
+    <p>Fix: &quot;...and in the build context and path options of nerdctl build.&quot;</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>(future) An env-type <code>--secret</code>, <code>--ssh default</code> and a value-less <code>--build-arg NAME</code> read buildctl&#39;s environment, and buildctl runs in the guest under <code>sudo</code> with no host variables forwarded. The stub passes them through correctly, but they resolve against the guest&#39;s environment on every OS. Forwarding the named variables would take <code>rdd nerdctl</code> sending them and <code>sudo --preserve-env</code>. This is reasoned from <code>limaVMGuestExec</code>, not run. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(future) On Linux, <code>rdd nerdctl build --output type=local,dest=...</code> into the home directory fails for users the same way as I1&#39;s tests, because the QEMU guest&#39;s 9p mount refuses <code>lchown</code> by root. The stub translates paths only on Windows, so the limitation predates this PR. Exporting into a directory outside the mount avoids it, and so should a tar export, which buildctl writes with <code>os.Create</code> and no owner change (<code>cmd/buildctl/build/output.go:97-106</code>; not run).</li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>(in-scope) The CSV handlers follow buildctl&#39;s parser: keys match in any case, the last <code>type=</code> wins, <code>tar=</code> falls back to true when <code>ParseBool</code> fails, and an env secret&#39;s <code>src=</code> stays a variable name. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>(in-scope) <code>builderOutputArgHandler</code> translates a bare value inside nerdctl&#39;s own <code>type=local,dest=</code> wrapper, so a comma in it splits into the same fields that buildctl sees. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span></li>
+      <li>(in-scope) The eleven BATS tests run each translated option through a real build. <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>In the lead worktree at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f3838762a"><code>f3838762a</code></a>, <code>go test -count=1 ./pkg/nerdctlstub/... ./pkg/guestexec/...</code> passes, and <code>GOOS=windows go vet</code> of both packages is clean. With the I2 and I3 patches applied in that order, both suites pass and <code>golangci-lint run ./pkg/nerdctlstub/...</code> reports 0 issues. Each patch&#39;s new cases fail with its fix reverted.</li>
+      <li>Disabling the <code>--</code> re-emission (S5) leaves the suite green.</li>
+      <li>CI at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f3838762a"><code>f3838762a</code></a>: <code>BATS (ubuntu-latest, bats-app)</code> fails with I1, and every other completed check passes. <code>BATS (windows-latest, bats-app)</code> and <code>BATS (macos-15-intel, bats-app)</code> pass, and on Windows all eleven new build tests run and pass with translated paths.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The design doc&#39;s &quot;ten handler kinds&quot; matches the ten constants in <code>overlay.go</code>.</li>
+      <li>The comma paragraph in <code>nerdctl.md</code> names only commas inside paths, and I3 shows that the comma split also misreads quoted keys. The I3 patch rewrites the paragraph.</li>
+      <li>The help text needs S6&#39;s wording, and the package comment needs S4&#39;s.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>A path inside a <code>--mount</code> or <code>--ssh</code> value cannot contain a comma, as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/rdd/docs/design/nerdctl.md#L62-L66"><code>nerdctl.md:62-66</code></a> documents. The I3 patch changes only the builder CSV handler, so the limit stays for both.</li>
+      <li>The new backslash-path test calls <code>cygpath -w</code> under <code>skip_on_unix</code>, like <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a>&#39;s tests at lines 540 and 557 and the <code>guest_path</code> helper at line 43. Windows BATS runs under MSYS2 (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/f3838762a20b327ced659140d735c3347db48ce1/.github/workflows/rdd-bats.yaml#L159"><code>.github/workflows/rdd-bats.yaml:159</code></a>), so do not re-suggest a WSL branch for it in this PR; a change belongs with <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a>&#39;s tests.</li>
+      <li>Do not re-suggest matching <code>raw=</code> in <code>--ssh</code> case-insensitively: buildctl v0.29.0 compares <code>key == &quot;raw&quot;</code> exactly.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found I2 alone and backed it with a probe of <code>TranslateHostPath</code> and a copy of nerdctl&#39;s <code>filepath.Split</code> rule; both matched what I reproduced. It checked every handler against the staged nerdctl and buildctl sources and raised five suggestions that held (S1 to S4 and S6), the missing <code>buildg</code> and the <code>raw=</code> version mismatch among them. It did not offer a diff for I2, saying the nerdctlstub tests cannot set a Windows working directory; an external test package in <code>guestexec</code> gets around that. It read the same CSV handler as Codex without seeing the quoted-key problem, and it gave <code>parse_args.go</code> only S4, missing the untested <code>--</code> branch.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex raised only I3, and no other agent saw it. It ran a probe against copies of HEAD and the parent, with BuildKit&#39;s own <code>csvvalue</code> as the oracle, and both quoted values passed through unchanged at the parent, which bears out its &quot;regression&quot; label. It did not say how rarely anyone quotes a <code>type=</code> field, which the severity has to weigh. It marked <code>overlay.go</code> and <code>parse_args.go</code> reviewed with no issues although I2 is in the <code>--file</code> entries, and it did not raise a suggestion, though S1 to S3 are in files it covered.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro raised one suggestion, <code>cygpath</code> under WSL, which repeats a pattern from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/974" class="gh-ref" data-title="Translate Windows volume, mount and file paths in rdd nerdctl" data-state="open" data-type="pr">#974</a> on a path CI never takes, so it went to Acknowledged Limitations. It marked <code>overlay.go</code> and <code>translate.go</code> reviewed with no issues although I2 and I3 are in them. Its strengths matched the code. Its session log holds 45 shell commands and none of them runs a test or linter, so its &quot;no correctness issues&quot; rests on reading alone.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash ran the linters and the race test that it reported. Its S1, a case-insensitive <code>raw=</code> match, is a false positive. buildctl v0.29.0 compares <code>key == &quot;raw&quot;</code> exactly, so the change would diverge from it. Its S2 renames <code>commandHandlerType</code>, the name the Rancher Desktop 1.x stub uses, so I dropped it as a style call, and its S3 and S4 merged into S1 and S4. Like Gemini Pro it found neither regression, and the two Gemini models&#39; agreement on &quot;no issues&quot; counts as one opinion.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>10m 32s</td><td>8m 32s</td><td>9m 31s</td><td>16m 48s</td></tr>
+        <tr><td>Findings</td><td>1I 5S</td><td>1I</td><td>none</td><td>2S</td></tr>
+        <tr><td>Tool calls</td><td>52 (Bash 42, Read 10)</td><td>19 (shell 16, stdin 3)</td><td>46 (run<em>shell</em>command 45, read_file 1)</td><td>80 (read<em>file 40, grep</em>search 35, run<em>shell</em>command 3)</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>1</td><td>1</td><td>2</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>4</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>9</td><td>9</td><td>9</td><td>9</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>1</td><td>2</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 5S</strong></td><td><strong>1I</strong></td><td><strong>none</strong></td><td><strong>2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p>Claude gave the most: I2, five suggestions and the deepest source checks. Codex found the one defect that needed BuildKit&#39;s CSV parser in mind. Neither Gemini model found an Important. No agent could see CI, so I1 came from the consolidator&#39;s read of the job logs.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] A BATS test that has buildctl export a directory into the host&#39;s mounted home, through <code>--output type=local,dest=...</code> or a bare <code>--output DIR</code>, fails on the Ubuntu runner while Windows and macOS pass it. buildctl runs as root in the guest and sets each exported file&#39;s owner, and Lima&#39;s default QEMU mount (9p, security model <code>none</code>) refuses <code>lchown</code>. Writes that do not set an owner, such as <code>--iidfile</code> and <code>--cache-to type=local</code>, pass on every runner. Flag a new test that exports a directory into the host mount unless it skips Linux.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+Prism.languages.makefile={comment:{pattern:/(^|[^\\])#(?:\\(?:\r\n|[\s\S])|[^\\\r\n])*/,lookbehind:!0},string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"builtin-target":{pattern:/\.[A-Z][^:#=\s]+(?=\s*:(?!=))/,alias:"builtin"},target:{pattern:/^(?:[^:=\s]|[ \t]+(?![\s:]))+(?=\s*:(?!=))/m,alias:"symbol",inside:{variable:/\$+(?:(?!\$)[^(){}:#=\s]+|(?=[({]))/}},variable:/\$+(?:(?!\$)[^(){}:#=\s]+|\([@*%<^+?][DF]\)|(?=[({]))/,keyword:/-include\b|\b(?:define|else|endef|endif|export|ifn?def|ifn?eq|include|override|private|sinclude|undefine|unexport|vpath)\b/,function:{pattern:/(\()(?:abspath|addsuffix|and|basename|call|dir|error|eval|file|filter(?:-out)?|findstring|firstword|flavor|foreach|guile|if|info|join|lastword|load|notdir|or|origin|patsubst|realpath|shell|sort|strip|subst|suffix|value|warning|wildcard|word(?:list|s)?)(?=[ \t])/,lookbehind:!0},operator:/(?:::|[?:+!])?=|[|@]/,punctuation:/[:;(){}]/};
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
