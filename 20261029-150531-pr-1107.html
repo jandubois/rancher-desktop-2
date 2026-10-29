@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261029-150531-pr-1107</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261029-150531-pr-1107</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-10-29 15:05</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2 (of target)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/mook-as">@mook-as</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1107" class="gh-ref" data-title="RDA: Preferences: Enable path management" data-state="open" data-type="pr">#1107</a> — RDA: Preferences: Enable path management</td></tr>
+      <tr><td>Branch</td><td><code>rda/prefs/path-mgmt</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/fb8dcc18e"><code>fb8dcc18e</code></a> RDD: API: remove &quot;unset&quot; option for path management<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e1f94ee5d"><code>e1f94ee5d</code></a> RDD: Path management: remove &quot;unset&quot;<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f230fa8b5"><code>f230fa8b5</code></a> BATS: appPath no longer supports unset<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/02ccb24bf"><code>02ccb24bf</code></a> rdd-client: regenerate<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/40e8a2a63"><code>40e8a2a63</code></a> RDA: Prefs: Enable path management, convert to composition API<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c836b8975"><code>c836b8975</code></a> RDA: layouts/preferences: Convert to composition API<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e7dcf0c2"><code>7e7dcf0c2</code></a> RDA: Expose paths via electron-IPC; update it<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/46c00c34a"><code>46c00c34a</code></a> RDA: prefs: Update path management<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f296ef97f"><code>f296ef97f</code></a> RDA: E2E: prefs: Test path management<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53e3d7a5c"><code>53e3d7a5c</code></a> RDA: Components: <code>&lt;radio-button&gt;</code>: Fix ARIA compatibility<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/88b4ccee6"><code>88b4ccee6</code></a> Translations: Update translations<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/69993270f"><code>69993270f</code></a> RDA: First-run: Add path management<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cb8883730"><code>cb8883730</code></a> RDA: E2E: first-run: add path management<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5210b4c38"><code>5210b4c38</code></a> RDA: window: Supply fallback size for first-run</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5210b4c38836f7907fa81d6b8d3793fd495fcd1f"><code>5210b4c38836f7907fa81d6b8d3793fd495fcd1f</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default); Gemini 3.1 Pro (effort: default) ran out of quota before reviewing</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; most round-1 items are fixed, but a first-run click can enable OK before the App exists, and the help text, descriptions and one doc comment state things the code contradicts</td></tr>
+      <tr><td>Wall-clock time</td><td><code>23 min 9 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 2 removes <code>unset</code> from the App API, adds the PATH selector to the first-run dialog, and translates the new strings. Most round-1 fixes are in, and every check passes. But a PATH click in first-run before the App exists enables OK with nothing to commit to. <code>rdd run --help</code> still promises the removed <code>unset</code> pinning, the descriptions don&#39;t say &quot;user Path&quot; or &quot;shell profile&quot;, and the <code>path_marker</code> doc is wrong outside Windows. Removing <code>unset</code> needs a maintainer ruling.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="pkg/rancher-desktop/pages/FirstRun.vue">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> A PATH click in first-run before the App exists enables OK <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/pages/FirstRun.vue#L22-L32">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="22" data-line="27"><code class="language-vue">    &lt;rd-fieldset
+      :legend-text=&quot;t(&#39;pathManagement.label&#39;)&quot;
+      :legend-tooltip=&quot;t(&#39;pathManagement.tooltip&#39;, { binDir: escapeHtml(binDir) })&quot;
+      :is-locked=&quot;isPreferenceLocked(&#39;application.addPath&#39;)&quot;
+    &gt;
+      &lt;path-management-selector :show-label=&quot;false&quot; /&gt;
+    &lt;/rd-fieldset&gt;
+    &lt;div class=&quot;button-area&quot;&gt;
+      &lt;button
+        ref=&quot;accept-btn&quot;
+        data-testid=&quot;accept-btn&quot;</code></pre>
+    <p>The window shows as soon as the page mounts (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/dialog.vue#L51-L56"><code>layouts/dialog.vue:51-56</code></a>), while <code>rdd/ensureAppExists</code> may still be creating the App. The other controls wait: <code>EngineSelector</code> gets <code>:disabled=&quot;!preferencesLoaded&quot;</code> (line 19), and <code>RdCheckbox</code> checks <code>hasPreferences</code>. The PATH selector doesn&#39;t.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/dialog.vue#L46-L61">pkg/rancher-desktop/layouts/dialog.vue</a></div>
+      <pre data-start="46" data-line="51-56"><code class="language-markup">  store.dispatch(&#39;i18n/init&#39;).catch(ex =&gt; console.error(ex));
+
+  // The page component is mounted before the layout (because the layout
+  // contains the page component); so we can safely send `dialog/load` here
+  // and assume the page has already been mounted.
+  ipcRenderer.on(&#39;dialog/populate&#39;, async() =&gt; {
+    await nextTick();
+    wrapper.value?.setAttribute(&#39;data-loaded&#39;, &#39;&#39;);
+    ipcRenderer.send(&#39;dialog/ready&#39;);
+  });
+  ipcRenderer.send(&#39;dialog/load&#39;);
+});
+&lt;/script&gt;
+
+&lt;style lang=&quot;scss&quot;&gt;
+  html {</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/pages/FirstRun.vue#L14-L24">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="14" data-line="19"><code class="language-markup">      :legend-text=&quot;t(&#39;containerEngine.label&#39;)&quot;
+      :is-locked=&quot;engineSelectorLocked&quot;
+    &gt;
+      &lt;engine-selector
+        data-testid=&quot;engine-selector&quot;
+        :disabled=&quot;!preferencesLoaded&quot;
+      /&gt;
+    &lt;/rd-fieldset&gt;
+    &lt;rd-fieldset
+      :legend-text=&quot;t(&#39;pathManagement.label&#39;)&quot;
+      :legend-tooltip=&quot;t(&#39;pathManagement.tooltip&#39;, { binDir: escapeHtml(binDir) })&quot;</code></pre>
+    <p>The <code>preferences</code> getter merges the committed spec with the pending changes (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/store/preferences.ts#L114-L120"><code>store/preferences.ts:114-120</code></a>). With no App the committed spec is <code>{}</code>, but a click records a pending change, so the getter gains a key and <code>preferencesLoaded</code> turns true. OK is then enabled and focused. The click&#39;s validation does not find an App and shows &quot;app is missing&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/store/preferences.ts#L327-L329"><code>store/preferences.ts:327-329</code></a>), and pressing OK fails the same way. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/69993270f"><code>69993270f</code></a> added the selector to this page.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/store/preferences.ts#L109-L125">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="109" data-line="114-120"><code class="language-typescript">    return (rootGetters[&#39;rdd/app&#39;]?.spec ?? {}) as Required&lt;RecursiveReadonly&lt;AppSpec&gt;&gt;;
+  },
+  /**
+   * Preferences is the desired preferences, including uncommitted changes.
+   */
+  preferences: (state, getters) =&gt; {
+    const modified = structuredClone(toRaw(getters.committed));
+    for (const [key, value] of Object.entries(state.changes)) {
+      _.set(modified, key, value);
+    }
+    return modified as Required&lt;RecursiveReadonly&lt;AppSpec&gt;&gt;;
+  },
+  canApply: (state) =&gt; {
+    return Object.keys(state.changes).length &gt; 0 &amp;&amp; !state.errorStatus;
+  },
+  isPreferenceLocked: () =&gt; (_key: RecursiveLeafKeys&lt;AppSpec&gt;) =&gt; {
+    // TODO: deployment profiles https://github.com/rancher-sandbox/rancher-desktop-2/issues/513</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/store/preferences.ts#L322-L334">pkg/rancher-desktop/store/preferences.ts</a></div>
+      <pre data-start="322" data-line="327-329"><code class="language-typescript">
+  // Request validation of the merged preferences.
+  const config = rootState[&#39;rdd-connection&#39;].config;
+  const client = config.makeApiClient(RDDClient.AppRancherdesktopIoV1alpha1Api);
+  const app = rootGetters[&#39;rdd/app&#39;];
+  if (!app?.metadata?.name) {
+    commit(&#39;SET_ERROR_STATUS&#39;, appMissingStatus);
+    return PatchAppResult.failure;
+  }
+
+  if (Object.keys(changes).length === 0) {
+    // No changes to validate or commit; clear any existing error status.
+    serializer.abort();</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-ts">// Save as pkg/rancher-desktop/pages/__tests__/probe-first-run-loading.spec.ts; run from the repository root:
+//   yarn test:unit:jest pkg/rancher-desktop/pages/__tests__/probe-first-run-loading.spec.ts 2&gt;&amp;1 | grep -E &#39;^  ● |✓|Expected|Received|Tests:&#39;
+import { flushPromises, mount } from &#39;@vue/test-utils&#39;;
+import _ from &#39;lodash&#39;;
+import { createStore } from &#39;vuex&#39;;
+
+import cleanHtml from &#39;@pkg/plugins/clean-html-directive&#39;;
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+
+mockModules({ &#39;@pkg/entry/store&#39;: undefined });
+const { default: FirstRun } = await import(&#39;@pkg/pages/FirstRun.vue&#39;);
+const preferences = await import(&#39;@pkg/store/preferences&#39;);
+
+global.structuredClone ??= _.cloneDeep;
+
+// The App never appears: rdd/watchResources stays pending, as it does while
+// the first-run dialog waits for rdd to create the App.
+function mountFirstRun() {
+  const store = createStore({
+    modules: {
+      preferences:     { ...preferences, namespaced: true },
+      &#39;rdd-connection&#39;: {
+        namespaced: true,
+        state:      () =&gt; ({ config: { makeApiClient: () =&gt; ({}) } }),
+        actions:    { fetchConfig: () =&gt; {} },
+      },
+      rdd: {
+        namespaced: true,
+        getters:    { app: () =&gt; undefined },
+        actions:    { watchResources: () =&gt; new Promise(() =&gt; {}), unwatchResources: () =&gt; {} },
+      },
+      i18n: { namespaced: true, getters: { t: () =&gt; (key: string) =&gt; key } },
+    },
+  });
+  const wrapper = mount(FirstRun, {
+    global: {
+      plugins:    [store, cleanHtml],
+      components: { t: { template: &#39;&lt;span /&gt;&#39; } },
+      directives: { &#39;clean-tooltip&#39;: {} },
+      stubs:      {
+        RdCheckbox: true, EngineSelector: true, KubernetesVersionSelector: true, PreferencesAlert: true,
+      },
+    },
+  });
+
+  return { store, wrapper };
+}
+
+// The neighbouring state, which the reviewed code already gets right.
+test(&#39;OK is disabled while the App is missing&#39;, async() =&gt; {
+  const { wrapper } = mountFirstRun();
+
+  await flushPromises();
+  expect(wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).element.disabled).toBe(true);
+  wrapper.unmount();
+});
+
+test(&#39;a PATH click while the App is missing leaves OK disabled and shows no error&#39;, async() =&gt; {
+  const { store, wrapper } = mountFirstRun();
+
+  await wrapper.get(&#39;[data-testid=&quot;path-management-front&quot;] [role=&quot;radio&quot;]&#39;).trigger(&#39;click&#39;);
+  await flushPromises();
+  expect(store.getters[&#39;rdd/app&#39;]).toBeUndefined();
+  expect(wrapper.get(&#39;[data-testid=&quot;accept-btn&quot;]&#39;).element.disabled).toBe(true);
+  expect(store.state.preferences.errorStatus).toBeUndefined();
+  wrapper.unmount();
+});</code></pre>
+      <pre><code class="language-text">$ yarn test:unit:jest pkg/rancher-desktop/pages/__tests__/probe-first-run-loading.spec.ts 2&gt;&amp;1 | grep -E &#39;^  ● |✓|Expected|Received|Tests:&#39;
+  ● a PATH click while the App is missing leaves OK disabled and shows no error
+    Expected: true
+    Received: false
+Tests:       1 failed, 1 passed, 2 total</code></pre>
+      </details>
+    <p>Fix: give the selector a <code>disabled</code> prop and pass <code>!preferencesLoaded</code>, as <code>EngineSelector</code> gets. The patch adds two <code>FirstRun.spec.ts</code> cases, and both fail without the fix.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/components/PathManagementSelector.vue b/pkg/rancher-desktop/components/PathManagementSelector.vue
+index 23eb99e13..5d98ec76f 100644
+--- a/pkg/rancher-desktop/components/PathManagementSelector.vue
++++ b/pkg/rancher-desktop/components/PathManagementSelector.vue
+@@ -13,9 +13,11 @@ defineOptions({ name: &#39;path-management-selector&#39; });
+ const {
+   row = false,
+   showLabel = true,
++  disabled = false,
+ } = defineProps&lt;{
+   row?:       boolean,
+   showLabel?: boolean,
++  disabled?:  boolean,
+ }&gt;();
+ 
+ const store = useStore();
+@@ -54,7 +56,7 @@ function updateVal(value: AddPath) {
+     :value=&quot;currentValue&quot;
+     :options=&quot;options&quot;
+     :row=&quot;row&quot;
+-    :disabled=&quot;isLocked&quot;
++    :disabled=&quot;isLocked || disabled&quot;
+     data-testid=&quot;path-management-selector&quot;
+     :data-value=&quot;currentValue&quot;
+     :class=&quot;{ &#39;locked-radio&#39;: isLocked }&quot;
+diff --git a/pkg/rancher-desktop/pages/FirstRun.vue b/pkg/rancher-desktop/pages/FirstRun.vue
+index 8e4a9a156..3299a1e06 100644
+--- a/pkg/rancher-desktop/pages/FirstRun.vue
++++ b/pkg/rancher-desktop/pages/FirstRun.vue
+@@ -24,7 +24,10 @@
+       :legend-tooltip=&quot;t(&#39;pathManagement.tooltip&#39;, { binDir: escapeHtml(binDir) })&quot;
+       :is-locked=&quot;isPreferenceLocked(&#39;application.addPath&#39;)&quot;
+     &gt;
+-      &lt;path-management-selector :show-label=&quot;false&quot; /&gt;
++      &lt;path-management-selector
++        :show-label=&quot;false&quot;
++        :disabled=&quot;!preferencesLoaded&quot;
++      /&gt;
+     &lt;/rd-fieldset&gt;
+     &lt;div class=&quot;button-area&quot;&gt;
+       &lt;button
+diff --git a/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts b/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+index 982647fc0..69f36d65c 100644
+--- a/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
++++ b/pkg/rancher-desktop/pages/__tests__/FirstRun.spec.ts
+@@ -2,6 +2,7 @@ import { jest } from &#39;@jest/globals&#39;;
+ import { flushPromises, shallowMount } from &#39;@vue/test-utils&#39;;
+ import { createStore } from &#39;vuex&#39;;
+ 
++import PathManagementSelector from &#39;@pkg/components/PathManagementSelector.vue&#39;;
+ import PreferencesAlert from &#39;@pkg/components/Preferences/Alert.vue&#39;;
+ import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+ import { t } from &#39;@pkg/utils/testUtils/translations&#39;;
+@@ -122,4 +123,20 @@ describe(&#39;FirstRun.vue&#39;, () =&gt; {
+     // ...and there is no visible indication of the failure for the user.
+     expect(wrapper.findComponent(PreferencesAlert).exists()).toBe(false);
+   });
++
++  it.each([
++    [&#39;disables&#39;, {}, true],
++    [&#39;enables&#39;, { application: { addPath: &#39;manual&#39; } }, false],
++  ])(&#39;%s the PATH selector by whether the App exists&#39;, async(_, preferences, disabled) =&gt; {
++    // A click without an App records a change, which would enable the accept
++    // button with nothing to commit to.
++    const { store } = makeStore({ preferences });
++
++    const wrapper = shallowMount(FirstRun, {
++      global: { plugins: [store], stubs: { RdFieldset: { template: &#39;&lt;div&gt;&lt;slot /&gt;&lt;/div&gt;&#39; } } },
++    });
++    await flushPromises();
++
++    expect(wrapper.findComponent(PathManagementSelector).props(&#39;disabled&#39;)).toBe(disabled);
++  });
+ });</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/cmd/rdd/run.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> <code>rdd run --help</code> and <code>cmd_app.md</code> still promise the removed <code>unset</code> pinning <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/cmd/rdd/run.go#L45-L57">rdd/cmd/rdd/run.go</a></div>
+      <pre data-start="45" data-line="50-52"><code class="language-go">			into ~/.kube/config and creates its Docker context; it switches
+			your current Docker or kube context only when the existing one
+			is missing or not working. When the App does not exist yet,
+			rdd run enables Kubernetes for kubectl and helm, so they have
+			a cluster to talk to, and selects the containerd engine for
+			nerdctl. An existing App is only started, except that rdd run,
+			like rdd set, changes an application.addPath that is still
+			unset to manual.
+
+			Examples:
+			  rdd run docker run --rm hello-world
+			  rdd run kubectl get nodes
+		`),</code></pre>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e1f94ee5d"><code>e1f94ee5d</code></a> deletes the pin from <code>setAction</code>, but <code>rdd run --help</code> still prints this sentence, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/docs/design/cmd_app.md#L11"><code>rdd/docs/design/cmd_app.md:11</code></a> and <code>:80</code> say the same of <code>rdd set</code> and <code>rdd run</code>. The lines predate the PR, but its removal of the pin makes them false.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/docs/design/cmd_app.md#L6-L16">rdd/docs/design/cmd_app.md</a></div>
+      <pre data-start="6" data-line="11"><code class="language-markdown">
+Set one or more properties on the App singleton resource. Properties use dot notation for nested fields.
+
+Valid property names and types are derived from the App CRD&#39;s OpenAPI schema at runtime, so the command automatically supports new properties as they are added to the CRD.
+
+If the App resource does not exist, it is created with default settings before the specified values are applied. Unless `application.addPath` is given, `rdd set` also sets it to `manual` when the App is new or the field is still `unset`; see [`spec.application.addPath`](api_app.md#app-object).
+
+By default, `rdd set` waits for the reconcile chain to settle before returning. Every property change — `running`, `containerEngine.name`, `kubernetes.enabled`, or any combination — waits for the App&#39;s `Settled` condition to reach `True` with `ObservedGeneration` matching the post-patch generation.
+
+`Settled` goes `False` whenever the App controller sees a generation it has not yet caught up with, and back to `True` once the LimaVM has reached a terminal phase (Started or Stopped), the engine controller has processed the current generation, and — when `kubernetes.enabled` is true — the Kubernetes controller has confirmed the k3s API server and merged the kubeconfig.
+</code></pre>
+    <p>Three comments are stale as well. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L91"><code>reconciler.go:91</code></a> says &quot;manual (or unset)&quot;. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L240"><code>set.bats:240</code></a> points at a test that this PR deletes, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L280"><code>set.bats:280</code></a> keeps &quot;the GUI&#39;s first-run signal&quot;, which no longer exists.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go#L86-L96">rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go</a></div>
+      <pre data-start="86" data-line="91"><code class="language-go">	// separate instances (and Rancher Desktop 1) don&#39;t touch each other&#39;s blocks.
+	Suffix string
+}
+
+// Reconcile applies spec.application.addPath: front/back add the bin directory
+// (prepended or appended); manual (or unset) removes any block we added before.
+// It is idempotent, so extra reconciles are harmless.
+func (r *PathManagementReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
+	log := logf.FromContext(ctx)
+
+	var app appv1alpha1.App</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L235-L245">rdd/bats/tests/32-app-controllers/set.bats</a></div>
+      <pre data-start="235" data-line="240"><code class="language-bash">    assert_output &quot;false&quot;
+}
+
+@test &quot;rdd run nerdctl creates the App with the containerd engine&quot; {
+    delete_app
+    # timeout ends rdd run&#39;s wait, as in the addPath creation test above.
+    run -124 timeout 10 rdd run nerdctl ps
+    run -0 get_app_field &#39;.spec.containerEngine.name&#39;
+    assert_output &quot;containerd&quot;
+}
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L275-L284">rdd/bats/tests/32-app-controllers/set.bats</a></div>
+      <pre data-start="275" data-line="280"><code class="language-bash">  running: false
+YAML
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;manual&quot;
+
+    # rdd stop must not pin addPath, so the GUI&#39;s first-run signal survives.
+    rdd stop --wait=false
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;manual&quot;
+}</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-unset-prose.sh; run from the repository root:
+#   bash probe-unset-prose.sh &lt;revision&gt;...   (a &quot;.&quot; reads the working tree)
+# For each revision: does setAction still pin addPath, and do the rdd run help
+# text and cmd_app.md still promise the pin?
+set -u
+src() { if [ &quot;$1&quot; = . ]; then cat &quot;$2&quot;; else git show &quot;$1:$2&quot;; fi; }
+for rev in &quot;$@&quot;; do
+  echo &quot;== $rev&quot;
+  printf &#39;pin code in set.go:       %s\n&#39; &quot;$(src &quot;$rev&quot; rdd/cmd/rdd/set.go | grep -c &#39;AddPathUnset&#39;)&quot;
+  printf &#39;pin promise in run help:  %s\n&#39; &quot;$(src &quot;$rev&quot; rdd/cmd/rdd/run.go | grep -c &#39;unset to manual&#39;)&quot;
+  printf &#39;pin promise in cmd_app:   %s\n&#39; &quot;$(src &quot;$rev&quot; rdd/docs/design/cmd_app.md | grep -c &#39;still `unset`&#39;)&quot;
+done</code></pre>
+      <pre><code class="language-text">$ bash probe-unset-prose.sh 419e0b7df 5210b4c38
+== 419e0b7df
+pin code in set.go:       1
+pin promise in run help:  1
+pin promise in cmd_app:   2
+== 5210b4c38
+pin code in set.go:       0
+pin promise in run help:  1
+pin promise in cmd_app:   2</code></pre>
+      </details>
+    <p>Fix: delete the sentences and correct the comments. With the patch applied, the probe reports 0 for all three counts.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/bats/tests/32-app-controllers/set.bats b/rdd/bats/tests/32-app-controllers/set.bats
+index 74e40bc92..3d673c5db 100644
+--- a/rdd/bats/tests/32-app-controllers/set.bats
++++ b/rdd/bats/tests/32-app-controllers/set.bats
+@@ -237,7 +237,8 @@ local_setup_file() {
+ 
+ @test &quot;rdd run nerdctl creates the App with the containerd engine&quot; {
+     delete_app
+-    # timeout ends rdd run&#39;s wait, as in the addPath creation test above.
++    # rdd run has no --wait flag and this suite starts no VM, so timeout ends
++    # the wait after rdd run has stored the App.
+     run -124 timeout 10 rdd run nerdctl ps
+     run -0 get_app_field &#39;.spec.containerEngine.name&#39;
+     assert_output &quot;containerd&quot;
+@@ -277,7 +278,7 @@ YAML
+     run -0 get_app_field &#39;.spec.application.addPath&#39;
+     assert_output &quot;manual&quot;
+ 
+-    # rdd stop must not pin addPath, so the GUI&#39;s first-run signal survives.
++    # rdd stop must leave addPath alone.
+     rdd stop --wait=false
+     run -0 get_app_field &#39;.spec.application.addPath&#39;
+     assert_output &quot;manual&quot;
+diff --git a/rdd/cmd/rdd/run.go b/rdd/cmd/rdd/run.go
+index 903ceea16..ba80b87a8 100644
+--- a/rdd/cmd/rdd/run.go
++++ b/rdd/cmd/rdd/run.go
+@@ -47,9 +47,7 @@ func newRunCommand() *cobra.Command {
+ 			is missing or not working. When the App does not exist yet,
+ 			rdd run enables Kubernetes for kubectl and helm, so they have
+ 			a cluster to talk to, and selects the containerd engine for
+-			nerdctl. An existing App is only started, except that rdd run,
+-			like rdd set, changes an application.addPath that is still
+-			unset to manual.
++			nerdctl. An existing App is only started.
+ 
+ 			Examples:
+ 			  rdd run docker run --rm hello-world
+diff --git a/rdd/docs/design/cmd_app.md b/rdd/docs/design/cmd_app.md
+index 1c1250366..b4347778f 100644
+--- a/rdd/docs/design/cmd_app.md
++++ b/rdd/docs/design/cmd_app.md
+@@ -8,7 +8,7 @@ Set one or more properties on the App singleton resource. Properties use dot not
+ 
+ Valid property names and types are derived from the App CRD&#39;s OpenAPI schema at runtime, so the command automatically supports new properties as they are added to the CRD.
+ 
+-If the App resource does not exist, it is created with default settings before the specified values are applied. Unless `application.addPath` is given, `rdd set` also sets it to `manual` when the App is new or the field is still `unset`; see [`spec.application.addPath`](api_app.md#app-object).
++If the App resource does not exist, it is created with default settings before the specified values are applied.
+ 
+ By default, `rdd set` waits for the reconcile chain to settle before returning. Every property change — `running`, `containerEngine.name`, `kubernetes.enabled`, or any combination — waits for the App&#39;s `Settled` condition to reach `True` with `ObservedGeneration` matching the post-patch generation.
+ 
+@@ -77,7 +77,7 @@ rdd lima shell rd &quot;$@&quot;
+ 
+ `rdd run` prepends `~/.rd2/bin` to `PATH`, sets the Docker context to `rancher-desktop-2`, and points `KUBECONFIG` at `~/.rd2/kube.config`, whose current context is `rancher-desktop-2`. It clears `DOCKER_HOST` so the Docker context takes effect. `rdd run` itself leaves your selected Docker context and the current context in `~/.kube/config` unchanged. Starting the App still merges the `rancher-desktop-2` entry into `~/.kube/config`, and on the moby backend creates its Docker context; as a normal startup does, it switches your current context only when the existing one is missing or not working (see [api_app.md](api_app.md)).
+ 
+-Rancher Desktop starts first if it is not already running. When the App does not exist yet and the command is `kubectl` or `helm`, `rdd run` also enables Kubernetes so the command has a cluster to talk to; the App defaulter then picks the default version. When the command is `nerdctl`, it selects the containerd engine instead of the default moby. `rdd run` only starts an existing App, except that, like `rdd set`, it changes an `application.addPath` that is still `unset` to `manual`.
++Rancher Desktop starts first if it is not already running. When the App does not exist yet and the command is `kubectl` or `helm`, `rdd run` also enables Kubernetes so the command has a cluster to talk to; the App defaulter then picks the default version. When the command is `nerdctl`, it selects the containerd engine instead of the default moby. `rdd run` only starts an existing App.
+ 
+ For example, `rdd run docker run --rm hello-world` effectively executes:
+ 
+diff --git a/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go b/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go
+index 8e378fecb..935c6fc0e 100644
+--- a/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go
++++ b/rdd/pkg/controllers/app/pathmanagement/controllers/reconciler.go
+@@ -88,7 +88,7 @@ type PathManagementReconciler struct {
+ }
+ 
+ // Reconcile applies spec.application.addPath: front/back add the bin directory
+-// (prepended or appended); manual (or unset) removes any block we added before.
++// (prepended or appended); manual removes any block we added before.
+ // It is idempotent, so extra reconciles are harmless.
+ func (r *PathManagementReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
+ 	log := logf.FromContext(ctx)</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/assets/translations/en-us.yaml">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> The descriptions say &quot;your PATH&quot; on every platform, and the PR closes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1049" class="gh-ref" data-title="Bring back Preferences › Application › Environment to set `addPath`" data-state="open" data-type="issue">#1049</a> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/assets/translations/en-us.yaml#L432-L442">pkg/rancher-desktop/assets/translations/en-us.yaml</a></div>
+      <pre data-start="432" data-line="437"><code class="language-yaml">  tooltip: Rancher Desktop ships with tools, such as kubectl, nerdctl, helm and docker, and various docker plugins. In order to use these tools, &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; must be in your PATH.
+  options:
+    front:
+      label: Add to front
+      # @no-translate Rancher Desktop
+      description: Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+    back:
+      label: Append to back
+      # @no-translate Rancher Desktop
+      description: Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+    manual:</code></pre>
+    <p>Maintainer item 2 asked for an ICU <code>select</code> on <code>os.platform()</code>, passed as <code>platform</code>, so the text says &quot;user Path&quot; on Windows and &quot;shell profile&quot; on macOS and Linux. Neither is in the code. The selector passes only <code>binDir</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/PathManagementSelector.vue#L34"><code>PathManagementSelector.vue:34</code></a>), and <code>back</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/assets/translations/en-us.yaml#L441"><code>en-us.yaml:441</code></a>) has the same text. The PR body says &quot;Closes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1049" class="gh-ref" data-title="Bring back Preferences › Application › Environment to set `addPath`" data-state="open" data-type="issue">#1049</a>&quot;, so merging it closes the issue with this text missing. The Manual description now says it &quot;does not register bundled docker plugins&quot;, which I judged enough for the plugin request.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/PathManagementSelector.vue#L29-L39">pkg/rancher-desktop/components/PathManagementSelector.vue</a></div>
+      <pre data-start="29" data-line="34"><code class="language-markup">
+const options = computed(() =&gt;
+  Object.values(AddPath).map(key =&gt; ({
+    label:       t.value(`pathManagement.options.${ key }.label`),
+    value:       key,
+    description: t.value(`pathManagement.options.${ key }.description`, { binDir: escapeHtml(binDir.value) }),
+  } as const)));
+
+const groupName = &#39;pathManagement&#39;;
+
+const label = computed(() =&gt; showLabel ? t.value(&#39;pathManagement.label&#39;) : &#39;&#39;);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/assets/translations/en-us.yaml#L436-L446">pkg/rancher-desktop/assets/translations/en-us.yaml</a></div>
+      <pre data-start="436" data-line="441"><code class="language-yaml">      # @no-translate Rancher Desktop
+      description: Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+    back:
+      label: Append to back
+      # @no-translate Rancher Desktop
+      description: Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+    manual:
+      label: Manual
+      # @no-translate Rancher Desktop
+      description: Rancher Desktop does not change your PATH configuration and does not register bundled docker plugins; add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to your path manually.
+sudoPrompt:</code></pre>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/88b4ccee6"><code>88b4ccee6</code></a> translated the platform-neutral English into nine locales. Once the English gains the <code>select</code>, <code>i18n-report validate</code> fails all nine on these two keys.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-ts">// Save as pkg/rancher-desktop/store/__tests__/probe-descriptions.spec.ts; run from the repository root:
+//   yarn test:unit:jest pkg/rancher-desktop/store/__tests__/probe-descriptions.spec.ts 2&gt;&amp;1 | grep -E &#39;^  ● |Received string|Tests:&#39;
+import { jest } from &#39;@jest/globals&#39;;
+
+import mockModules from &#39;@pkg/utils/testUtils/mockModules&#39;;
+
+mockModules({
+  &#39;@pkg/utils/ipcRenderer&#39;: { ipcRenderer: { on: jest.fn(), once: jest.fn(), send: jest.fn() } },
+});
+
+const i18n = await import(&#39;@pkg/store/i18n&#39;);
+const { availableLocales, loadTranslations } = await import(&#39;@pkg/utils/translationLoader&#39;);
+
+const state = {
+  default:      &#39;en-us&#39;,
+  selected:     &#39;en-us&#39;,
+  available:    [...availableLocales],
+  translations: { &#39;en-us&#39;: loadTranslations(&#39;en-us&#39;) },
+};
+const resolved: Record&lt;string, any&gt; = Object.create(null, Object.fromEntries(
+  Object.entries(i18n.getters).map(([key, getter]) =&gt; [key, { get: () =&gt; (getter as any)(state, resolved) }])));
+const t = resolved.t as (key: string, args?: Record&lt;string, unknown&gt;) =&gt; string;
+
+describe.each([[&#39;win32&#39;, &#39;user Path&#39;], [&#39;darwin&#39;, &#39;shell profile&#39;], [&#39;linux&#39;, &#39;shell profile&#39;]])(&#39;on %s&#39;, (platform, where) =&gt; {
+  // The neighbouring property, which the reviewed code already gets right.
+  it(&#39;front names the bin directory&#39;, () =&gt; {
+    expect(t(&#39;pathManagement.options.front.description&#39;, { binDir: &#39;BIN&#39;, platform })).toContain(&#39;BIN&#39;);
+  });
+  it(`front says it edits the ${ where }`, () =&gt; {
+    expect(t(&#39;pathManagement.options.front.description&#39;, { binDir: &#39;BIN&#39;, platform })).toContain(where);
+  });
+});</code></pre>
+      <pre><code class="language-text">$ yarn test:unit:jest pkg/rancher-desktop/store/__tests__/probe-descriptions.spec.ts 2&gt;&amp;1 | grep -E &#39;^  ● |Received string|Tests:&#39;
+  ● on win32 › front says it edits the user Path
+    Received string:    &quot;Rancher Desktop will add &lt;code&gt;BIN&lt;/code&gt; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.&quot;
+  ● on darwin › front says it edits the shell profile
+    Received string:    &quot;Rancher Desktop will add &lt;code&gt;BIN&lt;/code&gt; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.&quot;
+  ● on linux › front says it edits the shell profile
+    Received string:    &quot;Rancher Desktop will add &lt;code&gt;BIN&lt;/code&gt; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.&quot;
+Tests:       3 failed, 3 passed, 6 total</code></pre>
+      </details>
+    <p>Fix: branch <code>front</code> and <code>back</code> on <code>platform</code>, and remove the two keys from the nine locales (<code>i18n-report remove</code>, then restore <code>en-us.yaml</code>), so they fall back to English until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1108" class="gh-ref" data-title="Translate #1107&#39;s path management strings into every locale" data-state="open" data-type="issue">#1108</a> translates them. With the patch applied, the probe and <code>i18n-report check --locale=all</code> both pass.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/assets/translations/de.yaml b/pkg/rancher-desktop/assets/translations/de.yaml
+index eaef12ca9..883cc5a28 100644
+--- a/pkg/rancher-desktop/assets/translations/de.yaml
++++ b/pkg/rancher-desktop/assets/translations/de.yaml
+@@ -1006,13 +1006,9 @@ pathManagement:
+   label: PATH konfigurieren
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop fügt &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; an das Ende Ihres PATH hinzu und registriert mitgelieferte Docker-Plugins. Starten Sie geöffnete Shells neu, damit die Änderungen wirksam werden.
+       # @source Append to back
+       label: Am Ende anhängen
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop fügt &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; an den Anfang Ihres PATH hinzu und registriert mitgelieferte Docker-Plugins. Starten Sie geöffnete Shells neu, damit die Änderungen wirksam werden.
+       # @source Add to front
+       label: Am Anfang hinzufügen
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/en-us.yaml b/pkg/rancher-desktop/assets/translations/en-us.yaml
+index ff8893eb9..f93651383 100644
+--- a/pkg/rancher-desktop/assets/translations/en-us.yaml
++++ b/pkg/rancher-desktop/assets/translations/en-us.yaml
+@@ -434,11 +434,11 @@ pathManagement:
+     front:
+       label: Add to front
+       # @no-translate Rancher Desktop
+-      description: Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
++      description: &quot;{platform, select, win32 {Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your user Path, and register bundled docker plugins.} other {Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH in your shell profile, and register bundled docker plugins.}}  Restart any open shells for changes to take effect.&quot;
+     back:
+       label: Append to back
+       # @no-translate Rancher Desktop
+-      description: Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
++      description: &quot;{platform, select, win32 {Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your user Path, and register bundled docker plugins.} other {Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH in your shell profile, and register bundled docker plugins.}}  Restart any open shells for changes to take effect.&quot;
+     manual:
+       label: Manual
+       # @no-translate Rancher Desktop
+diff --git a/pkg/rancher-desktop/assets/translations/es.yaml b/pkg/rancher-desktop/assets/translations/es.yaml
+index cba101ec5..6b71330c0 100644
+--- a/pkg/rancher-desktop/assets/translations/es.yaml
++++ b/pkg/rancher-desktop/assets/translations/es.yaml
+@@ -954,13 +954,9 @@ pathManagement:
+   label: Configurar PATH
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop añadirá &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; al final de su PATH y registrará los plugins de docker incluidos. Reinicie los shells que tenga abiertos para que los cambios surtan efecto.
+       # @source Append to back
+       label: Añadir al final
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop añadirá &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; al principio de su PATH y registrará los plugins de docker incluidos. Reinicie los shells que tenga abiertos para que los cambios surtan efecto.
+       # @source Add to front
+       label: Añadir al principio
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/fr.yaml b/pkg/rancher-desktop/assets/translations/fr.yaml
+index 51c375020..ec4cf9701 100644
+--- a/pkg/rancher-desktop/assets/translations/fr.yaml
++++ b/pkg/rancher-desktop/assets/translations/fr.yaml
+@@ -972,13 +972,9 @@ pathManagement:
+   label: Configurer le PATH
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop ajoutera &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; à la fin de votre PATH et enregistrera les plugins docker fournis. Redémarrez tout shell ouvert pour que les modifications prennent effet.
+       # @source Append to back
+       label: Ajouter à la fin
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop ajoutera &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; au début de votre PATH et enregistrera les plugins docker fournis. Redémarrez tout shell ouvert pour que les modifications prennent effet.
+       # @source Add to front
+       label: Ajouter au début
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/it.yaml b/pkg/rancher-desktop/assets/translations/it.yaml
+index 9de91dbdd..11540c434 100644
+--- a/pkg/rancher-desktop/assets/translations/it.yaml
++++ b/pkg/rancher-desktop/assets/translations/it.yaml
+@@ -973,13 +973,9 @@ pathManagement:
+   label: Configura il PATH
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop aggiungerà &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; alla fine del PATH e registrerà i plugin docker inclusi. Riavvia le shell aperte affinché le modifiche abbiano effetto.
+       # @source Append to back
+       label: Aggiungi alla fine
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop aggiungerà &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; all&#39;inizio del PATH e registrerà i plugin docker inclusi. Riavvia le shell aperte affinché le modifiche abbiano effetto.
+       # @source Add to front
+       label: Aggiungi all&#39;inizio
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/ja.yaml b/pkg/rancher-desktop/assets/translations/ja.yaml
+index 11bcb189b..9ea00af54 100644
+--- a/pkg/rancher-desktop/assets/translations/ja.yaml
++++ b/pkg/rancher-desktop/assets/translations/ja.yaml
+@@ -949,13 +949,9 @@ pathManagement:
+   label: PATH の設定
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop は &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; を PATH の末尾に追加し、同梱の docker プラグインを登録します。変更を反映するには、開いているシェルを再起動してください。
+       # @source Append to back
+       label: 末尾に追加
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop は &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; を PATH の先頭に追加し、同梱の docker プラグインを登録します。変更を反映するには、開いているシェルを再起動してください。
+       # @source Add to front
+       label: 先頭に追加
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/ko.yaml b/pkg/rancher-desktop/assets/translations/ko.yaml
+index 68378fa5e..bc18e12f7 100644
+--- a/pkg/rancher-desktop/assets/translations/ko.yaml
++++ b/pkg/rancher-desktop/assets/translations/ko.yaml
+@@ -940,13 +940,9 @@ pathManagement:
+   label: PATH 구성
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop이 &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39;을 PATH 맨 뒤에 추가하고 번들로 제공되는 docker 플러그인을 등록합니다. 변경 사항을 적용하려면 열려 있는 셸을 다시 시작하십시오.
+       # @source Append to back
+       label: 맨 뒤에 추가
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop이 &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39;을 PATH 맨 앞에 추가하고 번들로 제공되는 docker 플러그인을 등록합니다. 변경 사항을 적용하려면 열려 있는 셸을 다시 시작하십시오.
+       # @source Add to front
+       label: 맨 앞에 추가
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/pt-br.yaml b/pkg/rancher-desktop/assets/translations/pt-br.yaml
+index 31a6b5307..7b2ffc2d9 100644
+--- a/pkg/rancher-desktop/assets/translations/pt-br.yaml
++++ b/pkg/rancher-desktop/assets/translations/pt-br.yaml
+@@ -966,13 +966,9 @@ pathManagement:
+   label: Configurar o PATH
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: O Rancher Desktop adicionará &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; ao final do seu PATH e registrará os plugins do docker inclusos. Reinicie os shells abertos para que as alterações tenham efeito.
+       # @source Append to back
+       label: Adicionar ao final
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: O Rancher Desktop adicionará &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; ao início do seu PATH e registrará os plugins do docker inclusos. Reinicie os shells abertos para que as alterações tenham efeito.
+       # @source Add to front
+       label: Adicionar ao início
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/vi.yaml b/pkg/rancher-desktop/assets/translations/vi.yaml
+index 1cb3e8758..e353540de 100644
+--- a/pkg/rancher-desktop/assets/translations/vi.yaml
++++ b/pkg/rancher-desktop/assets/translations/vi.yaml
+@@ -936,13 +936,9 @@ pathManagement:
+   label: Cấu hình PATH
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop sẽ thêm &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; vào cuối PATH của bạn và đăng ký các plugin docker đi kèm. Hãy khởi động lại mọi shell đang mở để các thay đổi có hiệu lực.
+       # @source Append to back
+       label: Thêm vào cuối
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop sẽ thêm &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; vào đầu PATH của bạn và đăng ký các plugin docker đi kèm. Hãy khởi động lại mọi shell đang mở để các thay đổi có hiệu lực.
+       # @source Add to front
+       label: Thêm vào đầu
+     manual:
+diff --git a/pkg/rancher-desktop/assets/translations/zh-hans.yaml b/pkg/rancher-desktop/assets/translations/zh-hans.yaml
+index 89140da1f..9fcc588c0 100644
+--- a/pkg/rancher-desktop/assets/translations/zh-hans.yaml
++++ b/pkg/rancher-desktop/assets/translations/zh-hans.yaml
+@@ -997,13 +997,9 @@ pathManagement:
+   label: 配置 PATH
+   options:
+     back:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the back of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop 会将 &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; 添加到您 PATH 的末尾，并注册随附的 docker 插件。请重新启动所有已打开的 shell 以使更改生效。
+       # @source Append to back
+       label: 添加到末尾
+     front:
+-      # @source Rancher Desktop will add &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; to the front of your PATH, and register bundled docker plugins.  Restart any open shells for changes to take effect.
+-      description: Rancher Desktop 会将 &#39;&lt;code&gt;&#39;{binDir}&#39;&lt;/code&gt;&#39; 添加到您 PATH 的开头，并注册随附的 docker 插件。请重新启动所有已打开的 shell 以使更改生效。
+       # @source Add to front
+       label: 添加到开头
+     manual:
+diff --git a/pkg/rancher-desktop/components/PathManagementSelector.vue b/pkg/rancher-desktop/components/PathManagementSelector.vue
+index 23eb99e13..b4fda4bca 100644
+--- a/pkg/rancher-desktop/components/PathManagementSelector.vue
++++ b/pkg/rancher-desktop/components/PathManagementSelector.vue
+@@ -1,4 +1,6 @@
+ &lt;script setup lang=&quot;ts&quot;&gt;
++import os from &#39;os&#39;;
++
+ import { computed, inject, ref } from &#39;vue&#39;;
+ import { useStore } from &#39;vuex&#39;;
+ 
+@@ -31,7 +33,7 @@ const options = computed(() =&gt;
+   Object.values(AddPath).map(key =&gt; ({
+     label:       t.value(`pathManagement.options.${ key }.label`),
+     value:       key,
+-    description: t.value(`pathManagement.options.${ key }.description`, { binDir: escapeHtml(binDir.value) }),
++    description: t.value(`pathManagement.options.${ key }.description`, { binDir: escapeHtml(binDir.value), platform: os.platform() }),
+   } as const)));
+ 
+ const groupName = &#39;pathManagement&#39;;</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="pkg/rancher-desktop/utils/paths.ts">
+      <div class="finding-title" id="I4">
+        <span class="finding-num">I4.</span> The <code>path_marker</code> doc says the marker means path management is enabled, but rdd writes it only on Windows <span class="pill pill-claude">Claude Opus 5.5</span><a href="#I4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/utils/paths.ts#L34-L44">pkg/rancher-desktop/utils/paths.ts</a></div>
+      <pre data-start="34" data-line="39"><code class="language-ts">  readonly k3s_config:         string;
+  /** RDD: Lima home directory. */
+  readonly lima_home:          string;
+  /** RDD: log directory. */
+  readonly log_dir:            string;
+  /** RDD: marker file indicating path management is enabled. */
+  readonly path_marker:        string;
+  /** RDD: PID file. */
+  readonly pid_file:           string;
+  /** RDD: short user data directory. */
+  readonly short_dir:          string;</code></pre>
+    <p>Round 1&#39;s S6 asked for this key with a doc comment. Only <code>pathmanagement_windows.go</code> writes the file, and rdd documents it as recording &quot;that rdd added BinDir to the Windows user Path&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/pkg/instance/instance.go#L168-L169"><code>rdd/pkg/instance/instance.go:168-169</code></a>). On macOS and Linux, <code>front</code> enables path management and no marker ever exists, so code written from this comment would test the wrong thing. Nothing in the app reads the key yet. The comment is static, so the defect holds on every platform but Windows.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/pkg/instance/instance.go#L163-L174">rdd/pkg/instance/instance.go</a></div>
+      <pre data-start="163" data-line="168-169"><code class="language-go">// to the user&#39;s PATH.
+var BinDir = sync.OnceValue(func() string {
+	return filepath.Join(ShortDir(), &quot;bin&quot;)
+})
+
+// PathMarker returns the file that records that rdd added BinDir to the
+// Windows user Path (e.g., ~/.rd2/.path-managed).
+var PathMarker = sync.OnceValue(func() string {
+	return filepath.Join(ShortDir(), &quot;.path-managed&quot;)
+})
+
+// DockerCliPluginsDir returns the directory holding this instance&#39;s docker CLI</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-path-marker.sh; run from the repository root: bash probe-path-marker.sh
+# Which files write rdd&#39;s path marker, and what does the app&#39;s RDDPaths say it means?
+set -u
+echo &quot;-- rdd files that write the marker:&quot;
+grep -rl &#39;writePathMarker()&#39; --include=&#39;*.go&#39; rdd/pkg | grep -v _test.go
+echo &quot;-- rdd&#39;s own doc (rdd/pkg/instance/instance.go):&quot;
+grep -A1 &#39;^// PathMarker returns&#39; rdd/pkg/instance/instance.go
+echo &quot;-- the app&#39;s doc (pkg/rancher-desktop/utils/paths.ts):&quot;
+grep -B1 &#39;readonly path_marker&#39; pkg/rancher-desktop/utils/paths.ts | head -1</code></pre>
+      <pre><code class="language-text">$ bash probe-path-marker.sh
+-- rdd files that write the marker:
+rdd/pkg/controllers/app/pathmanagement/controllers/pathmanagement_windows.go
+-- rdd&#39;s own doc (rdd/pkg/instance/instance.go):
+// PathMarker returns the file that records that rdd added BinDir to the
+// Windows user Path (e.g., ~/.rd2/.path-managed).
+-- the app&#39;s doc (pkg/rancher-desktop/utils/paths.ts):
+  /** RDD: marker file indicating path management is enabled. */</code></pre>
+      </details>
+    <p>Fix: take rdd&#39;s wording.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/pkg/rancher-desktop/utils/paths.ts b/pkg/rancher-desktop/utils/paths.ts
+index 53c726b13..dc831595b 100644
+--- a/pkg/rancher-desktop/utils/paths.ts
++++ b/pkg/rancher-desktop/utils/paths.ts
+@@ -36,7 +36,7 @@ interface RDDPaths {
+   readonly lima_home:          string;
+   /** RDD: log directory. */
+   readonly log_dir:            string;
+-  /** RDD: marker file indicating path management is enabled. */
++  /** RDD: marker file recording that rdd added bin_dir to the Windows user Path. */
+   readonly path_marker:        string;
+   /** RDD: PID file. */
+   readonly pid_file:           string;</code></pre>
+      </details>
+    <p>The four patches apply in sequence to a clean checkout without conflicts. I1&#39;s and I3&#39;s both edit <code>PathManagementSelector.vue</code>, in different hunks.</p>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/layouts/preferences.vue">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Every <code>binDir</code> start value is the e2e override&#39;s value, so the Environment-tab e2e test passes with <code>get-paths</code> broken <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/preferences.vue#L4-L14">pkg/rancher-desktop/layouts/preferences.vue</a></div>
+      <pre data-start="4" data-line="9"><code class="language-ts">
+import { binDirInjectionKey } from &#39;@pkg/types/injectionKeys&#39;;
+import { ipcRenderer } from &#39;@pkg/utils/ipcRenderer&#39;;
+
+const store = useStore();
+const binDir = ref(&#39;~/.rd2/bin&#39;);
+
+ipcRenderer.invoke(&#39;get-paths&#39;).then(result =&gt; {
+  binDir.value = result.bin_dir;
+}).catch(e =&gt; {
+  console.error(&#39;Failed to get paths:&#39;, e);</code></pre>
+    <p>Maintainer item 5 asked the fetch to start from an empty string (round 1 S4). Both layouts (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/preferences.vue#L9"><code>preferences.vue:9</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/dialog.vue#L35"><code>dialog.vue:35</code></a>) and three <code>inject</code> fallbacks (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/PathManagementSelector.vue#L28"><code>PathManagementSelector.vue:28</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/Preferences/ApplicationEnvironment.vue#L15"><code>ApplicationEnvironment.vue:15</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/pages/FirstRun.vue#L63"><code>FirstRun.vue:63</code></a>) start from <code>~/.rd2/bin</code>, the string that the <code>get-paths</code> handler substitutes under <code>RD_TEST=e2e</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L402"><code>background.ts:402</code></a>). So the assertion <code>toContainText(&#39;~/.rd2/bin&#39;)</code> at <code>preferences.e2e.spec.ts:113</code> passes whether the handler answers or not. Round 1 credited that assertion with catching a missing handler; now no test does. A broken handler would still show the right path for the default instance on macOS and Linux, which keeps this a Suggestion. This is reasoned from the source; I didn&#39;t run the e2e suite. The two layouts also repeat the same seven-line fetch.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/preferences.vue#L4-L14">pkg/rancher-desktop/layouts/preferences.vue</a></div>
+      <pre data-start="4" data-line="9"><code class="language-markup">
+import { binDirInjectionKey } from &#39;@pkg/types/injectionKeys&#39;;
+import { ipcRenderer } from &#39;@pkg/utils/ipcRenderer&#39;;
+
+const store = useStore();
+const binDir = ref(&#39;~/.rd2/bin&#39;);
+
+ipcRenderer.invoke(&#39;get-paths&#39;).then(result =&gt; {
+  binDir.value = result.bin_dir;
+}).catch(e =&gt; {
+  console.error(&#39;Failed to get paths:&#39;, e);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/layouts/dialog.vue#L30-L40">pkg/rancher-desktop/layouts/dialog.vue</a></div>
+      <pre data-start="30" data-line="35"><code class="language-markup">
+defineOptions({ name: &#39;dialog-layout&#39; });
+
+const store = useStore();
+const wrapper = useTemplateRef(&#39;wrapper&#39;);
+const binDir = ref(&#39;~/.rd2/bin&#39;);
+
+ipcRenderer.invoke(&#39;get-paths&#39;).then(result =&gt; {
+  binDir.value = result.bin_dir;
+}).catch(e =&gt; {
+  console.error(&#39;Failed to get paths:&#39;, e);</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/PathManagementSelector.vue#L23-L33">pkg/rancher-desktop/components/PathManagementSelector.vue</a></div>
+      <pre data-start="23" data-line="28"><code class="language-markup">const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
+const isPreferenceLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+const isLocked = computed(() =&gt; !!isPreferenceLocked.value?.(&#39;application.addPath&#39;));
+const currentValue = computed(() =&gt; preferences.value.application?.addPath ?? AddPath.Manual);
+
+const binDir = inject(binDirInjectionKey, ref(&#39;~/.rd2/bin&#39;));
+
+const options = computed(() =&gt;
+  Object.values(AddPath).map(key =&gt; ({
+    label:       t.value(`pathManagement.options.${ key }.label`),
+    value:       key,</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/Preferences/ApplicationEnvironment.vue#L10-L20">pkg/rancher-desktop/components/Preferences/ApplicationEnvironment.vue</a></div>
+      <pre data-start="10" data-line="15"><code class="language-markup">defineOptions({ name: &#39;preferences-application-environment&#39; });
+
+const store = useStore();
+const t = computed(() =&gt; store.getters[&#39;i18n/t&#39;]);
+const isPreferenceLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+const binDir = inject(binDirInjectionKey, ref(&#39;~/.rd2/bin&#39;));
+
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;rd-fieldset</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/pages/FirstRun.vue#L58-L68">pkg/rancher-desktop/pages/FirstRun.vue</a></div>
+      <pre data-start="58" data-line="63"><code class="language-markup">const store = useStore();
+const t = computed(() =&gt; store.getters[&#39;i18n/t&#39;]);
+const preferences = computed(() =&gt; store.getters[&#39;preferences/preferences&#39;]);
+const isPreferenceLocked = computed(() =&gt; store.getters[&#39;preferences/isPreferenceLocked&#39;]);
+const engineSelectorLocked = computed(() =&gt; isPreferenceLocked.value(&#39;containerEngine.name&#39;));
+const binDir = inject(binDirInjectionKey, ref(&#39;~/.rd2/bin&#39;));
+const preferencesLoaded = computed(() =&gt; Object.keys(preferences.value ?? {}).length &gt; 0);
+const processing = ref(false);
+const errorStatus = computed(() =&gt; store.state.preferences.errorStatus);
+const acceptBtn = useTemplateRef(&#39;accept-btn&#39;);
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L397-L407">background.ts</a></div>
+      <pre data-start="397" data-line="402"><code class="language-typescript">  // When taking screenshots or running end-to-end tests, override some paths
+  // so the output is consistent.
+  const result = Object.fromEntries(pathKeys.map(key =&gt; [key, paths[key]])) as Partial&lt;Paths&gt;;
+  if (/screenshots|e2e/.test(process.env.RD_TEST ?? &#39;&#39;)) {
+    Object.assign(result, {
+      bin_dir: &#39;~/.rd2/bin&#39;,
+    });
+  }
+  // Assume all the paths are available; if any are missing, we can fail at
+  // runtime.
+  return result as Paths;</code></pre>
+    <p>Fix: start from <code>&#39;&#39;</code> in one composable that both layouts call, and drop the <code>inject</code> defaults.</p>
+    </div>
+    <div class="card card-suggestion" data-file="background.ts">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> When <code>rdd service paths</code> fails, <code>get-paths</code> returns <code>{}</code> and development builds show &quot;undefined&quot; as the bin directory <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L394-L404">background.ts</a></div>
+      <pre data-start="394" data-line="399"><code class="language-ts">ipcMainProxy.handle(&#39;get-locked-fields&#39;, () =&gt; ({}));
+
+ipcMainProxy.handle(&#39;get-paths&#39;, () =&gt; {
+  // When taking screenshots or running end-to-end tests, override some paths
+  // so the output is consistent.
+  const result = Object.fromEntries(pathKeys.map(key =&gt; [key, paths[key]])) as Partial&lt;Paths&gt;;
+  if (/screenshots|e2e/.test(process.env.RD_TEST ?? &#39;&#39;)) {
+    Object.assign(result, {
+      bin_dir: &#39;~/.rd2/bin&#39;,
+    });
+  }</code></pre>
+    <p>On failure <code>getPaths()</code> returns a Proxy over <code>{}</code>, so <code>pathKeys</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/utils/paths.ts#L313"><code>utils/paths.ts:313</code></a>) is empty and the handler returns <code>{}</code>. Both layouts then set <code>binDir</code> to <code>undefined</code>, and <code>escapeHtml</code> turns it into the text &quot;undefined&quot; in every description and tooltip. The comment at lines 405-406 expects a missing path to &quot;fail at runtime&quot;, but nothing fails. Packaged builds never get this far: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L32"><code>background.ts:32</code></a> reads <code>paths.dir</code>, and in production the Proxy throws on that read.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/utils/paths.ts#L308-L313">pkg/rancher-desktop/utils/paths.ts</a></div>
+      <pre data-start="308" data-line="313"><code class="language-typescript">export default paths;
+/**
+ * The keys available for paths.  If we failed to get paths, this may not
+ * include all values.
+ */
+export const pathKeys = Object.keys(paths) as (keyof Paths)[];</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L27-L37">background.ts</a></div>
+      <pre data-start="27" data-line="32"><code class="language-typescript">// https://www.electronjs.org/docs/latest/breaking-changes#changed-gtk-4-is-default-when-running-gnome
+if (process.platform === &#39;linux&#39;) {
+  Electron.app.commandLine.appendSwitch(&#39;gtk-version&#39;, &#39;3&#39;);
+}
+
+Electron.app.setPath(&#39;userData&#39;, path.join(paths.dir, &#39;electron&#39;));
+Electron.app.setPath(&#39;cache&#39;, paths.cache);
+Electron.app.setAppLogsPath(paths.log_dir);
+
+const console = Logging.background;
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L400-L411">background.ts</a></div>
+      <pre data-start="400" data-line="405-406"><code class="language-typescript">  if (/screenshots|e2e/.test(process.env.RD_TEST ?? &#39;&#39;)) {
+    Object.assign(result, {
+      bin_dir: &#39;~/.rd2/bin&#39;,
+    });
+  }
+  // Assume all the paths are available; if any are missing, we can fail at
+  // runtime.
+  return result as Paths;
+});
+
+function showErrorDialog(title: string, message: string, fatal?: boolean) {
+  if (noModalDialogs) {</code></pre>
+    <p>Fix: <code>binDir.value = result.bin_dir ?? &#39;&#39;</code> together with S1, and say in the comment that a missing key reaches the renderer as an absent property.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/set.bats">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The <code>rdd stop</code> BATS test passes whether or not <code>rdd stop</code> writes <code>addPath</code> <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L272-L283">rdd/bats/tests/32-app-controllers/set.bats</a></div>
+      <pre data-start="272" data-line="277-278"><code class="language-bash">metadata:
+  name: ${APP_NAME}
+spec:
+  running: false
+YAML
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;manual&quot;
+
+    # rdd stop must not pin addPath, so the GUI&#39;s first-run signal survives.
+    rdd stop --wait=false
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;manual&quot;</code></pre>
+    <p>With <code>manual</code> now the default, the test seeds <code>manual</code> and checks that <code>rdd stop</code> leaves <code>manual</code>, which a stop that wrote <code>manual</code> would pass too. The test at line 202 is named for the removed value (&quot;App no longer supports addPath=unset&quot;).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L197-L207">rdd/bats/tests/32-app-controllers/set.bats</a></div>
+      <pre data-start="197" data-line="202"><code class="language-bash">    # App should exist (created with defaults).
+    run -0 get_app_field &#39;.metadata.name&#39;
+    assert_output &quot;${APP_NAME}&quot;
+}
+
+@test &quot;App no longer supports addPath=unset&quot; {
+    run -1 rdd set --wait=false application.addPath=unset
+    assert_output --partial &quot;invalid value&quot;
+
+    run -0 get_app_field &#39;.spec.application.addPath&#39;
+    assert_output &quot;manual&quot;</code></pre>
+    <p>Fix: seed <code>application.addPath=front</code> with <code>rdd set --wait=false</code>, stop, and assert <code>front</code>; rename line 202 to &quot;rdd set rejects addPath=unset&quot;. I2&#39;s patch rewrites the comment at line 280, so make this change on top of it.</p>
+    </div>
+    <div class="card card-suggestion" data-file="pkg/rancher-desktop/components/__tests__/PathManagementSelector.spec.ts">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> No test pins the escaping, the <code>?? AddPath.Manual</code> fallback or <code>aria-describedby</code> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/__tests__/PathManagementSelector.spec.ts#L58-L68">pkg/rancher-desktop/components/__tests__/PathManagementSelector.spec.ts</a></div>
+      <pre data-start="58" data-line="63"><code class="language-ts">      },
+      directives: {
+        &#39;clean-tooltip&#39;: {},
+      },
+      provide: {
+        [binDirInjectionKey]: ref(&#39;BIN_DIR&#39;),
+      },
+    },
+  });
+
+  return { wrapper, store };</code></pre>
+    <p>The spec injects a plain <code>BIN_DIR</code>, so deleting <code>escapeHtml</code> (maintainer item 6) leaves it green. No case mounts a store whose spec lacks <code>application</code>, the first-run state that the fallback exists for. The optional <code>RadioButton.spec.ts</code> case for <code>aria-describedby</code> wasn&#39;t added (round 1 S8 unaddressed). The comment at line 74, &quot;Allow time for binDir to be resolved&quot;, is stale, since <code>binDir</code> is now injected synchronously. These tests are optional, because a path breaks only when it contains an HTML entity such as <code>&amp;lt;</code>, which real user names almost never do.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/components/__tests__/PathManagementSelector.spec.ts#L69-L79">pkg/rancher-desktop/components/__tests__/PathManagementSelector.spec.ts</a></div>
+      <pre data-start="69" data-line="74"><code class="language-typescript">}
+
+describe(&#39;PathManagementSelector&#39;, () =&gt; {
+  it(&#39;renders all three options&#39;, async() =&gt; {
+    const { wrapper } = setup();
+    // Allow time for binDir to be resolved.
+    await nextTick();
+    const buttons = wrapper.findAllComponents(RadioButton);
+
+    expect(buttons.map(button =&gt; button.props(&#39;val&#39;))).toEqual(options);
+</code></pre>
+    <p>Fix: inject <code>ref(&#39;/A&amp;lt;B&#39;)</code> and assert the description shows <code>/A&amp;lt;B</code>; mount with <code>application: {}</code> and assert <code>manual</code> is checked; add the <code>aria-describedby</code> case; delete line 74.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/apis/app/v1alpha1/app_types.go">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> &quot;This is the default value.&quot; reaches both CRDs as a stray indented line <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/pkg/apis/app/v1alpha1/app_types.go#L225-L235">rdd/pkg/apis/app/v1alpha1/app_types.go</a></div>
+      <pre data-start="225" data-line="230"><code class="language-go">	// (~/.rd&lt;suffix&gt;/bin) is added to the user&#39;s PATH, by editing their shell
+	// startup files (Unix) or the user Environment (Windows):
+	//   - &quot;front&quot;:  prepend, so the bin directory wins   (bin:$PATH)
+	//   - &quot;back&quot;:   append,  so existing PATH entries win ($PATH:bin)
+	//   - &quot;manual&quot;: leave PATH alone; remove any lines a previous front/back added.
+	//               This is the default value.
+	//
+	// On Windows the user Environment Path is a plain semicolon-separated list
+	// with nowhere to fence our entry, so under &quot;manual&quot; we can&#39;t tell an entry
+	// we added from one the user typed. We instead keep a marker file in the
+	// instance directory that records that rdd added the bin directory: &quot;front&quot;</code></pre>
+    <p>The 15-space indent is copied into <code>crd.yaml:64</code> in both CRDs and into the generated client doc, under the <code>manual</code> bullet.</p>
+    <p>Fix: end the <code>manual</code> bullet with &quot;This is the default.&quot; and regenerate.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>(in-scope) <em></em>Removing <code>unset</code> needs a maintainer ruling.<em></em> Item 1 asked the GUI to check Manual while the stored value is <code>unset</code>; the PR removes the value from the API instead, and no PR comment approves that. <code>unset</code> was the maintainer&#39;s design for &quot;nobody has chosen yet&quot;, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1081" class="gh-ref" data-title="Default addPath to unset until user picks a value" data-state="merged" data-type="pr">#1081</a> settled which commands pin it. The removal is complete in code. It covers every <code>setAction</code> caller, the generated enum and both CRDs. <code>unset</code> shipped in no release, so only development Apps can still hold it. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>(in-scope) <em></em>The first-run dialog preselects Manual, while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a> specifies <code>front</code>.<em></em> <code>rdd/ensureAppExists</code> creates the App with only <code>running: false</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/store/rdd.ts#L93-L103"><code>store/rdd.ts:93-103</code></a>), so the selector shows the new CRD default. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1051" class="gh-ref" data-title="Bring back the first-run dialog" data-state="open" data-type="issue">#1051</a>, which this PR does not close, asks for a dialog that &quot;defaults to <code>front</code>&quot; and opens while <code>addPath</code> is <code>unset</code>. With <code>unset</code> gone, its trigger and its default both need a decision.</li>
+      <li>(in-scope) <strong>The translations overlap <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1108" class="gh-ref" data-title="Translate #1107&#39;s path management strings into every locale" data-state="open" data-type="issue">#1108</a>.</strong> The maintainer asked to leave the locales to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1108" class="gh-ref" data-title="Translate #1107&#39;s path management strings into every locale" data-state="open" data-type="issue">#1108</a>; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/88b4ccee6"><code>88b4ccee6</code></a> translates all nine, <code>vi</code> included. Spot checks of de, it, ja, zh-hans and vi matched their <code># @source</code>, and <code>i18n-report check --locale=all</code> passes. I3&#39;s fix removes two of those keys again, so <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1108" class="gh-ref" data-title="Translate #1107&#39;s path management strings into every locale" data-state="open" data-type="issue">#1108</a>&#39;s scope needs updating. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>(future) <em></em>Every dialog now calls <code>get-paths</code>.<em></em> The fetch in <code>layouts/dialog.vue</code> runs for SudoPrompt, UnmetPrerequisites, KubernetesError and DenyRoot as well, though only FirstRun shows the path. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>The handler returns a plain object built from <code>pathKeys</code>, so round 1&#39;s structured-clone failure on the error Proxy is gone, and the e2e override no longer reaches main-process code. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li>Escaping before <code>t</code> and rendering through <code>v-clean-html</code> shows a path containing <code>&amp;</code> as typed; a mounted probe confirmed it. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><code>RadioButton</code> no longer nests a <code>&lt;label&gt;</code> in a <code>&lt;label&gt;</code>, and each <code>aria-describedby</code> names an <code>id</code> that exists. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>The selector writes through <code>preferences/modify</code>, so Apply and Cancel still work in Preferences. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>I ran the full Jest suite at the review SHA, with dependencies installed from the PR&#39;s own lockfile: 60 suites passed and 1 was skipped (553 tests passed, 33 skipped). With all four patches applied, 60 passed and 1 was skipped (555 passed, 33 skipped); ESLint and <code>gofmt</code> are clean on the files that the patches touch, and <code>i18n-report check --locale=all</code> passes.</li>
+      <li><code>go test</code> passes at the head for <code>rdd/pkg/controllers/app/...</code>, <code>rdd/pkg/apis/app/...</code> and <code>rdd/cmd/rdd/...</code>.</li>
+      <li>CI on the head: 48 checks passed and 3 were skipped, every BATS job and Translation Checks included. The Linux e2e job ran the new first-run and Environment-tab specs.</li>
+      <li>I1&#39;s test is required, because the failure depends on timing. The patch adds it to <code>FirstRun.spec.ts</code>, and it fails without the fix.</li>
+      <li>What pins each round-1 fix: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L202"><code>set.bats:202</code></a> pins the rejection of <code>unset</code> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/bats/tests/32-app-controllers/set.bats#L106-L107"><code>set.bats:106-107</code></a> the <code>manual</code> default; <code>PathManagementSelector.spec.ts</code> pins the <code>application.addPath</code> write and locking. No test pins the tooltip&#39;s <code>binDir</code>, the handler override, <code>path_marker</code> or the escaping (S1, S4).</li>
+      <li>S3 and S4 are optional.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/rdd/docs/design/cmd_app.md#L11"><code>rdd/docs/design/cmd_app.md:11</code></a> and <code>:80</code> still describe <code>unset</code> pinning (I2).</li>
+      <li><code>rdd/docs/design/api_app.md</code> describes the new <code>manual</code> default consistently.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/config/help.ts#L22"><code>config/help.ts:22</code></a> links the tab to RD1&#39;s docs page, which round 1&#39;s triage left out of this PR.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/40e8a2a63"><code>40e8a2a63</code></a> still says the tab is &quot;intentionally not working correctly&quot;; the optional squash into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/46c00c34a"><code>46c00c34a</code></a> wasn&#39;t done. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/69993270f"><code>69993270f</code></a> has an empty body, but it also moves FirstRun&#39;s show handshake to <code>dialog/load</code> → <code>dialog/populate</code> → <code>dialog/ready</code> and adds <code>flush: &#39;post&#39;</code> to the focus watcher. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5210b4c38"><code>5210b4c38</code></a> also adds <code>center: true</code>, which its message doesn&#39;t mention. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f230fa8b5"><code>f230fa8b5</code></a>&#39;s subject says <code>appPath</code> for <code>addPath</code>. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>Round 1&#39;s entry on reading <code>addPath</code> without optional chaining no longer applies. The selector reads <code>application?.addPath ?? AddPath.Manual</code>, which first-run needs, since it renders before the App exists.</li>
+      <li><code>isPreferenceLocked</code> returns <code>false</code> until deployment profiles ship (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/513" class="gh-ref" data-title="Implement deployment profiles" data-state="open" data-type="issue">#513</a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/pkg/rancher-desktop/store/preferences.ts#L125"><code>store/preferences.ts:125</code></a>).</li>
+      <li>The descriptions leave out the Windows system Path&#39;s precedence, as the maintainer asked.</li>
+      <li>Creating the App keeps the first-run dialog from reopening after it is dismissed, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1086" class="gh-ref" data-title="Implement first run dialog" data-state="merged" data-type="pr">#1086</a> accepted; removing <code>unset</code> doesn&#39;t change that. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="unresolved-feedback">Unresolved Feedback <a href="#unresolved-feedback" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>Item 1 (show Manual while <code>unset</code>): replaced by removing <code>unset</code> from the API, which needs a ruling (Design Observations).</li>
+      <li>Item 2 (platform wording): the <code>select</code> is missing (I3).</li>
+      <li>Item 5 (start the bin directory from an empty string): still <code>~/.rd2/bin</code> (S1).</li>
+      <li>The request to leave the locales to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1108" class="gh-ref" data-title="Translate #1107&#39;s path management strings into every locale" data-state="open" data-type="issue">#1108</a>: <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/88b4ccee6"><code>88b4ccee6</code></a> translates them (Design Observations).</li>
+      <li>Optional: the <code>aria-describedby</code> test (S4) and the squash (Commit Structure).</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude raised the most findings, and each held. It alone checked the <code>path_marker</code> doc against rdd&#39;s own definition (I4), and it alone noticed that the <code>rdd stop</code> BATS test can no longer fail (S3) and the stray CRD indent (S5). It saw the first-run selector&#39;s missing gate but filed it as a Suggestion, without noticing that a click also enables OK; Codex proved that. It rated the shared <code>~/.rd2/bin</code> start value Important, but a broken handler still shows most users the right path, so that became S1. Its <code>get-paths</code> probe retyped the code instead of calling it, and it said so.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex found the round&#39;s sharpest bug, I1, and backed it with a mounted test against the real preferences store, which I adapted into I1&#39;s reproducer. Every probe it reports appears in its session log. It rated the missing escaping test Important, but a test pinning a Suggestion-level fix is optional, so it joined S4. Its I3 also asked Manual to name compose and buildx, which I judged covered by &quot;does not register bundled docker plugins&quot;. It again opened with a verdict table the format doesn&#39;t ask for.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash converged on the stale <code>unset</code> prose, the platform wording and the &quot;undefined&quot; path, and missed the first-run gating bug. It rated the &quot;undefined&quot; path Important; packaged builds throw at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/5210b4c38836f7907fa81d6b8d3793fd495fcd1f/background.ts#L32"><code>background.ts:32</code></a> before the handler can return <code>{}</code>, so it became S2. Two of its three reproducers stop short of the behaviour. One greps the YAML for <code>{platform, select</code>, and another builds its own Proxy instead of calling <code>getPaths()</code>. Its claim of &quot;zero type errors&quot; from <code>npx tsc --noEmit</code> is unverified, because plain <code>tsc</code> reports errors on <code>main</code>.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro did not produce a review. Its quota ran out on the first request, and the CLI scheduled a retry in about two hours. It did not make any tool calls, and its liveness monitor reported the stall after 15 minutes. I dropped it, since the reset was two hours away.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>8m 37s</td><td>10m 20s</td><td>0m 01s</td><td>9m 20s</td></tr>
+        <tr><td>Findings</td><td>4I 5S</td><td>3I 3S</td><td>—</td><td>2I 3S</td></tr>
+        <tr><td>Tool calls</td><td>72 (Bash 67, Read 5)</td><td>23 (shell 23)</td><td>—</td><td>78 (run<em>shell</em>command 34, read<em>file 24, grep</em>search 15)</td></tr>
+        <tr><td>Design observations</td><td>6</td><td>7</td><td>—</td><td>4</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>3</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>46</td><td>46</td><td>—</td><td>46</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>—</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>4I 5S</strong></td><td><strong>3I 3S</strong></td><td><strong>none</strong></td><td><strong>2I 3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p>Reconciliation: Claude Opus 5.5 P1 I3 (<code>binDir</code> start values): important → suggestion S1. Codex GPT 6 Astra P1 I4 (escaping test): important → suggestion S4. Gemini 3.5 Flash P1 I3 (<code>get-paths</code> returns <code>{}</code>): important → suggestion S2. Claude Opus 5.5 P1 S2 (first-run selector gate): suggestion → important I1, merged with Codex&#39;s finding.</p>
+    <p>Codex GPT 6 Astra provided the most value, with the round&#39;s one functional bug proven by a test against the real store. Claude Opus 5.5 gave the widest coverage. Without Gemini 3.1 Pro, Flash was the only Gemini model this round.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="skill-improvements">Skill improvements <a href="#skill-improvements" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>When a PR removes or renames an API value, enum member or field, search the repository&#39;s open issues for that identifier and inline every issue that specifies behaviour around it. A removal can invalidate a plan that the PR body never mentions, and agents cannot fetch issues themselves.</li>
+      <li>Have each external agent&#39;s liveness monitor also scan that agent&#39;s stderr for a quota error and report it at once. A CLI that runs out of quota sleeps until the reset, so the stall window of 15 minutes passes with nothing to show.</li>
+    </ul>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] The first-run dialog creates the App itself (<code>rdd/ensureAppExists</code>) and shows its window before the App exists. Any control in <code>pages/FirstRun.vue</code> that dispatches <code>preferences/modify</code> must stay disabled until <code>preferences/preferences</code> has keys, as <code>EngineSelector</code> and <code>RdCheckbox</code> do, because a pending change makes that getter non-empty and enables OK with no App to commit to.</li>
+      <li>[repo] CI&#39;s Translation Checks job runs <code>i18n-report check --locale=all</code> on every pull request without <code>--strict</code>, so it covers stale keys and <code>validate</code> (placeholders, tags, ICU constructs) but not drift. A green run therefore misses a translation whose English changed in wording only. To see what a change to <code>en-us.yaml</code> leaves the locales, build <code>src/go/i18n-report</code> and run <code>drift --locale=&lt;code&gt;</code> for each locale.</li>
+      <li>[repo] UPDATE the entry saying <code>pages/FirstRun.vue</code> is unreachable. <code>background.ts</code> opens the first-run dialog when <code>isFirstRunNeeded()</code> (<code>main/rdd-ctl.ts</code>) does not find an App, so findings in that page are live.</li>
+      <li>[repo] UPDATE the entry on the checkbox backends: <code>pages/FirstRun.vue</code> now writes the App spec through <code>preferences/modify</code> and no longer uses the legacy <code>settings</code> IPC.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(e){var n=/[*&][^\s[\]{},]+/,r=/!(?:<[\w\-%#;/?:@&=+$,.!~*'()[\]]+>|(?:[a-zA-Z\d-]*!)?[\w\-%#;/?:@&=+$.~*'()]+)?/,t="(?:"+r.source+"(?:[ \t]+"+n.source+")?|"+n.source+"(?:[ \t]+"+r.source+")?)",a="(?:[^\\s\\x00-\\x08\\x0e-\\x1f!\"#%&'*,\\-:>?@[\\]`{|}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]|[?:-]<PLAIN>)(?:[ \t]*(?:(?![#:])<PLAIN>|:<PLAIN>))*".replace(/<PLAIN>/g,(function(){return"[^\\s\\x00-\\x08\\x0e-\\x1f,[\\]{}\\x7f-\\x84\\x86-\\x9f\\ud800-\\udfff\\ufffe\\uffff]"})),d="\"(?:[^\"\\\\\r\n]|\\\\.)*\"|'(?:[^'\\\\\r\n]|\\\\.)*'";function o(e,n){n=(n||"").replace(/m/g,"")+"m";var r="([:\\-,[{]\\s*(?:\\s<<prop>>[ \t]+)?)(?:<<value>>)(?=[ \t]*(?:$|,|\\]|\\}|(?:[\r\n]\\s*)?#))".replace(/<<prop>>/g,(function(){return t})).replace(/<<value>>/g,(function(){return e}));return RegExp(r,n)}e.languages.yaml={scalar:{pattern:RegExp("([\\-:]\\s*(?:\\s<<prop>>[ \t]+)?[|>])[ \t]*(?:((?:\r?\n|\r)[ \t]+)\\S[^\r\n]*(?:\\2[^\r\n]+)*)".replace(/<<prop>>/g,(function(){return t}))),lookbehind:!0,alias:"string"},comment:/#.*/,key:{pattern:RegExp("((?:^|[:\\-,[{\r\n?])[ \t]*(?:<<prop>>[ \t]+)?)<<key>>(?=\\s*:\\s)".replace(/<<prop>>/g,(function(){return t})).replace(/<<key>>/g,(function(){return"(?:"+a+"|"+d+")"}))),lookbehind:!0,greedy:!0,alias:"atrule"},directive:{pattern:/(^[ \t]*)%.+/m,lookbehind:!0,alias:"important"},datetime:{pattern:o("\\d{4}-\\d\\d?-\\d\\d?(?:[tT]|[ \t]+)\\d\\d?:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \t]*(?:Z|[-+]\\d\\d?(?::\\d{2})?))?|\\d{4}-\\d{2}-\\d{2}|\\d\\d?:\\d{2}(?::\\d{2}(?:\\.\\d*)?)?"),lookbehind:!0,alias:"number"},boolean:{pattern:o("false|true","i"),lookbehind:!0,alias:"important"},null:{pattern:o("null|~","i"),lookbehind:!0,alias:"important"},string:{pattern:o(d),lookbehind:!0,greedy:!0},number:{pattern:o("[+-]?(?:0x[\\da-f]+|0o[0-7]+|(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?|\\.inf|\\.nan)","i"),lookbehind:!0},tag:r,important:n,punctuation:/---|[:[\]{}\-,|>?]|\.\.\./},e.languages.yml=e.languages.yaml}(Prism);
+!function(e){e.languages.typescript=e.languages.extend("javascript",{"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|type)\s+)(?!keyof\b)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?:\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>)?/,lookbehind:!0,greedy:!0,inside:null},builtin:/\b(?:Array|Function|Promise|any|boolean|console|never|number|string|symbol|unknown)\b/}),e.languages.typescript.keyword.push(/\b(?:abstract|declare|is|keyof|readonly|require)\b/,/\b(?:asserts|infer|interface|module|namespace|type)\b(?=\s*(?:[{_$a-zA-Z\xA0-\uFFFF]|$))/,/\btype\b(?=\s*(?:[\{*]|$))/),delete e.languages.typescript.parameter,delete e.languages.typescript["literal-property"];var s=e.languages.extend("typescript",{});delete s["class-name"],e.languages.typescript["class-name"].inside=s,e.languages.insertBefore("typescript","function",{decorator:{pattern:/@[$\w\xA0-\uFFFF]+/,inside:{at:{pattern:/^@/,alias:"operator"},function:/^[\s\S]+/}},"generic-function":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*<(?:[^<>]|<(?:[^<>]|<[^<>]*>)*>)*>(?=\s*\()/,greedy:!0,inside:{function:/^#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*/,generic:{pattern:/<[\s\S]+/,alias:"class-name",inside:s}}}}),e.languages.ts=e.languages.typescript}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
