@@ -55,13 +55,34 @@ func TestTranslateHostPath(t *testing.T) {
 		{`D:..\..\x`, "/mnt/d/x"},
 		{`d:`, "/mnt/d/proj"},
 		{`\\server\share\file`, "//server/share/file"},
-		{`/already/posix`, "/already/posix"},
+		{`\data`, "/mnt/c/data"},
+		{`/data`, "/mnt/c/data"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.arg, func(t *testing.T) {
 			got, err := TranslateHostPath(tc.arg)
 			assert.NilError(t, err)
 			assert.Equal(t, got, tc.want)
+		})
+	}
+}
+
+func TestTranslateHostPathRootedUnderUNCCwd(t *testing.T) {
+	cases := []struct {
+		cwd  string
+		want string
+	}{
+		{`\\server\share\dir`, "//server/share/data"},
+		{`\\?\C:\work`, "//?/C:/data"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.cwd, func(t *testing.T) {
+			withHostCwd(t, tc.cwd)
+			for _, arg := range []string{`\data`, `/data`} {
+				got, err := TranslateHostPath(arg)
+				assert.NilError(t, err)
+				assert.Equal(t, got, tc.want, "arg %q", arg)
+			}
 		})
 	}
 }

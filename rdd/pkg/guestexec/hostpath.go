@@ -32,10 +32,19 @@ var hostDriveCwd = func(drive string) (string, error) {
 // TranslateHostPath rewrites one host path to where the guest mounts it,
 // e.g. `C:\Users\jan\app` to `/mnt/c/Users/jan/app`. A relative path
 // resolves against the host working directory, and a drive-relative one
-// (`d:foo`) against the current directory on its drive. UNC and POSIX-style
-// absolute paths only get their backslashes turned into forward slashes.
+// (`d:foo`) against the current directory on its drive. A rooted path
+// without a drive (`\data`, `/data`) takes the root of the working
+// directory, its drive or its `\\server\share`, as Windows resolves it. UNC
+// paths only get their backslashes turned into forward slashes.
 func TranslateHostPath(arg string) (string, error) {
 	slashed := strings.ReplaceAll(arg, `\`, "/")
+	if strings.HasPrefix(slashed, "/") && !strings.HasPrefix(slashed, "//") {
+		cwd, err := hostCwd()
+		if err != nil {
+			return "", err
+		}
+		slashed = pathRoot(strings.ReplaceAll(cwd, `\`, "/")) + slashed
+	}
 	if _, _, ok := splitDrive(slashed); !ok && !strings.HasPrefix(slashed, "/") {
 		// Join on the host side, so that cleaning the result stops `..` at
 		// the drive root.
@@ -48,7 +57,8 @@ func TranslateHostPath(arg string) (string, error) {
 	if drive, rest, ok := splitDrive(slashed); ok {
 		return "/mnt/" + drive + path.Clean("/"+rest), nil
 	}
-	// UNC (//server/share) or POSIX-style; nothing we can map.
+	// UNC (//server/share/...), which includes paths resolved against a UNC
+	// working directory; nothing we can map.
 	return slashed, nil
 }
 
@@ -61,6 +71,21 @@ func relativeBase(slashed string) (base, rest string, err error) {
 	}
 	base, err = hostCwd()
 	return base, slashed, err
+}
+
+// pathRoot returns the drive of the absolute slashed path (`c:`), or its
+// first two components after a leading `//` (`//server/share`).
+func pathRoot(slashed string) string {
+	if drive, _, ok := splitDrive(slashed); ok {
+		return drive + ":"
+	}
+	if rest, ok := strings.CutPrefix(slashed, "//"); ok {
+		parts := strings.SplitN(rest, "/", 3)
+		if len(parts) >= 2 {
+			return "//" + parts[0] + "/" + parts[1]
+		}
+	}
+	return ""
 }
 
 // splitDrive splits `c:/Users/jan` into "c" and "/Users/jan". Only

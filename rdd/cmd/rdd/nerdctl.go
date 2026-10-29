@@ -7,6 +7,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"runtime"
 
 	"github.com/spf13/cobra"
 
@@ -16,6 +17,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/nerdctlstub"
 	service "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/cmd"
 )
 
@@ -32,8 +34,15 @@ func newNerdctlCommand() *cobra.Command {
 		Short: "Run nerdctl inside the Rancher Desktop VM",
 		Long: `Run nerdctl inside the Rancher Desktop VM.
 
-All arguments pass through to nerdctl. Rancher Desktop must already be
-running with the containerd engine; "rdd run nerdctl" starts it first.`,
+All arguments pass through to nerdctl. On Windows, rdd rewrites host paths
+to the /mnt/<drive> locations where the guest mounts them. It rewrites them
+in options such as -v, --mount, and --env-file. In those options, rdd
+resolves a host path such as /mnt/c/data under the working directory's
+root. With the working directory on C:, -v /mnt/c/data:/data mounts
+C:\mnt\c\data. Write a host path anywhere else, such as in
+--security-opt seccomp=PATH, as /mnt/<drive>/... yourself. Rancher Desktop
+must already be running with the containerd engine; "rdd run nerdctl"
+starts it first.`,
 		Args: cobra.ArbitraryArgs,
 		// A nerdctl link turns "nerdctl --help" into "rdd nerdctl --help", so
 		// --help must reach the guest nerdctl. "rdd help nerdctl" shows the Long text.
@@ -69,10 +78,18 @@ func nerdctlAction(cmd *cobra.Command, args []string) error {
 	if err := nerdctlAppError(&app); err != nil {
 		return err
 	}
+	guestArgs := args
+	if runtime.GOOS == "windows" {
+		parsed, err := nerdctlstub.TranslateCommandLine(args)
+		if err != nil {
+			return err
+		}
+		guestArgs = parsed
+	}
 	// nerdctl must run as root in the guest. Non-root nerdctl insists on
 	// rootless mode even when given an explicit --address.
 	// TODO: drop --address once containerd listens on its default socket (#1040).
-	guestCmd := append([]string{"sudo", "nerdctl", "--address", containerdGuestSocket}, args...)
+	guestCmd := append([]string{"sudo", "nerdctl", "--address", containerdGuestSocket}, guestArgs...)
 	return limaVMGuestExec(ctx, appLimaVMName, "", "", guestCmd)
 }
 
