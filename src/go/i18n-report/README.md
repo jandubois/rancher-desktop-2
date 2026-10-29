@@ -6,12 +6,16 @@ hardcoded English strings, and other i18n issues.
 
 ## Quick start
 
-Build the binary, then run it from the repository root:
+Run it from the repository root:
 
 ```sh
-go build -C src/go/i18n-report
-src/go/i18n-report/i18n-report <subcommand> [flags]
+go -C src/go/i18n-report tool i18n-report <subcommand> [flags]
 ```
+
+`go -C` runs the tool with `src/go/i18n-report` as its working directory,
+so a relative file argument resolves there. Give file arguments as absolute
+paths, such as `"$PWD"/batch1.out`. Below, `i18n-report` stands for this
+command.
 
 ## Exit codes
 
@@ -180,9 +184,9 @@ Read flat translations and write (or update) a nested YAML locale file.
 Accepts file arguments or reads from stdin.
 
 ```sh
-i18n-report merge --locale=de batch1.out batch2.out batch3.out
+i18n-report merge --locale=de "$PWD"/batch1.out "$PWD"/batch2.out "$PWD"/batch3.out
 i18n-report merge --locale=de < translations.txt
-i18n-report merge --locale=de --dry-run batch1.out   # preview without writing
+i18n-report merge --locale=de --dry-run "$PWD"/batch1.out   # preview without writing
 ```
 
 Input formats detected automatically:
@@ -356,7 +360,7 @@ i18n-report translate --locale=de --batch=2 --batches=3 > batch2.txt
 i18n-report translate --locale=de --batch=3 --batches=3 > batch3.txt
 
 # Merge translated output back into the locale file.
-i18n-report merge --locale=de batch1.out batch2.out batch3.out
+i18n-report merge --locale=de "$PWD"/batch1.out "$PWD"/batch2.out "$PWD"/batch3.out
 ```
 
 ### Retranslate drifted keys
@@ -364,7 +368,7 @@ i18n-report merge --locale=de batch1.out batch2.out batch3.out
 ```sh
 i18n-report translate --mode=drift --locale=de > drifted.txt
 # Translate the output, then merge:
-i18n-report merge --mode=drift --locale=de drifted.out
+i18n-report merge --mode=drift --locale=de "$PWD"/drifted.out
 ```
 
 Merge records the new English source for the merged keys itself; do not

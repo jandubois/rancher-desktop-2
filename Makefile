@@ -43,7 +43,7 @@ test-i18n-report:
 .PHONY: test-i18n-report
 
 check-translations:
-	( cd src/go/i18n-report && go$(EXE) run . check --locale=all )
+	( cd src/go/i18n-report && go$(EXE) tool i18n-report check --locale=all )
 .PHONY: check-translations
 
 lint: lint-rdd lint-bats lint-shell lint-startup-profile lint-wix-helper

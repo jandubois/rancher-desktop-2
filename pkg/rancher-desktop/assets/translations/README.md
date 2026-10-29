@@ -154,18 +154,19 @@ A Go CLI at `src/go/i18n-report/` for translation maintenance. See
 | `drift` | Detect translated keys whose English source changed |
 | `validate` | Structural checks: placeholders, tags, metadata, overrides, deliberate identity |
 
-Build it, then run it from the repository root:
+Run it from the repository root:
 
 ```sh
-go build -C src/go/i18n-report
-src/go/i18n-report/i18n-report translate --locale=fa
-src/go/i18n-report/i18n-report translate --locale=fa --batch=1 --batches=3
-src/go/i18n-report/i18n-report merge --locale=fa agent1.output agent2.output
-src/go/i18n-report/i18n-report unused --format=json
-src/go/i18n-report/i18n-report check --locale=de
+go -C src/go/i18n-report tool i18n-report translate --locale=fa
+go -C src/go/i18n-report tool i18n-report translate --locale=fa --batch=1 --batches=3
+go -C src/go/i18n-report tool i18n-report merge --locale=fa "$PWD"/agent1.output "$PWD"/agent2.output
+go -C src/go/i18n-report tool i18n-report unused --format=json
+go -C src/go/i18n-report tool i18n-report check --locale=de
 ```
 
-Elsewhere, this file calls the binary `i18n-report`.
+`go -C` runs the tool with `src/go/i18n-report` as its working directory,
+so a relative path given to `merge` resolves there. Pass absolute paths, as
+above. Elsewhere, this file calls the command `i18n-report`.
 
 The `merge` subcommand reads flat `key: value` or `key=value` lines, one full
 dotted key per line, from plain text, JSON, or agent JSONL transcripts. A YAML
