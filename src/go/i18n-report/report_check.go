@@ -142,10 +142,9 @@ func reportCheckSource(w io.Writer, root string) error {
 	return findingsError("source checks failed")
 }
 
-// reportCheckRegistration checks that every locale registration surface
-// agrees with the translation files on disk: the LocaleString union in
-// translationLoader.ts, the Locale union in settings.ts, and the locale.*
-// display-name keys in en-us.yaml.
+// reportCheckRegistration checks that the LocaleString union in
+// translationLoader.ts and the locale.* display-name keys in en-us.yaml
+// agree with the translation files on disk.
 func reportCheckRegistration(w io.Writer, root string, locales []string) error {
 	// The expected locales: the source locale and every translation file on disk.
 	expected := map[string]bool{sourceLocale: true}
@@ -155,26 +154,20 @@ func reportCheckRegistration(w io.Writer, root string, locales []string) error {
 
 	var problems []string
 
-	// Both TypeScript locale unions must list exactly the expected locales.
-	unions := []struct{ path, name string }{
-		{filepath.Join("pkg", "rancher-desktop", "utils", "translationLoader.ts"), "LocaleString"},
-		{filepath.Join("pkg", "rancher-desktop", "config", "settings.ts"), "Locale"},
+	// The LocaleString union must list exactly the expected locales.
+	unionPath := filepath.Join(root, "pkg", "rancher-desktop", "utils", "translationLoader.ts")
+	members, err := parseTypeUnion(unionPath, "LocaleString")
+	if err != nil {
+		return err
 	}
-	for _, u := range unions {
-		members, err := parseTypeUnion(filepath.Join(root, u.path), u.name)
-		if err != nil {
-			return err
+	for code := range expected {
+		if !members[code] {
+			problems = append(problems, fmt.Sprintf("  locale %q missing from translationLoader.ts type LocaleString", code))
 		}
-		file := filepath.Base(u.path)
-		for code := range expected {
-			if !members[code] {
-				problems = append(problems, fmt.Sprintf("  locale %q missing from %s type %s", code, file, u.name))
-			}
-		}
-		for code := range members {
-			if !expected[code] {
-				problems = append(problems, fmt.Sprintf("  %s type %s has %q with no translation file", file, u.name, code))
-			}
+	}
+	for code := range members {
+		if !expected[code] {
+			problems = append(problems, fmt.Sprintf("  translationLoader.ts type LocaleString has %q with no translation file", code))
 		}
 	}
 

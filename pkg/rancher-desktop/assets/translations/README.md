@@ -176,9 +176,8 @@ Without file arguments, it reads from stdin.
 ## Adding a new language
 
 1. Create an empty locale file `{code}.yaml` in this directory.
-2. Register the locale code in three places: the `locale.` display names
-   in en-us.yaml, the `LocaleString` type in `utils/translationLoader.ts`,
-   and the `Locale` type in `config/settings.ts`.
+2. Register the locale code in two places: the `locale.` display names
+   in en-us.yaml and the `LocaleString` type in `utils/translationLoader.ts`.
 3. Add the new locale's display name to every other locale file,
    translated into that file's language: `merge` a one-entry
    `locale.{code}` translation into each.

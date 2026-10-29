@@ -335,9 +335,8 @@ keys). PR CI runs the default structural set and no configured job passes
 `--locale` is an error.
 
 The registration checks verify that the `LocaleString` union in
-`translationLoader.ts`, the `Locale` union in `settings.ts`, and the
-`locale.*` display-name keys in `en-us.yaml` agree with the translation
-files on disk.
+`translationLoader.ts` and the `locale.*` display-name keys in `en-us.yaml`
+agree with the translation files on disk.
 
 ## Common workflows
 
