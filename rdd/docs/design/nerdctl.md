@@ -95,3 +95,53 @@ the home directory instead.
 The 1.x stub injects `--security-opt seccomp=/etc/rancher-desktop/seccomp.json`
 into `run` and `create`; that profile is a 1.x distro asset which the
 "Rancher Desktop 2" distro does not ship, so the port drops the injection.
+
+## Command table generation
+
+The command table must match the nerdctl version in the guest, the `nerdctl`
+entry in `rdd/dependencies.yaml`; `TestTableMatchesGuestNerdctl` fails when
+the two differ. The generator
+(`pkg/nerdctlstub/generate`, a separate Go module) pins the same version of
+`github.com/containerd/nerdctl/v2` and derives the table from the real cobra
+command tree in two stages:
+
+1. **extract** parses `cmd/nerdctl/main.go` and `main_linux.go` from the
+   pinned module with `go/ast`, collects the constructor calls passed to
+   `AddCommand`, and writes them to `zz_generated_commands.go` inside the
+   generator. For stage 2, it also collects the flag names registered in
+   `initRootCmdFlags`.
+2. **generate** rebuilds the root command — the one part of nerdctl that is
+   not importable (`package main`) — from a small replica of
+   `initRootCmdFlags`, adds the extracted subcommand constructors, walks the
+   resulting tree through the cobra API, and writes
+   `pkg/nerdctlstub/nerdctl_commands_generated.go`. It checks the replica
+   against the extracted flag names, so a root-flag change upstream fails
+   generation instead of silently drifting.
+
+The generate stage runs on Linux only: off-Linux builds of nerdctl compile out
+`container cp` (the most path-sensitive command) and `apparmor`. Run
+`make -C rdd generate-nerdctl`, which runs extract on the host and, off Linux,
+wraps the generate stage in a Linux container. CI regenerates the table on
+Linux and fails when the result differs from the checked-in copy.
+
+The cobra tree has the true flag definitions, so lying help text costs nothing;
+the 1.x generator parses `nerdctl <cmd> --help` and needs hand-patches for
+flags like `compose down --volumes`, a boolean whose help renders a metavar.
+
+## Overlay validation
+
+nerdctl does not annotate which flags take paths (it never calls
+`cobra.MarkFlagFilename`), so path classification is a human judgment. The
+generator keeps that judgment honest:
+
+- Every overlay entry must name an existing command and flag; a rename or
+  removal upstream fails generation.
+- Every value-consuming flag whose name or usage text suggests a path must
+  appear in the overlay or in an acknowledged list of flags that the stub
+  leaves alone; a new suspect fails generation with a message naming it.
+
+A nerdctl bump therefore takes four steps. Raise `MAX_VERSION` in the
+repository's top-level `scripts/dependencies/nerdctl.ts`, so that rddepman
+moves `dependencies.yaml`.
+Move `generate/go.mod` to the same version, along with the `tigron` pin that
+its comment describes. Rerun the generator, and classify whatever it names.
