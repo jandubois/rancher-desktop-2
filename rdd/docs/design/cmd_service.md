@@ -12,7 +12,7 @@ This service directory contains the following files:
 
 | File | Description |
 | --- | --- |
-| `config.json` | service config settings (written by `rdd service create` or `rdd service start`)
+| `args.json`   | service config settings (written by `rdd service create` or `rdd service start`)
 | `rdd.pid`     | pid of the control plane process (normally a background daemon) |
 | `rdd.sqlite3` | control plane data store |
 
@@ -43,7 +43,7 @@ It runs in a background process, which is started on demand by `rdd service serv
 
 Creates the service without starting it. This will rarely be used; the `rdd service start` command will call it automatically when the service does not yet exist.
 
-Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `config.json` file.
+Creates the service directory with the `rdd.sqlite3` data store. Stores the configuration settings in the `args.json` file.
 
 Configuration options (incomplete):
 
@@ -74,16 +74,16 @@ Configuration options (incomplete):
 
 Backgrounds itself (fork && exec) unless invoked with `--background=false` for easier debugging.
 
-Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager using the configuration found in `config.json`.
+Saves its own PID into `rdd.pid` and then starts the apiserver and the controller-manager with the options on its command line.
 
-Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `config.json` directly.
+Once the apiserver is running the config data will be copied into the `config` map in the `rdd-system` namespace. No controller should access `args.json` directly.
 
 
 ### `rdd service start`
 
 Starts the service. Calls `rdd service create` if the service does not yet exist.
 
-Takes all the same options as `rdd service create` and updates `config.json` with latest settings.
+Passes `rdd service serve` the options saved in `args.json`, then its own. `start` saves its arguments only when it creates the service, and never saves the `--controllers` or `--secure-port` values passed to it, which apply to this session only.
 
 Runs `rdd service serve` to actually start the control plane in the background
 
@@ -157,7 +157,7 @@ Show control plane logs.
 
 ## `rdd service paths`
 
-Prints instance directory and file paths. Accepts an optional key argument to print a single path.
+Prints the directory and file paths that rdd uses. Most belong to the instance, but all instances share some, such as the caches. Accepts an optional key argument to print a single path.
 
 | Key | Description |
 | --- | --- |
@@ -177,6 +177,8 @@ Prints instance directory and file paths. Accepts an optional key argument to pr
 | `docker_socket` | Docker socket (`$short_dir/docker.sock`, a named pipe on Windows) |
 | `containerd_socket` | containerd socket (`$short_dir/containerd.sock`, a named pipe on Windows) |
 | `docker_cli_plugins` | Directory of the bundled Docker CLI plugins (`$short_dir/docker-cli-plugins`) |
+| `cache_dir` | rdd-wide cache root (shared across instances) |
+| `kubectl_cache` | Cache directory for downloaded kubectl binaries (shared across instances) |
 
 Output formats (`--output`, `-o`):
 
@@ -194,12 +196,14 @@ Examples:
 $ rdd svc paths
 args_file           /Users/me/Library/Application Support/rancher-desktop-2/args.json
 bin_dir             /Users/me/.rd2/bin
+cache_dir           /Users/me/Library/Caches/rancher-desktop
 config              /Users/me/Library/Application Support/rancher-desktop-2/config.yaml
 containerd_socket   /Users/me/.rd2/containerd.sock
 dir                 /Users/me/Library/Application Support/rancher-desktop-2
 docker_cli_plugins  /Users/me/.rd2/docker-cli-plugins
 docker_socket       /Users/me/.rd2/docker.sock
 k3s_config          /Users/me/Library/Application Support/rancher-desktop-2/k3s.yaml
+kubectl_cache       /Users/me/Library/Caches/rancher-desktop/kubectl/darwin-arm64
 lima_home           /Users/me/.rd2/lima
 log_dir             /Users/me/Library/Logs/rancher-desktop-2
 path_marker         /Users/me/.rd2/.path-managed

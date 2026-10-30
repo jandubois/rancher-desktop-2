@@ -6,6 +6,19 @@ inside_repo_clone() {
     [[ -d "${PATH_REPO_ROOT}/pkg/rancher-desktop-daemon" ]]
 }
 
+# winpath converts a POSIX path to its Windows-native path (e.g.
+# /tmp/x -> C:\msys64\tmp\x on MSYS), for args reaching a native binary
+# outside rdd()'s own conversions.
+winpath() {
+    if is_msys; then
+        cygpath -w "$1"
+    elif is_windows && using_windows_exe; then
+        wslpath -w "$1"
+    else
+        printf '%s' "$1"
+    fi
+}
+
 # Convert 'export KEY="C:\win\path"' to POSIX paths (WSL or MSYS2).
 win_to_posix_exports() {
     tr -d "\r" | while IFS= read -r line; do
@@ -29,14 +42,16 @@ host_path() { # <path>
     fi
 }
 
-# Get instance paths from rdd (single source of truth).
+# Get instance and cache paths from rdd (single source of truth).
 # shellcheck disable=SC1090
 if is_windows; then
     source <("${PATH_REPO_ROOT}/bin/rdd.exe" svc paths --output=shell | win_to_posix_exports)
     if is_msys; then
-        # rdd.exe honors RDD_LOG_DIR as an override and would read /c/Users/...
-        # as \c\Users\... on the current drive, so hand it C:/Users/... instead.
+        # rdd.exe honors RDD_LOG_DIR and RDD_CACHE_DIR as overrides and would
+        # read /c/Users/... as \c\Users\... on the current drive, so hand it
+        # C:/Users/... instead.
         RDD_LOG_DIR=$(host_path "${RDD_LOG_DIR}")
+        RDD_CACHE_DIR=$(host_path "${RDD_CACHE_DIR}")
     fi
 else
     source <("${PATH_REPO_ROOT}/bin/rdd" svc paths --output=shell)

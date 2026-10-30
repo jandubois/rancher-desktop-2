@@ -10,6 +10,12 @@ load '../../helpers/load'
 # KubernetesReady condition on the App resource.
 
 APP_NAME="app"
+# The resolver does not accept the embedded kubectl for a 1.32 server, so
+# when the kubectl cache does not hold a v1.32 or v1.33 kubectl (a fresh CI
+# runner), the first `rdd kubectl --context` fetches one from dl.k8s.io. If
+# dl.k8s.io is unreachable, the resolver falls back to the embedded kubectl
+# and the tests still pass. But a download that starts and then fails makes
+# the tests fail.
 K3S_VERSION="1.32.0"
 CONTEXT_NAME="rancher-desktop-${RDD_INSTANCE}"
 
@@ -130,7 +136,7 @@ kube_current_context_is() { # <expected-context>
     # namespace UID is a stable per-cluster identity: read it through the
     # known-good shared context and through rdd run's maintained config, and
     # require the two to match.
-    run -0 rdd kubectl --context "${CONTEXT_NAME}" \
+    run_e -0 rdd kubectl --context "${CONTEXT_NAME}" \
         get namespace kube-system -o jsonpath='{.metadata.uid}'
     expected_uid=${output}
 
@@ -189,7 +195,7 @@ wait_for_k3s_bootstrap() {
         --name=test-connect --port=80 --type=NodePort
     rdd kubectl --context "${CONTEXT_NAME}" rollout status deployment/test-connect --timeout=240s
 
-    run -0 rdd kubectl --context "${CONTEXT_NAME}" get service test-connect \
+    run_e -0 rdd kubectl --context "${CONTEXT_NAME}" get service test-connect \
         -o jsonpath='{.spec.ports[0].nodePort}'
     node_port=${output}
 
