@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-FileCopyrightText: The Rancher Desktop Authors
+
 import { jest } from '@jest/globals';
 import { mount } from '@vue/test-utils';
 import { toRaw } from 'vue';
