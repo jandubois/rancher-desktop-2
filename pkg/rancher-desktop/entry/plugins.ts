@@ -18,7 +18,7 @@ export default async function usePlugins(app: App, store: Store<any>) {
   app.use(directives);
   app.use(i18n);
   app.use(shortKey, {
-    prevent:          ['input', 'textarea', 'select'],
+    prevent:          ['input', 'textarea', 'select', '[contenteditable]'],
     preventContainer: ['#modal-container-element'],
   });
   app.use(tooltip);

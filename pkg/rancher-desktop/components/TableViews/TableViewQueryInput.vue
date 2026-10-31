@@ -974,7 +974,7 @@ onBeforeUnmount(() => {
       <button
         v-if="showClear"
         type="button"
-        class="query-clear"
+        class="query-clear role-link"
         :aria-label="t('tableViews.query.clear')"
         data-testid="table-views-query-clear"
         @mousedown.left.prevent="clear"
