@@ -4,19 +4,20 @@
  * in use. It edits its own rendered tokens, so a value badge's spacing is ordinary layout and the
  * caret stays true
  */
-import {
-  computed, nextTick, onBeforeUnmount, onMounted, ref, watch
-} from 'vue';
-import { useStore } from 'vuex';
 
 import RcSeparator from '@components/RcSeparator/RcSeparator.vue';
 import { useI18n } from '@shell/composables/useI18n';
+import { isMac } from '@shell/utils/platform';
 import { LABEL_FIELD_PREFIX, dateBuckets, valuesInUse } from '@shell/utils/table-views/fields';
 import {
-  CONNECTIVES, NEGATORS, highlightQuery, isNegator, quoteIfNeeded, replaceToken, scanQuery, tokenAt
+  CONNECTIVES, NEGATORS, highlightQuery, isNegator, quoteIfNeeded, replaceToken, scanQuery, tokenAt,
 } from '@shell/utils/table-views/query';
 import { changeOf, createQueryHistory } from '@shell/utils/table-views/query-history';
-import { isMac } from '@shell/utils/platform';
+import {
+  computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch,
+} from 'vue';
+import { useStore } from 'vuex';
+
 import type { TableViewField, TableViewRow } from '@shell/types/table-views';
 
 const MENU_VIEWPORT_MARGIN = 20;
@@ -35,35 +36,33 @@ const MENU_SHADOW_ROOM = 30;
 
 const KEY_SEP = '\u0000';
 
-let uid = 0;
-
 interface Suggestion {
-  key: string;
-  label: string;
-  detail?: string;
-  insert: string;
+  key:         string;
+  label:       string;
+  detail?:     string;
+  insert:      string;
   connective?: boolean;
-  field?: TableViewField;
-  value?: string;
+  field?:      TableViewField;
+  value?:      string;
 }
 
 const props = withDefaults(defineProps<{
-  value?: string,
+  value?:         string,
   /** Everything the query can name, including fields this list can't filter by, so it can say so */
-  fields?: TableViewField[],
+  fields?:        TableViewField[],
   /** The fields worth suggesting, when narrower than `fields`. Defaults to `fields` */
-  filterFields?: TableViewField[] | null,
+  filterFields?:  TableViewField[] | null,
   /** fieldId -> values in use from the api; the rows on the page are the fallback */
-  fieldValues?: Record<string, { value: string, count: number }[]>,
-  rows?: TableViewRow[],
+  fieldValues?:   Record<string, { value: string, count: number }[]>,
+  rows?:          TableViewRow[],
   /** Ids of the fields that hold dates, whose values are offered as years and months */
-  dateFields?: string[],
+  dateFields?:    string[],
   /** Ids of the fields whose values are on their way, eg as the page opens */
   pendingFields?: string[],
   /** Ids of the fields whose values for suggesting are being asked for */
   loadingValues?: string[],
   /** Changes as another view is put on the table: its query starts the undo history afresh */
-  historyKey?: number,
+  historyKey?:    number,
 }>(), {
   historyKey:    0,
   value:         '',
@@ -77,7 +76,7 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-  'update:value': [value: string],
+  'update:value':   [value: string],
   'request-values': [fieldId: string],
   /** A field's values are being offered: those in hand can be asked for again, to be fresh */
   'refresh-values': [fieldId: string],
@@ -110,7 +109,7 @@ const pendingCaret = ref<number | null>(null);
 const composing = ref(false);
 /** Viewport coordinates: the menu hangs off <body> */
 const menuPos = ref({
-  top: 0, left: 0, width: 0, clip: 'none'
+  top: 0, left: 0, width: 0, clip: 'none',
 });
 /** What the menu has to outrank, read as it opens: a slide-in panel sits above the product's z-index scale */
 const menuZ = ref(0);
@@ -131,7 +130,7 @@ const domAhead = ref(false);
 /** Undo and redo of the box's own: the browser's can't follow contents rebuilt as they are highlighted */
 const queryHistory = createQueryHistory(props.value || '');
 
-const instanceId = `${ uid++ }`;
+const instanceId = useId();
 
 /** Per instance, as a page can hold more than one box */
 const menuId = computed(() => `table-view-query-menu-${ instanceId }`);
@@ -194,7 +193,7 @@ const parsedToken = computed(() => {
 
   if (!token) {
     return {
-      negate: '', field: null, typed: ''
+      negate: '', field: null, typed: '',
     };
   }
 
@@ -309,14 +308,14 @@ const suggestionGroups = computed(() => {
     return suggestion.field?.isLabel ? 'label' : 'field';
   };
 
-  type Group = { kind: string, entries: (Suggestion & { index: number })[] };
+  interface Group { kind: string, entries: (Suggestion & { index: number })[] }
   const groups: Group[] = [];
   let current: Group | null = null;
 
   suggestions.value.forEach((suggestion, index) => {
     const kind = kindOf(suggestion);
 
-    if (!current || current.kind !== kind) {
+    if (current?.kind !== kind) {
       current = { kind, entries: [] };
       groups.push(current);
     }
@@ -523,7 +522,7 @@ const stackAbove = () => {
 /** Where the box can be seen: the viewport, less what its scrolling ancestors cut off */
 const visibleArea = () => {
   const area = {
-    top: 0, left: 0, bottom: window.innerHeight, right: window.innerWidth
+    top: 0, left: 0, bottom: window.innerHeight, right: window.innerWidth,
   };
 
   for (let el = root.value?.parentElement; el && el !== document.body; el = el.parentElement) {

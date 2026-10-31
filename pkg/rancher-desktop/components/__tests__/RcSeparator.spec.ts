@@ -1,4 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
+
 import RcSeparator from './RcSeparator.vue';
 
 describe('component: RcSeparator', () => {

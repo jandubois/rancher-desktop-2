@@ -1,6 +1,7 @@
 import {
-  defineComponent, nextTick, onBeforeUnmount, provide, ref, shallowRef, watch, PropType, Ref
+  defineComponent, nextTick, onBeforeUnmount, provide, ref, shallowRef, watch, PropType, Ref,
 } from 'vue';
+
 import { DropdownContext, DropdownSubmenu } from './types';
 
 /** Time to cross the items between one that opened a submenu and the submenu, before another takes over */
@@ -180,7 +181,7 @@ export const useDropdownSubmenus = (isMenuOpen: Ref<boolean>, closeMenu: () => v
       });
 
       return () => props.submenu.render();
-    }
+    },
   });
 
   return {

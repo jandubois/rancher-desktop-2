@@ -8,20 +8,21 @@ import {
   dateBuckets,
   dateText,
   stringifyValue,
-  termsToServerFilters
+  termsToServerFilters,
 } from '@shell/utils/table-views';
-import type { TableViewField } from '@shell/types/table-views';
+
 import type { PaginationParamFilter } from '@shell/types/store/pagination.types';
+import type { TableViewField } from '@shell/types/table-views';
 
 const HEADERS = [
   {
-    name: 'name', label: 'Name', value: 'metadata.name'
+    name: 'name', label: 'Name', value: 'metadata.name',
   },
   {
-    name: 'namespace', label: 'Namespace', value: 'metadata.namespace'
+    name: 'namespace', label: 'Namespace', value: 'metadata.namespace',
   },
   {
-    name: 'state', label: 'State', value: 'stateDisplay'
+    name: 'state', label: 'State', value: 'stateDisplay',
   },
   { name: 'spacer', label: ' ' },
 ];
@@ -35,40 +36,40 @@ const HEADERS = [
  */
 const PAGINATION_HEADERS = [
   {
-    name: 'name', label: 'Name', value: 'metadata.name', search: 'metadata.name'
+    name: 'name', label: 'Name', value: 'metadata.name', search: 'metadata.name',
   },
   {
-    name: 'namespace', label: 'Namespace', value: 'metadata.namespace', search: 'metadata.namespace'
+    name: 'namespace', label: 'Namespace', value: 'metadata.namespace', search: 'metadata.namespace',
   },
   {
-    name: 'state', label: 'State', value: 'stateDisplay', search: 'metadata.state.name'
+    name: 'state', label: 'State', value: 'stateDisplay', search: 'metadata.state.name',
   },
   { name: 'spacer', label: ' ' },
 ];
 
 interface Row {
   stateDisplay: string;
-  metadata: { name: string, namespace: string, labels: Record<string, string> };
+  metadata:     { name: string, namespace: string, labels: Record<string, string> };
 }
 
 const ROWS: Row[] = [
   {
     stateDisplay: 'Running',
     metadata:     {
-      name: 'nginx-a', namespace: 'default', labels: { app: 'nginx' }
-    }
+      name: 'nginx-a', namespace: 'default', labels: { app: 'nginx' },
+    },
   },
   {
     stateDisplay: 'Error',
     metadata:     {
-      name: 'nginx-b', namespace: 'default', labels: { app: 'nginx', tier: 'web' }
-    }
+      name: 'nginx-b', namespace: 'default', labels: { app: 'nginx', tier: 'web' },
+    },
   },
   {
     stateDisplay: 'Error',
     metadata:     {
-      name: 'redis-a', namespace: 'cattle-system', labels: { app: 'redis' }
-    }
+      name: 'redis-a', namespace: 'cattle-system', labels: { app: 'redis' },
+    },
   },
 ];
 
@@ -92,32 +93,32 @@ describe('fx: parseQuery', () => {
   it('parses field terms, free text and negation', () => {
     expect(parseQuery('state:Error -namespace:cattle nginx', fields)).toStrictEqual([
       {
-        field: 'state', value: 'Error', negated: false
+        field: 'state', value: 'Error', negated: false,
       },
       {
-        field: 'namespace', value: 'cattle', negated: true
+        field: 'namespace', value: 'cattle', negated: true,
       },
       {
-        field: null, value: 'nginx', negated: false
+        field: null, value: 'nginx', negated: false,
       },
     ]);
   });
 
   it('keeps quoted values together', () => {
     expect(parseQuery('name:"nginx a"', fields)).toStrictEqual([{
-      field: 'name', value: 'nginx a', negated: false
+      field: 'name', value: 'nginx a', negated: false,
     }]);
   });
 
   it('handles label fields, which contain a colon themselves', () => {
     expect(parseQuery('label:app:nginx', fields)).toStrictEqual([{
-      field: 'label:app', value: 'nginx', negated: false
+      field: 'label:app', value: 'nginx', negated: false,
     }]);
   });
 
   it('treats an unknown field as free text', () => {
     expect(parseQuery('image:nginx', fields)).toStrictEqual([{
-      field: null, value: 'image:nginx', negated: false
+      field: null, value: 'image:nginx', negated: false,
     }]);
   });
 });
@@ -157,10 +158,10 @@ describe('fx: applyQuery', () => {
   describe('a state the State column shows remapped', () => {
     const remapped = [
       {
-        ...ROWS[0], state: 'in-progress', stateDisplay: 'In Progress'
+        ...ROWS[0], state: 'in-progress', stateDisplay: 'In Progress',
       },
       {
-        ...ROWS[1], state: 'active', stateDisplay: 'Active'
+        ...ROWS[1], state: 'active', stateDisplay: 'Active',
       },
     ];
     const names = (query: string) => applyQuery(remapped, parseQuery(query, fields), fields).map((r) => r.metadata.name);
@@ -237,7 +238,7 @@ describe('moveInOrder', () => {
 describe('serverPathFor', () => {
   it('uses a label key for label fields', () => {
     expect(serverPathFor({
-      id: 'label:app', label: 'app', isLabel: true, labelKey: 'app'
+      id: 'label:app', label: 'app', isLabel: true, labelKey: 'app',
     })).toStrictEqual('metadata.labels[app]');
   });
 
@@ -254,7 +255,7 @@ describe('serverPathFor', () => {
   it('has no path when the list is not paginated', () => {
     // No pagination definition is the list saying it cannot be filtered server side at all
     expect(serverPathFor({
-      id: 'name', label: 'Name', isLabel: false, header: { search: 'metadata.name' }
+      id: 'name', label: 'Name', isLabel: false, header: { search: 'metadata.name' },
     })).toBeNull();
   });
 
@@ -275,32 +276,32 @@ describe('serverPathFor', () => {
       label:            'Age',
       isLabel:          false,
       paginationHeader: {
-        value: 'metadata.creationTimestamp', sort: 'metadata.creationTimestamp:desc', search: false
+        value: 'metadata.creationTimestamp', sort: 'metadata.creationTimestamp:desc', search: false,
       },
     })).toBe('metadata.creationTimestamp');
   });
 
   it('filters a column that names no search on the path it sorts by, which the api has indexed', () => {
     expect(serverPathFor({
-      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { sort: ['status.allocatable.cpuRaw', 'metadata.name'] }
+      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { sort: ['status.allocatable.cpuRaw', 'metadata.name'] },
     })).toStrictEqual('status.allocatable.cpuRaw');
 
     expect(serverPathFor({
-      id: 'age', label: 'Age', isLabel: false, paginationHeader: { sort: 'metadata.creationTimestamp:desc' }
+      id: 'age', label: 'Age', isLabel: false, paginationHeader: { sort: 'metadata.creationTimestamp:desc' },
     })).toStrictEqual('metadata.creationTimestamp');
   });
 
   it('keeps only the paths a search list actually names', () => {
     expect(serverPathFor({
-      id: 'name', label: 'Name', isLabel: false, paginationHeader: { search: ['', 'spec.displayName'] }
+      id: 'name', label: 'Name', isLabel: false, paginationHeader: { search: ['', 'spec.displayName'] },
     })).toStrictEqual(['spec.displayName']);
 
     expect(serverPathFor({
-      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { search: [''] }
+      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { search: [''] },
     })).toBeNull();
 
     expect(serverPathFor({
-      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { search: [''], sort: 'status.allocatable.cpuRaw' }
+      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { search: [''], sort: 'status.allocatable.cpuRaw' },
     })).toStrictEqual('status.allocatable.cpuRaw');
   });
 });
@@ -310,9 +311,9 @@ describe('summaryToValues', () => {
     summary: [{
       property: 'metadata.namespace',
       counts:   {
-        'cattle-system': { total: 5 }, default: { total: 12 }, '': { total: 3 }
-      }
-    }]
+        'cattle-system': { total: 5 }, default: { total: 12 }, '': { total: 3 },
+      },
+    }],
   };
 
   it('lists the values most used first', () => {
@@ -338,16 +339,16 @@ describe('summaryToValues', () => {
 describe('fx: termsToServerFilters', () => {
   const FIELDS: TableViewField[] = [
     {
-      id: 'name', label: 'Name', isLabel: false, paginationHeader: { search: 'metadata.name' }
+      id: 'name', label: 'Name', isLabel: false, paginationHeader: { search: 'metadata.name' },
     },
     {
-      id: 'namespace', label: 'Namespace', isLabel: false, paginationHeader: { search: 'metadata.namespace' }
+      id: 'namespace', label: 'Namespace', isLabel: false, paginationHeader: { search: 'metadata.namespace' },
     },
     {
-      id: 'label:app', label: 'app', isLabel: true, labelKey: 'app'
+      id: 'label:app', label: 'app', isLabel: true, labelKey: 'app',
     },
     {
-      id: 'label:component', label: 'component', isLabel: true, labelKey: 'component'
+      id: 'label:component', label: 'component', isLabel: true, labelKey: 'component',
     },
   ];
 
@@ -356,26 +357,26 @@ describe('fx: termsToServerFilters', () => {
   it('should read a field named twice as either value, each a partial match - as `or` does', () => {
     const { filters } = termsToServerFilters([
       {
-        field: 'namespace', value: 'kube', negated: false
+        field: 'namespace', value: 'kube', negated: false,
       },
       {
-        field: 'namespace', value: 'default', negated: false
+        field: 'namespace', value: 'default', negated: false,
       },
     ], FIELDS);
 
     expect(filters).toHaveLength(1);
     expect(filters[0].fields.map((f) => `${ f.field }~${ f.value }:${ f.equality }`)).toStrictEqual([
-      'metadata.namespace~kube:~', 'metadata.namespace~default:~'
+      'metadata.namespace~kube:~', 'metadata.namespace~default:~',
     ]);
   });
 
   it('should keep out every value of a field negated twice, each a partial match', () => {
     const { filters } = termsToServerFilters([
       {
-        field: 'namespace', value: 'kube', negated: true
+        field: 'namespace', value: 'kube', negated: true,
       },
       {
-        field: 'namespace', value: 'default', negated: true
+        field: 'namespace', value: 'default', negated: true,
       },
     ], FIELDS);
 
@@ -384,13 +385,13 @@ describe('fx: termsToServerFilters', () => {
 
   it('should leave a column that is not searched out of free text, and filter it when named', () => {
     const age: TableViewField = {
-      id: 'age', label: 'Age', isLabel: false, paginationHeader: { sort: 'metadata.creationTimestamp', search: false }
+      id: 'age', label: 'Age', isLabel: false, paginationHeader: { sort: 'metadata.creationTimestamp', search: false },
     };
     const free = termsToServerFilters([{
-      field: null, value: '2026', negated: false
+      field: null, value: '2026', negated: false,
     }], [...FIELDS, age]);
     const named = termsToServerFilters([{
-      field: 'age', value: '2026-09', negated: false
+      field: 'age', value: '2026-09', negated: false,
     }], [...FIELDS, age]);
 
     expect(pathsOf(free.filters[0])).not.toContain('metadata.creationTimestamp');
@@ -400,13 +401,13 @@ describe('fx: termsToServerFilters', () => {
 
   it('should leave a column off the table out of free text, and filter it when named', () => {
     const description: TableViewField = {
-      id: 'description', label: 'Description', isLabel: false, notInFreeText: true, paginationHeader: { search: 'metadata.annotations[field.cattle.io/description]' }
+      id: 'description', label: 'Description', isLabel: false, notInFreeText: true, paginationHeader: { search: 'metadata.annotations[field.cattle.io/description]' },
     };
     const free = termsToServerFilters([{
-      field: null, value: 'payments', negated: false
+      field: null, value: 'payments', negated: false,
     }], [...FIELDS, description]);
     const named = termsToServerFilters([{
-      field: 'description', value: 'payments', negated: false
+      field: 'description', value: 'payments', negated: false,
     }], [...FIELDS, description]);
 
     expect(pathsOf(free.filters[0])).toStrictEqual(['metadata.name', 'metadata.namespace']);
@@ -415,7 +416,7 @@ describe('fx: termsToServerFilters', () => {
 
   it('should search every ordinary column for a free text term', () => {
     const { filters, unsupported } = termsToServerFilters([{
-      field: null, value: 'nginx', negated: false
+      field: null, value: 'nginx', negated: false,
     }], FIELDS);
 
     expect(unsupported).toStrictEqual([]);
@@ -427,7 +428,7 @@ describe('fx: termsToServerFilters', () => {
     // Each metadata.labels[key] term costs the pagination API a join, and OR'ing a handful of
     // them together hangs it - see the comment in termsToServerFilters
     const { filters } = termsToServerFilters([{
-      field: null, value: 'nginx', negated: false
+      field: null, value: 'nginx', negated: false,
     }], FIELDS);
 
     expect(pathsOf(filters[0]).some((p) => p?.includes('labels'))).toBe(false);
@@ -435,7 +436,7 @@ describe('fx: termsToServerFilters', () => {
 
   it('should still search a label when the term names one', () => {
     const { filters, unsupported } = termsToServerFilters([{
-      field: 'label:app', value: 'nginx', negated: false
+      field: 'label:app', value: 'nginx', negated: false,
     }], FIELDS);
 
     expect(unsupported).toStrictEqual([]);
@@ -445,7 +446,7 @@ describe('fx: termsToServerFilters', () => {
 
   it('should report a free text term as unsupported when no column can be searched', () => {
     const terms = [{
-      field: null, value: 'nginx', negated: false
+      field: null, value: 'nginx', negated: false,
     }];
     const { filters, unsupported } = termsToServerFilters(terms, [FIELDS[2]]);
 
@@ -728,7 +729,7 @@ describe('dateBuckets', () => {
 
   it('should roll timestamps up into months, newest first, each with its count', () => {
     expect(dateBuckets([at('2026-09-28T19:02:29Z', 2), at('2026-09-01T00:00:00Z'), at('2026-08-15T10:00:00Z')])).toStrictEqual([
-      at('2026-09', 3), at('2026-08', 1)
+      at('2026-09', 3), at('2026-08', 1),
     ]);
   });
 
@@ -738,7 +739,7 @@ describe('dateBuckets', () => {
 
   it('should put the years above the months when there is more than one', () => {
     expect(dateBuckets([at('2026-01-02T00:00:00Z'), at('2025-12-31T00:00:00Z', 4)])).toStrictEqual([
-      at('2026', 1), at('2025', 4), at('2026-01', 1), at('2025-12', 4)
+      at('2026', 1), at('2025', 4), at('2026-01', 1), at('2025-12', 4),
     ]);
   });
 
@@ -763,31 +764,31 @@ describe('dates in fields and filters', () => {
   const at = (ms: number) => ({ metadata: { name: `${ ms }` }, lastLogin: ms });
   const headers = [
     {
-      name: 'name', label: 'Name', value: 'metadata.name'
+      name: 'name', label: 'Name', value: 'metadata.name',
     },
     {
-      name: 'user-last-login', label: 'Last Login', value: 'lastLogin', sort: 'lastLogin', formatter: 'LiveDate'
+      name: 'user-last-login', label: 'Last Login', value: 'lastLogin', sort: 'lastLogin', formatter: 'LiveDate',
     },
     {
-      name: 'age', label: 'Age', value: 'creationTimestamp', formatter: 'LiveDate'
+      name: 'age', label: 'Age', value: 'creationTimestamp', formatter: 'LiveDate',
     },
     {
-      name: 'seen', label: 'Seen', value: 'seen'
+      name: 'seen', label: 'Seen', value: 'seen',
     },
     // Text that reads as time - relative, like an event's last seen - is not a date
     {
-      name: 'lastSeen', label: 'Last Seen', value: 'lastSeenText'
+      name: 'lastSeen', label: 'Last Seen', value: 'lastSeenText',
     },
   ];
   const rows = [
     {
-      ...at(Date.UTC(2026, 8, 3)), seen: '2026-09-03T00:00:00Z', lastSeenText: '23m'
+      ...at(Date.UTC(2026, 8, 3)), seen: '2026-09-03T00:00:00Z', lastSeenText: '23m',
     },
     {
-      ...at(Date.UTC(2025, 11, 1)), seen: '2025-12-01T00:00:00Z', lastSeenText: '2h'
+      ...at(Date.UTC(2025, 11, 1)), seen: '2025-12-01T00:00:00Z', lastSeenText: '2h',
     },
     {
-      ...at(0), seen: '2025-12-02T00:00:00Z', lastSeenText: '5d'
+      ...at(0), seen: '2025-12-02T00:00:00Z', lastSeenText: '5d',
     },
   ];
   const fields = fieldsFor(headers, rows);

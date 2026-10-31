@@ -1,8 +1,9 @@
+import { RcButtonType } from '@components/RcButton';
 import { ref, provide, nextTick, EmitFn } from 'vue';
+
+import { DropdownContext } from './types';
 import { useDropdownCollection } from './useDropdownCollection';
 import { useDropdownSubmenus } from './useDropdownSubmenus';
-import { RcButtonType } from '@components/RcButton';
-import { DropdownContext } from './types';
 
 /**
  * Whether the focus got where it is from the keyboard rather than the pointer, as the browser judges
@@ -124,7 +125,7 @@ export const useDropdownContext = (emit: EmitFn<['update:open']>) => {
 
     // The popper's box outlives an opening, so what an earlier one set is undone first, before the
     // menu is measured as it comes
-    const scroller = target.closest('.v-popper__inner') as HTMLElement | null || target;
+    const scroller = target.closest<HTMLElement>('.v-popper__inner') || target;
 
     scroller.style.overflowY = '';
     target.style.height = '';
@@ -137,7 +138,7 @@ export const useDropdownContext = (emit: EmitFn<['update:open']>) => {
       const height = Math.min(
         bottom,
         window.innerHeight - top,
-        window.innerHeight
+        window.innerHeight,
       );
 
       target.style.height = `${ height - padding }px`;

@@ -151,7 +151,7 @@ export const RcIconSizeToCSS = {
   large:   '24px',
   medium:  '16px',
   small:   '14px',
-  inherit: 'inherit'
+  inherit: 'inherit',
 };
 
 export type RcIconSize = keyof typeof RcIconSizeToCSS;
@@ -159,8 +159,8 @@ export type RcIconSize = keyof typeof RcIconSizeToCSS;
 export type RcIconType = keyof typeof RcIconTypeToClass;
 
 export interface RcIconProps {
-  type: RcIconType;
-  size?: RcIconSize;
+  type:        RcIconType;
+  size?:       RcIconSize;
   ariaHidden?: boolean;
-  status?: Status | 'inherit';
+  status?:     Status | 'inherit';
 }

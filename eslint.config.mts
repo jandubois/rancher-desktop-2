@@ -120,6 +120,7 @@ export default defineConfigWithVueTs(
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       'import-x/first':                        'off', // Often needed for mocks
+      'vue/one-component-per-file':            'off', // Specs define stub components
     },
   },
   {

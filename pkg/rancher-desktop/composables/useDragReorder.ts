@@ -2,24 +2,23 @@
  * Reorder a list by dragging an item along it. The item is picked up once the pointer travels
  * DRAG_THRESHOLD, so a press is still a click. Escape abandons the drag
  */
-import { onBeforeUnmount, ref } from 'vue';
-
 import { moveInOrder } from '@shell/utils/table-views/views';
+import { onBeforeUnmount, ref } from 'vue';
 
 const DRAG_THRESHOLD = 4;
 
 export interface DragReorderOptions {
-  axis: 'x' | 'y';
-  initialOrder: () => string[];
+  axis:          'x' | 'y';
+  initialOrder:  () => string[];
   /** Called once as the drag begins: displaced items are mid-transition afterwards */
-  measure: () => void;
+  measure:       () => void;
   /** -1 for nowhere */
-  indexAt: (pointer: number) => number;
+  indexAt:       (pointer: number) => number;
   /** For lists whose head is held in place */
   firstMovable?: (order: string[]) => number;
-  onCommit: (order: string[]) => void;
-  onBegin?: () => void;
-  onEnd?: () => void;
+  onCommit:      (order: string[]) => void;
+  onBegin?:      () => void;
+  onEnd?:        () => void;
 }
 
 /** The click that ends a drag would act on whatever the pointer is over */
@@ -51,7 +50,7 @@ export function useDragReorder(options: DragReorderOptions) {
       return;
     }
 
-    const from = current.indexOf(heldId.value as string);
+    const from = current.indexOf(heldId.value!);
     const at = options.indexAt(pointer.value);
 
     if (from === -1 || at === -1) {
@@ -91,11 +90,10 @@ export function useDragReorder(options: DragReorderOptions) {
   };
 
   const end = (commit: boolean) => {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     window.removeEventListener('mousemove', onMove, true);
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
     window.removeEventListener('mouseup', onUp, true);
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
     window.removeEventListener('keydown', onKey, true);
 
     const started = startOrder || [];
@@ -144,6 +142,6 @@ export function useDragReorder(options: DragReorderOptions) {
   onBeforeUnmount(() => end(false));
 
   return {
-    heldId, order, moved, pointer, start, end, place
+    heldId, order, moved, pointer, start, end, place,
   };
 }

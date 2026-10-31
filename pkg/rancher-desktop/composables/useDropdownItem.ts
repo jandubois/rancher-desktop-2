@@ -1,4 +1,5 @@
 import { inject } from 'vue';
+
 import { DropdownContext, defaultContext } from './types';
 
 export const useDropdownItem = () => {
@@ -78,7 +79,7 @@ export const useDropdownItem = () => {
       return;
     }
 
-    const t = target as HTMLElement;
+    const t = target;
 
     // If a button was clicked, then do not scroll into view, as this will scroll to make the button
     // visible and the click will be ignored - so just return, so that the click works as expected

@@ -1,4 +1,5 @@
 import { mount, RouterLinkStub } from '@vue/test-utils';
+
 import RcButton from './RcButton.vue';
 
 describe('rcButton.vue', () => {
@@ -25,8 +26,8 @@ describe('rcButton.vue', () => {
           primary:   true,
           secondary: true,
           tertiary:  true,
-        }
-      }
+        },
+      },
     );
     const button = wrapper.find('button');
 
@@ -40,8 +41,8 @@ describe('rcButton.vue', () => {
         props: {
           secondary: true,
           tertiary:  true,
-        }
-      }
+        },
+      },
     );
     const button = wrapper.find('button');
 
@@ -72,7 +73,7 @@ describe('rcButton.vue', () => {
   it('focuses the button when focus method is called', async() => {
     const wrapper = mount(
       RcButton,
-      { attachTo: document.body }
+      { attachTo: document.body },
     );
 
     await wrapper.vm.focus();

@@ -1,6 +1,6 @@
+import { RcDropdown } from '@components/RcDropdown';
 import { mount } from '@vue/test-utils';
 import { defineComponent } from 'vue';
-import { RcDropdown } from '@components/RcDropdown';
 
 const vDropdownMock = defineComponent({
   props:    { shown: Boolean },
@@ -35,7 +35,7 @@ describe('component: RcDropdown.vue', () => {
       writable: true,
     });
 
-    await wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
+    wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
     await wrapper.vm.$nextTick();
 
     expect(dropdownTarget.style.height).toBe('');
@@ -56,7 +56,7 @@ describe('component: RcDropdown.vue', () => {
       }),
     });
 
-    await wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
+    wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
     await wrapper.vm.$nextTick();
 
     expect(dropdownTarget.style.height).toBe('268px');
@@ -77,7 +77,7 @@ describe('component: RcDropdown.vue', () => {
       }),
     });
 
-    await wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
+    wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
     await wrapper.vm.$nextTick();
 
     expect(dropdownTarget.style.height).toBe('693px');
@@ -102,11 +102,11 @@ describe('component: RcDropdown.vue', () => {
 
     Object.defineProperty(dropdownTarget, 'getBoundingClientRect', {
       value: () => ({
-        top: 200, bottom: 700, height: 500
-      })
+        top: 200, bottom: 700, height: 500,
+      }),
     });
 
-    await wrapper.findComponent(innerMock).vm.$emit('apply-show');
+    wrapper.findComponent(innerMock).vm.$emit('apply-show');
     await wrapper.vm.$nextTick();
 
     expect(dropdownTarget.style.height).toBe('168px');
@@ -114,7 +114,7 @@ describe('component: RcDropdown.vue', () => {
     expect(dropdownTarget.style.overflowY).toBe('');
   });
 
-  it('should stop scrolling the popper\'s box, and drop the height it was cut to, once an opening fits again', async() => {
+  it('should stop scrolling the popper\'s box, and drop the height it was cut to, once an opening fits again', () => {
     Object.defineProperty(window, 'innerHeight', { value: 400 });
 
     const innerMock = defineComponent({
@@ -125,19 +125,19 @@ describe('component: RcDropdown.vue', () => {
     const dropdownTarget = wrapper.find('[dropdown-menu-collection]').element as HTMLElement;
     const inner = wrapper.find('.v-popper__inner').element as HTMLElement;
     let rect = {
-      top: 200, bottom: 700, height: 500
+      top: 200, bottom: 700, height: 500,
     };
 
     Object.defineProperty(dropdownTarget, 'getBoundingClientRect', { value: () => rect });
 
-    await wrapper.findComponent(innerMock).vm.$emit('apply-show');
+    wrapper.findComponent(innerMock).vm.$emit('apply-show');
     expect(inner.style.overflowY).toBe('auto');
     expect(dropdownTarget.style.height).not.toBe('');
 
     rect = {
-      top: 100, bottom: 200, height: 100
+      top: 100, bottom: 200, height: 100,
     };
-    await wrapper.findComponent(innerMock).vm.$emit('apply-show');
+    wrapper.findComponent(innerMock).vm.$emit('apply-show');
 
     expect(inner.style.overflowY).toBe('');
     expect(dropdownTarget.style.height).toBe('');
@@ -158,7 +158,7 @@ describe('component: RcDropdown.vue', () => {
       }),
     });
 
-    await wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
+    wrapper.findComponent(vDropdownMock).vm.$emit('apply-show');
     await wrapper.vm.$nextTick();
 
     expect(dropdownTarget.style.height).toBe('368px');

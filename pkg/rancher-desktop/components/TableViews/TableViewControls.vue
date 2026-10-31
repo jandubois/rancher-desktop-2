@@ -3,16 +3,6 @@
  * The row under the view tabs: the filter query and the View menu (grouping and columns). It edits
  * the `view` prop and hands it back; the tabs above see the change through the table
  */
-import { computed, nextTick, ref, watch } from 'vue';
-import { useStore } from 'vuex';
-
-import TableViewQueryInput from '@shell/components/TableViews/TableViewQueryInput.vue';
-import { useDragReorder } from '@shell/composables/useDragReorder';
-import { useI18n } from '@shell/composables/useI18n';
-import { validateQuery } from '@shell/utils/table-views/query';
-import { NO_GROUPING, isViewModified } from '@shell/utils/table-views/views';
-import { isMac } from '@shell/utils/platform';
-import type { TableViewField, TableViewQueryProblem, TableViewRow, TableViewState } from '@shell/types/table-views';
 import {
   RcDropdown,
   RcDropdownItem,
@@ -20,36 +10,46 @@ import {
   RcDropdownItemRadio,
   RcDropdownSeparator,
   RcDropdownSubmenu,
-  RcDropdownTrigger
+  RcDropdownTrigger,
 } from '@components/RcDropdown';
+import TableViewQueryInput from '@shell/components/TableViews/TableViewQueryInput.vue';
+import { useDragReorder } from '@shell/composables/useDragReorder';
+import { useI18n } from '@shell/composables/useI18n';
+import { isMac } from '@shell/utils/platform';
+import { validateQuery } from '@shell/utils/table-views/query';
+import { NO_GROUPING, isViewModified } from '@shell/utils/table-views/views';
+import { computed, nextTick, ref, watch } from 'vue';
+import { useStore } from 'vuex';
+
+import type { TableViewField, TableViewQueryProblem, TableViewRow, TableViewState } from '@shell/types/table-views';
 
 /** Clears the row's hover highlight rather than sitting over the handle */
 const TOOLTIP_DISTANCE = 12;
 
 const props = withDefaults(defineProps<{
-  view: TableViewState,
-  coreColumns?: string[],
+  view:               TableViewState,
+  coreColumns?:       string[],
   /** Field ids the table shows when a view says nothing about columns - fewer than the menu offers */
-  defaultColumns?: string[],
+  defaultColumns?:    string[],
   unsupportedFields?: string[],
-  fields?: TableViewField[],
+  fields?:            TableViewField[],
   /** Defaults to `fields` */
-  groupFields?: TableViewField[] | null,
+  groupFields?:       TableViewField[] | null,
   /** The grouping the table has when the view names none */
-  defaultGroupBy?: string | null,
+  defaultGroupBy?:    string | null,
   /** Defaults to `fields` */
-  filterFields?: TableViewField[] | null,
+  filterFields?:      TableViewField[] | null,
   /** Ids of the fields that hold dates */
-  dateFields?: string[],
-  fieldValues?: Record<string, { value: string, count: number }[]>,
+  dateFields?:        string[],
+  fieldValues?:       Record<string, { value: string, count: number }[]>,
   /** Ids of the fields whose values are on their way */
-  pendingFields?: string[],
+  pendingFields?:     string[],
   /** Ids of the fields whose values for suggesting are being asked for */
-  loadingValues?: string[],
+  loadingValues?:     string[],
   /** All rows, before the view's query is applied */
-  rows?: TableViewRow[],
+  rows?:              TableViewRow[],
   /** Changes as the tabs put another view on the table, for the search box to start its undo afresh */
-  historyKey?: number,
+  historyKey?:        number,
 }>(), {
   historyKey:        0,
   coreColumns:       () => [],
@@ -67,7 +67,7 @@ const props = withDefaults(defineProps<{
 });
 
 const emit = defineEmits<{
-  'update:view': [view: TableViewState],
+  'update:view':    [view: TableViewState],
   'request-values': [fieldId: string],
   'refresh-values': [fieldId: string],
 }>();
@@ -124,16 +124,15 @@ const columnFields = computed(() => props.fields.filter((f) => !f.isLabel && !f.
 
 /** Empty content hides the tooltip once a row is picked up */
 const reorderTip = computed(() => ({
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  content: heldColumnId.value ? '' : t('tableViews.columns.reorder'), placement: 'left', distance: TOOLTIP_DISTANCE
+
+  content: heldColumnId.value ? '' : t('tableViews.columns.reorder'), placement: 'left', distance: TOOLTIP_DISTANCE,
 }));
 
 const lockedTip = computed(() => ({
-  content: t('tableViews.columns.locked'), placement: 'left', distance: TOOLTIP_DISTANCE
+  content: t('tableViews.columns.locked'), placement: 'left', distance: TOOLTIP_DISTANCE,
 }));
 
 const orderedColumnFields = computed(() => {
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   const order = columnDragOrder.value || props.view.columnOrder;
 
   if (!order?.length) {
@@ -292,7 +291,7 @@ const toggleGroupBy = (id: string | null) => pickGroupBy(id === appliedGroupBy.v
 
 const resetColumns = () => {
   update({
-    columns: null, labelColumns: [], columnOrder: null
+    columns: null, labelColumns: [], columnOrder: null,
   });
   announce(t('tableViews.columns.resetDone'));
 };
@@ -317,7 +316,7 @@ const moveColumn = async(field: TableViewField, step: number) => {
   order.splice(to, 0, order.splice(from, 1)[0]);
   update({ columnOrder: order });
   announce(t('tableViews.columns.moved', {
-    label: field.label, position: to + 1, total: order.length
+    label: field.label, position: to + 1, total: order.length,
   }));
 
   // Moving the row takes it out of the page for a moment, which drops its focus
@@ -326,7 +325,7 @@ const moveColumn = async(field: TableViewField, step: number) => {
 };
 
 const resetView = () => update({
-  query: '', columns: null, labelColumns: [], columnOrder: null, groupBy: null, sort: null, sortDescending: false
+  query: '', columns: null, labelColumns: [], columnOrder: null, groupBy: null, sort: null, sortDescending: false,
 });
 
 /**
@@ -441,7 +440,7 @@ watch(groupPanel, (panel) => {
                       v-for="option in groupOptions"
                       :key="option.id || 'none'"
                       :checked="option.id === appliedGroupBy"
-                      :data-testid="`table-views-group-${ option.id || 'none' }`"
+                      :data-testid="`table-views-group-${option.id || 'none'}`"
                       @click="toggleGroupBy(option.id)"
                     >
                       {{ option.label }}
@@ -489,7 +488,7 @@ watch(groupPanel, (panel) => {
                       :class="{ 'column-row': true, locked: isCoreColumn(field), shown: isColumnVisible(field), held: heldColumnId === field.id }"
                       :disabled="isCoreColumn(field)"
                       :data-col-id="field.id"
-                      :data-testid="`table-views-col-${ field.id }`"
+                      :data-testid="`table-views-col-${field.id}`"
                       :aria-description="isCoreColumn(field) ? t('tableViews.columns.locked') : moveKeysHint"
                       @click="toggleColumn(field)"
                       @keydown.alt.up.prevent.stop="moveColumn(field, -1)"
@@ -505,7 +504,7 @@ watch(groupPanel, (panel) => {
                           v-else
                           v-clean-tooltip="reorderTip"
                           class="column-handle grip"
-                          :data-testid="`table-views-col-handle-${ field.id }`"
+                          :data-testid="`table-views-col-handle-${field.id}`"
                           @mousedown="startColumnDrag(field.id, $event)"
                         />
                       </template>

@@ -7,20 +7,20 @@
  * list of things shown and hidden; `#before` then holds anything leading the label.
  */
 import { Checkbox as RcCheckbox } from '@components/Form/Checkbox';
-import { RcIcon } from '@components/RcIcon';
 import { useDropdownItem } from '@components/RcDropdown/useDropdownItem';
+import { RcIcon } from '@components/RcIcon';
 
 const props = withDefaults(defineProps<{
   modelValue?: boolean;
-  disabled?: boolean;
-  indicator?: 'checkbox' | 'checkmark';
+  disabled?:   boolean;
+  indicator?:  'checkbox' | 'checkmark';
 }>(), {
-  modelValue: false, disabled: false, indicator: 'checkbox'
+  modelValue: false, disabled: false, indicator: 'checkbox',
 });
 const emits = defineEmits(['click', 'update:modelValue']);
 
 const {
-  handleKeydown, handleActivate, scrollIntoView, handleMouseenter
+  handleKeydown, handleActivate, scrollIntoView, handleMouseenter,
 } = useDropdownItem();
 
 const handleClick = () => {
@@ -45,7 +45,7 @@ const handleClick = () => {
     @click.stop="handleClick"
     @keydown.enter.space="handleActivate"
     @keydown.up.down.prevent.stop="handleKeydown"
-    @mousedown.prevent="() => {/* As RcDropdownItem: a click doesn't take the focus */}"
+    @mousedown.prevent="() => { /* As RcDropdownItem: a click doesn't take the focus */ }"
     @focusin="scrollIntoView"
     @mouseenter="handleMouseenter"
   >

@@ -1,12 +1,12 @@
+import TableViewQueryInput from '@shell/components/TableViews/TableViewQueryInput.vue';
 import { mount, VueWrapper } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { createStore } from 'vuex';
 
-import TableViewQueryInput from '@shell/components/TableViews/TableViewQueryInput.vue';
 import type { TableViewField } from '@shell/types/table-views';
 
 const STATE: TableViewField = {
-  id: 'state', label: 'State', isLabel: false
+  id: 'state', label: 'State', isLabel: false,
 };
 
 /** Values the api would give, which the list should wait for rather than show the page's first */
@@ -59,12 +59,12 @@ describe('TableViewQueryInput', () => {
 
   it('should not say it is loading values for a field whose values it doesn\'t offer', async() => {
     const NAME: TableViewField = {
-      id: 'name', label: 'Name', isLabel: false
+      id: 'name', label: 'Name', isLabel: false,
     };
 
     // `name` can be queried, but its values are not among those offered
     mountWith({
-      fields: [STATE, NAME], filterFields: [STATE], loadingValues: ['name']
+      fields: [STATE, NAME], filterFields: [STATE], loadingValues: ['name'],
     });
     await type('name:');
 
@@ -80,7 +80,7 @@ describe('TableViewQueryInput', () => {
 
     await wrapper.find('[data-testid="table-views-query"]').trigger('keydown', { key: 'Enter' });
 
-    expect(wrapper.emitted('update:value')).toHaveLength(typed as number);
+    expect(wrapper.emitted('update:value')).toHaveLength(typed!);
   });
 
   it('should name a field by its column first, and the word to type second', async() => {
@@ -120,7 +120,7 @@ describe('TableViewQueryInput', () => {
       await wrapper.setProps({ value: '' });
 
       await box().trigger('keydown', {
-        key: 'Z', ctrlKey: true, shiftKey: true
+        key: 'Z', ctrlKey: true, shiftKey: true,
       });
       expect(last()).toBe('state:active');
       await wrapper.setProps({ value: 'state:active' });
@@ -148,7 +148,7 @@ describe('TableViewQueryInput', () => {
       await wrapper.setProps({ historyKey: 1 });
       await box().trigger('keydown', { key: 'z', ctrlKey: true });
 
-      expect(wrapper.emitted('update:value')).toHaveLength(emitted as number);
+      expect(wrapper.emitted('update:value')).toHaveLength(emitted!);
     });
   });
 

@@ -1,4 +1,3 @@
-
 import isEqual from 'lodash/isEqual';
 
 import type { TableViewSaved, TableViewState } from '@shell/types/table-views';
@@ -11,7 +10,7 @@ export const SAVED_VIEWS_VERSION = 1;
 
 export interface SavedViewsPref<T> {
   metadata: {
-    version: number;
+    version:        number;
     /** A random key kept with the user's views, which a view they share carries - see share.ts. Not checked */
     persistenceId?: string;
   };

@@ -1,7 +1,7 @@
-
 import { LABEL_FIELD_PREFIX, findField } from '@shell/utils/table-views/fields';
+
 import type {
-  TableViewQueryProblem, TableViewQueryProblemKind, TableViewQuerySegment, TableViewQueryTerm, TableViewQueryToken, TableViewClause, TableViewField, TableViewGroup, TableViewQuery, TableViewTerm
+  TableViewQueryProblem, TableViewQueryProblemKind, TableViewQuerySegment, TableViewQueryTerm, TableViewQueryToken, TableViewClause, TableViewField, TableViewGroup, TableViewQuery, TableViewTerm,
 } from '@shell/types/table-views';
 
 /**
@@ -62,7 +62,7 @@ export function tokenize(query: string): TableViewQueryToken[] {
     out.push({
       start,
       end:  i,
-      text: str.substring(start, i)
+      text: str.substring(start, i),
     });
   }
 
@@ -70,7 +70,7 @@ export function tokenize(query: string): TableViewQueryToken[] {
 }
 
 function unquote(value: string): string {
-  if (value.length > 1 && (value[0] === '"' || value[0] === `'`) && value[value.length - 1] === value[0]) {
+  if (value.length > 1 && (value.startsWith('"') || value.startsWith(`'`)) && value.endsWith(value[0])) {
     return value.substring(1, value.length - 1);
   }
 
@@ -136,7 +136,7 @@ export function scanQuery(query: string, fields: TableViewField[]): TableViewQue
 
     if (isJoiner(text)) {
       out.push({
-        ...chunk, kind: 'connective', negate: '', negated: false, field: null, fieldText: '', value: text, valueStart: chunk.start
+        ...chunk, kind: 'connective', negate: '', negated: false, field: null, fieldText: '', value: text, valueStart: chunk.start,
       });
       continue;
     }
@@ -144,7 +144,7 @@ export function scanQuery(query: string, fields: TableViewField[]): TableViewQue
     if (isNegator(text)) {
       pendingNot = true;
       out.push({
-        ...chunk, kind: 'connective', negate: '', negated: false, field: null, fieldText: '', value: text, valueStart: chunk.start
+        ...chunk, kind: 'connective', negate: '', negated: false, field: null, fieldText: '', value: text, valueStart: chunk.start,
       });
       continue;
     }
@@ -164,7 +164,7 @@ export function scanQuery(query: string, fields: TableViewField[]): TableViewQue
 
     if (!field) {
       out.push({
-        ...chunk, kind: 'term', negate, negated, field: null, fieldText: '', value: unquote(text), valueStart: chunk.start + negate.length
+        ...chunk, kind: 'term', negate, negated, field: null, fieldText: '', value: unquote(text), valueStart: chunk.start + negate.length,
       });
       continue;
     }
@@ -195,7 +195,7 @@ export function scanQuery(query: string, fields: TableViewField[]): TableViewQue
 export function highlightQuery(
   query: string,
   fields: TableViewField[],
-  isKnownValue?: (fieldId: string, value: string) => boolean
+  isKnownValue?: (fieldId: string, value: string) => boolean,
 ): TableViewQuerySegment[] {
   const str = query || '';
   const out: TableViewQuerySegment[] = [];
@@ -287,7 +287,7 @@ export function validateQuery(query: string, fields: TableViewField[]): TableVie
 
   const add = (kind: TableViewQueryProblemKind, token: TableViewQueryToken, label?: string) => {
     problems.push({
-      kind, start: token.start, end: token.end, text: token.text, label
+      kind, start: token.start, end: token.end, text: token.text, label,
     });
   };
 

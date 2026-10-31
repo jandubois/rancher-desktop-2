@@ -1,6 +1,6 @@
-import { defineComponent, ref, nextTick } from 'vue';
-import { mount } from '@vue/test-utils';
 import { useClickOutside } from '@shell/composables/useClickOutside';
+import { mount } from '@vue/test-utils';
+import { defineComponent, ref, nextTick } from 'vue';
 
 /**
  * Helper: create a component that calls useClickOutside with given options,

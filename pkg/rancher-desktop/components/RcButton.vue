@@ -7,7 +7,9 @@
  *
  * <rc-button variant="primary" @click="doAction">Perform an Action</rc-button>
  */
+import RcIcon from '@components/RcIcon/RcIcon.vue';
 import { computed, ref, resolveComponent, watchEffect } from 'vue';
+
 import {
   ButtonVariantProps,
   ButtonSizeProps,
@@ -17,7 +19,6 @@ import {
   IconProps,
   NavigationProps,
 } from './types';
-import RcIcon from '@components/RcIcon/RcIcon.vue';
 
 const buttonVariants: { variant: keyof ButtonVariantProps, className: string }[] = [
   { variant: 'primary', className: 'variant-primary' },
@@ -46,18 +47,18 @@ const props = withDefaults(
         ButtonSizeNewProps &
         IconProps &
         NavigationProps
-    >(),
+  >(),
   {
     size: 'medium',
     to:   undefined,
     href: undefined,
-  }
+  },
 );
 
 if (process.env.NODE_ENV !== 'production') {
   watchEffect(() => {
     if (props.to && props.href) {
-      console.warn('[RcButton] "to" and "href" are mutually exclusive. Provide only one.'); // eslint-disable-line no-console
+      console.warn('[RcButton] "to" and "href" are mutually exclusive. Provide only one.');
     }
   });
 }
@@ -89,15 +90,15 @@ const linkProps = computed(() => {
 
 const activeVariantClassName = computed(() => {
   if (props.variant === 'multiAction' || props.multiAction) {
-    console.warn('[RcButton] The "multiAction" variant is deprecated and will be removed in a future version.'); // eslint-disable-line no-console
+    console.warn('[RcButton] The "multiAction" variant is deprecated and will be removed in a future version.');
   }
 
   const activeVariant = buttonVariants.find(({ variant }) => props[variant]);
 
   if (activeVariant) {
-    console.warn( // eslint-disable-line no-console
+    console.warn(
       `[RcButton] The "${ activeVariant.variant }" prop is deprecated and will be removed in a future version. ` +
-      `Please use variant="${ activeVariant.variant }" instead.`
+      `Please use variant="${ activeVariant.variant }" instead.`,
     );
 
     return activeVariant.className;
@@ -112,12 +113,10 @@ const activeSizeClassName = computed(() => {
   const activeSize = buttonSizes.find(({ size }) => props[size]);
 
   if (activeSize) {
-    /* eslint-disable no-console */
     console.warn(
       `[RcButton] The "${ activeSize.size }" prop is deprecated and will be removed in a future version. ` +
-      `Please use size="${ activeSize.size }" instead.`
+      `Please use size="${ activeSize.size }" instead.`,
     );
-    /* eslint-enable no-console */
 
     return activeSize.className;
   } else {

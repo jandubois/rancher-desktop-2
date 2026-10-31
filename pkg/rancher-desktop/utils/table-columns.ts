@@ -1,6 +1,7 @@
 /** Shared by the table's cells and table views, so a group heading can't disagree with its cells */
 
 import { get } from '@shell/utils/object';
+
 import type { TableViewColumn, TableViewRow } from '@shell/types/table-views';
 
 interface ValueForOptions {
@@ -27,7 +28,7 @@ export function valueFor(row: TableViewRow, col: TableViewColumn, isLabel?: bool
 
   if (!expr) {
     if (warn) {
-      console.error('No path has been defined for this column, unable to get value of cell', col); // eslint-disable-line no-console
+      console.error('No path has been defined for this column, unable to get value of cell', col);
     }
 
     return '';

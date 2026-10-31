@@ -1,10 +1,10 @@
-
 import { STATE } from '@shell/config/table-headers';
 import {
-  dateText, fieldValue, findField, rawFieldValue, stringifyValue
+  dateText, fieldValue, findField, rawFieldValue, stringifyValue,
 } from '@shell/utils/table-views/fields';
+
 import type {
-  TableViewField, TableViewGroup, TableViewQuery, TableViewRow, TableViewTerm
+  TableViewField, TableViewGroup, TableViewQuery, TableViewRow, TableViewTerm,
 } from '@shell/types/table-views';
 
 /**

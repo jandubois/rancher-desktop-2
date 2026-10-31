@@ -4,7 +4,7 @@
  * and one per paste, cut, suggestion or clear
  */
 export interface QueryHistoryEntry {
-  text: string;
+  text:  string;
   caret: number;
 }
 
@@ -45,7 +45,7 @@ function difference(from: string, to: string) {
   }
 
   return {
-    start, removed: from.length - start - end, inserted: to.slice(start, to.length - end)
+    start, removed: from.length - start - end, inserted: to.slice(start, to.length - end),
   };
 }
 

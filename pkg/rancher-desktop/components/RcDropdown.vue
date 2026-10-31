@@ -20,10 +20,10 @@
  *    </template>
  *  </rc-dropdown>
  */
-import { ref, watch } from 'vue';
-import { useClickOutside } from '@shell/composables/useClickOutside';
 import { focusedFromKeyboard, useDropdownContext } from '@components/RcDropdown/useDropdownContext';
 import { useSubmenuPlacement } from '@components/RcDropdown/useSubmenuPlacement';
+import { useClickOutside } from '@shell/composables/useClickOutside';
+import { ref, watch } from 'vue';
 
 import type { Placement } from 'floating-vue';
 
@@ -32,9 +32,9 @@ type ReferenceNode = () => Element | undefined | null;
 const props = withDefaults(
   defineProps<{
     // eslint-disable-next-line vue/require-default-prop
-    ariaLabel?: string;
+    ariaLabel?:     string;
     // eslint-disable-next-line vue/require-default-prop
-    distance?: number;
+    distance?:      number;
     /** Positions the menu against this element instead of the trigger */
     // eslint-disable-next-line vue/require-default-prop
     referenceNode?: ReferenceNode;
@@ -42,8 +42,8 @@ const props = withDefaults(
      * Opens and closes the menu from outside (`v-model:open`), eg for a menu without a trigger. From
      * the keyboard the first item takes the focus, and on closing it goes back to whatever had it
      */
-    open?: boolean;
-    placement?: Placement;
+    open?:          boolean;
+    placement?:     Placement;
     /**
      * Where the local popper anchor itself is teleported to (via Vue
      * Teleport, not floating-vue's own `container`, so the popper stays a
@@ -53,9 +53,9 @@ const props = withDefaults(
      * disabled, so its 'body' fallback target is ignored.
      */
     // eslint-disable-next-line vue/require-default-prop
-    container?: string | HTMLElement;
+    container?:     string | HTMLElement;
   }>(),
-  { placement: 'bottom-end', open: false }
+  { placement: 'bottom-end', open: false },
 );
 
 const emit = defineEmits(['update:open']);

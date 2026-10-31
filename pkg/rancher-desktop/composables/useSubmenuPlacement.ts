@@ -1,7 +1,8 @@
-import {
-  nextTick, onBeforeUnmount, ref, watch, Ref
-} from 'vue';
 import { recomputeAllPoppers } from 'floating-vue';
+import {
+  nextTick, onBeforeUnmount, ref, watch, Ref,
+} from 'vue';
+
 import { DropdownSubmenu } from './types';
 
 /** How far a submenu's popper keeps from the edges of the page */
@@ -32,7 +33,7 @@ const visibleArea = (el: Element) => {
 export const useSubmenuPlacement = (
   menuBox: () => Element | null | undefined,
   shownSubmenu: Ref<DropdownSubmenu | null>,
-  submenuTarget: Ref<HTMLElement | null>
+  submenuTarget: Ref<HTMLElement | null>,
 ) => {
   /** How far the submenu is raised above the menu's top: its popper's skidding, negated */
   const submenuLift = ref(0);
@@ -42,9 +43,11 @@ export const useSubmenuPlacement = (
     const row = shownSubmenu.value?.row();
     const popper = (submenuTarget.value?.closest('.v-popper__popper') as HTMLElement | null) || submenuTarget.value;
 
-    return box && row && popper ? {
-      box, row, popper
-    } : null;
+    return box && row && popper
+      ? {
+        box, row, popper,
+      }
+      : null;
   };
 
   /** No taller than it can show once raised, which stops at its row; not changed by a scroll */
@@ -76,7 +79,7 @@ export const useSubmenuPlacement = (
 
     submenuLift.value = Math.max(0, Math.min(
       top + height + EDGE_GAP - area.bottom,
-      top + height - found.row.getBoundingClientRect().bottom
+      top + height - found.row.getBoundingClientRect().bottom,
     ));
   };
 
@@ -120,6 +123,6 @@ export const useSubmenuPlacement = (
   });
 
   return {
-    submenuLift, start, stop
+    submenuLift, start, stop,
   };
 };

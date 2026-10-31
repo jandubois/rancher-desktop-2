@@ -3,27 +3,27 @@ import { computed, Ref } from 'vue';
 export const StatusDefinitions = {
   info: {
     primary:   '--rc-info',
-    secondary: '--rc-info-secondary'
+    secondary: '--rc-info-secondary',
   },
   success: {
     primary:   '--rc-success',
-    secondary: '--rc-success-secondary'
+    secondary: '--rc-success-secondary',
   },
   warning: {
     primary:   '--rc-warning',
-    secondary: '--rc-warning-secondary'
+    secondary: '--rc-warning-secondary',
   },
   error: {
     primary:   '--rc-error',
-    secondary: '--rc-error-secondary'
+    secondary: '--rc-error-secondary',
   },
   unknown: {
     primary:   '--rc-unknown',
-    secondary: '--rc-unknown-secondary'
+    secondary: '--rc-unknown-secondary',
   },
   none: {
     primary:   '--rc-none',
-    secondary: '--rc-none-secondary'
+    secondary: '--rc-none-secondary',
   },
 };
 
@@ -71,6 +71,6 @@ export function useStatusColors(status: Ref<Status>, style: Style) {
   return {
     borderColor,
     backgroundColor,
-    textColor
+    textColor,
   };
 }

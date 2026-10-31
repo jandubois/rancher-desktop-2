@@ -1,7 +1,6 @@
-import { defineComponent, h } from 'vue';
-import { mount } from '@vue/test-utils';
-
 import { DragReorderOptions, useDragReorder } from '@shell/composables/useDragReorder';
+import { mount } from '@vue/test-utils';
+import { defineComponent, h } from 'vue';
 
 // A list of four whose items sit 10 apart along the axis, so the pointer at 25 is over the third
 function setup(overrides: Partial<DragReorderOptions> = {}) {
@@ -21,16 +20,16 @@ function setup(overrides: Partial<DragReorderOptions> = {}) {
       });
 
       return () => h('div');
-    }
+    },
   }));
 
   return {
-    drag: drag!, onCommit, measure, wrapper
+    drag: drag!, onCommit, measure, wrapper,
   };
 }
 
 const press = (y: number) => new MouseEvent('mousedown', {
-  clientY: y, clientX: 0, button: 0
+  clientY: y, clientX: 0, button: 0,
 });
 const moveTo = (y: number) => window.dispatchEvent(new MouseEvent('mousemove', { clientY: y, clientX: 0 }));
 const release = () => window.dispatchEvent(new MouseEvent('mouseup'));

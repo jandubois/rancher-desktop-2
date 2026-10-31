@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { RcIconSizeToCSS, RcIconTypeToClass, RcIconProps } from './types';
-import { computed } from 'vue';
 import { useStatusColors } from '@components/utils/status';
+import { computed } from 'vue';
+
+import { RcIconSizeToCSS, RcIconTypeToClass, RcIconProps } from './types';
 
 const props = withDefaults(defineProps<RcIconProps>(), {
-  size: 'small', ariaHidden: true, status: 'inherit'
+  size: 'small', ariaHidden: true, status: 'inherit',
 });
 const fontSize = computed(() => {
   return RcIconSizeToCSS[props.size];
@@ -36,7 +37,7 @@ const color = computed(() => {
 <template>
   <i
     class="rc-icon"
-    :class="{[props.size]: true, [iconClass]: true}"
+    :class="{ [props.size]: true, [iconClass]: true }"
     :aria-hidden="props.ariaHidden"
   />
 </template>

@@ -1,12 +1,13 @@
 /** The shapes the table views engine (@shell/utils/table-views) takes and returns */
 
-import type { HeaderOptions, PaginationHeaderOptions } from '@shell/core/types';
 import { PaginationParamFilter } from '@shell/types/store/pagination.types';
+
+import type { HeaderOptions, PaginationHeaderOptions } from '@shell/core/types';
 
 /** A table row. Any resource can be one, so only the labels a view reads directly are typed */
 export interface TableViewRow {
   metadata?: {
-    labels?: Record<string, string>;
+    labels?:       Record<string, string>;
     [key: string]: unknown;
   };
   /** The model's own state name, eg `in-progress`, which the State column shows as "In Progress" */
@@ -20,36 +21,36 @@ export interface TableViewColumn extends Omit<HeaderOptions, 'value'> {
 
 export interface TableViewField {
   /** Token used in the query, eg `namespace` or `label:app` */
-  id: string;
-  label: string;
-  isLabel: boolean;
-  labelKey?: string;
+  id:                string;
+  label:             string;
+  isLabel:           boolean;
+  labelKey?:         string;
   /** Holds moments in time: filtered and suggested as dates, grouped by only by month */
-  isDate?: boolean;
+  isDate?:           boolean;
   /** The Group By entry that gathers a date column's rows by the month they fall in */
-  byMonth?: boolean;
-  header?: TableViewColumn;
+  byMonth?:          boolean;
+  header?:           TableViewColumn;
   /**
    * The column as a paginated list defines it. Only this one says how the api searches it, and it
    * is absent when the list can't be filtered server side
    */
   paginationHeader?: PaginationHeaderOptions;
   /** Only for the query: not a column, not grouped by, not searched by free text */
-  queryOnly?: boolean;
+  queryOnly?:        boolean;
   /** Left out of free text for now, eg the description while its column isn't on the table */
-  notInFreeText?: boolean;
+  notInFreeText?:    boolean;
   /** Matched whole rather than as a part, eg an id */
-  exact?: boolean;
+  exact?:            boolean;
   /** The values it takes, suggested as they are rather than read from the rows */
-  values?: TableViewValueSuggestion[];
+  values?:           TableViewValueSuggestion[];
   /** Rewrites a group's terms on it into terms on other fields, eg `pinned:true` into the pinned clusters' ids */
-  expand?: (terms: TableViewTerm[]) => TableViewTerm[];
+  expand?:           (terms: TableViewTerm[]) => TableViewTerm[];
 }
 
 export interface TableViewTerm {
   /** Field id, or null for free text */
-  field: string | null;
-  value: string;
+  field:   string | null;
+  value:   string;
   negated: boolean;
 }
 
@@ -67,15 +68,15 @@ export interface TableViewQuery {
 
 /** What a table shows: a view's query, columns, grouping and sort */
 export interface TableViewState {
-  query: string;
+  query:           string;
   /** null means the table's default columns */
-  columns: string[] | null;
+  columns:         string[] | null;
   /** null means the table's own order */
-  columnOrder?: string[] | null;
-  labelColumns: string[];
-  groupBy: string | null;
+  columnOrder?:    string[] | null;
+  labelColumns:    string[];
+  groupBy:         string | null;
   /** null means the table's own sort */
-  sort?: string | null;
+  sort?:           string | null;
   sortDescending?: boolean;
 }
 
@@ -84,7 +85,7 @@ export interface TableViewState {
  * the same as those
  */
 export interface TableViewSaved extends Partial<TableViewState> {
-  id: string;
+  id:   string;
   name: string;
 }
 
@@ -93,23 +94,23 @@ export interface TableViewSaved extends Partial<TableViewState> {
  * preferences and a Page resource both keep for a page
  */
 export interface TableViewsPageSettings {
-  views?: TableViewSaved[];
+  views?:         TableViewSaved[];
   defaultViewId?: string | null;
-  allIndex?: number;
+  allIndex?:      number;
 }
 
 export interface TableViewAction {
-  action: string;
-  label?: string;
-  icon?: string;
-  svg?: string;
+  action:   string;
+  label?:   string;
+  icon?:    string;
+  svg?:     string;
   enabled?: boolean;
 }
 
 export interface TableViewQueryToken {
   start: number;
-  end: number;
-  text: string;
+  end:   number;
+  text:  string;
 }
 
 /**
@@ -117,13 +118,13 @@ export interface TableViewQueryToken {
  * the autocomplete and highlighter need this rather than raw tokens
  */
 export interface TableViewQueryTerm extends TableViewQueryToken {
-  kind: 'term' | 'connective';
+  kind:       'term' | 'connective';
   /** The `-` or `!` prefix, if any. Empty for a spelled out `not`, which is its own token */
-  negate: string;
-  negated: boolean;
-  field: TableViewField | null;
-  fieldText: string;
-  value: string;
+  negate:     string;
+  negated:    boolean;
+  field:      TableViewField | null;
+  fieldText:  string;
+  value:      string;
   valueStart: number;
 }
 
@@ -140,15 +141,15 @@ export type TableViewQueryProblemKind =
   'danglingNegation' | 'unbalancedQuote' | 'noTerms';
 
 export interface TableViewQueryProblem {
-  kind: TableViewQueryProblemKind;
-  start: number;
-  end: number;
-  text: string;
+  kind:   TableViewQueryProblemKind;
+  start:  number;
+  end:    number;
+  text:   string;
   label?: string;
 }
 
 export interface TableViewServerFilterResult {
-  filters: PaginationParamFilter[];
+  filters:     PaginationParamFilter[];
   unsupported: TableViewTerm[];
 }
 

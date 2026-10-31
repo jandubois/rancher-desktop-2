@@ -1,16 +1,16 @@
-import { mount, VueWrapper } from '@vue/test-utils';
-import { defineComponent, nextTick } from 'vue';
-import { recomputeAllPoppers } from 'floating-vue';
 import {
-  RcDropdown, RcDropdownItem, RcDropdownItemCheckbox, RcDropdownItemRadio, RcDropdownSubmenu
+  RcDropdown, RcDropdownItem, RcDropdownItemCheckbox, RcDropdownItemRadio, RcDropdownSubmenu,
 } from '@components/RcDropdown';
+import { mount, VueWrapper } from '@vue/test-utils';
+import { recomputeAllPoppers } from 'floating-vue';
+import { defineComponent, nextTick } from 'vue';
 
 jest.mock('floating-vue', () => ({ ...jest.requireActual('floating-vue'), recomputeAllPoppers: jest.fn() }));
 
 /** Draws its popper into its container, as floating-vue does, so key presses bubble the same way */
 const vDropdownMock = defineComponent({
   props: {
-    shown: Boolean, container: { type: Object, default: null }, skidding: { type: Number, default: 0 }, shift: { type: Boolean, default: true }
+    shown: Boolean, container: { type: Object, default: null }, skidding: { type: Number, default: 0 }, shift: { type: Boolean, default: true },
   },
   template: `
     <div class="v-popper">
@@ -26,7 +26,7 @@ const vDropdownMock = defineComponent({
 
 const Menu = defineComponent({
   components: {
-    RcDropdown, RcDropdownItem, RcDropdownItemCheckbox, RcDropdownItemRadio, RcDropdownSubmenu
+    RcDropdown, RcDropdownItem, RcDropdownItemCheckbox, RcDropdownItemRadio, RcDropdownSubmenu,
   },
   props:    { open: Boolean },
   emits:    ['update:open', 'pick'],
@@ -56,7 +56,7 @@ const Menu = defineComponent({
   `,
 });
 
-const byId = (id: string) => document.getElementById(id) as HTMLElement;
+const byId = (id: string) => document.getElementById(id)!;
 
 const key = (el: Element, k: string) => el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
 
@@ -101,11 +101,11 @@ describe('component: RcDropdownSubmenu.vue', () => {
     expect(row.getAttribute('aria-expanded')).toBe('true');
     expect(poppers(wrapper)[1].props('shown')).toBe(true);
 
-    const submenu = byId(row.getAttribute('aria-controls') as string);
+    const submenu = byId(row.getAttribute('aria-controls')!);
 
     expect(submenu.getAttribute('role')).toBe('menu');
     // Named by the item's label, without its value
-    expect(byId(submenu.getAttribute('aria-labelledby') as string).textContent?.trim()).toBe('Group By');
+    expect(byId(submenu.getAttribute('aria-labelledby')!).textContent?.trim()).toBe('Group By');
     expect(submenu.contains(byId('radio-a'))).toBe(true);
     expect(byId('command').closest('[dropdown-menu-collection]')).not.toBe(submenu);
     // Beside the menu's popper, not inside it, where scrolling would clip it
@@ -121,22 +121,22 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     /** Lays out the menu's top, the row's foot and the submenu's height, as jsdom has no layout */
     const openAt = async({
-      menuTop, rowBottom, height, windowHeight
+      menuTop, rowBottom, height, windowHeight,
     }: { menuTop: number, rowBottom: number, height: number, windowHeight: number }) => {
       await openMenu();
       Object.defineProperty(window, 'innerHeight', { value: windowHeight, configurable: true });
 
       const row = byId('group');
-      const menu = byId('command').closest('[dropdown-menu-collection]') as HTMLElement;
+      const menu = byId('command').closest('[dropdown-menu-collection]')!;
       const rect = (top: number, bottom: number) => (() => ({
-        top, bottom, height: bottom - top
+        top, bottom, height: bottom - top,
       })) as unknown as () => DOMRect;
 
       menu.getBoundingClientRect = rect(menuTop, menuTop + 100);
       row.getBoundingClientRect = rect(rowBottom - 30, rowBottom);
       row.click();
       await nextTick();
-      byId(row.getAttribute('aria-controls') as string).getBoundingClientRect = rect(0, height);
+      byId(row.getAttribute('aria-controls')!).getBoundingClientRect = rect(0, height);
       poppers(wrapper)[1].vm.$emit('apply-show');
       await nextTick();
 
@@ -145,7 +145,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     it('should rise just enough to fit, and not be kept on screen as the page scrolls', async() => {
       const submenu = await openAt({
-        menuTop: 500, rowBottom: 540, height: 400, windowHeight: 700
+        menuTop: 500, rowBottom: 540, height: 400, windowHeight: 700,
       });
 
       // 500 + 400 + the 16px edge gap is 216px past the page's foot
@@ -155,7 +155,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     it('should rise no further than where its foot meets its own row', async() => {
       const submenu = await openAt({
-        menuTop: 300, rowBottom: 390, height: 100, windowHeight: 350
+        menuTop: 300, rowBottom: 390, height: 100, windowHeight: 350,
       });
 
       expect(submenu.props('skidding')).toBe(-10);
@@ -163,13 +163,13 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     it('should keep fitting as the page scrolls, until it closes', async() => {
       const submenu = await openAt({
-        menuTop: 100, rowBottom: 140, height: 400, windowHeight: 700
+        menuTop: 100, rowBottom: 140, height: 400, windowHeight: 700,
       });
 
       expect(submenu.props('skidding') || 0).toBe(0);
 
       // The page scrolls the menu down to 500: it now runs 216px past the page's foot
-      const menu = byId('command').closest('[dropdown-menu-collection]') as HTMLElement;
+      const menu = byId('command').closest('[dropdown-menu-collection]')!;
       const row = byId('group');
 
       menu.getBoundingClientRect = (() => ({ top: 500, bottom: 600 })) as unknown as () => DOMRect;
@@ -189,7 +189,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     it('should be placed again once the menu has moved with the window', async() => {
       await openAt({
-        menuTop: 100, rowBottom: 140, height: 200, windowHeight: 900
+        menuTop: 100, rowBottom: 140, height: 200, windowHeight: 900,
       });
       (recomputeAllPoppers as jest.Mock).mockClear();
 
@@ -201,14 +201,14 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     it('should keep its height once raised to its row, however short the window gets', async() => {
       await openAt({
-        menuTop: 100, rowBottom: 290, height: 150, windowHeight: 300
+        menuTop: 100, rowBottom: 290, height: 150, windowHeight: 300,
       });
 
       // Where the popper caps its height
       const inner = document.createElement('div');
 
       inner.className = 'v-popper__inner';
-      byId(byId('group').getAttribute('aria-controls') as string).appendChild(inner);
+      byId(byId('group').getAttribute('aria-controls')!).appendChild(inner);
 
       const resize = async(windowHeight: number) => {
         Object.defineProperty(window, 'innerHeight', { value: windowHeight, configurable: true });
@@ -227,7 +227,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     it('should stay at the menu\'s top when it fits, never lower', async() => {
       const submenu = await openAt({
-        menuTop: 100, rowBottom: 140, height: 200, windowHeight: 900
+        menuTop: 100, rowBottom: 140, height: 200, windowHeight: 900,
       });
 
       expect(submenu.props('skidding') || 0).toBe(0);
@@ -264,9 +264,9 @@ describe('component: RcDropdownSubmenu.vue', () => {
     byId('other').click();
     await nextTick();
 
-    const submenu = byId(byId('other').getAttribute('aria-controls') as string);
+    const submenu = byId(byId('other').getAttribute('aria-controls')!);
 
-    expect(byId(submenu.getAttribute('aria-labelledby') as string).textContent?.trim()).toBe('Other');
+    expect(byId(submenu.getAttribute('aria-labelledby')!).textContent?.trim()).toBe('Other');
     expect(submenu.contains(byId('other-item'))).toBe(true);
   });
 
@@ -277,10 +277,10 @@ describe('component: RcDropdownSubmenu.vue', () => {
     await nextTick();
     byId('radio-a').focus();
     byId('radio-a').dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'ArrowDown', altKey: true, bubbles: true
+      key: 'ArrowDown', altKey: true, bubbles: true,
     }));
     byId('radio-a').dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'ArrowLeft', altKey: true, bubbles: true
+      key: 'ArrowLeft', altKey: true, bubbles: true,
     }));
     await nextTick();
 
@@ -296,7 +296,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     byId('command').focus();
     byId('command').dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'ArrowDown', shiftKey: true, bubbles: true
+      key: 'ArrowDown', shiftKey: true, bubbles: true,
     }));
 
     expect(document.activeElement).toBe(byId('group'));
@@ -309,11 +309,11 @@ describe('component: RcDropdownSubmenu.vue', () => {
 
     byId('group').focus();
     byId('group').dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'ArrowDown', [modifier]: true, bubbles: true
+      key: 'ArrowDown', [modifier]: true, bubbles: true,
     }));
     await nextTick();
     byId('group').dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'ArrowUp', [modifier]: true, bubbles: true
+      key: 'ArrowUp', [modifier]: true, bubbles: true,
     }));
     await nextTick();
 
@@ -324,7 +324,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     const Nested = defineComponent({
       components: {
-        RcDropdown, RcDropdownItem, RcDropdownSubmenu
+        RcDropdown, RcDropdownItem, RcDropdownSubmenu,
       },
       template: `
         <rc-dropdown :open="true">

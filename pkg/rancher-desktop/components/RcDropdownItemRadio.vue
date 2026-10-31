@@ -10,7 +10,7 @@ const props = defineProps({ checked: Boolean, disabled: Boolean });
 const emits = defineEmits(['click']);
 
 const {
-  handleKeydown, handleActivate, scrollIntoView, handleMouseenter
+  handleKeydown, handleActivate, scrollIntoView, handleMouseenter,
 } = useDropdownItem();
 
 const handleClick = (e: MouseEvent) => {
@@ -31,7 +31,7 @@ const handleClick = (e: MouseEvent) => {
     @click.stop="handleClick"
     @keydown.enter.space="handleActivate"
     @keydown.up.down.prevent.stop="handleKeydown"
-    @mousedown.prevent="() => {/* As RcDropdownItem: a click doesn't take the focus */}"
+    @mousedown.prevent="() => { /* As RcDropdownItem: a click doesn't take the focus */ }"
     @focusin="scrollIntoView"
     @mouseenter="handleMouseenter"
   >

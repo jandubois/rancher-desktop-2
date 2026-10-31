@@ -1,8 +1,8 @@
-
-import day from 'dayjs';
 import { NAME, STATE } from '@shell/config/table-headers';
 import { get } from '@shell/utils/object';
 import { valueFor } from '@shell/utils/table-columns';
+import day from 'dayjs';
+
 import type { PaginationHeaderOptions } from '@shell/core/types';
 import type { TableViewColumn, TableViewField, TableViewRow, TableViewValueSuggestion } from '@shell/types/table-views';
 
@@ -193,7 +193,7 @@ export function fieldsFor(
   headers: TableViewColumn[],
   rows: TableViewRow[],
   t?: (key: string) => string,
-  paginationHeaders?: PaginationHeaderOptions[] | null
+  paginationHeaders?: PaginationHeaderOptions[] | null,
 ): TableViewField[] {
   const out: TableViewField[] = [];
   const seen: Record<string, boolean> = {};
@@ -228,7 +228,7 @@ export function fieldsFor(
 
     seen[id] = true;
     const field: TableViewField = {
-      id, label, isLabel: false, header, paginationHeader: byId[id]
+      id, label, isLabel: false, header, paginationHeader: byId[id],
     };
 
     if (isDateColumn(header) || holdsTimestamps(scanRows, field)) {

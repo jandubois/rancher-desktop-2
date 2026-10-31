@@ -25,25 +25,25 @@
  *    </template>
  *  </rc-dropdown-submenu>
  */
-import {
-  computed, inject, onBeforeUnmount, ref, useId, useSlots
-} from 'vue';
 import { useDropdownItem } from '@components/RcDropdown/useDropdownItem';
 import { RcIcon } from '@components/RcIcon';
+import {
+  computed, inject, onBeforeUnmount, ref, useId, useSlots,
+} from 'vue';
+
 import { DropdownContext, DropdownSubmenu, defaultContext } from './types';
 
 const props = withDefaults(defineProps<{
   /** Which side of the menu the submenu opens on */
-  side?: 'left' | 'right';
+  side?:     'left' | 'right';
   disabled?: boolean;
 }>(), { side: 'right', disabled: false });
 
 const {
-  submenuId, activeSubmenu, registerSubmenu, openSubmenu, hoverSubmenu, cancelSubmenuSwitch, inSubmenu
+  submenuId, activeSubmenu, registerSubmenu, openSubmenu, hoverSubmenu, cancelSubmenuSwitch, inSubmenu,
 } = inject<DropdownContext>('dropdownContext') || defaultContext;
 
 if (inSubmenu && process.env.NODE_ENV !== 'production') {
-  // eslint-disable-next-line no-console
   console.warn('RcDropdownSubmenu: submenus are one level deep, so one inside a submenu is not drawn');
 }
 
@@ -108,7 +108,7 @@ const onKeydown = (e: KeyboardEvent) => {
     @click.stop="open(false)"
     @keydown="onKeydown"
     @keydown.up.down.prevent.stop="handleKeydown"
-    @mousedown.prevent="() => {/* As RcDropdownItem: a click doesn't take the focus */}"
+    @mousedown.prevent="() => { /* As RcDropdownItem: a click doesn't take the focus */ }"
     @mouseenter="!disabled && hoverSubmenu(submenu)"
     @mouseleave="cancelSubmenuSwitch()"
     @focusin="scrollIntoView"

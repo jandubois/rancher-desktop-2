@@ -1,4 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
+
 import RcIcon from './RcIcon.vue';
 
 describe('rcIcon.vue', () => {
@@ -67,7 +68,7 @@ describe('rcIcon.vue', () => {
       props: {
         size:   'medium',
         type:   'search',
-        status: 'inherit'
+        status: 'inherit',
       },
     });
 
@@ -81,7 +82,7 @@ describe('rcIcon.vue', () => {
       props: {
         size:   'medium',
         type:   'search',
-        status: 'success'
+        status: 'success',
       },
     });
 
