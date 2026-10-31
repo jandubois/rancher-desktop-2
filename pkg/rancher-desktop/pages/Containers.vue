@@ -7,8 +7,9 @@
     >
       {{ errorMessage }}
     </banner>
-    <SortableTable
+    <ViewTable
       ref="sortableTableRef"
+      table-id="containers"
       class="containersTable"
       :headers="headers"
       key-field="id"
@@ -17,10 +18,9 @@
       :row-actions="true"
       :paging="true"
       :rows-per-page="10"
-      :has-advanced-filtering="false"
       :loading="containers === null"
-      group-by="projectGroup"
-      :group-sort="['projectGroup']"
+      :groupings="groupings"
+      default-group-by="group:projectGroup"
     >
       <template #header-middle>
         <div class="header-middle">
@@ -43,19 +43,19 @@
           </div>
         </div>
       </template>
-      <template #col:containerState="{ row }: { row: RowItem }">
+      <template #col:state="{ row }: { row: RowItem }">
         <td>
           <container-status-badge :container="row" />
         </td>
       </template>
-      <template #col:imageName="{ row }: { row: RowItem }">
+      <template #col:image="{ row }: { row: RowItem }">
         <td>
           <span v-tooltip="getTooltipConfig(row.status?.image || 'unknown')">
             {{ shortSha(row.imageName || 'unknown') }}
           </span>
         </td>
       </template>
-      <template #col:containerName="{ row }: { row: RowItem }">
+      <template #col:name="{ row }: { row: RowItem }">
         <td>
           <a
             v-tooltip="getTooltipConfig(row.status?.name || row.metadata?.name || 'unknown')"
@@ -103,12 +103,12 @@
           </div>
         </td>
       </template>
-      <template #group-row="{ group }">
+      <template #group-row="{ group, fullColspan }">
         <tr
           class="group-row"
           :aria-expanded="!collapsed[group.ref]"
         >
-          <td :colspan="headers.length + 1">
+          <td :colspan="fullColspan">
             <div class="group-tab">
               <i
                 data-title="Toggle Expand"
@@ -125,7 +125,7 @@
           </td>
         </tr>
       </template>
-    </SortableTable>
+    </ViewTable>
   </div>
 </template>
 
@@ -136,7 +136,7 @@ import { defineComponent } from 'vue';
 
 import Banner from '@pkg/components/Banner.vue';
 import ContainerStatusBadge from '@pkg/components/ContainerStatusBadge.vue';
-import SortableTable from '@pkg/components/SortableTable';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import { showDeleteConfirmation } from '@pkg/utils/deleteConfirmation';
 import { hasField } from '@pkg/utils/iterator';
@@ -177,40 +177,40 @@ const STANDALONE_CONTAINERS_GROUP = 'Standalone Containers';
 
 export default defineComponent({
   name:       'Containers',
-  components: { SortableTable, ContainerStatusBadge, Banner },
+  components: { ViewTable, ContainerStatusBadge, Banner },
   data() {
     return {
       // The type cast is necessary to correctly type `collapsed`.
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       collapsed: {} as Record<string, boolean>,
-      // Without a `search` key, the table searches the row field named after the column.
+      groupings: [{ value: 'projectGroup', label: this.t('containers.manage.table.group.project'), field: 'projectGroup' }],
       headers:   [
         {
-          name:   'containerState',
-          label:  this.t('containers.manage.table.header.state'),
-          search: 'status.status',
+          name:  'state',
+          label: this.t('containers.manage.table.header.state'),
+          sort:  ['status.status', 'status.name', 'imageName'],
         },
         {
-          name:   'containerName',
-          label:  this.t('containers.manage.table.header.containerName'),
-          search: 'status.name',
-          sort:   ['status.name', 'imageName'],
+          name:  'name',
+          label: this.t('containers.manage.table.header.containerName'),
+          sort:  ['status.name', 'imageName'],
         },
         {
-          name:  'imageName',
+          name:  'image',
           label: this.t('containers.manage.table.header.image'),
           sort:  ['imageName', 'status.name'],
         },
         {
-          name:   'ports',
-          label:  this.t('containers.manage.table.header.ports'),
-          // Search the host:container pairs that the column shows.
-          search: [(row: RowItem) => row.portList.map(([hostPort, containerPort]) => `${ hostPort }:${ containerPort }`)],
-          sort:   ['portsSortKey', 'status.name', 'imageName'],
+          name:  'ports',
+          label: this.t('containers.manage.table.header.ports'),
+          // The host:container pairs that the column shows.
+          value: (row: RowItem) => row.portList.map(([hostPort, containerPort]) => `${ hostPort }:${ containerPort }`),
+          sort:  ['portsSortKey', 'status.name', 'imageName'],
         },
         {
-          name:  'uptime',
+          name:  'started',
           label: this.t('containers.manage.table.header.started'),
+          value: 'uptime',
           sort:  ['status.startedAt', 'status.name', 'imageName'],
           width: 120,
         },
@@ -242,6 +242,7 @@ export default defineComponent({
           const portList = this.getPortList(container);
           return {
             ...container,
+            metadata:         { ...container.metadata, labels: container.status.labels },
             uptime:           container.status.startedAt ? dayjs(container.status.startedAt).toNow(true) : '',
             id:               container.metadata.name!,
             imageName: (() => {
@@ -575,9 +576,6 @@ export default defineComponent({
   min-width: 8rem;
 }
 
-.containersTable :deep(.search-box) {
-  align-self: flex-end;
-}
 .containersTable :deep(.bulk) {
   align-self: flex-end;
 }

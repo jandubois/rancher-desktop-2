@@ -7,6 +7,7 @@
  */
 
 import { jest } from '@jest/globals';
+import { createStore } from 'vuex';
 
 import { t } from './translations';
 
@@ -24,7 +25,8 @@ export function sortableTableGlobal(mocks: Record<string, unknown> = {}) {
       tooltip:           {},
       'trim-whitespace': {},
     },
-    mocks: {
+    plugins: [createStore({ getters: { 'i18n/t': () => t } })],
+    mocks:   {
       $store: {
         getters:  {
           'resource-fetch/isTooManyItemsToAutoUpdate': false,

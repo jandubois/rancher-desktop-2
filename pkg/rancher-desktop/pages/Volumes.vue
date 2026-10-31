@@ -8,7 +8,8 @@
     >
       {{ errorMessage }}
     </banner>
-    <SortableTable
+    <ViewTable
+      table-id="volumes"
       class="volumesTable"
       data-testid="volumes-table"
       :headers="headers"
@@ -18,7 +19,6 @@
       :row-actions="true"
       :paging="true"
       :rows-per-page="10"
-      :has-advanced-filtering="false"
       :loading="!volumes"
     >
       <template #header-middle>
@@ -67,7 +67,7 @@
           {{ row.createdText }} <!-- use the text representation -->
         </td>
       </template>
-    </SortableTable>
+    </ViewTable>
   </div>
 </template>
 
@@ -76,7 +76,7 @@ import merge from 'lodash/merge';
 import { defineComponent } from 'vue';
 
 import Banner from '@pkg/components/Banner.vue';
-import SortableTable from '@pkg/components/SortableTable';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import type { Settings } from '@pkg/config/settings';
 import { mapTypedActions, mapTypedGetters, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import { showDeleteConfirmation } from '@pkg/utils/deleteConfirmation';
@@ -103,36 +103,32 @@ type RowItem = Volume & Required<Pick<Volume, 'status' | 'metadata'>> & {
 
 export default defineComponent({
   name:       'Volumes',
-  components: { SortableTable, Banner },
+  components: { ViewTable, Banner },
   data() {
     return {
       settings:       undefined as Settings | undefined,
-      // Without a `search` key, the table searches the row field named after the column.
       headers:        [
         {
-          name:   'Name',
-          label:  this.t('volumes.manage.table.header.volumeName'),
-          search: 'status.name',
-          sort:   ['status.name'],
+          name:  'Name',
+          label: this.t('volumes.manage.table.header.volumeName'),
+          sort:  ['status.name'],
         },
         {
-          name:   'Driver',
-          label:  this.t('volumes.manage.table.header.driver'),
-          search: 'status.driver',
-          sort:   ['status.driver', 'status.name'],
+          name:  'Driver',
+          label: this.t('volumes.manage.table.header.driver'),
+          sort:  ['status.driver', 'status.name'],
         },
         {
-          name:   'Mountpoint',
-          label:  this.t('volumes.manage.table.header.mountpoint'),
-          search: 'status.mountpoint',
-          sort:   ['status.mountpoint', 'status.name'],
+          name:  'Mountpoint',
+          label: this.t('volumes.manage.table.header.mountpoint'),
+          sort:  ['status.mountpoint', 'status.name'],
         },
         {
-          name:   'Created',
-          label:  this.t('volumes.manage.table.header.created'),
-          search: 'createdText',
-          sort:   ['status.createdAt', 'status.name'],
-          width:  120,
+          name:  'Created',
+          label: this.t('volumes.manage.table.header.created'),
+          value: 'createdText',
+          sort:  ['status.createdAt', 'status.name'],
+          width: 120,
         },
       ],
     };
@@ -271,9 +267,6 @@ export default defineComponent({
   min-width: 8rem;
 }
 
-.volumesTable:v-deep(.search-box) {
-  align-self: flex-end;
-}
 .volumesTable:v-deep(.bulk) {
   align-self: flex-end;
 }
