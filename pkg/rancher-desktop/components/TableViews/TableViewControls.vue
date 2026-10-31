@@ -623,6 +623,12 @@ watch(groupPanel, (panel) => {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  // --muted is unreadable on the highlighted row's background
+  [dropdown-menu-item]:hover .menu-nav-value,
+  [dropdown-menu-item].expanded .menu-nav-value {
+    color: var(--dropdown-hover-text);
+  }
 }
 
 .menu-panel {

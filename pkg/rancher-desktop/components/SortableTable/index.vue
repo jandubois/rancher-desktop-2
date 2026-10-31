@@ -1945,6 +1945,11 @@ export default {
       grid-template-columns: [bulk] auto [middle] minmax(min-content, auto) [search] minmax(min-content, auto);
     }
 
+    // Without a search cell, the middle cell reaches the right edge
+    &:not(:has(> .search)) {
+      grid-template-columns: [bulk] auto [middle] min-content;
+    }
+
     .bulk {
       grid-area: bulk;
 

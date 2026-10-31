@@ -74,6 +74,9 @@ An upstream `<name>.test.ts` is `__tests__/<name>.spec.ts` next to our copy.
   and the functions above.
 - **`unsupportedFields`** stays in `TableViewControls.vue` though nothing sets
   it, so that a merge there stays simple.
+- **View menu values:** `TableViewControls.vue` gives `.menu-nav-value`
+  `--dropdown-hover-text` on a highlighted row, because `--muted` is
+  unreadable on our `--dropdown-hover-bg`.
 
 ## Left out
 
@@ -131,6 +134,9 @@ We took these by hand too:
   in that format, if we add saved views.
 - `assets/styles/rancher-desktop.scss`: the rule behind the red outline also
   skips `RcButton.vue`'s `variant-` classes.
+- `components/SortableTable/index.vue` drops the search column from its header
+  grid when there is no search cell, so `header-middle` content reaches the
+  right edge.
 - `ViewTable.spec.ts`, `TableViewControls.spec.ts` and `storage.spec.ts` don't
   have an upstream counterpart.
 
