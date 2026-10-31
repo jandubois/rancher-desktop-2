@@ -245,13 +245,17 @@ $(DISTRO_IMAGE): $(WORKING_DISTRO)
 FORCE:
 .PHONY: FORCE
 
+# bin/rdd embeds the dashboard only when it has been staged, so building rdd
+# doesn't need Node. `make --directory=dashboard` from the repo root stages it.
+DASHBOARD_INDEX := $(wildcard pkg/steve/dashboard/index.html)
+
 # Only bin/rdd and bin/lima-controller embed the distro. Tests, lint and the
 # other standalone controllers build without with_distro and need no image.
-bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE)
+bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE) $(DASHBOARD_INDEX)
 	WSLENV=${WSLENV}:CGO_CFLAGS:CGO_ENABLED:GOOS:GOARCH \
 	CGO_CFLAGS="$(SQLITE_CFLAGS)" CGO_ENABLED=1 \
 	GOOS=$(TARGET_OS) GOARCH=$(TARGET_ARCH) \
-	go$(EXE) build -tags="$(TAGS) with_distro" -gcflags="all=${GCFLAGS}" -ldflags="$(LDFLAGS)" -o $@ ./cmd/rdd
+	go$(EXE) build -tags="$(TAGS) with_distro $(if $(DASHBOARD_INDEX),with_dashboard)" -gcflags="all=${GCFLAGS}" -ldflags="$(LDFLAGS)" -o $@ ./cmd/rdd
 	$(call ATTACH_ENTITLEMENTS,$@)
 	ls -lh $@
 build-rdd: bin/rdd$(EXE)
