@@ -145,15 +145,14 @@ describe('Volumes methods', () => {
       expect(volumeDelete.mock.calls).toEqual(doomed.map(target => [{ volume: target }]));
     });
 
-    it('deletes what the user confirmed after a refresh empties the selection', async() => {
+    it('deletes what the dialog listed when the selection changes behind it', async() => {
       const volumeDelete = jest.fn();
       const selection = [volume('one'), volume('two')];
       const doomed = [...selection];
       const row = rowFor(selection[0], {
         volumeDelete,
-        // A refresh while the dialog is open drops the stale rows from the table's selection.
         confirmDelete: () => {
-          selection.splice(0);
+          selection.splice(0, selection.length, volume('other'));
 
           return Promise.resolve(true);
         },

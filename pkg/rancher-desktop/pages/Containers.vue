@@ -267,8 +267,9 @@ export default defineComponent({
             unpauseContainer: () => this.containerRequestAction({ container, state: 'unpause' }),
             restartContainer: () => this.containerRequestAction({ container, state: 'restart' }),
             deleteContainer:  async(args?: Container[]) => {
-              // The context menu passes the table's live selection, which a
-              // refresh can empty while the dialog is open, so copy it first.
+              // The context menu passes the table's live selection, and the
+              // dialog leaves the table usable. Copy it so that the delete
+              // matches what the dialog lists.
               const targets = args?.length ? [...args] : [container];
 
               if (await this.confirmDelete(targets)) {

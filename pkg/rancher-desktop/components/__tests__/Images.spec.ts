@@ -49,14 +49,14 @@ describe('Images deleteImages', () => {
     return ctx;
   }
 
-  it('deletes what the user confirmed after a refresh empties the selection', async() => {
+  it('deletes what the dialog listed when the selection changes behind it', async() => {
     const one = { id: 'sha256:1', reference: 'one:latest' };
     const two = { id: 'sha256:2', reference: 'two:latest' };
     const selected = [one, two];
     const ctx = context(selected);
 
     showMessageBox.mockImplementation(() => {
-      selected.splice(0);
+      selected.splice(0, selected.length, { id: 'sha256:3', reference: 'other:latest' });
 
       return Promise.resolve({ response: deleteButton });
     });
