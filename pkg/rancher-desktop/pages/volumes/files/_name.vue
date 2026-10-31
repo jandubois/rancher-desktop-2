@@ -49,12 +49,12 @@
       v-else
       class="file-browser"
     >
-      <sortable-table
+      <view-table
+        table-id="volumeFiles"
         :headers="headers"
         :paging="false"
         :row-actions="false"
         :rows="files"
-        :search="false"
         :table-actions="false"
         class="files-table"
         key-field="path"
@@ -86,7 +86,7 @@
             {{ row.permissions }}
           </td>
         </template>
-      </sortable-table>
+      </view-table>
     </div>
   </div>
 </template>
@@ -99,7 +99,7 @@ import { mapGetters } from 'vuex';
 import BadgeState from '@pkg/components/BadgeState.vue';
 import Banner from '@pkg/components/Banner.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
-import SortableTable from '@pkg/components/SortableTable';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import { ContainerEngine } from '@pkg/config/settings';
 import { mapTypedState } from '@pkg/entry/store';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
@@ -122,7 +122,7 @@ export default defineComponent({
     BadgeState,
     Banner,
     LoadingIndicator,
-    SortableTable,
+    ViewTable,
   },
   data() {
     const queryPath = this.$route.query.path || this.$route.query.initialPath;
@@ -146,12 +146,14 @@ export default defineComponent({
           name:  'size',
           label: this.t('volumes.files.table.header.size'),
           sort:  ['size', 'name'],
+          value: (row: fileEntry) => (row.isDirectory ? '-' : this.formatSize(row.size)),
           width: 100,
         },
         {
           name:  'modified',
           label: this.t('volumes.files.table.header.modified'),
           sort:  ['modified', 'name'],
+          value: (row: fileEntry) => this.formatDate(row.modified),
           width: 180,
         },
         {

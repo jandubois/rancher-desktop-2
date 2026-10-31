@@ -5,6 +5,9 @@
 import { jest } from '@jest/globals';
 import { mount } from '@vue/test-utils';
 
+import { fieldsFor } from '@pkg/utils/table-views/fields';
+import { applyQueryExpression } from '@pkg/utils/table-views/filter-rows';
+import { parseQueryExpression } from '@pkg/utils/table-views/query';
 import mockModules from '@pkg/utils/testUtils/mockModules';
 import { sortableTableGlobal } from '@pkg/utils/testUtils/sortableTable';
 import { t } from '@pkg/utils/testUtils/translations';
@@ -91,6 +94,15 @@ describe('Volumes methods', () => {
       return wrapper.findComponent({ name: 'SortableTable' });
     }
 
+    /** The names of the rows that a query finds, using the page's real headers and rows. */
+    function search(volumes: Volume[], query: string) {
+      const table = mountTable(volumes);
+      const rows = table.props('rows') as any[];
+      const fields = fieldsFor(table.props('headers'), rows);
+
+      return applyQueryExpression(rows, parseQueryExpression(query, fields), fields).map(row => row.status.name);
+    }
+
     it('keys each row by its volume UID', () => {
       const rows = mountTable([volume('one'), volume('two')]).findAll('tr.main-row');
 
@@ -103,10 +115,22 @@ describe('Volumes methods', () => {
       ['mountpoint', 'data7'],
     ])('finds a volume by its %s', (_, query) => {
       // Each query matches only the one field that the test names.
-      const table = mountTable([volume('one'), volume('two', 'zfs', '/mnt/data7')]).vm;
+      expect(search([volume('one'), volume('two', 'zfs', '/mnt/data7')], query)).toEqual(['two']);
+    });
 
-      table.searchQuery = query;
-      expect(table.filteredRows.map((row: any) => row.status.name)).toEqual(['two']);
+    describe('Created', () => {
+      const createdAt = new Date('2026-01-02T12:00:00Z');
+      const dated = volume('dated');
+
+      dated.status!.createdAt = createdAt;
+
+      it('finds the date that the cell shows', () => {
+        expect(search([volume('undated'), dated], createdAt.toLocaleDateString())).toEqual(['dated']);
+      });
+
+      it('does not find the ISO text, which no cell shows', () => {
+        expect(search([dated], '2026-01-02T')).toEqual([]);
+      });
     });
 
     it('sorts by driver', () => {

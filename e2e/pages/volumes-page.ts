@@ -24,7 +24,7 @@ export class VolumesPage {
     this.table = page.getByTestId('volumes-table');
     this.volumes = this.table.locator(`tr.main-row[data-node-id]`);
     this.namespaceSelector = page.getByTestId('namespace-selector');
-    this.searchBox = page.getByTestId('search-input');
+    this.searchBox = page.getByTestId('table-views-query');
     this.errorBanner = page.getByTestId('error-banner');
   }
 

@@ -164,6 +164,9 @@ containers:
         # @context Containers page, header row of the table group
         # @meaning Containers that belong to no compose project and no Kubernetes pod
         standalone: Standalone Containers
+        # @context Containers page, entry in the View menu's Group By list
+        # @meaning The compose project or Kubernetes pod that a container belongs to
+        project: Project
   confirmDelete:
     # @meaning '&' marks the access key, not literal text; see the README.
     confirm: '&Delete'
@@ -617,6 +620,59 @@ sortableTable:
     noFilter: This column cannot be filtered
     groupBy: Group by
     show: Show
+tableViews:
+  view:
+    label: View
+    groupBy: Group By
+    columnsConfiguration: Columns Configuration
+    columnsDefault: Default
+    columnsCount: "{shown} / {total}"
+    reset: Reset to Default
+  query:
+    placeholder: 'Filter across all columns or only specific ones (e.g. state:error)'
+    clear: Clear filter
+    inUse: "{count} in use"
+    label: Label
+    suggestions: Filter suggestions
+    loadingValues: Loading values…
+    suggestionsAvailable: |-
+      {count, plural,
+      one {1 suggestion available}
+      other {{count} suggestions available}
+      }
+    connective:
+      and: Both must match
+      or: Either can match
+      not: Leave these out
+    # What the toolbar says about a query it cannot read as written. Nothing here stops the query
+    # running - the table filters by as much of it as it can.
+    problem:
+      emptyValue: "'<b>'{label}'</b>' has no value to match."
+      trailingOperator: "The query ends with '<b>'{text}'</b>'."
+      leadingJoiner: "'<b>'{text}'</b>' has nothing before it to join."
+      consecutiveOperators: "'<b>'{text}'</b>' follows another operator."
+      danglingNegation: "'<b>'{text}'</b>' on its own negates nothing."
+      unbalancedQuote: 'A quote is opened and never closed.'
+      noTerms: 'There is nothing to filter by.'
+    # Shown when part of a query names something this list cannot be filtered by on the server
+    unsupported: |-
+      {count, plural,
+      one {'<b>'{fields}'</b>' cannot be filtered on this list, so that part of the query was ignored.}
+      other {'<b>'{fields}'</b>' cannot be filtered on this list, so those parts of the query were ignored.}
+      }
+  columns:
+    selectAll: Select All Columns
+    reset: Reset to Default
+    locked: This column cannot be hidden
+    reorder: Drag to reorder
+    moveKeys: '{modifier}+Up Arrow or {modifier}+Down Arrow moves it'
+    moved: '{label} moved to position {position} of {total}'
+    allShown: 'All {count} columns shown'
+    resetDone: Columns reset to the default
+  group:
+    none: None
+    resetDone: 'Grouping reset to {label}'
+    empty: (none)
 validation:
   tab: One or more fields in this tab contain a form validation error
 action:

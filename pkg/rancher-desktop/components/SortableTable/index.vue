@@ -96,13 +96,14 @@ export default {
     },
 
     groupBy: {
-      // Field to group rows by, row[groupBy] must be something that can be a map key
-      type:    String,
+      // Field to group rows by, row[groupBy] must be something that can be a map key. Or a function
+      // that takes the row and returns that key
+      type:    [String, Function],
       default: null,
     },
     groupRef: {
       // Object to provide as the reference for rendering the grouping row
-      type:    String,
+      type:    [String, Function],
       default: null,
     },
     groupSort: {
@@ -267,6 +268,15 @@ export default {
     noDataKey: {
       type:    String,
       default: 'sortableTable.noData', // i18n-uses sortableTable.noData
+    },
+
+    /**
+     * The rows are already filtered by a query that this table doesn't know about, so having none
+     * means that nothing matched rather than there being nothing to show
+     */
+    queried: {
+      type:    Boolean,
+      default: false,
     },
 
     /**
@@ -537,7 +547,7 @@ export default {
     },
 
     noResults() {
-      return !!this.searchQuery && this.pagedRows.length === 0;
+      return (!!this.searchQuery || this.queried) && this.pagedRows.length === 0;
     },
 
     noRows() {
@@ -1933,6 +1943,11 @@ export default {
 
     &.advanced-filtering {
       grid-template-columns: [bulk] auto [middle] minmax(min-content, auto) [search] minmax(min-content, auto);
+    }
+
+    // Without a search cell, the middle cell reaches the right edge
+    &:not(:has(> .search)) {
+      grid-template-columns: [bulk] auto [middle] min-content;
     }
 
     .bulk {

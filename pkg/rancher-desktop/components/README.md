@@ -28,3 +28,6 @@ An upstream `<Name>.test.ts` is `__tests__/<Name>.spec.ts` next to our copy of
 `<Name>`. In imports, `@shell/` becomes `@pkg/`, `@components/` paths
 follow the table, and a test's relative import of its subject (`./index`
 or `./<name>`) points at our copy, such as `../Card.vue`.
+
+The `Rc*` components and the table views came from a later `master` commit, and
+[TableViews/README.md](TableViews/README.md) describes those files.

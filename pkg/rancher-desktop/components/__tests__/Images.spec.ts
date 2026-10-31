@@ -30,6 +30,15 @@ mockModules({
 
 const { default: Images } = await import('@pkg/components/Images.vue');
 
+describe('Images size column', () => {
+  it('gives the size that the cell shows', () => {
+    const { headers, sizeFormatter } = (Images as any).data.call({ t });
+    const size = headers.find((header: { name: string }) => header.name === 'size');
+
+    expect(size.value({ size: 1536 })).toBe(sizeFormatter.format(1536));
+  });
+});
+
 describe('Images deleteImages', () => {
   const deleteButton = 0;
   const cancelButton = 1;

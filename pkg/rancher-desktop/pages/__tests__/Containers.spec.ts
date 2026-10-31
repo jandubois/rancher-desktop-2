@@ -1,6 +1,11 @@
 import { jest } from '@jest/globals';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
+import { fieldsFor } from '@pkg/utils/table-views/fields';
+import { applyQueryExpression } from '@pkg/utils/table-views/filter-rows';
+import { parseQueryExpression } from '@pkg/utils/table-views/query';
 import mockModules from '@pkg/utils/testUtils/mockModules';
 import { sortableTableGlobal } from '@pkg/utils/testUtils/sortableTable';
 import { t } from '@pkg/utils/testUtils/translations';
@@ -11,6 +16,11 @@ import {
 
 const componentStub = { template: '<div />' };
 const showMessageBox = jest.fn<(channel: string, options: any) => Promise<{ response: number }>>();
+
+/** What the mapped state and getters read */
+const engine: Record<string, unknown> = {};
+
+dayjs.extend(relativeTime);
 
 mockModules({
   '@pkg/entry/store':  {
@@ -29,8 +39,7 @@ mockModules({
     },
     mapTypedGetters(module: string, arg: string[] | Record<string, string>) {
       const props = Array.isArray(arg) ? arg : Object.values(arg);
-      return Object.fromEntries(
-        props.map((prop) => [prop, jest.fn()]));
+      return Object.fromEntries(props.map((prop) => [prop, () => engine[prop]]));
     },
     mapTypedMutations(module: string, arg: string[] | Record<string, string>) {
       const props = Array.isArray(arg) ? arg : Object.values(arg);
@@ -38,7 +47,7 @@ mockModules({
     },
     mapTypedState(module: string, arg: string[] | Record<string, string>) {
       const props = Array.isArray(arg) ? arg : Object.values(arg);
-      return Object.fromEntries(props.map((prop) => [prop, jest.fn()]));
+      return Object.fromEntries(props.map((prop) => [prop, () => engine[prop]]));
     },
   },
   '@pkg/utils/ipcRenderer': {
@@ -57,7 +66,7 @@ mockModules({
 });
 
 const { default: Containers } = await import('@pkg/pages/Containers.vue');
-const { default: SortableTable } = await import('@pkg/components/SortableTable/index.vue');
+const { default: TableViewControls } = await import('@pkg/components/TableViews/TableViewControls.vue');
 
 describe('Containers methods', () => {
   const { methods } = Containers as any;
@@ -167,23 +176,88 @@ describe('Containers methods', () => {
       ['name', 'web'],
       ['state', 'running'],
       ['port, as the column shows it', '8080:80'],
+      ['state field', 'state:running'],
+      ['name field', 'name:web'],
+      ['image field', 'image:nginx'],
+      ['label field', 'label:tier:front'],
     ])('finds a container by its %s', (_, query) => {
-      const web = container('web');
+      const web = container('web', { tier: 'front' });
 
+      web.status!.image = 'nginx';
       web.status!.status = ContainerStatus.Running;
       web.status!.ports = [{ name: '80/tcp', bindings: [{ hostIP: '0.0.0.0', hostPort: '8080' }] }];
-      const table = mount(SortableTable, {
-        global: sortableTableGlobal(),
-        props:  {
-          headers:     (Containers as any).data.call({ t }).headers,
-          rows:        rowsFor([web, container('db')], { getPortList: methods.getPortList }),
-          keyField:    'id',
-          rowsPerPage: 10,
-        },
-      }).vm;
+      const { headers } = (Containers as any).data.call({ t });
+      const rows = rowsFor([web, container('db')], { getPortList: methods.getPortList });
+      const fields = fieldsFor(headers, rows);
+      const found = applyQueryExpression(rows, parseQueryExpression(query, fields), fields);
 
-      table.searchQuery = query;
-      expect(table.filteredRows.map((row: any) => row.status.name)).toEqual(['web']);
+      expect(found.map((row: any) => row.status.name)).toEqual(['web']);
+    });
+  });
+
+  describe('page', () => {
+    afterEach(() => {
+      delete engine.containers;
+      delete engine.supportsNamespaces;
+    });
+
+    async function mountPage(items: Container[]) {
+      engine.containers = items;
+      engine.supportsNamespaces = true;
+      const wrapper = mount(Containers, { global: sortableTableGlobal() });
+
+      await flushPromises();
+
+      return wrapper;
+    }
+
+    it('shows the state, name, image and started cells', async() => {
+      const web = container('web');
+      const startedAt = dayjs().subtract(3, 'hour').toDate();
+
+      web.status!.image = 'nginx';
+      web.status!.startedAt = startedAt;
+      const wrapper = await mountPage([web]);
+
+      expect(wrapper.find('[data-testid="container-state"]').attributes('label')).toBe(ContainerStatus.Exited);
+      expect(wrapper.find('.container-name-link').text()).toBe('web');
+      expect(wrapper.findAll('tr.main-row td').map(cell => cell.text())).toEqual(expect.arrayContaining([
+        'nginx',
+        dayjs(startedAt).toNow(true),
+      ]));
+    });
+
+    it('groups rows under the page\'s own heading', async() => {
+      const wrapper = await mountPage([
+        container('web', { 'com.docker.compose.project': 'shop' }),
+        container('db'),
+      ]);
+
+      expect(wrapper.findAll('tr.group-row').map(row => row.text()).sort()).toEqual([
+        t('containers.manage.table.group.standalone'),
+        'shop',
+      ]);
+    });
+
+    it('offers each column to Group By', async() => {
+      const wrapper = await mountPage([container('web')]);
+      const fields = wrapper.findComponent(TableViewControls).props('groupFields') as { id: string }[];
+
+      expect(fields.map(field => field.id)).toEqual(['group:projectGroup', 'state', 'name', 'image', 'ports', 'started']);
+    });
+
+    it('places the port dropdown from the table element', async() => {
+      const web = container('web');
+
+      web.status!.ports = ['8080', '8081', '8082'].map(hostPort => {
+        return { name: `${ hostPort }/tcp`, bindings: [{ hostIP: '0.0.0.0', hostPort }] };
+      });
+      const wrapper = await mountPage([web]);
+      const content = wrapper.find('.dropdown-content').element as HTMLElement;
+
+      expect(content.style.top).toBe('');
+      await wrapper.find('.dropdown').trigger('mouseenter');
+      expect(content.style.top).toBe('0px');
     });
   });
 

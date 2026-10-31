@@ -1,0 +1,61 @@
+<script setup lang="ts">
+/**
+ * A button that opens a menu. Used in conjunction with `RcDropdown.vue`.
+ */
+import { inject, onMounted, ref } from 'vue';
+
+import RcButton from '@pkg/components/RcButton.vue';
+import type { ButtonSize as RcButtonSize, RcButtonType } from '@pkg/types/RcButton';
+import { DropdownContext, defaultContext } from '@pkg/types/RcDropdown';
+
+defineProps<{
+  size?: RcButtonSize,
+}>();
+
+const {
+  showMenu,
+  registerTrigger,
+  isMenuOpen,
+  handleKeydown,
+} = inject<DropdownContext>('dropdownContext') || defaultContext;
+
+const dropdownTrigger = ref<RcButtonType | null>(null);
+
+onMounted(() => {
+  registerTrigger(dropdownTrigger.value);
+});
+
+const focus = () => {
+  dropdownTrigger?.value?.focus();
+};
+
+defineExpose({ focus });
+</script>
+
+<template>
+  <RcButton
+    ref="dropdownTrigger"
+    role="button"
+    aria-haspopup="menu"
+    :aria-expanded="isMenuOpen"
+    :size="size"
+    @keydown.enter.space="handleKeydown"
+    @click="showMenu(true)"
+  >
+    <template
+      v-if="$slots.before"
+      #before
+    >
+      <slot name="before" />
+    </template>
+    <slot name="default">
+      <!--Empty slot content-->
+    </slot>
+    <template
+      v-if="$slots.after"
+      #after
+    >
+      <slot name="after" />
+    </template>
+  </RcButton>
+</template>
