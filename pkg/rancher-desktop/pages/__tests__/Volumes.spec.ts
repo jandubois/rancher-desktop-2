@@ -36,7 +36,7 @@ describe('Volumes methods', () => {
 
   function volume(name: string, driver = 'local', mountpoint = `/var/lib/docker/volumes/${ name }/_data`): Volume {
     return {
-      metadata: { name: `${ name }-id`, namespace: 'default' },
+      metadata: { name: `${ name }-id`, namespace: 'default', uid: `${ name }-uid` },
       status:   {
         name,
         namespace:  'default',
@@ -87,12 +87,10 @@ describe('Volumes methods', () => {
       return wrapper.findComponent({ name: 'SortableTable' });
     }
 
-    it('keys each row by its volume name', () => {
-      const { keyField, rows } = mountTable([volume('one'), volume('two')]).props();
+    it('keys each row by its volume UID', () => {
+      const rows = mountTable([volume('one'), volume('two')]).findAll('tr.main-row');
 
-      // SortableTable reads the key as row[keyField], and its selection matches rows by _key.
-      expect(rows.map((row: any) => row[keyField])).toEqual(['one', 'two']);
-      expect(rows.map((row: any) => row._key)).toEqual(['one', 'two']);
+      expect(rows.map(row => row.attributes('data-node-id'))).toEqual(['one-uid', 'two-uid']);
     });
 
     it.each([

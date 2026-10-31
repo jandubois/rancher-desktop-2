@@ -12,7 +12,7 @@
       class="volumesTable"
       data-testid="volumes-table"
       :headers="headers"
-      key-field="_key"
+      key-field="metadata.uid"
       :rows="rows"
       no-rows-key="volumes.sortableTables.noRows"
       :row-actions="true"
@@ -89,7 +89,6 @@ const MAX_PATH_LENGTH = 40;
  * The RowItem type describes the type of one row.
  */
 type RowItem = Volume & Required<Pick<Volume, 'status' | 'metadata'>> & {
-  _key:             string;
   createdText:      string;
   availableActions: {
     label:       string;
@@ -147,7 +146,6 @@ export default defineComponent({
         .filter(hasField('status'))
         .sort((a, b) => a.status.name.localeCompare(b.status.name))
         .map(volume => merge({}, volume, {
-          _key:                 volume.status.name,
           createdText:          volume.status.createdAt ? new Date(volume.status.createdAt).toLocaleDateString() : '',
           availableActions: [
             {

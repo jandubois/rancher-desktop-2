@@ -20,6 +20,7 @@ interface Row {
   id:               string;
   containerName:    string;
   projectGroup:     string;
+  metadata:         { uid: string };
   availableActions: { label: string, action: string, enabled: boolean, bulkable: boolean }[];
 }
 
@@ -28,6 +29,7 @@ function row(id: string, projectGroup = 'one'): Row {
     id,
     containerName:    id,
     projectGroup,
+    metadata:         { uid: `${ id }-uid` },
     availableActions: [{
       label: 'Stop', action: 'stopContainer', enabled: true, bulkable: true,
     }],
@@ -146,6 +148,28 @@ describe('SortableTable selection', () => {
     await wrapper.setProps({ rows: rebuiltRows });
 
     expect(selectedRowsOf(wrapper).map(toRaw)).toEqual([rebuiltRows[0], rebuiltRows[1]]);
+  });
+
+  it('keeps the selection of rebuilt rows when the key field is a path', async() => {
+    const wrapper = mountTable(threeRows(), { keyField: 'metadata.uid' });
+
+    await clickCell(wrapper, 0);
+
+    const rebuiltRows = threeRows();
+
+    await wrapper.setProps({ rows: rebuiltRows });
+
+    expect(selectedRowsOf(wrapper).map(toRaw)).toEqual([rebuiltRows[0]]);
+  });
+
+  it('expands only the toggled row when the key field is a path', async() => {
+    const rows = threeRows();
+    const wrapper = mountTable(rows, { keyField: 'metadata.uid', subExpandColumn: true });
+
+    (wrapper.vm as any).toggleExpand(rows[0]);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.findAll('tr.main-row .icon-chevron-down')).toHaveLength(1);
   });
 
   it('holds the rebuilt row objects rather than the ones that were clicked', async() => {
