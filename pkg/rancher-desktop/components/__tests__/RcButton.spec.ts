@@ -1,6 +1,7 @@
+import { jest } from '@jest/globals';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 
-import RcButton from './RcButton.vue';
+import RcButton from '../RcButton.vue';
 
 describe('rcButton.vue', () => {
   it('renders with default variant', () => {

@@ -25,13 +25,13 @@
  *    </template>
  *  </rc-dropdown-submenu>
  */
-import { useDropdownItem } from '@components/RcDropdown/useDropdownItem';
-import { RcIcon } from '@components/RcIcon';
 import {
   computed, inject, onBeforeUnmount, ref, useId, useSlots,
 } from 'vue';
 
-import { DropdownContext, DropdownSubmenu, defaultContext } from './types';
+import RcIcon from '@pkg/components/RcIcon.vue';
+import { useDropdownItem } from '@pkg/composables/useDropdownItem';
+import { DropdownContext, DropdownSubmenu, defaultContext } from '@pkg/types/RcDropdown';
 
 const props = withDefaults(defineProps<{
   /** Which side of the menu the submenu opens on */

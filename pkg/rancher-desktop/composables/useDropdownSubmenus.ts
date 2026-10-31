@@ -2,7 +2,7 @@ import {
   defineComponent, nextTick, onBeforeUnmount, provide, ref, shallowRef, watch, PropType, Ref,
 } from 'vue';
 
-import { DropdownContext, DropdownSubmenu } from './types';
+import { DropdownContext, DropdownSubmenu } from '@pkg/types/RcDropdown';
 
 /** Time to cross the items between one that opened a submenu and the submenu, before another takes over */
 const SUBMENU_GRACE_MS = 300;

@@ -1,4 +1,4 @@
-import { SAVED_VIEWS_VERSION, persistenceIdOf, savedViewsByType, savedViewsPref } from '@shell/utils/table-views/views';
+import { SAVED_VIEWS_VERSION, persistenceIdOf, savedViewsByType, savedViewsPref } from '@pkg/utils/table-views/views';
 
 describe('the saved views preference', () => {
   const byType = { pod: { views: [{ id: 'a', name: 'a' }] } };

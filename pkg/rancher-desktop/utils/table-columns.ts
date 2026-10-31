@@ -1,8 +1,7 @@
 /** Shared by the table's cells and table views, so a group heading can't disagree with its cells */
 
-import { get } from '@shell/utils/object';
-
-import type { TableViewColumn, TableViewRow } from '@shell/types/table-views';
+import type { TableViewColumn, TableViewRow } from '@pkg/types/table-views';
+import { get } from '@pkg/utils/object';
 
 interface ValueForOptions {
   /** Off for callers that ask about every column, where some genuinely have no path */

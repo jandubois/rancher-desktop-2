@@ -1,6 +1,8 @@
-import { DragReorderOptions, useDragReorder } from '@shell/composables/useDragReorder';
+import { jest } from '@jest/globals';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h } from 'vue';
+
+import { DragReorderOptions, useDragReorder } from '@pkg/composables/useDragReorder';
 
 // A list of four whose items sit 10 apart along the axis, so the pointer at 25 is over the third
 function setup(overrides: Partial<DragReorderOptions> = {}) {

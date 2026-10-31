@@ -1,6 +1,6 @@
 import { shallowMount } from '@vue/test-utils';
 
-import RcSeparator from './RcSeparator.vue';
+import RcSeparator from '../RcSeparator.vue';
 
 describe('component: RcSeparator', () => {
   it('renders an hr element', () => {

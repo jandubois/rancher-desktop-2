@@ -2,10 +2,11 @@
 /**
  * A button that opens a menu. Used in conjunction with `RcDropdown.vue`.
  */
-import { RcButton, RcButtonType, RcButtonSize } from '@components/RcButton';
 import { inject, onMounted, ref } from 'vue';
 
-import { DropdownContext, defaultContext } from './types';
+import RcButton from '@pkg/components/RcButton.vue';
+import type { ButtonSize as RcButtonSize, RcButtonType } from '@pkg/types/RcButton';
+import { DropdownContext, defaultContext } from '@pkg/types/RcDropdown';
 
 defineProps<{
   size?: RcButtonSize,

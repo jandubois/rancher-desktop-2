@@ -1,6 +1,6 @@
 import { inject } from 'vue';
 
-import { DropdownContext, defaultContext } from './types';
+import { DropdownContext, defaultContext } from '@pkg/types/RcDropdown';
 
 export const useDropdownItem = () => {
   const { dropdownItems, close, hoverSubmenu } = inject<DropdownContext>('dropdownContext') || defaultContext;

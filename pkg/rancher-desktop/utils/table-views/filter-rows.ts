@@ -1,21 +1,18 @@
-import { STATE } from '@shell/config/table-headers';
-import {
-  dateText, fieldValue, findField, rawFieldValue, stringifyValue,
-} from '@shell/utils/table-views/fields';
-
 import type {
   TableViewField, TableViewGroup, TableViewQuery, TableViewRow, TableViewTerm,
-} from '@shell/types/table-views';
+} from '@pkg/types/table-views';
+import {
+  dateText, fieldValue, findField, stringifyValue,
+} from '@pkg/utils/table-views/fields';
 
 /**
- * Both the shown and the filterable value count, so `state:Act` and `state:active` match client and
- * server side alike. The State column also matches the state's own name, which it shows remapped:
- * `in-progress` as "In Progress"
+ * The value shown counts. The State column also matches the state's own name, which it shows
+ * remapped: `in-progress` as "In Progress"
  */
 function valuesOf(row: TableViewRow, field: TableViewField): unknown[] {
-  const values = [fieldValue(row, field), rawFieldValue(row, field)];
+  const values = [fieldValue(row, field)];
 
-  if (field.id === STATE.name) {
+  if (field.id === 'state') {
     values.push(row.state);
   }
 

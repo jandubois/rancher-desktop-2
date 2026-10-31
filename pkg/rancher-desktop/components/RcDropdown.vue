@@ -20,10 +20,11 @@
  *    </template>
  *  </rc-dropdown>
  */
-import { focusedFromKeyboard, useDropdownContext } from '@components/RcDropdown/useDropdownContext';
-import { useSubmenuPlacement } from '@components/RcDropdown/useSubmenuPlacement';
-import { useClickOutside } from '@shell/composables/useClickOutside';
 import { ref, watch } from 'vue';
+
+import { useClickOutside } from '@pkg/composables/useClickOutside';
+import { focusedFromKeyboard, useDropdownContext } from '@pkg/composables/useDropdownContext';
+import { useSubmenuPlacement } from '@pkg/composables/useSubmenuPlacement';
 
 import type { Placement } from 'floating-vue';
 

@@ -1,18 +1,12 @@
+import type { TableViewField } from '@pkg/types/table-views';
 import {
-  applyQuery, applyQueryExpression, fieldsFor, parseQuery,
-  parseQueryExpression, queryToServerFilters, replaceToken, rowsToCsv, queryFor, tokenAt, validateQuery, valuesInUse,
-  coreFieldIdsFor, CORE_FIELD_IDS,
-  moveInOrder,
-  serverPathFor,
-  summaryToValues,
-  dateBuckets,
-  dateText,
-  stringifyValue,
-  termsToServerFilters,
-} from '@shell/utils/table-views';
-
-import type { PaginationParamFilter } from '@shell/types/store/pagination.types';
-import type { TableViewField } from '@shell/types/table-views';
+  dateBuckets, dateText, fieldsFor, coreFieldIdsFor, CORE_FIELD_IDS, stringifyValue, valuesInUse,
+} from '@pkg/utils/table-views/fields';
+import { applyQuery, applyQueryExpression } from '@pkg/utils/table-views/filter-rows';
+import {
+  parseQuery, parseQueryExpression, queryFor, replaceToken, tokenAt, validateQuery,
+} from '@pkg/utils/table-views/query';
+import { moveInOrder } from '@pkg/utils/table-views/views';
 
 const HEADERS = [
   {
@@ -23,26 +17,6 @@ const HEADERS = [
   },
   {
     name: 'state', label: 'State', value: 'stateDisplay',
-  },
-  { name: 'spacer', label: ' ' },
-];
-
-/**
- * The same columns as a server side paginated list defines them.
- *
- * Note `state`: the list above draws it from `stateDisplay` ("Running"), while the api filters
- * `metadata.state.name` ("running"). Only these definitions can be asked of the api, which is
- * why a field carries both and `serverPathFor` reads this one.
- */
-const PAGINATION_HEADERS = [
-  {
-    name: 'name', label: 'Name', value: 'metadata.name', search: 'metadata.name',
-  },
-  {
-    name: 'namespace', label: 'Namespace', value: 'metadata.namespace', search: 'metadata.namespace',
-  },
-  {
-    name: 'state', label: 'State', value: 'stateDisplay', search: 'metadata.state.name',
   },
   { name: 'spacer', label: ' ' },
 ];
@@ -196,18 +170,6 @@ describe('fx: valuesInUse', () => {
   });
 });
 
-describe('fx: rowsToCsv', () => {
-  it('writes a header row and quotes cells that need it', () => {
-    const fields = fieldsFor(HEADERS, ROWS);
-    const columns = [
-      { label: 'Name', field: fields.find((f) => f.id === 'name')! },
-      { label: 'App', field: fields.find((f) => f.id === 'label:app')! },
-    ];
-
-    expect(rowsToCsv(ROWS.slice(0, 1), columns)).toBe('Name,App\nnginx-a,nginx');
-  });
-});
-
 describe('core columns', () => {
   it('marks the columns the table depends on as core', () => {
     expect(CORE_FIELD_IDS).toStrictEqual(['state', 'name']);
@@ -232,226 +194,6 @@ describe('moveInOrder', () => {
     expect(moveInOrder(['a', 'b'], -1, 0)).toStrictEqual(['a', 'b']);
     expect(moveInOrder(['a', 'b'], 0, -1)).toStrictEqual(['a', 'b']);
     expect(moveInOrder(['a', 'b'], 5, 0)).toStrictEqual(['a', 'b']);
-  });
-});
-
-describe('serverPathFor', () => {
-  it('uses a label key for label fields', () => {
-    expect(serverPathFor({
-      id: 'label:app', label: 'app', isLabel: true, labelKey: 'app',
-    })).toStrictEqual('metadata.labels[app]');
-  });
-
-  it('uses the search path the pagination api definition names', () => {
-    expect(serverPathFor({
-      id:               'name',
-      label:            'Name',
-      isLabel:          false,
-      header:           { value: 'nameDisplay', sort: 'nameSort' },
-      paginationHeader: { search: 'metadata.name', sort: 'metadata.name' },
-    })).toStrictEqual('metadata.name');
-  });
-
-  it('has no path when the list is not paginated', () => {
-    // No pagination definition is the list saying it cannot be filtered server side at all
-    expect(serverPathFor({
-      id: 'name', label: 'Name', isLabel: false, header: { search: 'metadata.name' },
-    })).toBeNull();
-  });
-
-  it('ignores the display definition even when it names a search', () => {
-    // The two can disagree, and only the pagination one is what the api answers to
-    expect(serverPathFor({
-      id:               'state',
-      label:            'State',
-      isLabel:          false,
-      header:           { search: 'stateDisplay' },
-      paginationHeader: { value: 'stateDisplay' },
-    })).toBeNull();
-  });
-
-  it('filters a column that is not searched, when a term names it, on the path it sorts by', () => {
-    expect(serverPathFor({
-      id:               'age',
-      label:            'Age',
-      isLabel:          false,
-      paginationHeader: {
-        value: 'metadata.creationTimestamp', sort: 'metadata.creationTimestamp:desc', search: false,
-      },
-    })).toBe('metadata.creationTimestamp');
-  });
-
-  it('filters a column that names no search on the path it sorts by, which the api has indexed', () => {
-    expect(serverPathFor({
-      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { sort: ['status.allocatable.cpuRaw', 'metadata.name'] },
-    })).toStrictEqual('status.allocatable.cpuRaw');
-
-    expect(serverPathFor({
-      id: 'age', label: 'Age', isLabel: false, paginationHeader: { sort: 'metadata.creationTimestamp:desc' },
-    })).toStrictEqual('metadata.creationTimestamp');
-  });
-
-  it('keeps only the paths a search list actually names', () => {
-    expect(serverPathFor({
-      id: 'name', label: 'Name', isLabel: false, paginationHeader: { search: ['', 'spec.displayName'] },
-    })).toStrictEqual(['spec.displayName']);
-
-    expect(serverPathFor({
-      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { search: [''] },
-    })).toBeNull();
-
-    expect(serverPathFor({
-      id: 'cpu', label: 'CPU', isLabel: false, paginationHeader: { search: [''], sort: 'status.allocatable.cpuRaw' },
-    })).toStrictEqual('status.allocatable.cpuRaw');
-  });
-});
-
-describe('summaryToValues', () => {
-  const response = {
-    summary: [{
-      property: 'metadata.namespace',
-      counts:   {
-        'cattle-system': { total: 5 }, default: { total: 12 }, '': { total: 3 },
-      },
-    }],
-  };
-
-  it('lists the values most used first', () => {
-    expect(summaryToValues(response)).toStrictEqual([
-      { value: 'default', count: 12 },
-      { value: 'cattle-system', count: 5 },
-    ]);
-  });
-
-  it('caps how many are returned', () => {
-    expect(summaryToValues(response, 1)).toStrictEqual([{ value: 'default', count: 12 }]);
-  });
-
-  it.each([
-    ['no summary', {}],
-    ['empty summary', { summary: [] }],
-    ['nothing at all', undefined],
-  ])('returns nothing for %s', (_name, input) => {
-    expect(summaryToValues(input)).toStrictEqual([]);
-  });
-});
-
-describe('fx: termsToServerFilters', () => {
-  const FIELDS: TableViewField[] = [
-    {
-      id: 'name', label: 'Name', isLabel: false, paginationHeader: { search: 'metadata.name' },
-    },
-    {
-      id: 'namespace', label: 'Namespace', isLabel: false, paginationHeader: { search: 'metadata.namespace' },
-    },
-    {
-      id: 'label:app', label: 'app', isLabel: true, labelKey: 'app',
-    },
-    {
-      id: 'label:component', label: 'component', isLabel: true, labelKey: 'component',
-    },
-  ];
-
-  const pathsOf = (filter: PaginationParamFilter) => filter.fields.map((f) => f.field);
-
-  it('should read a field named twice as either value, each a partial match - as `or` does', () => {
-    const { filters } = termsToServerFilters([
-      {
-        field: 'namespace', value: 'kube', negated: false,
-      },
-      {
-        field: 'namespace', value: 'default', negated: false,
-      },
-    ], FIELDS);
-
-    expect(filters).toHaveLength(1);
-    expect(filters[0].fields.map((f) => `${ f.field }~${ f.value }:${ f.equality }`)).toStrictEqual([
-      'metadata.namespace~kube:~', 'metadata.namespace~default:~',
-    ]);
-  });
-
-  it('should keep out every value of a field negated twice, each a partial match', () => {
-    const { filters } = termsToServerFilters([
-      {
-        field: 'namespace', value: 'kube', negated: true,
-      },
-      {
-        field: 'namespace', value: 'default', negated: true,
-      },
-    ], FIELDS);
-
-    expect(filters.map((f) => f.fields.map((x) => `${ x.value }:${ x.equality }`).join())).toStrictEqual(['kube:!~', 'default:!~']);
-  });
-
-  it('should leave a column that is not searched out of free text, and filter it when named', () => {
-    const age: TableViewField = {
-      id: 'age', label: 'Age', isLabel: false, paginationHeader: { sort: 'metadata.creationTimestamp', search: false },
-    };
-    const free = termsToServerFilters([{
-      field: null, value: '2026', negated: false,
-    }], [...FIELDS, age]);
-    const named = termsToServerFilters([{
-      field: 'age', value: '2026-09', negated: false,
-    }], [...FIELDS, age]);
-
-    expect(pathsOf(free.filters[0])).not.toContain('metadata.creationTimestamp');
-    expect(named.unsupported).toStrictEqual([]);
-    expect(pathsOf(named.filters[0])).toStrictEqual(['metadata.creationTimestamp']);
-  });
-
-  it('should leave a column off the table out of free text, and filter it when named', () => {
-    const description: TableViewField = {
-      id: 'description', label: 'Description', isLabel: false, notInFreeText: true, paginationHeader: { search: 'metadata.annotations[field.cattle.io/description]' },
-    };
-    const free = termsToServerFilters([{
-      field: null, value: 'payments', negated: false,
-    }], [...FIELDS, description]);
-    const named = termsToServerFilters([{
-      field: 'description', value: 'payments', negated: false,
-    }], [...FIELDS, description]);
-
-    expect(pathsOf(free.filters[0])).toStrictEqual(['metadata.name', 'metadata.namespace']);
-    expect(pathsOf(named.filters[0])).toStrictEqual(['metadata.annotations[field.cattle.io/description]']);
-  });
-
-  it('should search every ordinary column for a free text term', () => {
-    const { filters, unsupported } = termsToServerFilters([{
-      field: null, value: 'nginx', negated: false,
-    }], FIELDS);
-
-    expect(unsupported).toStrictEqual([]);
-    expect(filters).toHaveLength(1);
-    expect(pathsOf(filters[0])).toStrictEqual(['metadata.name', 'metadata.namespace']);
-  });
-
-  it('should keep label columns out of a free text search', () => {
-    // Each metadata.labels[key] term costs the pagination API a join, and OR'ing a handful of
-    // them together hangs it - see the comment in termsToServerFilters
-    const { filters } = termsToServerFilters([{
-      field: null, value: 'nginx', negated: false,
-    }], FIELDS);
-
-    expect(pathsOf(filters[0]).some((p) => p?.includes('labels'))).toBe(false);
-  });
-
-  it('should still search a label when the term names one', () => {
-    const { filters, unsupported } = termsToServerFilters([{
-      field: 'label:app', value: 'nginx', negated: false,
-    }], FIELDS);
-
-    expect(unsupported).toStrictEqual([]);
-    expect(filters).toHaveLength(1);
-    expect(pathsOf(filters[0])).toStrictEqual(['metadata.labels[app]']);
-  });
-
-  it('should report a free text term as unsupported when no column can be searched', () => {
-    const terms = [{
-      field: null, value: 'nginx', negated: false,
-    }];
-    const { filters, unsupported } = termsToServerFilters(terms, [FIELDS[2]]);
-
-    expect(filters).toStrictEqual([]);
-    expect(unsupported).toStrictEqual(terms);
   });
 });
 
@@ -518,46 +260,6 @@ describe('fx: applyQueryExpression', () => {
   it('should negate only the term the "not" belongs to', () => {
     expect(names('not state:Error')).toStrictEqual(['nginx-a']);
     expect(names('not state:Error or name:redis')).toStrictEqual(['nginx-a', 'redis-a']);
-  });
-});
-
-describe('fx: queryToServerFilters', () => {
-  // Server filters only exist for a paginated list, so the fields carry the pagination headers
-  const fields = fieldsFor(HEADERS, ROWS, undefined, PAGINATION_HEADERS);
-  const build = (query: string) => queryToServerFilters(parseQueryExpression(query, fields), fields);
-
-  it('should give one param per group when the clauses are AND\'d', () => {
-    const { filters } = build('state:Error and name:nginx');
-
-    expect(filters).toHaveLength(2);
-    expect(filters[0].fields).toHaveLength(1);
-    expect(filters[1].fields).toHaveLength(1);
-  });
-
-  it('should OR the fields of a single param when the clauses are OR\'d', () => {
-    const { filters } = build('state:Error or name:nginx');
-
-    // The api ORs the fields within one param, so an `or` of two simple sides is one param
-    expect(filters).toHaveLength(1);
-    expect(filters[0].fields).toHaveLength(2);
-  });
-
-  it('should turn "(a and b) or c" inside out into "(a or c) and (b or c)"', () => {
-    const { filters } = build('state:Error and name:nginx or namespace:default');
-
-    expect(filters).toHaveLength(2);
-    expect(filters[0].fields).toHaveLength(2);
-    expect(filters[1].fields).toHaveLength(2);
-  });
-
-  it('should filter nothing when one side of an "or" cannot be asked for', () => {
-    // Only state has a paginated definition, so name cannot be asked of the api - and the side
-    // that could be must not narrow the list alone
-    const stateOnly = fieldsFor(HEADERS, ROWS, undefined, PAGINATION_HEADERS.filter((header) => header.name === 'state'));
-    const { filters, unsupported } = queryToServerFilters(parseQueryExpression('state:Error or name:nginx', stateOnly), stateOnly);
-
-    expect(filters).toHaveLength(0);
-    expect(unsupported.map((t) => t.value)).toStrictEqual(['Error', 'nginx']);
   });
 });
 

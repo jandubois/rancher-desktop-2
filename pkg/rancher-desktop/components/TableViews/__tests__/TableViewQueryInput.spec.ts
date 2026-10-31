@@ -1,9 +1,10 @@
-import TableViewQueryInput from '@shell/components/TableViews/TableViewQueryInput.vue';
+import { jest } from '@jest/globals';
 import { mount, VueWrapper } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { createStore } from 'vuex';
 
-import type { TableViewField } from '@shell/types/table-views';
+import TableViewQueryInput from '@pkg/components/TableViews/TableViewQueryInput.vue';
+import type { TableViewField } from '@pkg/types/table-views';
 
 const STATE: TableViewField = {
   id: 'state', label: 'State', isLabel: false,

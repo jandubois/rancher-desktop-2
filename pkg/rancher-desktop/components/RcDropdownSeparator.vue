@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import RcSeparator from '@components/RcSeparator/RcSeparator.vue';
+import RcSeparator from '@pkg/components/RcSeparator.vue';
 </script>
 
 <template>

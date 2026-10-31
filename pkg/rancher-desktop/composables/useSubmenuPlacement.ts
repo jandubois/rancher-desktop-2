@@ -3,7 +3,7 @@ import {
   nextTick, onBeforeUnmount, ref, watch, Ref,
 } from 'vue';
 
-import { DropdownSubmenu } from './types';
+import { DropdownSubmenu } from '@pkg/types/RcDropdown';
 
 /** How far a submenu's popper keeps from the edges of the page */
 const EDGE_GAP = 16;

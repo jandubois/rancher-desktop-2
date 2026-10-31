@@ -5,20 +5,20 @@
  * caret stays true
  */
 
-import RcSeparator from '@components/RcSeparator/RcSeparator.vue';
-import { useI18n } from '@shell/composables/useI18n';
-import { isMac } from '@shell/utils/platform';
-import { LABEL_FIELD_PREFIX, dateBuckets, valuesInUse } from '@shell/utils/table-views/fields';
-import {
-  CONNECTIVES, NEGATORS, highlightQuery, isNegator, quoteIfNeeded, replaceToken, scanQuery, tokenAt,
-} from '@shell/utils/table-views/query';
-import { changeOf, createQueryHistory } from '@shell/utils/table-views/query-history';
 import {
   computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch,
 } from 'vue';
 import { useStore } from 'vuex';
 
-import type { TableViewField, TableViewRow } from '@shell/types/table-views';
+import RcSeparator from '@pkg/components/RcSeparator.vue';
+import { useI18n } from '@pkg/composables/useI18n';
+import type { TableViewField, TableViewRow } from '@pkg/types/table-views';
+import { isMac } from '@pkg/utils/platform';
+import { LABEL_FIELD_PREFIX, dateBuckets, valuesInUse } from '@pkg/utils/table-views/fields';
+import {
+  CONNECTIVES, NEGATORS, highlightQuery, isNegator, quoteIfNeeded, replaceToken, scanQuery, tokenAt,
+} from '@pkg/utils/table-views/query';
+import { changeOf, createQueryHistory } from '@pkg/utils/table-views/query-history';
 
 const MENU_VIEWPORT_MARGIN = 20;
 
@@ -210,7 +210,7 @@ const precedingToken = computed(() => {
   const active = activeToken.value;
 
   const before = scanQuery(props.value || '', props.fields)
-    .filter((token) => token.end <= caret.value && (!active || token.start !== active.start));
+    .filter((token) => token.end <= caret.value && token.start !== active?.start);
 
   return before[before.length - 1] || null;
 });
@@ -342,7 +342,7 @@ const suggestionsAnnouncement = computed(() => {
     return t('tableViews.query.loadingValues');
   }
 
-  return t('tableViews.query.suggestionsAvailable', { count: suggestions.value.length }, true);
+  return t('tableViews.query.suggestionsAvailable', { count: suggestions.value.length });
 });
 
 const menuStyle = computed(() => ({

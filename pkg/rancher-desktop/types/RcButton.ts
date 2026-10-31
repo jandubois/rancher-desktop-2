@@ -1,4 +1,4 @@
-import { RcIconType } from '@components/RcIcon/types';
+import { RcIconType } from '@pkg/types/RcIcon';
 
 import type { RouteLocationRaw } from 'vue-router';
 

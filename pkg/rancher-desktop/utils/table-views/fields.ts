@@ -1,15 +1,13 @@
-import { NAME, STATE } from '@shell/config/table-headers';
-import { get } from '@shell/utils/object';
-import { valueFor } from '@shell/utils/table-columns';
 import day from 'dayjs';
 
-import type { PaginationHeaderOptions } from '@shell/core/types';
-import type { TableViewColumn, TableViewField, TableViewRow, TableViewValueSuggestion } from '@shell/types/table-views';
+import type { TableViewColumn, TableViewField, TableViewRow, TableViewValueSuggestion } from '@pkg/types/table-views';
+import { get } from '@pkg/utils/object';
+import { valueFor } from '@pkg/utils/table-columns';
 
 export const LABEL_FIELD_PREFIX = 'label:';
 
 /** Columns the user can't hide: without them a row can't be identified or its health seen */
-export const CORE_FIELD_IDS = [STATE.name, NAME.name];
+export const CORE_FIELD_IDS = ['state', 'name'];
 
 /**
  * The columns a table won't let go of: the leading state and name, else the first column, plus the
@@ -84,7 +82,7 @@ export function fieldValue(row: TableViewRow, field: TableViewField): unknown {
   }
 
   if (field.isLabel) {
-    return row.metadata?.labels?.[field.labelKey as string] ?? '';
+    return row.metadata?.labels?.[field.labelKey!] ?? '';
   }
 
   const header = field.header;
@@ -122,30 +120,6 @@ export function fieldValue(row: TableViewRow, field: TableViewField): unknown {
   return '';
 }
 
-/**
- * The value the api filters on, which can differ from the one shown: `state` shows "Active" but
- * filters on "active"
- */
-export function rawFieldValue(row: TableViewRow, field: TableViewField): unknown {
-  if (!row || !field || field.isLabel) {
-    return fieldValue(row, field);
-  }
-
-  const path = serverPathFor(field);
-  // The first path is the column's own value; the rest are extras
-  const first = Array.isArray(path) ? path[0] : path;
-
-  if (typeof first === 'string') {
-    const out = safeGet(row, first);
-
-    if (out !== undefined && out !== null && out !== '') {
-      return out;
-    }
-  }
-
-  return fieldValue(row, field);
-}
-
 export function stringifyValue(value: unknown): string {
   if (value === undefined || value === null) {
     return '';
@@ -179,35 +153,24 @@ export function headerFieldId(header: TableViewColumn): string {
   return `${ name }`.replace(/\s+/g, '-').toLowerCase();
 }
 
-/** A column that isn't data - see HeaderOptions.tableViews */
+/** A column that isn't data - see TableViewColumn.tableViews */
 export function isIgnoredColumn(header: TableViewColumn): boolean {
   return header?.tableViews === false || IGNORED_COLUMNS.includes(headerFieldId(header));
 }
 
 /**
  * Everything a table can be filtered, grouped or shown by: its columns, plus one field per label
- * key on the rows. `paginationHeaders` is passed only for a server side paginated list - see
- * serverPathFor
+ * key on the rows
  */
 export function fieldsFor(
   headers: TableViewColumn[],
   rows: TableViewRow[],
   t?: (key: string) => string,
-  paginationHeaders?: PaginationHeaderOptions[] | null,
 ): TableViewField[] {
   const out: TableViewField[] = [];
   const seen: Record<string, boolean> = {};
 
-  const byId: Record<string, PaginationHeaderOptions> = {};
   const scanRows = (rows || []).slice(0, SCAN_LIMIT);
-
-  (paginationHeaders || []).forEach((header) => {
-    const id = headerFieldId(header);
-
-    if (id) {
-      byId[id] = header;
-    }
-  });
 
   (headers || []).forEach((header) => {
     const id = headerFieldId(header);
@@ -228,7 +191,7 @@ export function fieldsFor(
 
     seen[id] = true;
     const field: TableViewField = {
-      id, label, isLabel: false, header, paginationHeader: byId[id],
+      id, label, isLabel: false, header,
     };
 
     if (isDateColumn(header) || holdsTimestamps(scanRows, field)) {
@@ -273,62 +236,11 @@ export function findField(fields: TableViewField[], id: string): TableViewField 
   return fields.find((f) => f.id.toLowerCase() === lower);
 }
 
-/**
- * The api path(s) to filter a field on, or null to filter it on the rows instead.
- * Only the paginated definition is read: its search path, else the path it sorts by - a column the
- * api sorts by is one it has indexed. `value` is as likely to be a display value the api doesn't know.
- * `search: false` keeps a column out of free text, not out of a term that names it
- */
-export function serverPathFor(field: TableViewField): string | string[] | null {
-  if (!field) {
-    return null;
-  }
-
-  if (field.isLabel) {
-    return field.labelKey ? `metadata.labels[${ field.labelKey }]` : null;
-  }
-
-  const { search, sort } = field.paginationHeader || {};
-
-  if (typeof search === 'string' && search) {
-    return search;
-  }
-
-  if (Array.isArray(search)) {
-    // Eg the cluster list's name is also searched on `spec.displayName`
-    const paths = search.filter((path: unknown) => typeof path === 'string' && path);
-
-    if (paths.length) {
-      return paths;
-    }
-  }
-
-  // Only the first sort entry: the rest are tie breakers
-  const first = Array.isArray(sort) ? sort[0] : sort;
-
-  return typeof first === 'string' && first ? first.split(':')[0] : null;
-}
-
-interface SummaryResponse {
-  summary?: { counts?: Record<string, { total?: number }> }[];
-}
-
-/** Value suggestions from a steve summary, which counts every row rather than just this page */
-export function summaryToValues(response: SummaryResponse | null | undefined, max = 50): TableViewValueSuggestion[] {
-  const counts = response?.summary?.[0]?.counts || {};
-
-  return Object.keys(counts)
-    .map((value) => ({ value, count: counts[value]?.total ?? 0 }))
-    .filter((entry) => !!entry.value)
-    .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
-    .slice(0, max);
-}
-
 export function valuesInUse(rows: TableViewRow[], field: TableViewField, max = 25): TableViewValueSuggestion[] {
   const counts: Record<string, number> = {};
 
   (rows || []).slice(0, SCAN_LIMIT).forEach((row) => {
-    const raw = rawFieldValue(row, field);
+    const raw = fieldValue(row, field);
     const values = Array.isArray(raw) ? raw : [raw];
 
     values.forEach((entry) => {

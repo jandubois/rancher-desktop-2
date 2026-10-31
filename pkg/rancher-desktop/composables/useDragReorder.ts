@@ -2,8 +2,9 @@
  * Reorder a list by dragging an item along it. The item is picked up once the pointer travels
  * DRAG_THRESHOLD, so a press is still a click. Escape abandons the drag
  */
-import { moveInOrder } from '@shell/utils/table-views/views';
 import { onBeforeUnmount, ref } from 'vue';
+
+import { moveInOrder } from '@pkg/utils/table-views/views';
 
 const DRAG_THRESHOLD = 4;
 

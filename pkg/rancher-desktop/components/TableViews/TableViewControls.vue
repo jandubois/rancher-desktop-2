@@ -3,25 +3,24 @@
  * The row under the view tabs: the filter query and the View menu (grouping and columns). It edits
  * the `view` prop and hands it back; the tabs above see the change through the table
  */
-import {
-  RcDropdown,
-  RcDropdownItem,
-  RcDropdownItemCheckbox,
-  RcDropdownItemRadio,
-  RcDropdownSeparator,
-  RcDropdownSubmenu,
-  RcDropdownTrigger,
-} from '@components/RcDropdown';
-import TableViewQueryInput from '@shell/components/TableViews/TableViewQueryInput.vue';
-import { useDragReorder } from '@shell/composables/useDragReorder';
-import { useI18n } from '@shell/composables/useI18n';
-import { isMac } from '@shell/utils/platform';
-import { validateQuery } from '@shell/utils/table-views/query';
-import { NO_GROUPING, isViewModified } from '@shell/utils/table-views/views';
 import { computed, nextTick, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
-import type { TableViewField, TableViewQueryProblem, TableViewRow, TableViewState } from '@shell/types/table-views';
+import RcDropdown from '@pkg/components/RcDropdown.vue';
+import RcDropdownItem from '@pkg/components/RcDropdownItem.vue';
+import RcDropdownItemCheckbox from '@pkg/components/RcDropdownItemCheckbox.vue';
+import RcDropdownItemRadio from '@pkg/components/RcDropdownItemRadio.vue';
+import RcDropdownSeparator from '@pkg/components/RcDropdownSeparator.vue';
+import RcDropdownSubmenu from '@pkg/components/RcDropdownSubmenu.vue';
+import RcDropdownTrigger from '@pkg/components/RcDropdownTrigger.vue';
+import TableViewQueryInput from '@pkg/components/TableViews/TableViewQueryInput.vue';
+import { useDragReorder } from '@pkg/composables/useDragReorder';
+import { useI18n } from '@pkg/composables/useI18n';
+import type { TableViewField, TableViewQueryProblem, TableViewRow, TableViewState } from '@pkg/types/table-views';
+import { isMac } from '@pkg/utils/platform';
+import { escapeHtml } from '@pkg/utils/string';
+import { validateQuery } from '@pkg/utils/table-views/query';
+import { NO_GROUPING, isViewModified } from '@pkg/utils/table-views/views';
 
 /** Clears the row's hover highlight rather than sitting over the handle */
 const TOOLTIP_DISTANCE = 12;
@@ -102,12 +101,13 @@ const moveKeysHint = computed(() => t('tableViews.columns.moveKeys', { modifier:
 /** Held back while the box has the caret, so `state:` isn't reported halfway through `state:active` */
 const shownProblems = computed(() => (queryFocused.value ? [] : validateQuery(props.view.query, props.fields)));
 
+// These notices reach `v-clean-html`, so anything the user typed or a resource named is escaped.
 const unsupportedNotice = computed(() => t('tableViews.query.unsupported', {
   count:  props.unsupportedFields.length,
-  fields: props.unsupportedFields.join(', '),
-}, true));
+  fields: escapeHtml(props.unsupportedFields.join(', ')),
+}));
 
-const problemNotice = (problem: TableViewQueryProblem) => t(`tableViews.query.problem.${ problem.kind }`, { text: problem.text, label: problem.label || '' }, true);
+const problemNotice = (problem: TableViewQueryProblem) => t(`tableViews.query.problem.${ problem.kind }`, { text: escapeHtml(problem.text), label: escapeHtml(problem.label || '') });
 
 /** A query that can't be read is reported alone, before any unfilterable fields */
 const queryStatusMessage = computed(() => {
@@ -183,7 +183,7 @@ const groupOptions = computed(() => {
 
   return [none].concat((props.groupFields || props.fields)
     .filter((f) => !f.isLabel)
-    .map((f) => ({ id: f.id as string | null, label: f.label })));
+    .map((f) => ({ id: f.id, label: f.label })));
 });
 
 /** The grouping in force: the view's, else the table's default */
@@ -395,7 +395,7 @@ watch(groupPanel, (panel) => {
         >
           <i
             class="icon"
-            :class="queryStatus === 'error' ? 'icon-notify-warning' : 'icon-notify-info'"
+            :class="queryStatus === 'error' ? 'icon-warning' : 'icon-info'"
           />
           <span v-clean-html="queryStatusMessage" />
         </p>
@@ -556,7 +556,7 @@ watch(groupPanel, (panel) => {
 </template>
 
 <style lang="scss" scoped>
-@import '@shell/components/TableViews/_table-views.scss';
+@import '@pkg/components/TableViews/_table-views.scss';
 
 .table-views {
   .view-controls {

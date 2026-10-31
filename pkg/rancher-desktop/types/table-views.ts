@@ -1,8 +1,4 @@
-/** The shapes the table views engine (@shell/utils/table-views) takes and returns */
-
-import { PaginationParamFilter } from '@shell/types/store/pagination.types';
-
-import type { HeaderOptions, PaginationHeaderOptions } from '@shell/core/types';
+/** The shapes the table views engine (@pkg/utils/table-views) takes and returns */
 
 /** A table row. Any resource can be one, so only the labels a view reads directly are typed */
 export interface TableViewRow {
@@ -14,37 +10,80 @@ export interface TableViewRow {
   state?: unknown;
 }
 
-/** A table column: the extension header shape, plus a `value` that can be a function */
-export interface TableViewColumn extends Omit<HeaderOptions, 'value'> {
+/** A table column: the header fields the table views engine reads */
+export interface TableViewColumn {
+  /**
+   * Name of the header. This should be unique.
+   */
+  name?: string;
+
+  /**
+   * `false` for a column that isn't data, eg a button: table views leaves it out of Columns, Group
+   * By and the query
+   */
+  tableViews?: boolean;
+
+  /**
+   * A string that will show in the table column as a header
+   */
+  label?: string;
+
+  /**
+   * A translation key where the resulting string will show in the table column as a header
+   */
+  labelKey?: string;
+
+  /**
+   * How the cell's value is resolved: either a string path into the row (i.e. `metadata.name`), or
+   * a function given the row that returns the value to display.
+   */
   value?: string | ((row: TableViewRow) => unknown);
+
+  /**
+   * A string which represents the path to access the value from the row object which we'll use to sort i.e. `row.meta.value`
+   */
+  sort?: string | string[] | boolean;
+
+  /**
+   * A string which represents the path to access the value from the row object which we'll use to search i.e. `row.meta.value`.
+   * A column can name more than one path, as `sort` can. It can be false to disable searching on this field
+   */
+  search?: string | boolean | string[];
+
+  /**
+   * The name of a custom formatter.
+   */
+  formatter?: string;
+
+  /**
+   * Provide a function which accepts a row and returns the value that should be displayed in the column
+   * @param row This can be any value which represents the row
+   * @returns Can return {@link string | number | null | undefined} to display in the column
+   */
+  getValue?: (row: TableViewRow) => string | number | null | undefined;
 }
 
 export interface TableViewField {
   /** Token used in the query, eg `namespace` or `label:app` */
-  id:                string;
-  label:             string;
-  isLabel:           boolean;
-  labelKey?:         string;
+  id:             string;
+  label:          string;
+  isLabel:        boolean;
+  labelKey?:      string;
   /** Holds moments in time: filtered and suggested as dates, grouped by only by month */
-  isDate?:           boolean;
+  isDate?:        boolean;
   /** The Group By entry that gathers a date column's rows by the month they fall in */
-  byMonth?:          boolean;
-  header?:           TableViewColumn;
-  /**
-   * The column as a paginated list defines it. Only this one says how the api searches it, and it
-   * is absent when the list can't be filtered server side
-   */
-  paginationHeader?: PaginationHeaderOptions;
+  byMonth?:       boolean;
+  header?:        TableViewColumn;
   /** Only for the query: not a column, not grouped by, not searched by free text */
-  queryOnly?:        boolean;
+  queryOnly?:     boolean;
   /** Left out of free text for now, eg the description while its column isn't on the table */
-  notInFreeText?:    boolean;
+  notInFreeText?: boolean;
   /** Matched whole rather than as a part, eg an id */
-  exact?:            boolean;
+  exact?:         boolean;
   /** The values it takes, suggested as they are rather than read from the rows */
-  values?:           TableViewValueSuggestion[];
+  values?:        TableViewValueSuggestion[];
   /** Rewrites a group's terms on it into terms on other fields, eg `pinned:true` into the pinned clusters' ids */
-  expand?:           (terms: TableViewTerm[]) => TableViewTerm[];
+  expand?:        (terms: TableViewTerm[]) => TableViewTerm[];
 }
 
 export interface TableViewTerm {
@@ -148,17 +187,7 @@ export interface TableViewQueryProblem {
   label?: string;
 }
 
-export interface TableViewServerFilterResult {
-  filters:     PaginationParamFilter[];
-  unsupported: TableViewTerm[];
-}
-
 export interface TableViewValueSuggestion {
   value: string;
   count: number;
-}
-
-export interface TableViewExportColumn {
-  label: string;
-  field: TableViewField;
 }

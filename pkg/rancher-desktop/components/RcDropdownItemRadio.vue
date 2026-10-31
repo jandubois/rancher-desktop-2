@@ -3,8 +3,8 @@
  * An item for a dropdown menu that is one choice of several, marked with a checkmark when it is the
  * chosen one. It stays open, so the menu shows the choice made. Used in conjunction with RcDropdown.
  */
-import { useDropdownItem } from '@components/RcDropdown/useDropdownItem';
-import { RcIcon } from '@components/RcIcon';
+import RcIcon from '@pkg/components/RcIcon.vue';
+import { useDropdownItem } from '@pkg/composables/useDropdownItem';
 
 const props = defineProps({ checked: Boolean, disabled: Boolean });
 const emits = defineEmits(['click']);

@@ -1,4 +1,4 @@
-import { changeOf, createQueryHistory, TYPING_GROUP_MS } from '@shell/utils/table-views/query-history';
+import { changeOf, createQueryHistory, TYPING_GROUP_MS } from '@pkg/utils/table-views/query-history';
 
 /** Types `text` a letter at a time onto the end of what the history holds, a few milliseconds apart */
 const typeInto = (history: ReturnType<typeof createQueryHistory>, text: string, start = 0) => {

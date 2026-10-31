@@ -1,6 +1,7 @@
-import { RcDropdown } from '@components/RcDropdown';
 import { mount } from '@vue/test-utils';
 import { defineComponent } from 'vue';
+
+import RcDropdown from '@pkg/components/RcDropdown.vue';
 
 const vDropdownMock = defineComponent({
   props:    { shown: Boolean },

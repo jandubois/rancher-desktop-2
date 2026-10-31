@@ -7,9 +7,9 @@
  *
  * <rc-button variant="primary" @click="doAction">Perform an Action</rc-button>
  */
-import RcIcon from '@components/RcIcon/RcIcon.vue';
 import { computed, ref, resolveComponent, watchEffect } from 'vue';
 
+import RcIcon from '@pkg/components/RcIcon.vue';
 import {
   ButtonVariantProps,
   ButtonSizeProps,
@@ -18,8 +18,10 @@ import {
   ButtonSize,
   IconProps,
   NavigationProps,
-} from './types';
+} from '@pkg/types/RcButton';
 
+// RcButton defines and still accepts its own deprecated boolean props.
+/* eslint-disable @typescript-eslint/no-deprecated */
 const buttonVariants: { variant: keyof ButtonVariantProps, className: string }[] = [
   { variant: 'primary', className: 'variant-primary' },
   { variant: 'secondary', className: 'variant-secondary' },
@@ -199,7 +201,7 @@ defineExpose({ focus });
 </template>
 
 <style lang="scss" scoped>
-@import '../_variables.scss';
+@import './_variables.scss';
 
 .rc-button {
   display: inline-flex;

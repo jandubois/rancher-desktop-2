@@ -1,6 +1,6 @@
 import { shallowMount } from '@vue/test-utils';
 
-import RcIcon from './RcIcon.vue';
+import RcIcon from '../RcIcon.vue';
 
 describe('rcIcon.vue', () => {
   it('renders with the correct type class and size classes', () => {

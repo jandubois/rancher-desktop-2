@@ -6,9 +6,9 @@
  * `indicator="checkmark"` marks it checked with a checkmark at its end rather than a checkbox, for a
  * list of things shown and hidden; `#before` then holds anything leading the label.
  */
-import { Checkbox as RcCheckbox } from '@components/Form/Checkbox';
-import { useDropdownItem } from '@components/RcDropdown/useDropdownItem';
-import { RcIcon } from '@components/RcIcon';
+import RcIcon from '@pkg/components/RcIcon.vue';
+import RcCheckbox from '@pkg/components/form/Checkbox.vue';
+import { useDropdownItem } from '@pkg/composables/useDropdownItem';
 
 const props = withDefaults(defineProps<{
   modelValue?: boolean;

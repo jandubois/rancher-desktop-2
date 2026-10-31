@@ -1,7 +1,7 @@
-import { ButtonVariant, ButtonSize } from '@components/RcButton/types';
 import { Ref, ref, VNode } from 'vue';
 
-import type { RcButtonType } from '@components/RcButton';
+import { ButtonVariant, ButtonSize } from '@pkg/types/RcButton';
+import type { RcButtonType } from '@pkg/types/RcButton';
 
 /** A nested menu, as RcDropdownSubmenu hands it to the menu it sits in */
 export interface DropdownSubmenu {

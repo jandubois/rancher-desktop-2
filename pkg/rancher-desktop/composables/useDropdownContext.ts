@@ -1,9 +1,9 @@
-import { RcButtonType } from '@components/RcButton';
 import { ref, provide, nextTick, EmitFn } from 'vue';
 
-import { DropdownContext } from './types';
-import { useDropdownCollection } from './useDropdownCollection';
-import { useDropdownSubmenus } from './useDropdownSubmenus';
+import { useDropdownCollection } from '@pkg/composables/useDropdownCollection';
+import { useDropdownSubmenus } from '@pkg/composables/useDropdownSubmenus';
+import type { RcButtonType } from '@pkg/types/RcButton';
+import { DropdownContext } from '@pkg/types/RcDropdown';
 
 /**
  * Whether the focus got where it is from the keyboard rather than the pointer, as the browser judges

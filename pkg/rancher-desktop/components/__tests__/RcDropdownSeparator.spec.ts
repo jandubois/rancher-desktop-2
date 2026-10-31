@@ -1,5 +1,6 @@
-import { RcDropdownSeparator } from '@components/RcDropdown';
 import { mount } from '@vue/test-utils';
+
+import RcDropdownSeparator from '@pkg/components/RcDropdownSeparator.vue';
 
 describe('component: RcDropdownSeparator', () => {
   it('renders a meaningful horizontal separator for menu and listbox contexts', () => {

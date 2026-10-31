@@ -1,6 +1,6 @@
 import isEqual from 'lodash/isEqual';
 
-import type { TableViewSaved, TableViewState } from '@shell/types/table-views';
+import type { TableViewSaved, TableViewState } from '@pkg/types/table-views';
 
 /** What a view stores to turn off the grouping its table groups by by default */
 export const NO_GROUPING = 'none';

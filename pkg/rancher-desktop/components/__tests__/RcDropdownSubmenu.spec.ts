@@ -1,11 +1,17 @@
-import {
-  RcDropdown, RcDropdownItem, RcDropdownItemCheckbox, RcDropdownItemRadio, RcDropdownSubmenu,
-} from '@components/RcDropdown';
+import { jest } from '@jest/globals';
 import { mount, VueWrapper } from '@vue/test-utils';
-import { recomputeAllPoppers } from 'floating-vue';
 import { defineComponent, nextTick } from 'vue';
 
-jest.mock('floating-vue', () => ({ ...jest.requireActual('floating-vue'), recomputeAllPoppers: jest.fn() }));
+const recomputeAllPoppers = jest.fn();
+const floatingVue = await import('floating-vue');
+
+jest.unstable_mockModule('floating-vue', () => ({ ...floatingVue, recomputeAllPoppers }));
+
+const { default: RcDropdown } = await import('@pkg/components/RcDropdown.vue');
+const { default: RcDropdownItem } = await import('@pkg/components/RcDropdownItem.vue');
+const { default: RcDropdownItemCheckbox } = await import('@pkg/components/RcDropdownItemCheckbox.vue');
+const { default: RcDropdownItemRadio } = await import('@pkg/components/RcDropdownItemRadio.vue');
+const { default: RcDropdownSubmenu } = await import('@pkg/components/RcDropdownSubmenu.vue');
 
 /** Draws its popper into its container, as floating-vue does, so key presses bubble the same way */
 const vDropdownMock = defineComponent({
@@ -191,7 +197,7 @@ describe('component: RcDropdownSubmenu.vue', () => {
       await openAt({
         menuTop: 100, rowBottom: 140, height: 200, windowHeight: 900,
       });
-      (recomputeAllPoppers as jest.Mock).mockClear();
+      recomputeAllPoppers.mockClear();
 
       window.dispatchEvent(new Event('resize'));
       await new Promise((resolve) => requestAnimationFrame(resolve));

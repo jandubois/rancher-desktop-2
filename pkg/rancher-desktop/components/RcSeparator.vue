@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { RcSeparatorProps } from './types';
+import type { RcSeparatorProps } from '@pkg/types/RcSeparator';
 
 const props = withDefaults(defineProps<RcSeparatorProps>(), {
   decorative:  true,

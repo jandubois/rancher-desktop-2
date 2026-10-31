@@ -1,8 +1,7 @@
-import { LABEL_FIELD_PREFIX, findField } from '@shell/utils/table-views/fields';
-
 import type {
   TableViewQueryProblem, TableViewQueryProblemKind, TableViewQuerySegment, TableViewQueryTerm, TableViewQueryToken, TableViewClause, TableViewField, TableViewGroup, TableViewQuery, TableViewTerm,
-} from '@shell/types/table-views';
+} from '@pkg/types/table-views';
+import { LABEL_FIELD_PREFIX, findField } from '@pkg/utils/table-views/fields';
 
 /**
  * Accepted so a query reads naturally, but skipped when parsing: how terms combine is decided by
