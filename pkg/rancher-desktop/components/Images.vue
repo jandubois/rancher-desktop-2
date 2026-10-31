@@ -7,8 +7,9 @@
       v-if="ready"
       ref="fullWindow"
     >
-      <SortableTable
+      <ViewTable
         ref="imagesTable"
+        table-id="images"
         class="imagesTable"
         data-test="imagesTableRows"
         key-field="_key"
@@ -62,11 +63,7 @@
             </span>
           </td>
         </template>
-        <!-- The SortableTable component puts the Filter box goes in the #header-right slot
-             Too bad, because it means we can't use a css grid to manage the relative
-             positions of these three widgets
-        -->
-      </SortableTable>
+      </ViewTable>
 
       <Card
         v-if="showImageManagerOutput"
@@ -109,7 +106,7 @@ import { defineComponent, PropType } from 'vue';
 
 import Card from '@pkg/components/Card.vue';
 import ImagesOutputWindow from '@pkg/components/ImagesOutputWindow.vue';
-import SortableTable from '@pkg/components/SortableTable';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import Checkbox from '@pkg/components/form/Checkbox.vue';
 import { mapTypedActions, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import getImageOutputCuller, { ImageOutputCuller } from '@pkg/utils/imageOutputCuller';
@@ -168,7 +165,7 @@ export default defineComponent({
   components: {
     Card,
     Checkbox,
-    SortableTable,
+    ViewTable,
     ImagesOutputWindow,
   },
   props: {
@@ -233,6 +230,7 @@ export default defineComponent({
           name:  'size',
           label: this.t('images.manager.table.header.size'),
           sort:  ['size', 'name', 'tag', 'id'],
+          value: (row: RowItem) => sizeFormatter.format(row.size),
         },
       ],
       keepImageManagerOutputWindowOpen: false,
@@ -510,9 +508,6 @@ export default defineComponent({
     margin-bottom: 12px;
   }
 
-  .imagesTable :deep(.search-box) {
-    align-self: flex-end;
-  }
   .imagesTable :deep(.bulk) {
     align-self: flex-end;
   }

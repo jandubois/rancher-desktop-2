@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals';
 import { shallowMount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 
 import mockModules from '@pkg/utils/testUtils/mockModules';
 
@@ -32,26 +33,29 @@ mockModules({
 });
 
 const { default: InstalledExtensions } = await import('@pkg/pages/extensions/installed.vue');
+const { default: ViewTable } = await import('@pkg/components/TableViews/ViewTable.vue');
 const methods = (InstalledExtensions as any).methods;
 
 describe('extensions installed table', () => {
   it('sorts installed extensions by displayed name by default', () => {
+    const store = createStore({
+      getters: { 'i18n/t': () => (key: string) => key },
+      actions: { 'extensions/fetch': jest.fn() },
+    });
     const wrapper = shallowMount(InstalledExtensions, {
       computed: {
         ...(InstalledExtensions as any).computed,
         installedExtensions: () => [],
       },
       global: {
-        mocks: {
-          $store: {
-            dispatch: jest.fn(),
-          },
-          t: (key: string) => key,
-        },
+        plugins: [store],
+        stubs:   { ViewTable: false },
+        mocks:   { t: (key: string) => key },
       },
     });
 
     expect(wrapper.getComponent(sortableTableStub).props('defaultSortBy')).toBe('title');
+    expect(wrapper.getComponent(ViewTable as any).props('coreColumns')).toContain('title');
   });
 });
 

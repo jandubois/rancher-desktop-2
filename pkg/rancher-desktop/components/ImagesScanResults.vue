@@ -1,6 +1,6 @@
 <script>
 import BadgeState from '@pkg/components/BadgeState.vue';
-import SortableTable from '@pkg/components/SortableTable';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 
 const SEVERITY_MAP = {
   LOW: {
@@ -23,7 +23,7 @@ const SEVERITY_MAP = {
 
 export default {
   components: {
-    SortableTable,
+    ViewTable,
     BadgeState,
   },
 
@@ -126,7 +126,8 @@ export default {
 </script>
 
 <template>
-  <sortable-table
+  <view-table
+    table-id="imageScan"
     :headers="headers"
     :rows="rows"
     key-field="id"
@@ -219,7 +220,7 @@ export default {
         </div>
       </td>
     </template>
-  </sortable-table>
+  </view-table>
 </template>
 
 <style lang="scss" scoped>

@@ -4,18 +4,29 @@ import { mapGetters } from 'vuex';
 
 import DiagnosticsButtonRun from '@pkg/components/DiagnosticsButtonRun.vue';
 import EmptyState from '@pkg/components/EmptyState.vue';
-import SortableTable from '@pkg/components/SortableTable/index.vue';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import ToggleSwitch from '@pkg/components/form/ToggleSwitch.vue';
 import type { DiagnosticsResult } from '@pkg/main/diagnostics/diagnostics';
 import { DiagnosticsCategory } from '@pkg/main/diagnostics/types';
 
 import type { PropType } from 'vue';
 
+/**
+ * `#group-row` draws the Mute heading and `expanded` is keyed by category, so the table always
+ * groups by category
+ */
+const GROUPINGS = [{ value: 'category', label: 'category', field: 'category' }];
+
+/** What `v-html` shows for a description, so that a query matches this and not the markup */
+function descriptionText(row: DiagnosticsResult): string {
+  return new DOMParser().parseFromString(row.description, 'text/html').body.textContent ?? '';
+}
+
 export default defineComponent({
   name:       'DiagnosticsBody',
   components: {
     DiagnosticsButtonRun,
-    SortableTable,
+    ViewTable,
     ToggleSwitch,
     EmptyState,
   },
@@ -28,7 +39,8 @@ export default defineComponent({
   },
   data() {
     return {
-      expanded: Object.fromEntries(Object.values(DiagnosticsCategory).map(c => [c, true])) as Record<DiagnosticsCategory, boolean>,
+      groupings: GROUPINGS,
+      expanded:  Object.fromEntries(Object.values(DiagnosticsCategory).map(c => [c, true])) as Record<DiagnosticsCategory, boolean>,
     };
   },
   computed: {
@@ -37,11 +49,13 @@ export default defineComponent({
         {
           name:  'description',
           label: this.t('diagnostics.tableHeaders.name'),
+          value: descriptionText,
         },
         {
-          name:  'mute',
-          label: this.t('diagnostics.tableHeaders.mute'),
-          width: 76,
+          name:       'mute',
+          label:      this.t('diagnostics.tableHeaders.mute'),
+          width:      76,
+          tableViews: false,
         },
       ];
     },
@@ -122,13 +136,15 @@ export default defineComponent({
         :time-last-run="timeLastRun"
       />
     </div>
-    <sortable-table
+    <view-table
+      table-id="diagnostics"
+      :view-menu="false"
+      :groupings="groupings"
+      default-group-by="group:category"
       key-field="id"
       :headers="headers"
       :rows="filteredRows"
       :paging="true"
-      group-by="category"
-      :search="false"
       :table-actions="false"
       :row-actions="false"
       :show-headers="false"
@@ -232,7 +248,7 @@ export default defineComponent({
           />
         </tr>
       </template>
-    </sortable-table>
+    </view-table>
   </div>
 </template>
 
