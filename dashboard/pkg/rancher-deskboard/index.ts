@@ -2,9 +2,26 @@ import { importTypes } from '@rancher/auto-import';
 import { IInternal, IPlugin } from '@shell/core/types';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
+import 'dayjs/locale/es';
+import 'dayjs/locale/fr';
+import 'dayjs/locale/it';
 import 'dayjs/locale/ja';
+import 'dayjs/locale/ko';
+import 'dayjs/locale/pt-br';
 import 'dayjs/locale/vi';
 import 'dayjs/locale/zh-cn';
+
+// The languages that the shell does not ship, each under its own name.
+const addedLocales: Record<string, string> = {
+  de:      'Deutsch',
+  es:      'Español',
+  fr:      'Français',
+  it:      'Italiano',
+  ja:      '日本語',
+  ko:      '한국어',
+  'pt-br': 'Português (Brasil)',
+  vi:      'Tiếng Việt',
+};
 
 // Where dayjs names a locale differently from the dashboard.
 const dayjsLocales: Record<string, string> = { 'zh-hans': 'zh-cn' };
@@ -18,9 +35,15 @@ export default function(plugin: IPlugin, internal: IInternal): void {
   plugin.metadata = require('./package.json');
 
   // The shell ships only en-us and zh-hans.
-  plugin.addLocale('de', 'Deutsch');
-  plugin.addLocale('ja', '日本語');
-  plugin.addLocale('vi', 'Tiếng Việt');
+  for (const [locale, label] of Object.entries(addedLocales)) {
+    plugin.addLocale(locale, label);
+  }
+
+  // Each translations file is its own chunk, loaded when its locale is selected. The shell's
+  // zh-hans loads first, so our zh-hans file overrides it key by key.
+  for (const locale of [...Object.keys(addedLocales), 'zh-hans']) {
+    plugin.addL10n(locale, () => import(`./translations/${ locale }.yaml`));
+  }
 
   const { store, app: { router } } = internal;
 
