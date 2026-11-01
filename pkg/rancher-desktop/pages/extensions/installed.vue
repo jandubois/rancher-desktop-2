@@ -5,7 +5,7 @@ import { mapGetters } from 'vuex';
 import EmptyState from '@pkg/components/EmptyState.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
 import NavIconExtension from '@pkg/components/NavIconExtension.vue';
-import SortableTable from '@pkg/components/SortableTable/index.vue';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import type { ExtensionState } from '@pkg/store/extensions';
 import { ipcRenderer } from '@pkg/utils/ipcRenderer';
 
@@ -29,7 +29,7 @@ const LABEL_MORE_INFO = 'io.rancherdesktop.extension.more-info';
 export default defineComponent({
   name:       'extensions-installed',
   components: {
-    LoadingIndicator, NavIconExtension, SortableTable, EmptyState,
+    LoadingIndicator, NavIconExtension, ViewTable, EmptyState,
   },
   data() {
     return {
@@ -161,13 +161,14 @@ export default defineComponent({
 
 <template>
   <div>
-    <sortable-table
+    <view-table
+      table-id="extensions"
+      :core-columns="['title']"
       key-field="id"
       :loading="loading"
       :headers="headers"
       :rows="installedExtensionRows"
       default-sort-by="title"
-      :search="false"
       :table-actions="false"
       :row-actions="false"
     >
@@ -258,7 +259,7 @@ export default defineComponent({
           </div>
         </td>
       </template>
-    </sortable-table>
+    </view-table>
   </div>
 </template>
 

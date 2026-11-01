@@ -12,7 +12,9 @@
     >
       {{ errorMessage }}
     </Banner>
-    <SortableTable
+    <ViewTable
+      table-id="portForwarding"
+      :core-columns="['listenport']"
       :headers="headers"
       :rows="rows"
       no-rows-key="portForwarding.sortableTables.noRows"
@@ -94,7 +96,7 @@
           </button>
         </div>
       </template>
-    </SortableTable>
+    </ViewTable>
   </div>
 </template>
 
@@ -102,7 +104,7 @@
 import { defineComponent } from 'vue';
 
 import Banner from '@pkg/components/Banner.vue';
-import SortableTable from '@pkg/components/SortableTable/index.vue';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import Checkbox from '@pkg/components/form/Checkbox.vue';
 
 import type { PropType } from 'vue';
@@ -110,7 +112,7 @@ import type { PropType } from 'vue';
 export default defineComponent({
   name:       'port-forwarding',
   components: {
-    SortableTable, Checkbox, Banner,
+    ViewTable, Checkbox, Banner,
   },
   directives: {
     focus: {

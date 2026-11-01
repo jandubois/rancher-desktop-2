@@ -96,13 +96,14 @@ export default {
     },
 
     groupBy: {
-      // Field to group rows by, row[groupBy] must be something that can be a map key
-      type:    String,
+      // Field to group rows by, row[groupBy] must be something that can be a map key. Or a function
+      // that takes the row and returns that key
+      type:    [String, Function],
       default: null,
     },
     groupRef: {
       // Object to provide as the reference for rendering the grouping row
-      type:    String,
+      type:    [String, Function],
       default: null,
     },
     groupSort: {
@@ -267,6 +268,15 @@ export default {
     noDataKey: {
       type:    String,
       default: 'sortableTable.noData', // i18n-uses sortableTable.noData
+    },
+
+    /**
+     * The rows are already filtered by a query that this table doesn't know about, so having none
+     * means that nothing matched rather than there being nothing to show
+     */
+    queried: {
+      type:    Boolean,
+      default: false,
     },
 
     /**
@@ -537,7 +547,7 @@ export default {
     },
 
     noResults() {
-      return !!this.searchQuery && this.pagedRows.length === 0;
+      return (!!this.searchQuery || this.queried) && this.pagedRows.length === 0;
     },
 
     noRows() {
@@ -854,13 +864,13 @@ export default {
     },
 
     isExpanded(row) {
-      const key = row[this.keyField];
+      const key = get(row, this.keyField);
 
       return !!this.expanded[key];
     },
 
     toggleExpand(row) {
-      const key = row[this.keyField];
+      const key = get(row, this.keyField);
       const val = !this.expanded[key];
 
       this.expanded[key] = val;
@@ -1295,7 +1305,7 @@ export default {
         </slot>
         <template
           v-for="(row, i) in groupedRows.rows"
-          :key="row.row[keyField]"
+          :key="row.key"
         >
           <slot
             name="main-row"
@@ -1336,8 +1346,8 @@ export default {
                     data-title="Toggle Expand"
                     :class="{
                       icon: true,
-                      'icon-chevron-right': !expanded[row.row[keyField]],
-                      'icon-chevron-down': !!expanded[row.row[keyField]],
+                      'icon-chevron-right': !expanded[row.key],
+                      'icon-chevron-down': !!expanded[row.key],
                     }"
                     @click.stop="toggleExpand(row.row)"
                   />
@@ -1447,7 +1457,7 @@ export default {
           >
             <tr
               v-if="row.row.stateDescription"
-              :key="row.row[keyField] + '-description'"
+              :key="row.key + '-description'"
               :data-testid="componentTestid + '-' + i + '-row-description'"
               class="state-description sub-row"
               @mouseenter="onRowMouseEnter"
@@ -1933,6 +1943,11 @@ export default {
 
     &.advanced-filtering {
       grid-template-columns: [bulk] auto [middle] minmax(min-content, auto) [search] minmax(min-content, auto);
+    }
+
+    // Without a search cell, the middle cell reaches the right edge
+    &:not(:has(> .search)) {
+      grid-template-columns: [bulk] auto [middle] min-content;
     }
 
     .bulk {

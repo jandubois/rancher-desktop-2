@@ -7,8 +7,9 @@
       v-if="ready"
       ref="fullWindow"
     >
-      <SortableTable
+      <ViewTable
         ref="imagesTable"
+        table-id="images"
         class="imagesTable"
         data-test="imagesTableRows"
         key-field="_key"
@@ -62,11 +63,7 @@
             </span>
           </td>
         </template>
-        <!-- The SortableTable component puts the Filter box goes in the #header-right slot
-             Too bad, because it means we can't use a css grid to manage the relative
-             positions of these three widgets
-        -->
-      </SortableTable>
+      </ViewTable>
 
       <Card
         v-if="showImageManagerOutput"
@@ -109,7 +106,7 @@ import { defineComponent, PropType } from 'vue';
 
 import Card from '@pkg/components/Card.vue';
 import ImagesOutputWindow from '@pkg/components/ImagesOutputWindow.vue';
-import SortableTable from '@pkg/components/SortableTable';
+import ViewTable from '@pkg/components/TableViews/ViewTable.vue';
 import Checkbox from '@pkg/components/form/Checkbox.vue';
 import { mapTypedActions, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import getImageOutputCuller, { ImageOutputCuller } from '@pkg/utils/imageOutputCuller';
@@ -168,7 +165,7 @@ export default defineComponent({
   components: {
     Card,
     Checkbox,
-    SortableTable,
+    ViewTable,
     ImagesOutputWindow,
   },
   props: {
@@ -233,6 +230,7 @@ export default defineComponent({
           name:  'size',
           label: this.t('images.manager.table.header.size'),
           sort:  ['size', 'name', 'tag', 'id'],
+          value: (row: RowItem) => sizeFormatter.format(row.size),
         },
       ],
       keepImageManagerOutputWindowOpen: false,
@@ -293,9 +291,6 @@ export default defineComponent({
     },
     imagesToDelete(): RowItem[] {
       return this.selected.filter(image => this.isDeletable(image));
-    },
-    imageIdsToDelete() {
-      return this.imagesToDelete.map(image => image.reference || image.id);
     },
     rows(): RowItem[] {
       return this.filteredImages
@@ -389,8 +384,11 @@ export default defineComponent({
       this.imageOutputCuller = getImageOutputCuller(command);
     },
     async deleteImages() {
-      const message = this.t('images.confirmDelete.multiple', { count: this.imagesToDelete.length });
-      const detail = this.imageIdsToDelete.join('\n');
+      // The table's live selection can change while the dialog is open, so
+      // delete exactly the images the dialog lists.
+      const images = this.imagesToDelete;
+      const message = this.t('images.confirmDelete.multiple', { count: images.length });
+      const detail = images.map(image => image.reference || image.id).join('\n');
 
       const options: Electron.MessageBoxOptions = {
         message,
@@ -409,7 +407,7 @@ export default defineComponent({
       }
 
       // TODO: This should display deletion output.
-      await Promise.all(this.imagesToDelete.map(image => this.imageDelete({ image })));
+      await Promise.all(images.map(image => this.imageDelete({ image })));
     },
     async deleteImage(image: ParsedImage) {
       const options: Electron.MessageBoxOptions = {
@@ -510,9 +508,6 @@ export default defineComponent({
     margin-bottom: 12px;
   }
 
-  .imagesTable :deep(.search-box) {
-    align-self: flex-end;
-  }
   .imagesTable :deep(.bulk) {
     align-self: flex-end;
   }
