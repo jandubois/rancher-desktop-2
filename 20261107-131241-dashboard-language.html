@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This PR makes the dashboard follow the app&#39;s language. It sets the <code>R_LOCALE</code> cookie before the window loads, reloads the dashboard on a language change, adds a zh-hans plugin file, and sets dayjs&#39;s locale from the shell&#39;s. Traces through the vendored shell and probes confirm each mechanism. The one Important finding is a test gap. Deleting the cookie write leaves the Jest suite green, and I1&#39;s patch adds the spec that catches it. Two Suggestions concern the plugin&#39;s dayjs code.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since This Review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The author addressed the findings on 2026-11-07 and amended the fixes into the PR&#39;s two commits, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1bfd9297c"><code>1bfd9297c</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/453b76a4e"><code>453b76a4e</code></a>. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -423,6 +429,7 @@ index 000000000..cf4589176
 +  });
 +});</code></pre>
       </details>
+    <p><strong>Outcome:</strong> test written, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1bfd9297c"><code>1bfd9297c</code></a>. The spec has a fourth test, which closes the window during the first cookie write: none of the three above fails when the closed-window check before <code>loadURL</code> is removed.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -451,6 +458,7 @@ index 000000000..cf4589176
      dayjs.locale(dayjsLocales[locale] ?? locale);
 -  });
 +  }, { immediate: true });</code></pre>
+    <p><strong>Outcome:</strong> fixed as proposed, in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/453b76a4e"><code>453b76a4e</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/pkg/rancher-deskboard/index.ts">
       <div class="finding-title" id="S2">
@@ -474,6 +482,7 @@ export default function(plugin: IPlugin, internal: IInternal): void {
       <pre><code class="language-ts">// Where dayjs names a locale differently from the dashboard. Each language
 // the shell offers needs its dayjs locale imported above, or its dates stay
 // in English.</code></pre>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/453b76a4e"><code>453b76a4e</code></a>. The comment also says why en-us needs neither an import nor a map entry: dayjs falls back on the part of a name before the hyphen, so en-us gets its built-in English.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -481,7 +490,7 @@ export default function(plugin: IPlugin, internal: IInternal): void {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li>(future) Every language change reloads the dashboard. That discards unsaved state, such as an open YAML edit, and it happens even when the dashboard&#39;s language stays the same (en-us to de, since the shell falls back to en-us). Language changes are rare, so this is fine for now. Skipping the reload when the shell&#39;s resolved locale does not change would need the shell&#39;s locale list, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1187" class="gh-ref" data-title="Translate the dashboard into every app language" data-state="open" data-type="issue">#1187</a> settles. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(future) Every language change reloads the dashboard. That discards unsaved state, such as an open YAML edit, and it happens even when the dashboard&#39;s language stays the same (en-us to de, since the shell falls back to en-us). Language changes are rare, so this is fine for now. Skipping the reload when the shell&#39;s resolved locale does not change would need the shell&#39;s locale list, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1187" class="gh-ref" data-title="Translate the dashboard into every app language" data-state="open" data-type="issue">#1187</a> settles. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> declined for this PR and kept as follow-up work for <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1187" class="gh-ref" data-title="Translate the dashboard into every app language" data-state="open" data-type="issue">#1187</a>.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>

@@ -24,6 +24,12 @@ This PR makes the dashboard follow the app's language. It sets the `R_LOCALE` co
 
 ---
 
+## Since This Review
+
+The author addressed the findings on 2026-11-07 and amended the fixes into the PR's two commits, now `1bfd9297c` and `453b76a4e`. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome.
+
+---
+
 ## Critical Issues
 
 None.
@@ -199,6 +205,8 @@ index 000000000..cf4589176
 +});
 ```
 
+**Outcome:** test written, in `1bfd9297c`. The spec has a fourth test, which closes the window during the first cookie write: none of the three above fails when the closed-window check before `loadURL` is removed.
+
 ---
 
 ## Suggestions
@@ -222,6 +230,8 @@ Fix:
 +  }, { immediate: true });
 ```
 
+**Outcome:** fixed as proposed, in `453b76a4e`.
+
 S2. **A shell language without a dayjs locale import gets English dates** — `dashboard/pkg/rancher-deskboard/index.ts:3-7` [Claude Opus 5.5, Gemini 3.1 Pro]
 
 ```ts
@@ -242,6 +252,8 @@ Fix: say it at the map. Importing every app language's dayjs locale now would al
 // in English.
 ```
 
+**Outcome:** fixed in `453b76a4e`. The comment also says why en-us needs neither an import nor a map entry: dayjs falls back on the part of a name before the hyphen, so en-us gets its built-in English.
+
 ---
 
 ## Design Observations
@@ -249,6 +261,7 @@ Fix: say it at the map. Importing every app language's dayjs locale now would al
 ### Concerns
 
 - (future) Every language change reloads the dashboard. That discards unsaved state, such as an open YAML edit, and it happens even when the dashboard's language stays the same (en-us to de, since the shell falls back to en-us). Language changes are rare, so this is fine for now. Skipping the reload when the shell's resolved locale does not change would need the shell's locale list, which #1187 settles. [Claude Opus 5.5]
+  **Outcome:** declined for this PR and kept as follow-up work for #1187.
 
 ### Strengths
 
@@ -755,3 +768,17 @@ Commit messages are detailed, accurately document rationale, and reference the c
   - Verified `dayjs.locale(null)` and `dayjs.locale('unknown')` safely return current locale without throwing.
 - **`getLocale` Jest unit test probe**: Created a probe modifying `pkg/rancher-desktop/main/__tests__/i18n.spec.ts` in `.scratch/` and ran Jest under Node 26.13.0; verified 8 of 8 tests pass with `getLocale()` assertions.
 - **Lint verification**: Ran `eslint` on `pkg/rancher-desktop/main/i18n.ts` and `pkg/rancher-desktop/window/dashboard.ts`; 0 errors, 0 warnings.
+
+## Resolution
+
+| | |
+|---|---|
+| **Addressed** | 2026-11-07 |
+| **Commit** | `1bfd9297c Follow the app's language in the dashboard`, `453b76a4e Show dashboard dates in the dashboard's language` (fixups amended into the PR's two commits; not pushed) |
+
+| # | Finding | Action | Reason |
+|---|---------|--------|--------|
+| 1 | Important #1: Nothing tests the dashboard's locale sync | Test written | |
+| 2 | Suggestion #1: The dayjs watcher relies on the shell's init order | Fixed | |
+| 3 | Suggestion #2: A shell language without a dayjs locale import gets English dates | Fixed | |
+| 4 | Design Concern #1: Every language change reloads the dashboard | Skipped | Language changes are rare; skipping a same-language reload needs the shell's locale list, which #1187 settles; tracked in pending-work |
