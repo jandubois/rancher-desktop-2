@@ -242,6 +242,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The six commits build the Cluster Explorer plugin in <code>dashboard/</code> against a pinned, checksummed Rancher shell, embed one CI build in every package leg&#39;s rdd, and start steve as <code>rdd steve</code>, which retires the fork&#39;s binary, the unreleased-change monitor and <code>internalDir</code>. One finding needs a fix before merge. <code>dashboard/package.json</code> keeps four resolutions from the old dashboard repo, so the lock resolves <code>jsonpath-plus</code> to 10.4.0 and <code>pbkdf2</code> to 3.1.7, where Rancher tested 10.3.0 and 3.1.5. The suggestions are cleanups.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings cite <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e355ba763"><code>e355ba763</code></a>. Their fixes were folded into the PR&#39;s six commits on 2026-11-07, so the commits have new SHAs (tip <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/42f70e61e"><code>42f70e61e</code></a>) and some cited lines have moved. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -454,6 +460,7 @@ index c25f3262f..40b428b2f 100644
    linkType: hard
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. The four resolutions are gone, <code>dashboard/package.json</code> repeats all four of Rancher&#39;s v2.15.3 resolutions (<code>@cypress/request</code> included), and the lock takes Rancher&#39;s entries for <code>@types/node</code>, <code>undici-types</code>, <code>elliptic</code>, <code>jsonpath-plus</code> and <code>pbkdf2</code>. <code>semver</code>, <code>undici</code> and <code>is-core-module</code> keep their locked versions. The comment above <code>RANCHER_TAG</code> documents the re-seed, and the commit body now matches it.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -476,6 +483,7 @@ bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_I
 	$(call ATTACH_ENTITLEMENTS,$@)</code></pre>
     <p>The rule watches the mtime of <code>index.html</code>, but the tag depends on whether the file exists. Deleting the staged directory leaves the old <code>with_dashboard</code> binary up to date. Staging an <code>index.html</code> that is older than <code>bin/rdd</code> does the reverse and leaves a binary built without the tag up to date. Unzipping the CI <code>dashboard</code> artifact produces such a file, and so does copying with <code>cp -p</code>, <code>rsync -a</code> or <code>tar x</code>. <code>make --directory=dashboard</code> writes fresh mtimes, so its own output always triggers a rebuild.</p>
     <p>Fix: make <code>bin/rdd</code> depend on a stamp file that a <code>FORCE</code> rule rewrites only when <code>$(if $(DASHBOARD_INDEX),with_dashboard)</code> changes. Adding <code>FORCE</code> to <code>bin/rdd</code> itself also works, but then every <code>make build-rdd</code>, including the one that <code>yarn install</code> runs, invokes <code>go build</code> and re-signs the binary; I did not measure that cost.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. <code>bin/rdd</code> depends on a <code>bin/.dashboard-tag</code> stamp that a <code>FORCE</code> rule rewrites only when the tag changes.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/Makefile">
       <div class="finding-title" id="S2">
@@ -519,6 +527,7 @@ TARGET_OS := $(if $(filter command line,$(origin GOOS)),$(GOOS),$(shell go$(EXE)
 TARGET_ARCH := $(if $(filter command line,$(origin GOARCH)),$(GOARCH),$(shell go$(EXE) env GOARCH))
 HOST_OS := $(shell go$(EXE) env GOHOSTOS)</code></pre>
     <p>Fix: have the Package job check <code>go version -m</code> on the built rdd for <code>with_dashboard</code>, or fail <code>make</code> when the index is missing and a <code>REQUIRE_DASHBOARD</code> variable is set.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. The Package job&#39;s new step, &quot;Check that rdd embeds the dashboard&quot;, checks <code>go version -m</code> on the built rdd for <code>with_dashboard</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/Makefile">
       <div class="finding-title" id="S3">
@@ -557,6 +566,7 @@ all:
 		$(ARCHIVE_ROOT)/shell
 	rm -rf vendor-shell/rancher-components</code></pre>
     <p>Fix: add that a new pin also needs <code>RANCHER_SHA256</code> set to the new archive&#39;s checksum.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3f8ed042b"><code>3f8ed042b</code></a>. The comment says a new pin also needs <code>RANCHER_SHA256</code> set to the new archive&#39;s checksum.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/Makefile">
       <div class="finding-title" id="S4">
@@ -588,6 +598,7 @@ all:
 	tar --extract --gzip --file=$(ARCHIVE) --directory=vendor-shell --strip-components=2 \
 		$(ARCHIVE_ROOT)/shell</code></pre>
     <p>Fix: rename <code>VERSION</code> to <code>DASHBOARD_VERSION</code> and drop <code>API=…</code>. A build with both changes passes and contains <code>dashboardVersion:&quot;v2.15.3&quot;</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. The build passes <code>DASHBOARD_VERSION</code> and no longer passes <code>API</code>, and its output contains <code>dashboardVersion:&quot;v2.15.3&quot;</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/pkg/rancher-deskboard/babel.config.js">
       <div class="finding-title" id="S5">
@@ -597,6 +608,7 @@ all:
       <pre data-start="1" data-line="1"><code class="language-js">module.exports = require(&#39;./.shell/pkg/babel.config.js&#39;);</code></pre>
     <p>This file and the <code>vue.config.js</code> beside it require <code>./.shell/...</code>, which does not exist here; Babel and vue-cli read only the configs in <code>dashboard/</code>. The plugin is not a Yarn workspace, so nothing installs the <code>devDependencies</code> in its <code>package.json</code>, and Yarn ignores its <code>engines</code>. GitHub&#39;s dependency graph still reads that file: its comparison of this branch lists <code>ip</code> 2.0.1 from it, with the high-severity advisory GHSA-2p57-rm9w-gvfp. <code>dashboard/tsconfig.json</code> also names <code>cypress</code> types, which nothing installs. A build with the two files deleted and those fields and <code>cypress</code> removed passes, and the plugin still registers.</p>
     <p>Fix: delete both config files and the <code>devDependencies</code>, <code>engines</code> and <code>scripts</code> fields, and drop <code>cypress</code> from the types. Keep the <code>rancher</code> field, which the shell&#39;s <code>vue.config.js:327</code> needs to register the plugin.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. Both configs are deleted, the plugin&#39;s <code>package.json</code> lost <code>devDependencies</code>, <code>engines</code> and <code>scripts</code>, both tsconfigs lost their unresolvable type entries (<code>cypress</code> among them), <code>@components/*</code> maps into the shell&#39;s <code>rancher-components</code>, and the root <code>package.json</code> lost its stale <code>version</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="packaging/electron-builder.yml">
       <div class="finding-title" id="S6">
@@ -635,6 +647,7 @@ files:
 
     throw new Error(message.join(&#39;\n&#39;));</code></pre>
     <p>Fix: have <code>postinstall</code> delete <code>resources/internal</code>, or tell developers to remove it. Keeping the ignore entry for one more release is the backward-compatible choice and needs Jan&#39;s approval.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1191" class="gh-ref" data-title="Build the Cluster Explorer dashboard and start steve through rdd" data-state="open" data-type="pr">#1191</a>&#39;s body, which tells developers with an existing checkout to delete <code>resources/internal</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/pkg/rancher-deskboard/index.ts">
       <div class="finding-title" id="S7">
@@ -655,6 +668,7 @@ files:
     hideCopyConfig: true,</code></pre>
     <p>Both numbers are rancher-sandbox/rancher-desktop issues, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/2208" class="gh-ref">#2208</a> about the kubeconfig buttons and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/8151" class="gh-ref">#8151</a> about the Kubectl Shell icon. Neither exists in this repository.</p>
     <p>Fix: write them as <code>rancher-sandbox/rancher-desktop#2208</code> and <code>rancher-sandbox/rancher-desktop#8151</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="scripts/lib/dependencies.ts">
       <div class="finding-title" id="S8">
@@ -674,6 +688,7 @@ type ReleaseFilter = &#39;published&#39; | &#39;published-pre&#39; | &#39;semver
 export abstract class GitHubDependency extends VersionedDependency {</code></pre>
     <p>The <code>Steve</code> class was the only user of <code>published-pre</code>, and <code>published</code> already had none at the merge-base.</p>
     <p>Fix: drop both from the union and simplify <code>getPublishedReleaseTagNames</code> (line 772), whose branch at line 780 tests for <code>published-pre</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0e608d6dc"><code>0e608d6dc</code></a>. <code>published-pre</code> is gone from the union and from <code>getPublishedReleaseTagNames</code>; <code>published</code> stays.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/docs/design/gui.md">
       <div class="finding-title" id="S9">
@@ -694,6 +709,7 @@ the control plane.  It may also need to interact with RDX extensions.
 2.  Run `rdd ctl get app` to determine whether first-run is needed.</code></pre>
     <p><code>steve.ts</code> now starts a long-running <code>rdd steve</code>, and this description of what the GUI calls <code>rdd</code> for leaves it out. The doc was already out of date at the merge-base, when Electron ran the fork&#39;s binary directly. But this PR is where the GUI starts calling <code>rdd</code> for steve, so it should update the doc.</p>
     <p>Fix: add <code>rdd steve</code>, with 180b3dc87&#39;s reason why Electron still owns the process.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0e608d6dc"><code>0e608d6dc</code></a>. <code>gui.md</code> names <code>rdd steve</code> and says why Electron still starts it.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/pkg/rancher-deskboard/index.ts">
       <div class="finding-title" id="S10">
@@ -709,6 +725,7 @@ export default function(plugin: IPlugin, internal: IInternal): void {
   importTypes(plugin);</code></pre>
     <p>The review context for this repo asks new <code>.ts</code>, <code>.js</code> and <code>.vue</code> files for the SPDX header in <code>.ltag/go.txt</code>, because CI&#39;s ltag check skips them. Only 5 of the 189 tracked app <code>.ts</code> files have it so far, so the rule is not settled. <code>index.ts</code> and <code>models/management.cattle.io.cluster.js</code> were written for this PR, and <code>dashboard/babel.config.js</code> and <code>dashboard/vue.config.js</code> are new as well. Line 19 of <code>pkg/rancher-deskboard/tsconfig.json</code> also ends in trailing whitespace, which <code>git diff --check</code> reports.</p>
     <p>Fix: add the header to those four files (S5 deletes the two <code>pkg/</code> configs) and trim the whitespace.</p>
+    <p><strong>Outcome:</strong> declined for the license headers. The trailing whitespace is fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/pkg/rancher-deskboard/index.ts">
       <div class="finding-title" id="S11">
@@ -731,6 +748,7 @@ export default function(plugin: IPlugin, internal: IInternal): void {
     logo: require(`./assets/logo.svg`),</code></pre>
     <p>ESLint skips <code>dashboard/</code>, so nothing flags the <code>let</code>.</p>
     <p>Fix: declare it with <code>const</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file=".github/workflows/package.yaml">
       <div class="finding-title" id="S12">
@@ -751,6 +769,7 @@ export default function(plugin: IPlugin, internal: IInternal): void {
         name: dashboard</code></pre>
     <p><code>yarn-install/action.yaml</code> runs the same two commands under the comment &quot;Install yarn, which requires installing corepack&quot;. The new job&#39;s log shows only <code>Run npm install -g corepack</code>.</p>
     <p>Fix: add the same comment, or a <code>name:</code> on each step.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. A comment above the two steps says why the job installs Corepack, and the install uses <code>--global</code>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -758,9 +777,9 @@ export default function(plugin: IPlugin, internal: IInternal): void {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><em></em>The <code>dashboard</code> job delays every package leg<em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. In run 42315601976 it ran from 00:01:34 to 00:03:27 UTC, 1 min 53 s, and the six legs waited for it. Caching the staged output under a hash of <code>dashboard/**</code> would skip it when a PR leaves <code>dashboard/</code> alone.</li>
-      <li><em></em>The root <code>.yarnrc.yml</code> applies to <code>dashboard/</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. Its <code>enableScripts: false</code> produces three YN0004 warnings in the job log, for <code>@parcel/watcher</code>, <code>core-js</code> and <code>yarn</code>. The build passes anyway, so a Makefile comment saying the warnings are expected would save whoever bumps the shell next from chasing them.</li>
-      <li><em></em>The standalone <code>rdd</code> download includes steve and the dashboard until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a><em></em> (future) <span class="pill pill-gemini">Gemini 3.5 Flash</span>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a> plans the split; until then, by <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a>&#39;s measurement, the download is about 23 MB larger.</li>
+      <li><em></em>The <code>dashboard</code> job delays every package leg<em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. In run 42315601976 it ran from 00:01:34 to 00:03:27 UTC, 1 min 53 s, and the six legs waited for it. Caching the staged output under a hash of <code>dashboard/**</code> would skip it when a PR leaves <code>dashboard/</code> alone. <strong>Outcome:</strong> deferred until after this PR merges.</li>
+      <li><em></em>The root <code>.yarnrc.yml</code> applies to <code>dashboard/</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. Its <code>enableScripts: false</code> produces three YN0004 warnings in the job log, for <code>@parcel/watcher</code>, <code>core-js</code> and <code>yarn</code>. The build passes anyway, so a Makefile comment saying the warnings are expected would save whoever bumps the shell next from chasing them. <strong>Outcome:</strong> deferred until after this PR merges.</li>
+      <li><em></em>The standalone <code>rdd</code> download includes steve and the dashboard until <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a><em></em> (future) <span class="pill pill-gemini">Gemini 3.5 Flash</span>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a> plans the split; until then, by <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a>&#39;s measurement, the download is about 23 MB larger. <strong>Outcome:</strong> declined here; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1192" class="gh-ref" data-title="Leave steve and the dashboard out of the standalone rdd download" data-state="open" data-type="issue">#1192</a> tracks it.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -776,18 +795,21 @@ export default function(plugin: IPlugin, internal: IInternal): void {
     <div class="card card-neutral">
     <p>Run for this review in a worktree at the review SHA: the whole Jest suite through <code>yarn test:unit:jest</code> (65 suites passed and 1 skipped; 612 tests passed and 33 skipped), eslint on every changed TypeScript and JavaScript file outside <code>dashboard/</code> (clean), and <code>make --directory=dashboard</code> on Node 26.13.0 (exit 0, six warnings, 365 files). A scan of that build found <code>://127.0.0.1:6120/</code> 18 times, all in <code>index.html</code> and five <code>.js</code> files, and <code>127.0.0.1</code> in no other file type. CI passed every workflow on this SHA. Both Test Signing jobs were skipped, so the <code>signing-config-win.yaml</code> change has not run. CI&#39;s <code>dashboard</code> job installed Node 26.13.0 from the root <code>devEngines</code>, as the PR body says.</p>
     <p>Nothing asserts that a shipped rdd embeds the dashboard (S2); this time the linux x86_64 leg&#39;s log shows <code>with_dashboard</code>. Nothing automated reaches Electron&#39;s <code>rdd steve</code> path, because <code>e2e/dashboard.e2e.spec.ts</code> is <code>describe.fixme</code>, which is settled. Nothing tests <code>LocalCluster.statusInfo</code>, and <code>dashboard/</code> does not have a test runner, so a test there is optional.</p>
+    <p><strong>Outcome:</strong> S2&#39;s new check covers the first gap. The <code>LocalCluster.statusInfo</code> test is declined.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p>S3 and S9 cover the pin-bump comment and the GUI design doc. No developer doc says that a dev build of rdd does not serve the dashboard until someone runs <code>make --directory=dashboard</code>; the comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/e355ba763c1a583a37707d5015546a8244721003/rdd/Makefile#L248-L249"><code>rdd/Makefile:248-249</code></a> is the only place that says it.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e73fc574a"><code>e73fc574a</code></a>. README&#39;s &quot;Running&quot; section says how to build the dashboard into rdd.</p>
     </div>
     <hr>
     <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p>Each of the six commits records one decision and its reason. c18ae8596 deletes interceptor code that 749de2704 adds, and 1cc67a909 and 7a574462d each re-pin the shell. Folding them would shorten what a reviewer reads but merge four explanations into one body; either is reasonable.</p>
+    <p><strong>Outcome:</strong> the six commits stay; each review fix was folded into the commit that introduced its lines.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
