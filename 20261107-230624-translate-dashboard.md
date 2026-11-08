@@ -11,7 +11,7 @@
 | **Commits** | `c7663172e` Add dashboard translations for five locales<br>`324f586d1` Add dashboard translations based on ui-locales<br>`bd3af7e63` Translate the dashboard's missing type and group names<br>`79b4dee81` Load the dashboard translations |
 | **Review SHA** | `79b4dee814f47cb49c4eded787b54f2dece772d6` |
 | **Reviewers** | Claude Opus 5.5 (effort: high), Codex GPT 6 Astra (effort: high), Gemini 3.1 Pro (effort: default), Gemini 3.5 Flash (effort: default) |
-| **Verdict** | **Merge with fixes**: the loader code does not need a change; I1 adds the dashboard to the README's procedure for a new language |
+| **Verdict** | **Merge with fixes**: the loader code does not need a change; I1 and I2 correct the README and a commit message |
 | **Wall-clock time** | `22 min 13 s` |
 
 The PR's branch also has #1195's two commits, #1191's six and #1181's two below them. This review covers only #1197's own four commits, diffed against `453b76a4e`, the head of #1195. At the author's request it leaves out the wording of the nine `translations/*.yaml` files and checks only their structure.
@@ -20,7 +20,7 @@ The PR's branch also has #1195's two commits, #1191's six and #1181's two below 
 
 ## Executive Summary
 
-This PR loads dashboard translations for nine languages, each in its own lazy chunk, adds eight languages to the dashboard's language menu, and imports their dayjs locales. Probes against a rebuild of the reviewed tree and the shell's i18n store confirm each mechanism, and every translation file passes the structural checks. The one Important finding is in the documentation. The app's procedure for adding a language still says nothing else needs changing, but the dashboard now needs four more pieces.
+This PR loads dashboard translations for nine languages, each in its own lazy chunk, adds eight languages to the shell's list of languages, and imports their dayjs locales. Probes against a rebuild of the reviewed tree and the shell's i18n store confirm each mechanism, and every translation file passes the structural checks. Both Important findings are prose. The app's procedure for adding a language leaves out the dashboard, and a commit message names a language menu that RD hides.
 
 ---
 
@@ -128,6 +128,58 @@ index 7e9240e1b..1c0d42734 100644
  
 ```
 
+
+I2. **A commit message credits a language menu that RD hides** — `79b4dee81` [Consolidator]
+
+```text
+The shell ships only en-us and zh-hans. Add our other eight languages
+to its language menu, and register each one's translations with
+```
+
+RD hides the shell's side-nav and Preferences language menus. The side-nav selector (`SideNav.vue`, line 457) renders only when the root product is Harvester (`showProductFooter`, line 148). The Preferences page has one too, but only the header's user menu links to it, and `showUserMenu()` hides that menu when `rancherEnv` is `desktop`. RD's builds set it to `desktop`. The login page has a third, which this review did not check. For RD, `addLocale` puts each language in `state.available`, the list that `i18n/init` checks the `R_LOCALE` cookie against. A reader who trusts the message and knows that RD hides the menus could delete the loop as dead code, and every added language would then fall back to en-us, as de and ja do in the probe below.
+
+```bash repro
+#!/usr/bin/env bash
+# Save as probe-addlocale.sh in the repo root, next to I1's probe-new-language.cjs;
+# run: bash probe-addlocale.sh
+set -o errexit -o nounset
+f=dashboard/pkg/rancher-deskboard/index.ts
+cp "${f}" "${f}.orig"
+trap 'mv "${f}.orig" "${f}"' EXIT
+show() {
+    local out
+    out=$(node probe-new-language.cjs nl)
+    grep -E '^(de|ja|zh-hans) ' <<<"${out}"
+}
+echo '== as committed'
+show
+sed -i.bak '/plugin.addLocale(locale, label);/d' "${f}"
+rm -f "${f}.bak"
+echo '== without the addLocale call'
+show
+```
+
+```text repro-output
+$ bash probe-addlocale.sh
+== as committed
+de       -> dashboard de
+ja       -> dashboard ja
+zh-hans  -> dashboard zh-hans
+== without the addLocale call
+de       -> dashboard en-us   (falls back)
+ja       -> dashboard en-us   (falls back)
+zh-hans  -> dashboard zh-hans
+```
+
+Fix: reword the opening of the paragraph to name the list and the check that reads it, then rewrap the rest of the paragraph.
+
+```text
+The shell ships only en-us and zh-hans, and it falls back to en-us for
+any language that is not on its list. Add our other eight languages to
+that list, and register each one's translations with `addL10n`, so that
+a file loads only when the user selects its language.
+```
+
 ---
 
 ## Suggestions
@@ -159,16 +211,14 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 
 ### Concerns
 
-- (future) Dates now take the language's day and month names but keep the shell's US formats, `ddd, MMM D YYYY` and `h:mm:ss a` (`store/prefs.js`, lines 79 and 89). dayjs's de and fr locales do not define a meridiem, so the PR's own table shows `Sa., Nov. 7 2026 10:43:42 pm` under de. Users can change both formats in the dashboard's preferences. A default per language would need someone to decide each language's formats. [Claude Opus 5.5]
+- (future) Dates now take the language's day and month names but keep the shell's US formats, `ddd, MMM D YYYY` and `h:mm:ss a` (`store/prefs.js`, lines 79 and 89). dayjs's de and fr locales do not define a meridiem, so the PR's own table shows `Sa., Nov. 7 2026 10:43:42 pm` under de. Both formats are settings on the shell's Preferences page, but RD hides the only link to that page, so RD users cannot change them. A default per language would need someone to decide each language's formats. [Claude Opus 5.5]
 - (future) The 58 type and group labels that en-us lacks are in files that otherwise follow en-us key for key. A tool that prunes these files against a newer en-us, the way `i18n-report remove --stale` prunes the app's files, would delete them. A separate file per language, registered in the same `addL10n` loop, would keep them apart. Moving them to `l10n/` would not, because the build inlines those files into `index.js`. [Claude Opus 5.5]
-- (future, pre-existing) In single-product mode the dashboard shows its own language menu (`SideNav.vue`, line 457), and that menu now lists ten languages. A choice made there lasts until the app writes `R_LOCALE` again, on the next open or the next language change. The #1195 review said RD's dashboard does not have a language menu of its own, and that was wrong. [Claude Opus 5.5]
 
 ### Strengths
 
 - (in-scope) Each language's translations build into their own chunk of 314 to 422 KB, fetched only when someone selects that language. `index.js` grows by 2,245 bytes, and `chunk-vendors`, which gains the eight dayjs locales, by 8,527. [Claude Opus 5.5, Codex GPT 6 Astra, Gemini 3.5 Flash]
 - (in-scope) The zh-hans comment holds. `switchTo` awaits the shell's own zh-hans before it merges the plugin's files, and the `l10n/` and `translations/` files do not share a key, so their concurrent merges cannot conflict. [Claude Opus 5.5, Codex GPT 6 Astra, Gemini 3.1 Pro]
 - (in-scope) Every app language now reaches the dashboard as itself, so every language change also changes the dashboard's language. That settles the #1195 review's concern about reloads that left the language unchanged. [Claude Opus 5.5, Gemini 3.5 Flash]
-- (in-scope) The menu reads every label from en-us's `locale` map, where `addLocale` puts each language's own name, so all ten entries show their native names whatever language is selected. [Gemini 3.5 Flash]
 
 ---
 
@@ -187,7 +237,7 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 - I1: the README's procedure for adding a language leaves out the dashboard.
 - S1: the Makefile's procedures for moving the shell leave out the translations.
 - The four files seeded from rancher/ui-locales each start with a line naming the source file, the commit `e538b156d5`, Apache-2.0 and `ui-locales.LICENSE`. That license file is byte-identical to upstream's `LICENSE` at that commit, and upstream does not have a NOTICE file. The five other translations do not say which shell commit they translate; the Makefile's `SHELL_COMMIT` is the only record.
-- The comments in `index.ts` match the shell's behavior. The four commit messages match the code, though `79b4dee81` does not mention the eight `l10n/` files that supply the header's product label.
+- The comments in `index.ts` match the shell's behavior. I2 covers `79b4dee81`'s message, which also does not mention the eight `l10n/` files that supply the header's product label. The other three commit messages match the code.
 
 ---
 
@@ -195,6 +245,7 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 
 - Settled in the #1195 review and still settled: license headers on the plugin's files, which the author declined, and a dayjs fallback to `en` for a name that dayjs has not loaded.
 - Do not re-suggest rewording "the shell offers" in the `dayjsLocales` comment. The shell's language list includes the languages that the plugin adds, and that list is what the comment means.
+- Do not re-suggest anything about the dashboard's own language menu. In RD the side-nav selector renders only for Harvester, and the header hides the only link to Preferences, so RD hides both of the selectors that this review checked, as the #1195 review said. The login page has a third, which this review did not check, and RD's dashboard opens straight into the cluster explorer.
 - The wording and terminology of the translations were out of scope at the author's request.
 
 ---
@@ -203,7 +254,7 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 
 ### [Claude Opus 5.5]
 
-Claude found the only Important finding by asking what else a new language now needs, which took it outside the diff to the app's README. It also raised the shell-bump Suggestion and the two other design concerns, and its bundle sizes and chunk claims matched the staged builds. Its second Suggestion, the US date format, moved to Design Observations, because the PR does what it set out to do, and formats per language need a decision first. It ran the built shell's `t` getter by loading the vendor chunk with Node's `vm` module; the I1 probe could not reuse that harness, because the plugin's module is inside the entry chunk's runtime.
+Claude found I1 by asking what else a new language now needs, which took it outside the diff to the app's README. It also raised the shell-bump Suggestion and the concern about the 58 labels, and its bundle sizes and chunk claims matched the staged builds. Its concern that the dashboard's own language menu now lists ten languages was wrong. It cited `SideNav.vue:457` without the `v-if="showProductFooter"` around it, which limits that footer to Harvester, and the first version of this report repeated the error. Its second Suggestion, the US date format, moved to Design Observations, because the PR does what it set out to do, and formats per language need a decision first. It ran the built shell's `t` getter by loading the vendor chunk with Node's `vm` module; the I1 probe could not reuse that harness, because the plugin's module is inside the entry chunk's runtime.
 
 ### [Codex GPT 6 Astra]
 
@@ -215,7 +266,7 @@ Gemini 3.1 Pro did not report a finding, and it named one strength, the merge or
 
 ### [Gemini 3.5 Flash]
 
-Flash raised the chunk-name Suggestion and was the only agent to check that the new dotted type keys parse through the shell's `splitObjectPath`. Its other Suggestion, rewording the dayjs comment, rested on a wrong history. The #1195 review chose "the shell offers" for #1187's languages, and the comment is accurate. It also tried `npx eslint` in a worktree without installed dependencies, and npm refused to run it on the root `package.json`'s `devEngines` check. The two Gemini models agreed that nothing in the diff is Important, and that agreement counts as one opinion.
+Flash raised the chunk-name Suggestion and was the only agent to check that the new dotted type keys parse through the shell's `splitObjectPath`. Its strength about native names in the language menu was dropped, because RD hides the side-nav and Preferences selectors. Its other Suggestion, rewording the dayjs comment, rested on a wrong history. The #1195 review chose "the shell offers" for #1187's languages, and the comment is accurate. It also tried `npx eslint` in a worktree without installed dependencies, and npm refused to run it on the root `package.json`'s `devEngines` check. The two Gemini models agreed that nothing in the diff is Important, and that agreement counts as one opinion.
 
 ### Summary
 
@@ -224,9 +275,9 @@ Flash raised the chunk-name Suggestion and was the only agent to check that the 
 | Duration | 11m 38s | 4m 41s | 8m 32s | 12m 02s |
 | Findings | 1I 1S | none | none | 1S |
 | Tool calls | 64 (Bash 61, Read 3) | 19 (shell 19) | 44 (run_shell_command 44) | 118 (run_shell_command 57, read_file 24, grep_search 23) |
-| Design observations | 6 | 2 | 1 | 3 |
-| False positives | 0 | 0 | 0 | 1 |
-| Unique insights | 5 | 0 | 0 | 2 |
+| Design observations | 5 | 2 | 1 | 2 |
+| False positives | 1 | 0 | 0 | 1 |
+| Unique insights | 4 | 0 | 0 | 1 |
 | Files reviewed | 10 | 10 | 10 | 10 |
 | Coverage misses | 0 | 0 | 0 | 0 |
 | **Totals** | **1I 1S** | **none** | **none** | **1S** |
@@ -234,9 +285,9 @@ Flash raised the chunk-name Suggestion and was the only agent to check that the 
 | Dropped | 0 | 0 | 0 | 0 |
 
 
-Claude gave the most value: the one Important finding and every design concern. Codex's executed probes are the strongest evidence that the loader works in all ten languages.
+Claude gave the most value, with I1 and both design concerns. Codex's executed probes are the strongest evidence that the loader works in all ten languages.
 
-**Reconciliation:** Claude, pass 1, "Dates keep a US pattern and an English pm": suggestion → Design Observations concern. Gemini 3.5 Flash, pass 1, "Outdated scope description in inline dayjs comment": dropped as a false positive.
+**Reconciliation:** Claude, pass 1, "Dates keep a US pattern and an English pm": suggestion → Design Observations concern. Gemini 3.5 Flash, pass 1, "Outdated scope description in inline dayjs comment": dropped as a false positive. Claude, pass 1, design concern "the dashboard's own language selector lists ten languages": dropped as a false positive after the first version of this report. Gemini 3.5 Flash, pass 1, strength "addLocale exposes native names in the shell's language selector": dropped, because RD hides the selectors that it describes.
 
 ---
 
@@ -246,6 +297,10 @@ Claude gave the most value: the one Important finding and every design concern. 
 
 - When a change makes one component consume a list that another part of the repository owns (the supported languages, platforms or architectures), find the owner's documented procedure for adding an entry and check that it names the new consumer. The procedure is outside the diff and its text has not changed, so only the new consumer shows that it now misses a step.
 - Before telling agents that a staged build came from the reviewed tree, rebuild the tree and compare the two outputs with content hashes masked. Two builds of the same tree from different checkouts can differ in every hashed file name while each chunk's code is identical.
+
+### Citation lint
+
+I2 cites a commit, `79b4dee81`, so the citation lint reports it as unresolved.
 
 ---
 
