@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This PR lets a copy or symlink named <code>rdd-&lt;instance&gt;</code> select that instance, with <code>--instance</code> overriding the name and the name overriding <code>RDD_INSTANCE</code>. It routes the service and hostagent re-execs through <code>instance.Command</code>, so each child keeps the instance that its parent resolved. The code is correct on every path traced, and the extracted parser behaves like the old one. The Important finding is two comments outside the diff that still say the inherited environment keeps children on one instance.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code Changed Since This Review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The branch changed after this review ran. The fixups were folded into the first commit, so <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53886b21c"><code>53886b21c</code></a> is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/34289fe33"><code>34289fe33</code></a>, and a new commit, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2f0d64aea"><code>2f0d64aea</code></a>, validates instance names and accepts only lowercase built-in command names. Line numbers and quoted code refer to the review SHA <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cf918e7ec"><code>cf918e7ec</code></a>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -373,6 +379,7 @@ index 044bd8034..a475f2490 100755
  sig_quit_rdd_service() {
      local pid_file pid</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/34289fe33"><code>34289fe33</code></a>, which replaced <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53886b21c"><code>53886b21c</code></a>. The <code>instance.go</code> comment is gone, and <code>bats-with-timeout.sh</code> now gives the real reason.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -424,6 +431,7 @@ The `--instance` flag takes precedence over the command name, and the command na
 [^profile]: The only exception is the system [deployment profile](profile.md), which applies to all instances.
 </code></pre>
     <p>Fix: document that the command as typed decides the case. Lowercasing the name&#39;s instance would extend case-insensitive matching past the <code>rdd-</code> prefix check.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2f0d64aea"><code>2f0d64aea</code></a>, which goes past the proposed doc fix. rdd now rejects any instance name outside <code>^[a-z0-9][a-z0-9-]*$</code> or ending in <code>-logs</code>, runs only under lowercase built-in command names, and strips <code>.exe</code> only on Windows. So the typed case can no longer select a second instance.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/lima-controller/main.go">
       <div class="finding-title" id="S2">
@@ -443,6 +451,7 @@ func main() {
 			Use:   &quot;lima-controller&quot;,</code></pre>
     <p><code>lima-controller</code> reaches its <code>hostagent</code> branch only when <code>ParseFlag</code> strips the <code>--instance=&lt;suffix&gt;</code> that <code>instance.Command</code> prepends, a dash-led suffix included. No BATS suite runs the standalone binary (bats-lima starts hostagents from the embedded service), and nothing in <code>rdd/pkg/instance</code> tests <code>flag.go</code>. A regression there fails every hostagent start, so a developer sees it at once. Because the binary is also only a development tool, the test is optional.</p>
     <p>Fix: add <code>rdd/pkg/instance/flag_test.go</code> with table cases for <code>ParseFlag</code> (<code>--instance=x</code>, <code>--instance x</code>, <code>--instance=</code>, a dash-led value) and a case that passes <code>Command(ctx, &quot;hostagent&quot;, &quot;vm&quot;).Args</code> under <code>RDD_INSTANCE=-x</code> back through <code>ParseFlag</code>, expecting <code>[&lt;exe&gt; hostagent vm]</code> with <code>RDD_INSTANCE</code> still <code>-x</code>.</p>
+    <p><strong>Outcome:</strong> declined; <code>ParseFlag</code> already runs on every rdd re-exec under BATS.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/rdd/multicall_test.go">
       <div class="finding-title" id="S3">
@@ -474,6 +483,7 @@ The `--instance` flag takes precedence over the command name, and the command na
 [^profile]: The only exception is the system [deployment profile](profile.md), which applies to all instances.
 </code></pre>
     <p>Fix: add <code>{&quot;instance ends at the first dot&quot;, &quot;rdd-1.2.exe&quot;, &quot;1&quot;}</code>.</p>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2f0d64aea"><code>2f0d64aea</code></a>. Since rdd now strips only <code>.exe</code>, and only on Windows, the rows assert that <code>rdd-1.2</code> and <code>rdd-1.2.exe</code> are rejected instead of selecting instance <code>1</code>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -481,7 +491,7 @@ The `--instance` flag takes precedence over the command name, and the command na
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li>(future) Any binary whose name starts with <code>rdd-</code> now selects an instance without saying so. A kept <code>rdd-old</code>, or a download saved as <code>rdd-darwin-arm64</code>, creates or drives instance <code>old</code> or <code>darwin-arm64</code>. A debug-level log line naming the instance that the command name chose would make such a mix-up quick to spot. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(future) Any binary whose name starts with <code>rdd-</code> now selects an instance without saying so. A kept <code>rdd-old</code>, or a download saved as <code>rdd-darwin-arm64</code>, creates or drives instance <code>old</code> or <code>darwin-arm64</code>. A debug-level log line naming the instance that the command name chose would make such a mix-up quick to spot. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> declined; a mistaken <code>rdd-&lt;name&gt;</code> copy shows its instance in <code>svc status</code> and <code>svc paths</code>.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -497,9 +507,9 @@ The `--instance` flag takes precedence over the command name, and the command na
     <ul>
       <li>I ran <code>go build ./...</code> and <code>go test -race</code> on <code>cmd/rdd</code>, <code>pkg/instance</code>, <code>cmd/lima-controller</code> and <code>pkg/service/cmd</code> in the lead worktree at the review SHA, and all passed. CI passed on the head; the <code>bats-others</code> job logs on Ubuntu, macOS and Windows show all three new BATS tests passing.</li>
       <li><code>8-instance-name.bats</code> covers the service re-exec, the two new <code>2-instance.bats</code> tests cover precedence, and <code>TestInstanceFromName</code> covers name parsing.</li>
-      <li>No test covers the hostagent re-exec from a renamed binary. It needs a VM-backed BATS run from a copy, so the drop rule (new infrastructure, real waits) removes it.</li>
+      <li>No test covers the hostagent re-exec from a renamed binary. It needs a VM-backed BATS run from a copy, so the drop rule (new infrastructure, real waits) removes it. <strong>Outcome:</strong> declined; <code>8-instance-name.bats</code> covers the shared <code>instance.Command</code> path through the service re-exec.</li>
       <li>S2 and S3 are optional. &quot;Does the code run only for us?&quot; decides S2, and S3 pins documented behavior for one line of test.</li>
-      <li>Not run: reverting the <code>service.go</code> hunk and running <code>8-instance-name.bats</code> to watch it fail, since that starts a control plane. Neither the commit message nor the PR says whether the test was seen to fail without the fix.</li>
+      <li>Not run: reverting the <code>service.go</code> hunk and running <code>8-instance-name.bats</code> to watch it fail, since that starts a control plane. Neither the commit message nor the PR says whether the test was seen to fail without the fix. <strong>Outcome:</strong> done; with the <code>service.go</code> hunk reverted the test failed, and with it the test passed.</li>
     </ul>
     </div>
     <hr>
