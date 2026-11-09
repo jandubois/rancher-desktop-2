@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1181" class="gh-ref" data-title="Add a steve multicall entry to rdd" data-state="open" data-type="pr">#1181</a> links upstream steve v0.9.23 into rdd as <code>rdd steve</code>, re-implementing the rancher-desktop-steve fork&#39;s entry point and embedding the dashboard only under the <code>with_dashboard</code> tag. The port handshake matches what <code>steve.ts</code> expects, and the routing and ETag handling hold up against the fork. No Critical or Important finding held up under verification, so this round converged. The six optional suggestions are two cleanups, a log-level decision, more reload routes, a shutdown comment and the fork&#39;s ETag test cases.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since This Review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The fixes below were amended into the PR&#39;s first commit on 2026-11-09, so the code that this review cites has changed. Line numbers refer to the review SHA, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/eae434d1f"><code>eae434d1f</code></a>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -275,6 +281,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
 		defer close(shutdownDone)</code></pre>
     <p><code>server.New(ctx, restConfig, nil)</code> leaves the aggregation secret&#39;s namespace and name empty, and steve v0.9.23&#39;s <code>aggregation.Watch</code> returns at once when either is empty (<code>pkg/aggregation/watch.go:14-16</code> in the module). The fork made the same dead call. A reader has to trace into steve to learn that the line does nothing.</p>
     <p>Fix: delete line 78.</p>
+    <p><strong>Outcome:</strong> fixed. The call is gone.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/cmd/rdd/steve.go">
       <div class="finding-title" id="S2">
@@ -319,6 +326,7 @@ func Run(ctx context.Context, opts Options) error {
 		return err
 	}</code></pre>
     <p>Fix: &quot;Serve the steve API, and the Cluster Explorer dashboard in builds that embed it&quot;, with the same change in both comments.</p>
+    <p><strong>Outcome:</strong> fixed with the proposed help text. The package comment now says that builds with the <code>with_dashboard</code> tag embed the dashboard, and <code>Run</code>&#39;s doc comment says it serves the dashboard if the build embeds it.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/steve/steve.go">
       <div class="finding-title" id="S3">
@@ -356,6 +364,7 @@ func Run(ctx context.Context, opts Options) error {
 	if err != nil {
 		return err</code></pre>
     <p>Fix: decide which level steve should log at. For the fork&#39;s behaviour, set <code>logrus.InfoLevel</code> in <code>Run</code> when neither <code>--log-level</code> nor <code>RDD_LOG_LEVEL</code> is given. Otherwise drop line 76, since <code>steve.ts</code> already logs the port at debug level.</p>
+    <p><strong>Outcome:</strong> fixed by dropping line 76. <code>rdd steve</code> keeps rdd&#39;s log levels, like every other subcommand.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/steve/dashboard.go">
       <div class="finding-title" id="S4">
@@ -377,6 +386,7 @@ func Run(ctx context.Context, opts Options) error {
     <p>The shell&#39;s router (<code>config/router/routes.js</code> in the dashboard source) also declares <code>/about</code>, <code>/prefs</code>, <code>/account</code>, <code>/diagnostic</code>, <code>/clusters</code> and <code>/auth/{login,logout,setup,verify}</code>. A probe against <code>newHandler</code> sent <code>/prefs</code>, <code>/about</code>, <code>/auth/login</code>, <code>/diagnostic</code>, <code>/home/</code> and <code>/fail-whale/</code> to the API handler. The fork served only <code>/c/</code>, so this is not a regression.</p>
     <p>Not every route is reachable. The only link to <code>/prefs</code> is the header&#39;s user menu, which the shell hides when <code>rancherEnv</code> is <code>desktop</code>. This review did not check whether a desktop build shows the top-level menu, whose footer links to <code>/about</code>.</p>
     <p>Fix: register each route that the RD build can reach, as these two are. Register the trailing-slash form of every one of them too, <code>/home/</code> and <code>/fail-whale/</code> included. Keep <code>/v3/</code> with steve, because the dashboard&#39;s <code>/v3/settings</code> probes rely on its 404s (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eae434d1f1a03d77b0699d5170252fbe695c370d/rdd/pkg/steve/steve.go#L46"><code>rdd/pkg/steve/steve.go:46</code></a>).</p>
+    <p><strong>Outcome:</strong> declined, because an RD build cannot reach <code>/about</code> or <code>/diagnostic</code>. The shell&#39;s <code>showTopLevelMenu</code> getter (<code>shell/store/index.js:612</code>) names its first parameter <code>getters</code> but receives Vuex state, so it returns false once RD&#39;s plugin sets single-product mode, and the top-level menu that links to <code>/about</code> never renders. RD does not set <code>aboutPage</code>, so the side navigation does not link there either, and only <code>/about</code> links to <code>/diagnostic</code>. The desktop build hides the user menu that holds <code>/prefs</code> and <code>/account</code> (<code>Header.vue:188-189</code>). This round did not trace <code>/clusters</code> or <code>/auth/*</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/steve/steve.go">
       <div class="finding-title" id="S5">
@@ -408,6 +418,7 @@ func Run(ctx context.Context, opts Options) error {
 			logrus.Errorf(&quot;error shutting down server: %v&quot;, err)
 		}</code></pre>
     <p>Fix: add a one-line comment, or derive the timeout from <code>context.WithoutCancel(ctx)</code>, which states the intent in code.</p>
+    <p><strong>Outcome:</strong> fixed with <code>context.WithoutCancel(ctx)</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/steve/dashboard_test.go">
       <div class="finding-title" id="S6">
@@ -429,6 +440,7 @@ func Run(ctx context.Context, opts Options) error {
 			if files == nil {</code></pre>
     <p>Raised by the consolidator. <code>isNotModified</code> is copied from the fork, whose <code>TestIsNotModified</code> also covered a strong tag, surrounding whitespace, a tag list with and without a match, and misplaced whitespace. This PR tests only these three header values. A mutation that stopped splitting the header on commas, stopped trimming whitespace and rejected strong tags left <code>go test ./pkg/steve/</code> passing. But browsers send back the single weak tag that they received, so a user would not notice such a regression. That makes the test optional (Testing check 3).</p>
     <p>Fix: copy the fork&#39;s <code>TestIsNotModified</code> table into <code>dashboard_test.go</code>.</p>
+    <p><strong>Outcome:</strong> test written. <code>TestIsNotModified</code> has the fork&#39;s seven cases, and it fails when the header is not split on commas or not trimmed, while <code>TestHandler</code> passes under both mutations. The fork&#39;s table does not have a strong-tag case, so a version that rejects strong tags still passes.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -439,6 +451,7 @@ func Run(ctx context.Context, opts Options) error {
       <li>(future) Nothing checks <code>Host</code> or <code>Origin</code> in front of an admin proxy. With nil options steve authorizes every request as <code>AlwaysAdmin</code> and proxies <code>/api</code> and <code>/apis</code>, websocket upgrades included, with the kubeconfig&#39;s credentials (<code>pkg/server/handler/apiserver.go</code> in steve v0.9.23). A DNS-rebinding page that finds the random port would be same-origin with it. <code>kubectl proxy</code> guards the same setup with a host allowlist and a rejection list for <code>exec</code> and <code>attach</code>. The fork binary that <code>main</code> ships has the same exposure, so this PR adds nothing new, but <code>Run</code> now builds the handler chain where a check would go. Read from source, not reproduced. <span class="pill pill-claude">Claude Opus 5.5</span></li>
       <li>(future) A dashboard entry named like a fixed route panics at startup. A probe with a top-level <code>c/</code> directory or a <code>home</code> file in the dashboard made <code>newHandler</code> panic on a ServeMux pattern conflict. The failure is loud, and the current build does not have such an entry. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p><strong>Outcome:</strong> both left as they are. The first is inherited from the fork and tracked outside the PR. The second fails loudly at startup, and no top-level entry of the current dashboard build collides with a fixed route.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>(in-scope) Hashing the embedded files at startup removes the fork&#39;s failure mode, where an unset <code>-X</code> checksum made every request a 304, and the &quot;empty dashboard is not a 304&quot; case guards it. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
@@ -458,12 +471,14 @@ func Run(ctx context.Context, opts Options) error {
       <li>No test drives <code>Run</code>&#39;s stdout contract (the port, then EOF). A break would fail loudly every time, because <code>steve.ts</code> logs &quot;Failed to parse Steve port&quot; or times out. A test would also need a fake API server that satisfies <code>server.New</code>. Those two facts put it under the drop rule.</li>
       <li>A test of <code>newSteveCommand</code>&#39;s flags would exercise cobra&#39;s flag binding rather than rdd&#39;s logic, so it is not needed.</li>
     </ul>
+    <p><strong>Outcome:</strong> neither test added, for the reasons above.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
     <p><code>rdd/docs/design/cmd_other.md</code> documents <code>rdd kubectl</code> and <code>rdd nerdctl</code> and says rdd is a multicall binary, but it covers neither <code>rdd steve</code> nor the existing <code>rdd yq</code>. Once <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1185" class="gh-ref" data-title="Build the Cluster Explorer dashboard in RD2 and start Steve through rdd" data-state="open" data-type="issue">#1185</a> makes <code>rdd steve</code> the app&#39;s path, a short section would help. It would say what the command prints on stdout, what the <code>with_dashboard</code> tag does, and that only the app should run it. Optional.</p>
+    <p><strong>Outcome:</strong> declined. <code>rdd steve</code> is hidden outside developer mode and only the app runs it, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/eae434d1f1a03d77b0699d5170252fbe695c370d/rdd/pkg/steve/steve.go#L67-L68"><code>rdd/pkg/steve/steve.go:67-68</code></a> records its stdout contract at the call site.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
