@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This PR loads dashboard translations for nine languages, each in its own lazy chunk, adds eight languages to the shell&#39;s list of languages, and imports their dayjs locales. Probes against a rebuild of the reviewed tree and the shell&#39;s i18n store confirm each mechanism, and every translation file passes the structural checks. Both Important findings are prose. The app&#39;s procedure for adding a language leaves out the dashboard, and a commit message names a language menu that RD hides.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since This Review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The author addressed the findings on 2026-11-08 and amended the fixes into the PR&#39;s top commit, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f8538b772"><code>f8538b772</code></a> in place of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/79b4dee81"><code>79b4dee81</code></a>. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -369,6 +375,7 @@ index 7e9240e1b..1c0d42734 100644
  ## Maintenance workflow
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f8538b772"><code>f8538b772</code></a>. Its step 6 also names <code>dayjsLocales</code>, which a language needs when dayjs calls it by another name, as dayjs calls zh-hans <code>zh-cn</code>.</p>
     </div>
     <div class="card card-important" data-file="79b4dee81">
       <div class="finding-title" id="I2">
@@ -412,6 +419,7 @@ zh-hans  -&gt; dashboard zh-hans</code></pre>
 any language that is not on its list. Add our other eight languages to
 that list, and register each one&#39;s translations with `addL10n`, so that
 a file loads only when the user selects its language.</code></pre>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f8538b772"><code>f8538b772</code></a>, whose message names the list and the fallback, and the <code>l10n/</code> files.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -456,6 +464,7 @@ RANCHER_SHA256 := 625f4e637d18ca912690774a722b8820e5638dec0125283f2208d3230db520
 ARCHIVE := rancher-dashboard.tar.gz
 ARCHIVE_ROOT := dashboard-$(SHELL_COMMIT)</code></pre>
     <p>Fix: add a step to both procedures that compares each translation&#39;s ICU argument names with the new en-us and retranslates the keys whose English changed.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f8538b772"><code>f8538b772</code></a>. No tool reads these files, so the new step diffs en-us between the old and new <code>SHELL_COMMIT</code>, which shows every changed placeholder too, and has the maintainer translate the keys that the diff lists.</p>
     </div>
     <div class="card card-suggestion" data-file="dashboard/pkg/rancher-deskboard/index.ts">
       <div class="finding-title" id="S2">
@@ -475,6 +484,7 @@ ARCHIVE_ROOT := dashboard-$(SHELL_COMMIT)</code></pre>
   // The shell never tells dayjs the language, so month and day names would stay</code></pre>
     <p>The nine translation chunks build with names such as <code>4179.1c3aea0a.js</code>. The shell names its own translation chunk with <code>webpackChunkName: &quot;[request]&quot;</code> (<code>utils/dynamic-importer.js</code>, line 110), which gives <code>zh-hans-yaml.8d99ce5a.js</code>, so someone reading the network panel or <code>dist/embed</code> can tell which language loaded.</p>
     <p>Fix: add the magic comment with a prefix, such as <code>/* webpackChunkName: &quot;l10n-[request]&quot; */</code>. A bare <code>[request]</code> would give the plugin&#39;s zh-hans chunk the same name as the shell&#39;s.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f8538b772"><code>f8538b772</code></a>. The nine chunks now build as <code>l10n-&lt;code&gt;-yaml.&lt;hash&gt;.js</code>, beside the shell&#39;s <code>zh-hans-yaml.&lt;hash&gt;.js</code>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -482,8 +492,8 @@ ARCHIVE_ROOT := dashboard-$(SHELL_COMMIT)</code></pre>
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li>(future) Dates now take the language&#39;s day and month names but keep the shell&#39;s US formats, <code>ddd, MMM D YYYY</code> and <code>h:mm:ss a</code> (<code>store/prefs.js</code>, lines 79 and 89). dayjs&#39;s de and fr locales do not define a meridiem, so the PR&#39;s own table shows <code>Sa., Nov. 7 2026 10:43:42 pm</code> under de. Both formats are settings on the shell&#39;s Preferences page, but RD hides the only link to that page, so RD users cannot change them. A default per language would need someone to decide each language&#39;s formats. <span class="pill pill-claude">Claude Opus 5.5</span></li>
-      <li>(future) The 58 type and group labels that en-us lacks are in files that otherwise follow en-us key for key. A tool that prunes these files against a newer en-us, the way <code>i18n-report remove --stale</code> prunes the app&#39;s files, would delete them. A separate file per language, registered in the same <code>addL10n</code> loop, would keep them apart. Moving them to <code>l10n/</code> would not, because the build inlines those files into <code>index.js</code>. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(future) Dates now take the language&#39;s day and month names but keep the shell&#39;s US formats, <code>ddd, MMM D YYYY</code> and <code>h:mm:ss a</code> (<code>store/prefs.js</code>, lines 79 and 89). dayjs&#39;s de and fr locales do not define a meridiem, so the PR&#39;s own table shows <code>Sa., Nov. 7 2026 10:43:42 pm</code> under de. Both formats are settings on the shell&#39;s Preferences page, but RD hides the only link to that page, so RD users cannot change them. A default per language would need someone to decide each language&#39;s formats. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> declined for this PR and kept as follow-up work, since someone has to choose each language&#39;s formats first.</li>
+      <li>(future) The 58 type and group labels that en-us lacks are in files that otherwise follow en-us key for key. A tool that prunes these files against a newer en-us, the way <code>i18n-report remove --stale</code> prunes the app&#39;s files, would delete them. A separate file per language, registered in the same <code>addL10n</code> loop, would keep them apart. Moving them to <code>l10n/</code> would not, because the build inlines those files into <code>index.js</code>. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> commented in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/f8538b772"><code>f8538b772</code></a>. The Makefile&#39;s new step for moving the shell tells the maintainer to keep these keys, and to change the 47 type labels&#39; arguments when en-us changes its own.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -500,7 +510,7 @@ ARCHIVE_ROOT := dashboard-$(SHELL_COMMIT)</code></pre>
       <li>No unit test reaches the plugin, because the root <code>jest.config.js</code> ignores <code>dashboard/</code>. The PR&#39;s live run in all ten languages is its end-to-end check. I rebuilt the reviewed tree with <code>vue-cli-service build</code>, and the result matches the build that the agents read, apart from content hashes in file names.</li>
       <li>My structural check of the nine files: each parses with the loader&#39;s js-yaml 3.14.2 and has 6,553 string leaves, en-us&#39;s 6,495 plus the 58 labels. Each lacks only <code>nameNsDescription.workspace.placeholder</code>, which is null in en-us. Every message builds with the shell&#39;s intl-messageformat 7.8.4, and every message&#39;s argument names match en-us. Three messages use <code>plural</code> where en-us has a plain argument of the same name.</li>
       <li>Codex&#39;s probe ran the compiled plugin against the shell&#39;s i18n actions for all ten languages, and 30,240 formatting calls passed. Claude&#39;s ran the built shell&#39;s <code>t</code> getter over all 672 ICU messages in each language. dayjs resolves all nine imports, and its dates match the PR&#39;s table.</li>
-      <li>A test that every app language selects itself in the dashboard would catch a deleted <code>addedLocales</code> entry and a new language added without one, both silent. It needs the extracted shell and <code>dashboard/node_modules</code>, which the Jest job does not install, so the drop rule removes it. A Jest check that each app language has <code>translations/{code}.yaml</code> and <code>l10n/{code}.yaml</code> needs nothing new but guards only those two files; it is optional. I1&#39;s fix is documentation, which no test guards.</li>
+      <li>A test that every app language selects itself in the dashboard would catch a deleted <code>addedLocales</code> entry and a new language added without one, both silent. It needs the extracted shell and <code>dashboard/node_modules</code>, which the Jest job does not install, so the drop rule removes it. A Jest check that each app language has <code>translations/{code}.yaml</code> and <code>l10n/{code}.yaml</code> needs nothing new but guards only those two files; it is optional. I1&#39;s fix is documentation, which no test guards. <strong>Outcome:</strong> declined, since the check is optional and the full test needs the extracted shell.</li>
       <li>CI on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/79b4dee81"><code>79b4dee81</code></a>: 47 check runs succeeded, 4 were skipped and 2 BATS jobs were still running. <code>BATS (macos-15-intel, bats-lima)</code> failed in <code>make bin/rdd</code> when the runner could not resolve <code>proxy.golang.org</code>, before any test ran. This PR does not change a Go file.</li>
     </ul>
     </div>
@@ -511,7 +521,7 @@ ARCHIVE_ROOT := dashboard-$(SHELL_COMMIT)</code></pre>
     <ul>
       <li>I1: the README&#39;s procedure for adding a language leaves out the dashboard.</li>
       <li>S1: the Makefile&#39;s procedures for moving the shell leave out the translations.</li>
-      <li>The four files seeded from rancher/ui-locales each start with a line naming the source file, the commit <code>e538b156d5</code>, Apache-2.0 and <code>ui-locales.LICENSE</code>. That license file is byte-identical to upstream&#39;s <code>LICENSE</code> at that commit, and upstream does not have a NOTICE file. The five other translations do not say which shell commit they translate; the Makefile&#39;s <code>SHELL_COMMIT</code> is the only record.</li>
+      <li>The four files seeded from rancher/ui-locales each start with a line naming the source file, the commit <code>e538b156d5</code>, Apache-2.0 and <code>ui-locales.LICENSE</code>. That license file is byte-identical to upstream&#39;s <code>LICENSE</code> at that commit, and upstream does not have a NOTICE file. The five other translations do not say which shell commit they translate; the Makefile&#39;s <code>SHELL_COMMIT</code> is the only record. <strong>Outcome:</strong> declined. <code>SHELL_COMMIT</code> stays the one record, because a header in each file would repeat it and go stale at the next shell bump.</li>
       <li>The comments in <code>index.ts</code> match the shell&#39;s behavior. I2 covers <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/79b4dee81"><code>79b4dee81</code></a>&#39;s message, which also does not mention the eight <code>l10n/</code> files that supply the header&#39;s product label. The other three commit messages match the code.</li>
     </ul>
     </div>

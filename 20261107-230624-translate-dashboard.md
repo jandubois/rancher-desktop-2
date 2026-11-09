@@ -24,6 +24,12 @@ This PR loads dashboard translations for nine languages, each in its own lazy ch
 
 ---
 
+## Since This Review
+
+The author addressed the findings on 2026-11-08 and amended the fixes into the PR's top commit, now `f8538b772` in place of `79b4dee81`. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome.
+
+---
+
 ## Critical Issues
 
 None.
@@ -128,6 +134,8 @@ index 7e9240e1b..1c0d42734 100644
  
 ```
 
+**Outcome:** fixed in `f8538b772`. Its step 6 also names `dayjsLocales`, which a language needs when dayjs calls it by another name, as dayjs calls zh-hans `zh-cn`.
+
 
 I2. **A commit message credits a language menu that RD hides** — `79b4dee81` [Consolidator]
 
@@ -180,6 +188,8 @@ that list, and register each one's translations with `addL10n`, so that
 a file loads only when the user selects its language.
 ```
 
+**Outcome:** fixed in `f8538b772`, whose message names the list and the fallback, and the `l10n/` files.
+
 ---
 
 ## Suggestions
@@ -195,6 +205,8 @@ The Makefile's two procedures for moving the shell, to a new `RANCHER_TAG` (line
 
 Fix: add a step to both procedures that compares each translation's ICU argument names with the new en-us and retranslates the keys whose English changed.
 
+**Outcome:** fixed in `f8538b772`. No tool reads these files, so the new step diffs en-us between the old and new `SHELL_COMMIT`, which shows every changed placeholder too, and has the maintainer translate the keys that the diff lists.
+
 S2. **The translation chunks get numeric names** — `dashboard/pkg/rancher-deskboard/index.ts:48` [Gemini 3.5 Flash]
 
 ```ts
@@ -205,6 +217,8 @@ The nine translation chunks build with names such as `4179.1c3aea0a.js`. The she
 
 Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[request]" */`. A bare `[request]` would give the plugin's zh-hans chunk the same name as the shell's.
 
+**Outcome:** fixed in `f8538b772`. The nine chunks now build as `l10n-<code>-yaml.<hash>.js`, beside the shell's `zh-hans-yaml.<hash>.js`.
+
 ---
 
 ## Design Observations
@@ -212,7 +226,9 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 ### Concerns
 
 - (future) Dates now take the language's day and month names but keep the shell's US formats, `ddd, MMM D YYYY` and `h:mm:ss a` (`store/prefs.js`, lines 79 and 89). dayjs's de and fr locales do not define a meridiem, so the PR's own table shows `Sa., Nov. 7 2026 10:43:42 pm` under de. Both formats are settings on the shell's Preferences page, but RD hides the only link to that page, so RD users cannot change them. A default per language would need someone to decide each language's formats. [Claude Opus 5.5]
+  **Outcome:** declined for this PR and kept as follow-up work, since someone has to choose each language's formats first.
 - (future) The 58 type and group labels that en-us lacks are in files that otherwise follow en-us key for key. A tool that prunes these files against a newer en-us, the way `i18n-report remove --stale` prunes the app's files, would delete them. A separate file per language, registered in the same `addL10n` loop, would keep them apart. Moving them to `l10n/` would not, because the build inlines those files into `index.js`. [Claude Opus 5.5]
+  **Outcome:** commented in `f8538b772`. The Makefile's new step for moving the shell tells the maintainer to keep these keys, and to change the 47 type labels' arguments when en-us changes its own.
 
 ### Strengths
 
@@ -228,6 +244,7 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 - My structural check of the nine files: each parses with the loader's js-yaml 3.14.2 and has 6,553 string leaves, en-us's 6,495 plus the 58 labels. Each lacks only `nameNsDescription.workspace.placeholder`, which is null in en-us. Every message builds with the shell's intl-messageformat 7.8.4, and every message's argument names match en-us. Three messages use `plural` where en-us has a plain argument of the same name.
 - Codex's probe ran the compiled plugin against the shell's i18n actions for all ten languages, and 30,240 formatting calls passed. Claude's ran the built shell's `t` getter over all 672 ICU messages in each language. dayjs resolves all nine imports, and its dates match the PR's table.
 - A test that every app language selects itself in the dashboard would catch a deleted `addedLocales` entry and a new language added without one, both silent. It needs the extracted shell and `dashboard/node_modules`, which the Jest job does not install, so the drop rule removes it. A Jest check that each app language has `translations/{code}.yaml` and `l10n/{code}.yaml` needs nothing new but guards only those two files; it is optional. I1's fix is documentation, which no test guards.
+  **Outcome:** declined, since the check is optional and the full test needs the extracted shell.
 - CI on `79b4dee81`: 47 check runs succeeded, 4 were skipped and 2 BATS jobs were still running. `BATS (macos-15-intel, bats-lima)` failed in `make bin/rdd` when the runner could not resolve `proxy.golang.org`, before any test ran. This PR does not change a Go file.
 
 ---
@@ -237,6 +254,7 @@ Fix: add the magic comment with a prefix, such as `/* webpackChunkName: "l10n-[r
 - I1: the README's procedure for adding a language leaves out the dashboard.
 - S1: the Makefile's procedures for moving the shell leave out the translations.
 - The four files seeded from rancher/ui-locales each start with a line naming the source file, the commit `e538b156d5`, Apache-2.0 and `ui-locales.LICENSE`. That license file is byte-identical to upstream's `LICENSE` at that commit, and upstream does not have a NOTICE file. The five other translations do not say which shell commit they translate; the Makefile's `SHELL_COMMIT` is the only record.
+  **Outcome:** declined. `SHELL_COMMIT` stays the one record, because a header in each file would repeat it and go stale at the next shell bump.
 - The comments in `index.ts` match the shell's behavior. I2 covers `79b4dee81`'s message, which also does not mention the eight `l10n/` files that supply the header's product label. The other three commit messages match the code.
 
 ---
@@ -652,3 +670,21 @@ None of the commits are fixups, and bisectability is preserved.
 | `dashboard/pkg/rancher-deskboard/l10n/pt-br.yaml` | Reviewed, no issues | Contains `rancher-desktop: label: Dashboard`. Verified 2-line format and trailing newline. |
 | `dashboard/pkg/rancher-deskboard/l10n/vi.yaml` | Reviewed, no issues | Contains `rancher-desktop: label: Bảng điều khiển`. Verified 2-line format and trailing newline. |
 | `dashboard/pkg/rancher-deskboard/translations/ui-locales.LICENSE` | Reviewed, no issues | Standard Apache-2.0 text for upstream ui-locales attribution. |
+
+## Resolution
+
+| | |
+|---|---|
+| **Addressed** | 2026-11-08 |
+| **Commit** | `f8538b772 Load the dashboard translations` (amended; replaces `79b4dee81`) |
+
+| # | Finding | Action | Reason |
+|---|---------|--------|--------|
+| 1 | Important #1: The procedure for adding a language leaves out the dashboard | Fixed | |
+| 2 | Important #2: A commit message credits a language menu that RD hides | Fixed | |
+| 3 | Suggestion #1: The shell-bump procedures skip the translations | Fixed | |
+| 4 | Suggestion #2: The translation chunks get numeric names | Fixed | |
+| 5 | Testing Gap #1: No test checks that every app language selects itself in the dashboard | Skipped | The review rates the file-presence check optional, and the full selection test needs the extracted shell, which the Jest job does not install. |
+| 6 | Documentation Gap #1: Five translations do not say which shell commit they translate | Skipped | SHELL_COMMIT in dashboard/Makefile is the one record of the en-us these files translate; a header per file would repeat it and go stale on the next bump. |
+| 7 | Design Concern #1: Dates keep the shell's US formats | Skipped | Per-language date formats need someone to choose each language's formats first; tracked in pending-work. |
+| 8 | Design Concern #2: A prune against a newer en-us would delete the 58 extra labels | Commented | Step 4 of dashboard/Makefile's shell-bump procedure tells the maintainer to keep the typeLabel and nav.group keys that en-us lacks, and to change the type labels' arguments when en-us changes its own. |
