@@ -26,7 +26,7 @@ This PR makes the dashboard follow the app's language. It sets the `R_LOCALE` co
 
 ## Since This Review
 
-The author addressed the findings on 2026-11-07 and amended the fixes into the PR's two commits, now `1bfd9297c` and `453b76a4e`. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome.
+The author addressed the findings on 2026-11-07 and amended the fixes into the PR's two commits, which became `1bfd9297c` and `453b76a4e`. On 2026-11-09 the author rebased them onto #1181 and dropped two unused members from the spec's fake window, which a review of the fixes found. That made them `62d7cfbf6` and `58bc909ea`. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome, which names the commit from before the rebase.
 
 ---
 
@@ -774,7 +774,7 @@ Commit messages are detailed, accurately document rationale, and reference the c
 | | |
 |---|---|
 | **Addressed** | 2026-11-07 |
-| **Commit** | `1bfd9297c Follow the app's language in the dashboard`, `453b76a4e Show dashboard dates in the dashboard's language` (fixups amended into the PR's two commits; not pushed) |
+| **Commit** | `1bfd9297c Follow the app's language in the dashboard`, `453b76a4e Show dashboard dates in the dashboard's language` (fixups amended into the PR's two commits; force-pushed 2026-11-07); `62d7cfbf6`, `58bc909ea` rebased onto #1181, with two unused test members removed |
 
 | # | Finding | Action | Reason |
 |---|---------|--------|--------|

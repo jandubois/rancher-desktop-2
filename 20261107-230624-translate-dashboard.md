@@ -26,7 +26,7 @@ This PR loads dashboard translations for nine languages, each in its own lazy ch
 
 ## Since This Review
 
-The author addressed the findings on 2026-11-08 and amended the fixes into the PR's top commit, now `f8538b772` in place of `79b4dee81`. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome.
+The author addressed the findings on 2026-11-08 and amended the fixes into the PR's top commit, `f8538b772` in place of `79b4dee81`. On 2026-11-09 the author rebased the PR onto #1181 and amended in four wording fixes that a review of the fixes found. The top commit is now `b6abb5867`. The code that the findings cite has changed since; the links still point at the reviewed SHA. Each finding ends with its outcome, which names the commit from before the rebase.
 
 ---
 
@@ -676,7 +676,7 @@ None of the commits are fixups, and bisectability is preserved.
 | | |
 |---|---|
 | **Addressed** | 2026-11-08 |
-| **Commit** | `f8538b772 Load the dashboard translations` (amended; replaces `79b4dee81`) |
+| **Commit** | `f8538b772 Load the dashboard translations` (amended; replaces `79b4dee81`); `b6abb5867` rebased onto #1181, with four wording fixes amended in |
 
 | # | Finding | Action | Reason |
 |---|---------|--------|--------|
