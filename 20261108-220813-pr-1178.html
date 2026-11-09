@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>This round moves the fix into the renderer. A window now reports the App&#39;s status only after its first list of Apps, the resource watcher commits after every list, and the main process stops Steve and closes the dashboard on any report that is not ready. That works, and it fixes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1180" class="gh-ref" data-title="Stop Steve when the App is deleted" data-state="open" data-type="issue">#1180</a> too. The review found two Important problems. No test drives the watcher through a restart, and the new comment misstates when <code>ListWatch</code> emits. Both come with patches.</p>
     </div>
     <hr>
+    <h2 id="since-this-review">Since This Review <a href="#since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The fixes below were amended into the PR&#39;s three commits on 2026-11-09, so the code that this review cites has changed. Line numbers refer to the review SHA, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/36992ae96"><code>36992ae96</code></a>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -369,6 +375,7 @@ index 91dea2c60..e88c3d435 100644
      const { store, lists } = await watchApps();
      let loaded = false;</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed. Both tests went into <code>rdd.spec.ts</code> as written, and each fails under its mutation.</p>
     </div>
     <div class="card card-important" data-file="pkg/rancher-desktop/store/rddConnection.ts">
       <div class="finding-title" id="I2">
@@ -490,6 +497,7 @@ index 9ee44c7c9..d09a8d83c 100644
        const list = await this.#listFn();
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed, in wording that also names the consequence (<code>waitForResources</code> would wait) and says why calling <code>onChange()</code> before ListWatch applies the list is safe.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -515,6 +523,7 @@ index 9ee44c7c9..d09a8d83c 100644
     let loaded = false;</code></pre>
     <p>Both lists hand the store the same <code>app</code> object, so the <code>rdd/app</code> getter returns the same value and the plugin sends nothing. A real relist deserializes a fresh object, and the window re-sends <code>{ KubernetesReady: [true, &#39;Ready&#39;] }</code>. That is harmless, since <code>Steve.start()</code> returns the running port, but line 149 asserts that a restart sends nothing, and in production it sends a Ready report. With <code>structuredClone(app)</code> in <code>lists[1]</code>, the test fails at line 149.</p>
     <p>Fix: pass a copy in <code>lists[1]</code> and expect one Ready report, or drop line 149. Line 144 is the assertion that pins the fix.</p>
+    <p><strong>Outcome:</strong> fixed with <code>JSON.parse(JSON.stringify(app))</code>, plus an assertion of exactly one Ready report. The repo&#39;s JSDOM test environment does not define <code>structuredClone</code>, so the copy above throws <code>ReferenceError</code> before it reaches the assertion.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/store/__tests__/rdd.spec.ts">
       <div class="finding-title" id="S2">
@@ -556,6 +565,7 @@ const app = {
       <pre><code class="language-ts">function deferred&lt;T&gt;(): Deferred&lt;T&gt; {
   return Promise.withResolvers&lt;T&gt;();
 }</code></pre>
+    <p><strong>Outcome:</strong> fixed as suggested.</p>
     </div>
     <div class="card card-suggestion" data-file="0ae66a265">
       <div class="finding-title" id="S3">
@@ -564,6 +574,7 @@ const app = {
     <p>The commit says &quot;close it whenever Steve stops&quot;, and the PR body says &quot;The dashboard window also closes whenever Steve stops&quot;. The dashboard closes when <code>followAppStatus</code> stops Steve.</p>
     <p>A Steve process that exits on its own zeroes its port and leaves the dashboard open (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/36992ae965beb9a1017878e66095c7afe3ea217c/pkg/rancher-desktop/backend/steve.ts#L130-L140"><code>pkg/rancher-desktop/backend/steve.ts:130-140</code></a>), which is tracked outside this PR.</p>
     <p>Fix: write &quot;whenever the app stops Steve&quot; in both places.</p>
+    <p><strong>Outcome:</strong> the messages of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0ae66a265"><code>0ae66a265</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/36992ae96"><code>36992ae96</code></a> now say &quot;whenever the App&#39;s status stops Steve&quot;, because the app also stops Steve on quit and when it restarts a Steve that runs without a port. The PR-body sentence changes with the next push.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -574,6 +585,7 @@ const app = {
       <li><strong>(future) Every window reports, and the last report wins.</strong> <span class="pill pill-claude">Claude Opus 5.5</span> Each window&#39;s store sends its own reports, and <code>followAppStatus</code> acts on whichever arrives last, so a window whose watch lags can stop Steve after another window started it. That predates this PR, which now also closes the dashboard in that case. One App watch in the main process, or reports from the main window only, would remove the race.</li>
       <li><em></em>(future) A <code>ListWatch</code> stopped during its list still opens a watch.<em></em> <span class="pill pill-claude">Claude Opus 5.5</span> <code>doneHandler</code> checks <code>stopped</code> before the list but not after it (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/36992ae965beb9a1017878e66095c7afe3ea217c/pkg/rdd-client/cache.ts#L177"><code>pkg/rdd-client/cache.ts:177</code></a>), and <code>Watcher.close()</code> keeps <code>#watcher</code>, so a late list from a closed watcher still counts as current. The wrapper adds one more commit from such a watcher, an empty late list after <code>close()</code>. The gap predates this PR and is tracked outside it.</li>
     </ul>
+    <p><strong>Outcome:</strong> both left as they are. They predate the PR and are tracked outside it.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><strong>(in-scope) The renderer now tells &quot;not listed yet&quot; from &quot;no App&quot;.</strong> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <code>resourceState</code> starts every list at <code>null</code> and nothing resets it (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/36992ae965beb9a1017878e66095c7afe3ea217c/pkg/rancher-desktop/store/rddConnection.ts#L228"><code>pkg/rancher-desktop/store/rddConnection.ts:228</code></a>). So the plugin&#39;s <code>null</code> check holds for the window&#39;s lifetime, and the main process can treat every report that is not ready as a stop again.</li>
@@ -601,6 +613,7 @@ const app = {
 
     <div class="card card-neutral">
     <p>The three commit messages and the PR body match the tree, apart from S3. The bodies of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1183" class="gh-ref" data-title="Opening an app window restarts Steve" data-state="open" data-type="issue">#1183</a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1180" class="gh-ref" data-title="Stop Steve when the App is deleted" data-state="open" data-type="issue">#1180</a> still describe round 1&#39;s code. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1183" class="gh-ref" data-title="Opening an app window restarts Steve" data-state="open" data-type="issue">#1183</a>&#39;s Proposed Solution says to &quot;Leave Steve running when a report lacks the <code>KubernetesReady</code> condition&quot;, which this PR no longer does. Update both issues before <code>Fixes</code> closes them.</p>
+    <p><strong>Outcome:</strong> replacement text for both issue bodies is drafted and goes up with the next push.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
