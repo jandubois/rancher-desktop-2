@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Table headers and stored messages now follow a language switch, and the page&#39;s half of the Preferences close guard works as described. The defects are in the window&#39;s lifecycle. A Cancel on the discard question deletes the window&#39;s shortcut registration, so the next open registers every handler twice. Closing the main window destroys Preferences without unloading its page, so a previewed language stays. The main-process guard has no test, and its quit comment gives the wrong reason.</p>
     </div>
     <hr>
+    <h2 id="after-the-review">After the Review <a href="#after-the-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a> addresses these findings by rewriting <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a534e082a"><code>a534e082a</code></a>, so the code cited below has changed since the review ran. Each finding ends with its outcome.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -475,6 +481,7 @@ index 000000000..a2422721c
 +  });
 +});</code></pre>
       </details>
+    <p>Outcome: fixed with this patch in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a>; the spec&#39;s helper also gained a line saying what it returns.</p>
     </div>
     <div class="card card-important" data-file="pkg/rancher-desktop/pages/Preferences.vue">
       <div class="finding-title" id="I2">
@@ -585,6 +592,7 @@ quit: stored locale = en-us</code></pre>
       </details>
     <p>Fix: outside a quit, give the main window a <code>close</code> handler that closes Preferences first, so its page can ask and switch back; or, once <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1204" class="gh-ref" data-title="Start the main process and a fresh install in the right locale" data-state="open" data-type="issue">#1204</a> lets the main process read the App&#39;s locale, restore it when Preferences emits <code>closed</code>.</p>
     <p>No patch: the first remedy costs the user a second click to close the main window and the second waits on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1204" class="gh-ref" data-title="Start the main process and a fresh install in the right locale" data-state="open" data-type="issue">#1204</a>, so the choice is the author&#39;s.</p>
+    <p>Outcome: commented. A comment above the <code>beforeunload</code> and <code>pagehide</code> listeners in <code>pages/Preferences.vue</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a>) says that closing the main window skips both, and that the next window to open switches back to the App&#39;s locale. The main-process restore waits on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1204" class="gh-ref" data-title="Start the main process and a fresh install in the right locale" data-state="open" data-type="issue">#1204</a>.</p>
     </div>
     <div class="card card-important" data-file="pkg/rancher-desktop/window/preferences.ts">
       <div class="finding-title" id="I3">
@@ -646,6 +654,7 @@ Tests:       2 failed, 33 passed, 35 total</code></pre>
       </details>
     <p>Fix: add a spec that answers Cancel and Discard, closes after <code>before-quit</code>, and reopens after a cancelled close.</p>
     <p>No patch: I1&#39;s patch adds <code>window/__tests__/preferences.spec.ts</code> with these cases, and the probe&#39;s second run shows it catching the inverted check.</p>
+    <p>Outcome: fixed by I1&#39;s spec in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a>.</p>
     </div>
     <div class="card card-important" data-file="pkg/rancher-desktop/window/preferences.ts">
       <div class="finding-title" id="I4">
@@ -777,6 +786,7 @@ index f097584c3..3ca9380df 100644
  let quitting = false;
  </code></pre>
       </details>
+    <p>Outcome: fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a>. The comment keeps &quot;stopped steve&quot; and drops &quot;and cannot go back&quot;, and the commit message and the PR body give the same reason.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -790,8 +800,8 @@ index f097584c3..3ca9380df 100644
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><em></em>A Cancel can now overrule <code>preferences-close</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/layouts/default.vue#L99"><code>layouts/default.vue:99</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/components/SnapshotCard.vue#L69"><code>SnapshotCard.vue:69</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/pages/snapshots/create.vue#L61"><code>snapshots/create.vue:61</code></a> send it to close Preferences before a backend lock or a snapshot. With unsaved changes the user now gets the discard question and can keep Preferences open. Nothing sends <code>backend-locked</code> to a renderer yet, so this matters once snapshots land.</li>
-      <li><em></em>Some quit paths never emit <code>before-quit</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. Electron documents that a Windows session end does not emit it, and that <code>autoUpdater.quitAndInstall()</code> emits it only after closing the windows, so the guard can ask on either path. Nobody ran either path, and the updater has no production caller yet.</li>
+      <li><em></em>A Cancel can now overrule <code>preferences-close</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/layouts/default.vue#L99"><code>layouts/default.vue:99</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/components/SnapshotCard.vue#L69"><code>SnapshotCard.vue:69</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/pages/snapshots/create.vue#L61"><code>snapshots/create.vue:61</code></a> send it to close Preferences before a backend lock or a snapshot. With unsaved changes the user now gets the discard question and can keep Preferences open. Nothing sends <code>backend-locked</code> to a renderer yet, so this matters once snapshots land. Outcome: declined for this PR and tracked.</li>
+      <li><em></em>Some quit paths never emit <code>before-quit</code><em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. Electron documents that a Windows session end does not emit it, and that <code>autoUpdater.quitAndInstall()</code> emits it only after closing the windows, so the guard can ask on either path. Nobody ran either path, and the updater has no production caller yet. Outcome: declined for this PR and tracked.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
@@ -808,7 +818,7 @@ index f097584c3..3ca9380df 100644
       <li>I ran the ten changed specs at the review SHA (10 suites, 55 tests) and, together with every spec under <code>components/__tests__</code>, 22 suites with 167 tests, all passing. CI&#39;s Jest Tests job also passed on the head.</li>
       <li>Required: a test for the main-process guard (I3). I1&#39;s patch adds it. With both patches applied, the full Jest run passes 74 suites and 639 tests, with 1 suite (33 tests) skipped.</li>
       <li>The seven header tests switch the locale through <code>switchableT</code>, a reactive stand-in for the store&#39;s <code>i18n/t</code> getter. The real getter reads <code>getters.current</code> inside the function it returns (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/store/i18n.ts#L62-L63"><code>store/i18n.ts:62-63</code></a>), so a computed that calls it tracks the locale the same way.</li>
-      <li>No test runs the Electron half of the unload, such as whether <code>pagehide</code> fires on each way the window can close. The probes under I2 and I4 ran Electron 45.2.1 outside the app; the e2e suite cannot reach the question while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/window/preferences.ts#L119"><code>window/preferences.ts:119</code></a> skips it under <code>RD_TEST</code>.</li>
+      <li>No test runs the Electron half of the unload, such as whether <code>pagehide</code> fires on each way the window can close. The probes under I2 and I4 ran Electron 45.2.1 outside the app; the e2e suite cannot reach the question while <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/window/preferences.ts#L119"><code>window/preferences.ts:119</code></a> skips it under <code>RD_TEST</code>. Outcome: declined, since it needs an Electron-level test rig that the repo lacks.</li>
     </ul>
     </div>
     <hr>
@@ -816,8 +826,8 @@ index f097584c3..3ca9380df 100644
 
     <div class="card card-neutral">
     <ul>
-      <li>The PR body&#39;s &quot;switches back however the window closes&quot; is wrong for the main window&#39;s close (I2), and its quit reason is wrong (I4). Fix both with the code.</li>
-      <li>The doc comment on <code>openPreferences</code> says &quot;Open the main window&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/window/preferences.ts#L25-L27"><code>window/preferences.ts:25-27</code></a>). It predates this PR <span class="pill pill-gemini">Gemini 3.5 Flash</span> and is tracked separately.</li>
+      <li>The PR body&#39;s &quot;switches back however the window closes&quot; is wrong for the main window&#39;s close (I2), and its quit reason is wrong (I4). Fix both with the code. Outcome: fixed in the commit message of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a> and in the PR body.</li>
+      <li>The doc comment on <code>openPreferences</code> says &quot;Open the main window&quot; (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/6c2666ed781e313311ac7683d12f733b3e62f7b8/pkg/rancher-desktop/window/preferences.ts#L25-L27"><code>window/preferences.ts:25-27</code></a>). It predates this PR <span class="pill pill-gemini">Gemini 3.5 Flash</span> and is tracked separately. Outcome: fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b53c82ae2"><code>b53c82ae2</code></a>.</li>
     </ul>
     </div>
     <hr>
