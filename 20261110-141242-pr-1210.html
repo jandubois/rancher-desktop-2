@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR builds the standalone <code>rdd.*</code> download without the <code>with_dashboard</code> tag, so it leaves out steve and the dashboard, and <code>yarn sign</code> now signs that binary and, on macOS, notarizes it. A manual Package run on the author&#39;s fork signed it on macOS arm64 and Windows x86_64. It needs two fixes. A new comment wrongly names <code>DashboardOpen.vue</code> as steve&#39;s only port reader (I1), and nothing checks that the separately built binary has its package leg&#39;s architecture (I2).</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code Changed Since This Review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2b1e5ec46"><code>2b1e5ec46</code></a> amended the reviewed commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/138798cd5"><code>138798cd5</code></a> with the fixes recorded under each finding, so the cited lines in <code>.github/workflows/package.yaml</code>, <code>rdd/cmd/rdd/steve.go</code>, <code>rdd/Makefile</code> and <code>scripts/lib/build-utils.ts</code> have moved.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -328,6 +334,7 @@ index e9f0a2873..e6a0faa47 100644
  //go:build with_dashboard
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2b1e5ec46"><code>2b1e5ec46</code></a> as patched.</p>
     </div>
     <div class="card card-important" data-file="scripts/package.ts">
       <div class="finding-title" id="I2">
@@ -419,6 +426,7 @@ index 011c1e808..86069cb55 100644
        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
        with:</code></pre>
       </details>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2b1e5ec46"><code>2b1e5ec46</code></a> as patched.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -451,6 +459,7 @@ index 011c1e808..86069cb55 100644
 +          echo &quot;::error::The standalone rdd links steve&quot;
 +          exit 1
 +        fi</code></pre>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2b1e5ec46"><code>2b1e5ec46</code></a>, with a plain <code>grep</code> in place of <code>--quiet</code>. The app-side step now also requires the steve module, because its tag check alone would miss a <code>steve.go</code> whose build constraint stopped matching. <code>dashboard_embed.go</code>&#39;s own constraint is still judged by the tag alone, which predates this PR and stays as is.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/steve/steve.go">
       <div class="finding-title" id="S2">
@@ -512,6 +521,7 @@ var dashboardFiles fs.FS
 func newHandler(api http.Handler, files fs.FS, port int) (http.Handler, error) {
 	checksum, err := dashboardChecksum(files)</code></pre>
     <p>Fix: either drop the branch, so that <code>Run</code> returns an error without an embedded dashboard, and trim the three comments, or keep the branch and say in the package doc that only its tests build it without the tag.</p>
+    <p><strong>Outcome:</strong> Declined. Harmless dead branch; the pkg/steve comments are true of the package, which its tests build without the tag.</p>
     </div>
     <div class="card card-suggestion" data-file="scripts/lib/build-utils.ts">
       <div class="finding-title" id="S3">
@@ -574,12 +584,14 @@ await (async() =&gt; {
     await signArchive(archive, rddFiles);
   }</code></pre>
     <p>Fix: add <code>|| !fs.existsSync(rdd)</code> to the guard. Optionally leave <code>rdd.*.zip</code> out of <code>archives</code> and tell the user to extract it.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2b1e5ec46"><code>2b1e5ec46</code></a> with a separate existence check that names the missing path. The <code>rdd.*.zip</code> half was left out.</p>
     </div>
     <div class="card card-suggestion" data-file="scripts/lib/build-utils.ts">
       <div class="finding-title" id="S4">
         <span class="finding-num">S4.</span> No unit test covers <code>findStandaloneRdd</code> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
       </div>
     <p><code>scripts/lib/__tests__/build-utils.spec.ts</code> tests the neighbouring <code>checkArchiveArch</code> by stubbing the <code>arch</code> getter, and <code>findStandaloneRdd</code> can use the same pattern. The test is optional, because the function runs only in our own release signing, and a regression throws an error that names the expected file. Add a case that picks the matching name out of several files and one that throws when it is missing. I2 covers <code>goArch</code>.</p>
+    <p><strong>Outcome:</strong> Declined. Optional test: runs only in our release signing, and a regression throws an error naming the expected file.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/Makefile">
       <div class="finding-title" id="S5">
@@ -599,6 +611,7 @@ endef
 # Only the rdd builds and bin/lima-controller embed the distro. Tests, lint and</code></pre>
     <p>With an empty second argument the recipe runs <code>go build -tags=&quot;sqlite_omit_load_extension with_distro &quot;</code>, as the package job logs show. Go ignores the space, and <code>go version -m</code> records clean tags, so nothing breaks. <code>CONTROLLER_TARGETS</code> in the same file wraps its tags in <code>$(strip ...)</code> for the same case.</p>
     <p>Fix: write <code>-tags=&quot;$(strip $(TAGS) with_distro $(2))&quot;</code>.</p>
+    <p><strong>Outcome:</strong> Fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2b1e5ec46"><code>2b1e5ec46</code></a>.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
