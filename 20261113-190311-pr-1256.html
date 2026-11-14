@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>Preferences now asks before it discards unsaved changes, keeps its shortcuts after a cancelled close, is destroyed on quit, and applies a picked language only on Apply. Those changes work, and tests cover them. One regression remains. The language picker still shows the displayed language, which no longer follows a pick, so after a tab switch it shows English while a Korean pick waits for Apply. The patch binds the picker to the pending preference.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The findings cite <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ff5baef2e"><code>ff5baef2e</code></a>. The branch now holds <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ea2fd33e"><code>6ea2fd33e</code></a>, the PR commit with the fixes amended in, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/89152f807"><code>89152f807</code></a>, so cited lines may have moved.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -436,6 +442,7 @@ index 000000000..f083e2f0c
 +  });
 +});</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ea2fd33e"><code>6ea2fd33e</code></a> with the review&#39;s spec, plus a fallback to <code>i18n/current</code> for a locale without a translation. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/89152f807"><code>89152f807</code></a> makes <code>switchTo</code> treat an <code>Object.prototype</code> name such as <code>constructor</code> as an unknown locale, so the fallback holds for every value.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -460,6 +467,7 @@ index 000000000..f083e2f0c
       await expect(application.tabGeneral).toHaveText(&#39;General&#39;);</code></pre>
     <p><code>toHaveText</code> passes as soon as the text matches. With this PR the tab reads &quot;General&quot; when the check first runs. At the merge-base the switch to Korean came a moment after the pick, through <code>preferences/modify</code> and a watcher, so the first check could pass there too. The assertion cannot tell preview from Apply. The Jest test &quot;ignores a locale picked but not applied&quot; in <code>store/__tests__/i18n.spec.ts</code> is what pins the change. And since the test never clicks Apply, the e2e suite never checks that a picked language takes effect.</p>
     <p>Fix: after <code>selectOption(&#39;ko&#39;)</code>, switch tabs and back and assert that <code>localeSelect</code> still has the value <code>ko</code> (this also covers I1). To cover Apply, apply the change, assert the Korean tab label, then switch back to <code>en-us</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ea2fd33e"><code>6ea2fd33e</code></a>. The test checks the pick after a tab switch, applies Korean, checks the tab label, and switches back. With Important #1&#39;s fix reverted it fails at <code>toHaveValue(&#39;ko&#39;)</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="screenshots/screenshots.e2e.spec.ts">
       <div class="finding-title" id="S2">
@@ -479,6 +487,7 @@ index 000000000..f083e2f0c
         // enable Apply button</code></pre>
     <p>The &quot;General Tab&quot; test clicks the automatic-updates checkbox to enable Apply, which leaves a pending change. With <code>runBeforeUnload: true</code>, the page now cancels its unload and opens a native message box that Playwright cannot answer, so Preferences stays open. At the merge-base the close guard never asked, because the app never set its dirty flag. Line 626 makes the same call. The breakage is latent. The spec runs only through <code>workflow_dispatch</code>, and its &quot;Behavior Tab&quot; test already fails at the merge-base, since <code>BodyApplication.vue</code> comments out that tab.</p>
     <p>Fix: close with <code>runBeforeUnload: false</code>, or click the footer&#39;s Cancel button, which clears the changes before it closes the window.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ea2fd33e"><code>6ea2fd33e</code></a>. Both closes call <code>close()</code> without <code>runBeforeUnload</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="PR <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1256" class="gh-ref" data-title="Preferences: Ask before dropping changes, and switch language on Apply" data-state="open" data-type="pr">#1256</a> body">
       <div class="finding-title" id="S3">
@@ -486,6 +495,7 @@ index 000000000..f083e2f0c
       </div>
     <p>Issue <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a> lists three items. This PR does the second and third; the open draft <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1255" class="gh-ref" data-title="Follow a language switch in table headers and stored messages" data-state="open" data-type="pr">#1255</a> does the first and says <code>Part of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a></code>. If <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1256" class="gh-ref" data-title="Preferences: Ask before dropping changes, and switch language on Apply" data-state="open" data-type="pr">#1256</a> merges first, GitHub closes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a> with the table-header work still open.</p>
     <p>Fix: say <code>Part of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a></code> here, and let whichever of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1255" class="gh-ref" data-title="Follow a language switch in table headers and stored messages" data-state="open" data-type="pr">#1255</a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1256" class="gh-ref" data-title="Preferences: Ask before dropping changes, and switch language on Apply" data-state="open" data-type="pr">#1256</a> merges last say <code>Fixes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a></code>.</p>
+    <p><strong>Outcome:</strong> pending. The PR body says <code>Part of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a></code> from the next push, once Jan approves it.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/Preferences.vue">
       <div class="finding-title" id="S4">
@@ -508,6 +518,7 @@ async function askToDiscard() {
     const result = await ipcRenderer.invoke(&#39;show-message-box&#39;, {</code></pre>
     <p>With the <code>if (!asking)</code> guard deleted, all five tests in <code>pages/__tests__/Preferences.spec.ts</code> still pass. A second close request while the question is open would then open a second box. <code>preferences-close</code> from the main window is such a request, but the app cannot send it today (see Acknowledged Limitations). A user would see the second box, so the test is optional.</p>
     <p>Fix: add a case that dispatches <code>beforeunload</code> twice before <code>flushPromises()</code> and expects one <code>invoke</code>.</p>
+    <p><strong>Outcome:</strong> declined. The test is optional: the second close request cannot be sent today, and a regression would show the user a second box.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/pages/__tests__/Preferences.spec.ts">
       <div class="finding-title" id="S5">
@@ -527,6 +538,7 @@ async function askToDiscard() {
 </code></pre>
     <p><code>tsc --noEmit -p tsconfig.json</code> reports 148 errors at the head, and five of them are in this PR&#39;s new spec code. Two are TS2345, at <code>Preferences.spec.ts:71</code> and <code>:94</code>, where the untyped <code>jest.fn()</code> makes <code>mockResolvedValue</code> take <code>never</code>. Three are TS18046 on <code>store.state</code>, at <code>Preferences.spec.ts:101</code> and <code>i18n.spec.ts:271</code> and <code>:279</code>. CI does not type-check the specs, so it stays green.</p>
     <p>Fix: type the mock, as in <code>jest.fn&lt;(...args: any[]) =&gt; Promise&lt;any&gt;&gt;()</code>, and give <code>createStore</code> a state type or cast <code>store.state</code> where the test reads it.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ea2fd33e"><code>6ea2fd33e</code></a>. <code>tsc</code> reports 143 errors, five fewer, none new.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -536,6 +548,7 @@ async function askToDiscard() {
     <ul>
       <li><em></em><code>modal</code> means two things on two sibling channels<em></em> (future) <span class="pill pill-claude">Claude Opus 5.5</span>. On <code>show-message-box</code>, <code>modal</code> now attaches the box to the window that asked (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ff5baef2e6ab5df262ca138ecb8b4321557646b7/background.ts#L358-L359"><code>background.ts:358-359</code></a>). On <code>show-message-box-rd</code>, it attaches the box to the main window (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ff5baef2e6ab5df262ca138ecb8b4321557646b7/background.ts#L362-L363"><code>background.ts:362-363</code></a>). Nobody has ruled on which meaning should win. Attaching to the sender suits Preferences, so <code>show-message-box-rd</code> could follow it the next time someone touches it.</li>
     </ul>
+    <p><strong>Outcome:</strong> declined as future work, filed in pending-work beside the delete-confirmation modality entry.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><strong>The page decides from its own store whether to ask</strong> (in-scope) <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span>. The PR removes the main-process dirty flag. The app never set it, and now the two processes cannot disagree about it.</li>
@@ -578,6 +591,7 @@ async function askToDiscard() {
       <li>The PR body&#39;s <code>Fixes <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/984" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="open" data-type="issue">#984</a></code> is S3.</li>
       <li><code>openPreferences</code>&#39;s doc comment still says &quot;Open the main window&quot;. That is tracked for the follow-up that fixes the <code>isRegistered</code> block.</li>
     </ul>
+    <p><strong>Outcome:</strong> the commit message now names the <code>modal</code> argument, and <code>openPreferences</code>&#39;s doc comment says it opens Preferences, both in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ea2fd33e"><code>6ea2fd33e</code></a>.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
@@ -602,6 +616,7 @@ async function askToDiscard() {
 
     <div class="card card-neutral">
     <p>All nine of mook-as&#39;s inline comments on <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1207" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="closed" data-type="pr">#1207</a> are addressed here or left out. This PR addresses comments 1, 2, 3, 5, 6, 7 and 8 with shorter comments, a <code>preferences/isDirty</code> getter read through <code>computed</code>, the first-run quit pattern, the two-line <code>closed</code> comment, the page asking through <code>show-message-box</code>, the removal of the restore function and its explanation, and the main-window note moved to the <code>parent</code> option. Comment 9 (revert the locale on <code>closed</code>) is moot, since Preferences no longer previews a picked language. Comment 4 (the <code>isRegistered</code> block) is left for a separate PR, as the comment closing <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1207" class="gh-ref" data-title="Apply a locale switch everywhere, and revert an unsaved one" data-state="closed" data-type="pr">#1207</a> says.</p>
+    <p><strong>Outcome:</strong> comment 4 stays for its own PR, tracked in pending-work.</p>
     </div>
     <hr>
     <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
