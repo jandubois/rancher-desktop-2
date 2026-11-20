@@ -95,6 +95,25 @@ kube_current_context_is() { # <expected-context>
     assert_output "Ready"
 }
 
+assert_running_since() { # <lastTransitionTime>
+    run -0 rdd ctl get limavm rd --namespace rancher-desktop \
+        -o jsonpath='{.status.conditions[?(@.type=="Running")].lastTransitionTime}'
+    assert_output "$1"
+}
+
+@test "the VM stays running while the root-namespace boot run retries the k3s download" {
+    # On WSL, Lima also runs the boot scripts through wsl.exe in the root
+    # network namespace, where get.k3s.io does not resolve. That run tries
+    # 30 times, at most 10 s each plus a 2 s pause, then exits 1. Wait
+    # longer than that and check that the LimaVM never left Running.
+    run -0 rdd ctl get limavm rd --namespace rancher-desktop \
+        -o jsonpath='{.status.conditions[?(@.type=="Running")].lastTransitionTime}'
+    running_since=${output}
+    assert_output
+    sleep 420
+    assert_running_since "${running_since}"
+}
+
 @test "kubernetes controller creates context entry in user kubeconfig" {
     kube_context_exists "${CONTEXT_NAME}"
 }
