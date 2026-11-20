@@ -47,6 +47,16 @@ entries:
   source: build/guest/rdd-guest
   mode: "0755"
 
+# The provision script and its unit, which rdd's Lima template starts.
+- path: /usr/local/libexec/rancher-desktop/provision.sh
+  source: root/usr/local/libexec/rancher-desktop/provision.sh
+  mode: "0755"
+- path: /usr/local/lib/systemd/system/rancher-desktop-provision.service
+  source: root/usr/local/lib/systemd/system/rancher-desktop-provision.service
+- path: /usr/local/lib/systemd/system/rancher-desktop-provision.service.d/network-namespace.conf
+  source: root/usr/local/lib/systemd/system/rancher-desktop-provision.service.d/network-namespace.conf
+  profiles: [wsl]
+
 # ---------------------------------------------------------------------------
 # openSUSE guest assets, moved out of the distro's `root/` tree and `config.sh`
 # (rancher-desktop-2#805). The overlay is now the only source of these files, so
@@ -56,6 +66,7 @@ entries:
 # its chmod block set the modes below; its raw branch deleted every
 # `*/network-namespace.conf` (so those are wsl-only) and its wsl branch deleted
 # lima-init.service.d/requires-{cidata,rd-init}.conf (so those are raw-only).
+# Two .wants symlinks below depart from config.sh, and their comments say why.
 # ---------------------------------------------------------------------------
 
 # /etc/sudoers.d must be 0750 (config.sh chmod'd it); its files default to 0644.
@@ -136,9 +147,6 @@ entries:
   profiles: [wsl]
 - path: /usr/local/lib/systemd/system/k3s.service.d/target.conf
   source: root/usr/local/lib/systemd/system/k3s.service.d/target.conf
-- path: /usr/local/lib/systemd/system/lima-init.service.d/network-namespace.conf
-  source: root/usr/local/lib/systemd/system/lima-init.service.d/network-namespace.conf
-  profiles: [wsl]
 - path: /usr/local/lib/systemd/system/lima-init.service.d/requires-cidata.conf
   source: root/usr/local/lib/systemd/system/lima-init.service.d/requires-cidata.conf
   profiles: [raw]
@@ -181,14 +189,17 @@ entries:
   profiles: [wsl]
 
 # systemctl-enable .wants symlinks, moved out of config.sh's `systemctl enable`
-# lines. config.sh enabled ten RD units; the Lima template re-enables
-# buildkitd/containerd/docker per container engine at provision, so only the
-# other seven need a static symlink here. Each points at its unit and lands in
-# the same <target>.wants directory `systemctl enable` would use, so it stays
+# lines. config.sh enabled ten RD units; provision.sh re-enables
+# buildkitd/containerd/docker per container engine on every boot, so only the
+# other seven need static symlinks here. Each points at its unit from the same
+# <target>.wants directory that `systemctl enable` would use, so it stays
 # runtime-disableable.
+#
+# On WSL, Lima's WSL2 driver runs boot.sh itself, through wsl.exe.
 - path: /etc/systemd/system/multi-user.target.wants/lima-init.service
   type: symlink
   target: /usr/local/lib/systemd/system/lima-init.service
+  profiles: [raw]
 - path: /etc/systemd/system/multi-user.target.wants/rd-init.service
   type: symlink
   target: /usr/local/lib/systemd/system/rd-init.service
@@ -197,6 +208,11 @@ entries:
   type: symlink
   target: /usr/local/lib/systemd/system/journal-to-console.service
   profiles: [raw]
+# Start WSL networking at boot, alongside Lima's boot.
+- path: /etc/systemd/system/multi-user.target.wants/network-setup.service
+  type: symlink
+  target: /usr/local/lib/systemd/system/network-setup.service
+  profiles: [wsl]
 - path: /etc/systemd/system/rancher-desktop.target.wants/network-setup.service
   type: symlink
   target: /usr/local/lib/systemd/system/network-setup.service
