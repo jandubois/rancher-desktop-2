@@ -10,6 +10,7 @@ load '../../helpers/load'
 # resources are forwarded to Docker.
 
 CONTEXT_NAME="rancher-desktop-${RDD_INSTANCE}"
+VM_NAME="rd"
 
 local_setup_file() {
     # Isolate all Docker config reads and writes from the developer's real
@@ -72,6 +73,38 @@ do_websocket() { # endpoint
     # to select from.
     run -0 rdd ctl get app app -o jsonpath='{.status.supportsNamespaces}'
     assert_output "false"
+}
+
+@test "provision unit is active" {
+    run -0 rdd limavm shell "${VM_NAME}" systemctl is-active rancher-desktop-provision.service
+    assert_output "active"
+}
+
+# Lima's WSL2 driver runs boot.sh through wsl.exe with a wrapper that tees its
+# output into /var/log/lima-init.log, so the file holds only that run. boot.sh
+# logs "Exiting with code" last, so that line means the run has finished.
+assert_wsl_boot_run_finished() {
+    run -0 rdd limavm shell "${VM_NAME}" sudo cat /var/log/lima-init.log
+    assert_line --partial "Exiting with code"
+}
+
+# On WSL, Lima runs boot.sh twice per boot. lima-init.service runs it inside
+# RD's network namespace, and Lima's WSL2 driver also runs it through wsl.exe
+# in the root namespace. Both runs start the provision unit, which must run its
+# steps once, through its wsl-exec drop-in. The journal tags the unit's output
+# with the wsl-exec identifier only when the drop-in runs it, and the script's
+# xtrace logs `systemctl stop rancher-desktop.target` once per run. The test is
+# in this file because its setup boots a fresh VM with Kubernetes off, so a
+# failed k3s install can't make the unit run twice.
+@test "provision steps run once per boot, inside the network namespace" {
+    skip_on_unix "Only Lima's WSL2 driver runs boot.sh outside lima-init.service"
+    try assert_wsl_boot_run_finished
+    run -0 rdd limavm shell "${VM_NAME}" sudo cat /var/log/lima-init.log
+    assert_line --partial "+ systemctl start rancher-desktop-provision.service"
+    run -0 rdd limavm shell "${VM_NAME}" sudo journalctl --boot \
+        --unit=rancher-desktop-provision.service --identifier=wsl-exec --output=cat
+    run grep --count --fixed-strings "+ systemctl stop rancher-desktop.target" <<<"${output}"
+    assert_output "1"
 }
 
 # --- Image mirroring ---
