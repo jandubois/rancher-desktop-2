@@ -120,6 +120,13 @@ provision:
                 # so a black-holed network fails fast instead of hanging that
                 # step. --show-error surfaces the error without --silent's
                 # progress meter spamming the log.
+                # Probe: when this script runs in a network namespace of its
+                # own (the lima-init run on WSL), sleep until the run in the
+                # root namespace has given up after its 30 attempts, to model
+                # a slow k3s download.
+                if [[ $(readlink /proc/self/ns/net) != $(readlink /proc/1/ns/net) ]]; then
+                    sleep 450
+                fi
                 attempt=0
                 until curl --fail --silent --show-error --location --connect-timeout 10 --max-time 60 https://get.k3s.io | sh -; do
                     attempt=$((attempt + 1))
