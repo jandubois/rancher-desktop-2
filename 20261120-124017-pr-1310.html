@@ -225,7 +225,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
       <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
       <tr><td>Round</td><td>1 (of target)</td></tr>
       <tr><td>Author</td><td>@jandubois</td></tr>
-      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1310" class="gh-ref" data-title="Run the provision steps from a systemd unit" data-state="open" data-type="pr">#1310</a> — Run the provision steps from a systemd unit</td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1310" class="gh-ref" data-title="Run boot.sh once per boot on WSL" data-state="open" data-type="pr">#1310</a> — Run the provision steps from a systemd unit</td></tr>
       <tr><td>Branch</td><td><code>wsl-boot-run-guard</code></td></tr>
       <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e0284bf50"><code>e0284bf50</code></a> Run the provision steps from a systemd unit</td></tr>
       <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e0284bf507cb25a45ee67a5f82b40f69af6afc6f"><code>e0284bf507cb25a45ee67a5f82b40f69af6afc6f</code></a></td></tr>
@@ -246,7 +246,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8bbd5acb1"><code>8bbd5acb1</code></a> reworked the PR after this review. On WSL, <code>lima-init.service</code> no longer runs boot.sh, so Lima&#39;s wsl.exe run is the only run, and the guest-log capture is back in the Lima template. The files and line numbers cited below have changed.</p>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a> reworked the PR after this review. On WSL, <code>lima-init.service</code> no longer runs boot.sh, so Lima&#39;s wsl.exe run is the only run, and the guest-log capture is back in the Lima template. The files and line numbers cited below have changed.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -337,7 +337,7 @@ index 12e53a4ee..b28da8d24 100644
  EnvironmentFile=/etc/sysconfig/rancher-desktop
  ExecStart=/usr/local/libexec/rancher-desktop/provision.sh</code></pre>
       </details>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8bbd5acb1"><code>8bbd5acb1</code></a> with this patch&#39;s <code>EnvironmentFile=</code> line. The WSL window goes away too, because <code>lima-init.service</code> no longer runs boot.sh on WSL, so a second run can&#39;t rewrite <code>/etc/environment</code> while the unit starts.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a> with this patch&#39;s <code>EnvironmentFile=</code> line. The WSL window goes away too, because <code>lima-init.service</code> no longer runs boot.sh on WSL, so a second run can&#39;t rewrite <code>/etc/environment</code> while the unit starts.</p>
     </div>
     <div class="card card-important" data-file="rdd/overlay/root/usr/local/libexec/rancher-desktop/provision.sh">
       <div class="finding-title" id="I2">
@@ -520,7 +520,7 @@ index 35aabe851..eecc2e399 100644
  # runs the provision steps with the settings from the file above. On WSL,
  # Lima runs this script twice per boot. The overlay&#39;s lima-init.service runs it</code></pre>
       </details>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8bbd5acb1"><code>8bbd5acb1</code></a> with this patch. The restored capture also runs <code>journalctl --boot</code>, because on WSL the guest journal keeps earlier boots and each boot&#39;s capture copied them again.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>. The capture is back in its own script in the Lima template, outside <code>rancher-desktop-provision.service</code>, so it starts even when network setup fails. Since the rebase onto main, that script is the per-unit capture from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1321" class="gh-ref" data-title="RDD: systemd: Copy service logs per-unit" data-state="merged" data-type="pr">#1321</a>, and the PR adds <code>rancher-desktop-provision</code> to its unit list instead of applying this patch. The first version of this fix also ran <code>journalctl --boot</code>, because on WSL the guest journal keeps earlier boots, and each boot&#39;s capture copied them again. The author dropped <code>--boot</code>, because it didn&#39;t stop the repeats. Boots of a WSL distro share the boot ID of WSL&#39;s kernel, so <code>--boot</code> still returns the distro&#39;s earlier boots until WSL&#39;s kernel reboots. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1324" class="gh-ref" data-title="Continue journal captures from the previous run&#39;s cursor" data-state="open" data-type="pr">#1324</a>, still open, stops the repeats by continuing each capture from the previous run&#39;s cursor.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -544,7 +544,7 @@ if [[ ${KUBERNETES_ENABLED} == &quot;true&quot; ]]; then
     export INSTALL_K3S_VERSION=&quot;v${KUBERNETES_VERSION}+k3s1&quot;</code></pre>
     <p>Flag-less <code>shfmt</code> with the repo&#39;s <code>.editorconfig</code> (<code>simplify = true</code>) rewrites <code>=</code> to <code>==</code> in these two <code>[[ ]]</code> comparisons, and the rest of the file already uses <code>==</code>. CI lints shell only under <code>rdd/bats/</code>, so it won&#39;t flag them.</p>
     <p>Fix: use <code>==</code> on both lines.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8bbd5acb1"><code>8bbd5acb1</code></a>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/32-app-controllers/engine-docker.bats">
       <div class="finding-title" id="S2">
@@ -568,7 +568,7 @@ if [[ ${KUBERNETES_ENABLED} == &quot;true&quot; ]]; then
     skip_on_unix &quot;Only Lima&#39;s WSL2 driver runs boot.sh outside lima-init.service&quot;</code></pre>
     <p>Line 108 shows that the <code>wsl.exe</code> run reached the start, but the test doesn&#39;t check the namespaced <code>lima-init.service</code> run. In the PR&#39;s Windows CI artifacts, <code>guest-journal.log</code> shows the namespaced run logging <code>+ systemctl start rancher-desktop-provision.service</code>, and <code>lima-init.log</code> shows the <code>wsl.exe</code> run logging it, so the claim holds today. The test would still pass, though, if the namespaced run stopped before its start, leaving one start and one run.</p>
     <p>Fix: also assert the start line in <code>journalctl --boot --unit=lima-init.service</code>, or narrow the comment to the <code>wsl.exe</code> run.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8bbd5acb1"><code>8bbd5acb1</code></a>. With one boot.sh run on WSL, the comment describes that run, and the test also asserts that <code>lima-init.service</code> stays inactive.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>. With one boot.sh run on WSL, the comment describes that run, and the test also asserts that <code>lima-init.service</code> stays inactive.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -578,7 +578,7 @@ if [[ ${KUBERNETES_ENABLED} == &quot;true&quot; ]]; then
     <ul>
       <li>(future) <code>RemainAfterExit=yes</code> keeps the unit active until the distro&#39;s systemd stops, so new settings reach the guest only through a boot from a stopped distro. Lima&#39;s WSL2 <code>Start</code> doesn&#39;t terminate a running distro. But rdd force-stops an orphaned instance, and <code>stopInstanceForcibly</code> calls <code>terminateWSL2Distro</code> (<code>limavm_lifecycle.go</code>), so today every start does begin from a stopped distro. A line in the unit&#39;s header comment naming that assumption would protect it. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
-    <p>  <strong>Outcome:</strong> commented in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8bbd5acb1"><code>8bbd5acb1</code></a>, in the header of <code>rancher-desktop-provision.service</code>.</p>
+    <p>  <strong>Outcome:</strong> commented in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>, in the header of <code>rancher-desktop-provision.service</code>.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>(in-scope) systemd merges the two WSL starts into one job, and <code>RemainAfterExit=</code> turns later starts into no-ops, so the steps run once without a namespace check in each script. The template also shrinks by about 75 lines. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
