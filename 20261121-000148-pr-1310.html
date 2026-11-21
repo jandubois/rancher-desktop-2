@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>On WSL the PR drops the namespaced <code>boot.sh</code> run and moves RD&#39;s provision steps into a oneshot unit. Each round-1 fix holds, and the Windows CI logs show one <code>boot.sh</code> run and one provision run per boot. One comment is false. The template says a failed script makes Lima stop the VM, but only the WSL2 driver does that, and on macOS and Linux the VM keeps running (I1). Two Suggestions cover a test&#39;s journal scope and a testdata header.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/dfbfab7c3"><code>dfbfab7c3</code></a> changed the comments this review cites. The template comment (I1) keeps its line numbers. Test 139 now starts four lines lower in <code>engine-docker.bats</code> (S1), and the guest-path list header grew six lines (S2). <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/dfbfab7c3"><code>dfbfab7c3</code></a> also corrects the same journal-scope claim in <code>rdd/scripts/bats-with-timeout.sh</code> and <code>rdd/bats/helpers/load.bash</code>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -341,6 +347,7 @@ index c907ce3d4..4293bc634 100644
    script: |
      #!/bin/bash</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>. The comment now says &quot;On WSL, Lima stops the VM when this script fails&quot;, in a sentence of its own, so the qualifier doesn&#39;t extend to the <code>|| true</code> that runs on every platform.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -366,6 +373,7 @@ index c907ce3d4..4293bc634 100644
 @test &quot;docker pull creates Image resource&quot; {</code></pre>
     <p>All WSL distro runs share the kernel&#39;s boot ID, so <code>--boot</code> doesn&#39;t limit the journal to the current run. The Windows CI capture shows each new run replaying the earlier runs&#39; provision lines. The test expects one <code>systemctl stop</code> line, and it gets one only because <code>local_setup_file</code> runs <code>rdd svc delete</code> and starts a fresh distro. A VM restart added before this test would make the count two. The PR body&#39;s &quot;this boot&#39;s journal&quot; overstates the scope for the same reason.</p>
     <p>Fix: say in the test comment that the count relies on a freshly created distro, and write &quot;the provision unit&#39;s journal&quot; in the PR body.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>. The test comment says that boots of a WSL distro share the kernel&#39;s boot ID, and that the count holds only because <code>rdd svc delete</code> unregisters the old distro and the new one has booted once. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/dfbfab7c3"><code>dfbfab7c3</code></a> corrects the same claim in <code>bats-with-timeout.sh</code> and <code>load.bash</code>. The PR body edit is pending until the next push.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/overlay/testdata/opensuse-guest-paths.txt">
       <div class="finding-title" id="S2">
@@ -386,6 +394,7 @@ index c907ce3d4..4293bc634 100644
 /etc/wsl.conf</code></pre>
     <p>The header tells whoever regenerates the list from the openSUSE <code>root/</code> tree to drop &quot;the six deleted&quot;. This PR deletes the sixth, <code>lima-init.service.d/network-namespace.conf</code>, and neither the header nor the test names it. So a regenerated list would include it again, and the coverage test would fail on it.</p>
     <p>Fix: name <code>lima-init.service.d/network-namespace.conf</code> in the header as the file that this change deleted.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9d1673963"><code>9d1673963</code></a>. The header lists all six deleted files, taken from the openSUSE <code>root/</code> tree at <code>76696d594^</code>, not only the new one.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -395,6 +404,7 @@ index c907ce3d4..4293bc634 100644
     <ul>
       <li>(future) On WSL, a failed <code>network-setup.service</code> now skips <code>provision.sh</code> entirely, EXIT trap included, so <code>rancher-desktop.target</code> never starts. At the merge-base, the <code>boot.sh</code> run in the root namespace also ran the provision script, without waiting on network-setup, and its trap started the target, which started network-setup again. The engine units <code>Require=</code> network-setup, so this matters only when a second attempt would succeed, and no CI run has shown one. If CI ever shows a transient network-setup failure, <code>Restart=on-failure</code> on network-setup is the place for a retry. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p>  <strong>Outcome:</strong> declined. A retry helps only if a second network-setup attempt would succeed, and no CI run has shown one.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>(in-scope) The provision steps reach RD&#39;s namespace through the unit&#39;s drop-in, whichever process starts the unit, so the namespace they run in no longer depends on which <code>boot.sh</code> run gets there first. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
