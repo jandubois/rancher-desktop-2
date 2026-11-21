@@ -91,6 +91,37 @@ provision:
         systemd-run --collect --unit=rdd-lima-init-capture /bin/sh -c \
             "tail -c +0 -F /var/log/lima-init.log >> \"$PARAM_GUEST_LOG_DIR/lima-init.log\""
     fi
+    # Follow two units again with sd-journal's debug logging, which logs each
+    # journal file and directory that journalctl starts or stops reading.
+    for unit in rancher-desktop-provision rdd-guest; do
+        if ! systemctl is-active --quiet "rdd-journal-debug-${unit}.service"; then
+            systemd-run --collect --unit="rdd-journal-debug-${unit}" \
+                --setenv=SYSTEMD_LOG_LEVEL=debug --setenv=SYSTEMD_LOG_TARGET=console /bin/sh -c \
+                "journalctl --follow --no-tail --output=short-iso --unit=${unit}.service >> \"$PARAM_GUEST_LOG_DIR/debug-${unit}.log\" 2>&1"
+        fi
+    done
+    # Record the journal's files and mounts at boot, and again when the distro
+    # shuts down and systemd stops rdd-journal-state.
+    cat > /run/rdd-journal-state.sh <<'EOF'
+    #!/bin/bash
+    exec >> "$1/journal-state.log" 2>&1
+    echo "===== $2 $(date --iso-8601=ns)"
+    echo "boot_id: $(cat /proc/sys/kernel/random/boot_id)"
+    echo "machine-id: $(cat /etc/machine-id)"
+    for dir in /run/log/journal /var/log/journal; do
+        findmnt --target "$dir"
+        ls -laiR "$dir"
+    done
+    journalctl --list-boots
+    journalctl --header
+    systemctl show systemd-journald.service systemd-journal-flush.service
+    EOF
+    chmod +x /run/rdd-journal-state.sh
+    if ! systemctl is-active --quiet rdd-journal-state.service; then
+        /run/rdd-journal-state.sh "$PARAM_GUEST_LOG_DIR" boot || true
+        systemd-run --collect --unit=rdd-journal-state -p RemainAfterExit=yes \
+            -p ExecStop="/run/rdd-journal-state.sh \"$PARAM_GUEST_LOG_DIR\" shutdown" /usr/bin/true
+    fi
 # Start rancher-desktop-provision.service from the distro overlay. On WSL this
 # script runs through wsl.exe in the root namespace, where DNS doesn't
 # resolve, so the unit's drop-in runs the steps inside RD's network namespace.

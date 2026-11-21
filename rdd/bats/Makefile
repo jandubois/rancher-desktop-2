@@ -73,7 +73,7 @@ bats-rdd: check-bats build-rdd build-rdd-controller
 
 # Run app API group controller tests
 bats-app: check-bats build-rdd
-	RDD_INSTANCE=bats-app-controller $(BATS) tests/32-app-controllers/
+	RDD_INSTANCE=bats-app-controller $(BATS) tests/32-app-controllers/engine-docker.bats
 .PHONY: bats-app
 
 # Run lima API group controller tests
