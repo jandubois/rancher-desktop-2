@@ -9,6 +9,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// MachineFinalizer keeps a LimaMachine until rdd has deleted its node VM.
+// Cluster API waits for the infrastructure machine to disappear before it
+// deletes the Machine, so the finalizer also holds the Machine back. The
+// name contains a "/" because the API server warns about a custom resource
+// finalizer without one.
+const MachineFinalizer = "capi.rancherdesktop.io/limamachine"
+
 // LimaMachineSpec defines the desired state of a LimaMachine.
 type LimaMachineSpec struct {
 	// providerID must match the provider ID on the Node object of this machine.

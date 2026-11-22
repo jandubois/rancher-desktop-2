@@ -56,8 +56,9 @@ const (
 
 	// requeueInProgress is the wait before the next pass when the guest
 	// cluster cannot be reached, our CRDs cannot be installed, our
-	// infrastructure objects cannot be read or updated, or a LimaMachine
-	// waits for its Machine, its bootstrap data or its node VM.
+	// infrastructure objects cannot be read or updated, a LimaMachine
+	// waits for its Machine, its bootstrap data or its node VM, or a deleted
+	// LimaMachine waits for its node VM to disappear.
 	requeueInProgress = 5 * time.Second
 
 	// requeueIdle is the wait between passes while the guest cluster lacks
@@ -80,7 +81,9 @@ func newGuestScheme() *runtime.Scheme {
 // Reconciler installs the Lima infrastructure provider's CRDs into the App's
 // k3s cluster once Cluster API is present there, then marks every LimaCluster
 // in that cluster provisioned and ready, and creates a node VM for every
-// LimaMachine.
+// LimaMachine. It deletes a node VM when its LimaMachine is deleted or gone,
+// or when the guest cluster was reset, and it runs the node VMs only while
+// the App runs with Kubernetes enabled.
 type Reconciler struct {
 	// Client talks to rdd's control plane, which holds the App.
 	client.Client
@@ -126,11 +129,14 @@ type probeRecord struct {
 	status       nodeStatus
 }
 
-// Reconcile installs our CRDs into the guest cluster when it is running and
-// has Cluster API, then marks the LimaClusters there provisioned and ready,
-// and creates the LimaMachines' node VMs. A failed request to the guest cluster
-// leads to a requeue, unless the same pass also has an error from rdd's
-// control plane. Then Reconcile returns both.
+// Reconcile first starts or stops the node VMs to follow the App. Then, when
+// the guest cluster is running, it removes the node VMs of an earlier guest
+// cluster. When the guest cluster also has Cluster API, it installs our CRDs
+// there, marks the LimaClusters provisioned and ready, creates and deletes
+// the LimaMachines' node VMs, and removes node VMs that no LimaMachine
+// claims. A failed request to the guest cluster leads to a requeue, unless
+// the same pass also has an error from rdd's control plane. Then Reconcile
+// returns both.
 func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
 
@@ -139,6 +145,11 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		if apierrors.IsNotFound(err) {
 			return ctrl.Result{}, nil
 		}
+		return ctrl.Result{}, err
+	}
+	// Stopping the App turns its conditions False, and the check below then
+	// returns early. So the node VMs follow the App before that check.
+	if err := r.syncNodeVMsRunning(ctx, &app); err != nil {
 		return ctrl.Result{}, err
 	}
 	if !apimeta.IsStatusConditionTrue(app.Status.Conditions, appv1alpha1.AppConditionRunning) ||
@@ -150,6 +161,18 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 	if err := r.connectGuest(); err != nil {
 		log.V(1).Info("Cannot load the guest kubeconfig", "err", err)
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+
+	var kubeSystem corev1.Namespace
+	if err := r.guestClient.Get(ctx, client.ObjectKey{Name: metav1.NamespaceSystem}, &kubeSystem); err != nil {
+		log.V(1).Info("Cannot get the kube-system Namespace of the guest cluster", "err", err)
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+	// The node VMs of an earlier guest cluster go first, so that a guest
+	// cluster without Cluster API, or a failure in a later step, doesn't keep
+	// them running.
+	if err := r.removeOtherClusterNodeObjects(ctx, kubeSystem.UID); err != nil {
+		return ctrl.Result{}, err
 	}
 
 	if _, err := r.crdClient.Get(ctx, machineCRDName, metav1.GetOptions{}); err != nil {
@@ -175,7 +198,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
 	}
 
-	inProgress, err := r.reconcileLimaMachines(ctx, &app)
+	inProgress, err := r.reconcileLimaMachines(ctx, &app, kubeSystem.UID)
 	if err != nil {
 		// reconcileLimaMachines joins the errors of all LimaMachines, so returning
 		// the joined error keeps every one of them in controller-runtime's log.

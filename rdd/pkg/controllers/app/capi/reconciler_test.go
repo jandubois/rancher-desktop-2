@@ -7,12 +7,14 @@ package capi
 import (
 	"context"
 	"errors"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/go-logr/logr/testr"
 	"github.com/lima-vm/lima/v2/pkg/limayaml"
 	"gotest.tools/v3/assert"
 
@@ -29,8 +31,11 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/event"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	limav1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
@@ -42,11 +47,15 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/testapiserver"
 )
 
-// newApp returns the App with the Running and KubernetesReady conditions set
-// to the given statuses.
+// newApp returns a running App with Kubernetes enabled, and with the Running
+// and KubernetesReady conditions set to the given statuses.
 func newApp(running, kubernetesReady metav1.ConditionStatus) *appv1alpha1.App {
 	return &appv1alpha1.App{
 		ObjectMeta: metav1.ObjectMeta{Name: appName, Generation: 1},
+		Spec: appv1alpha1.AppSpec{
+			Running:    true,
+			Kubernetes: appv1alpha1.KubernetesSpec{Enabled: true},
+		},
 		Status: appv1alpha1.AppStatus{
 			Conditions: []metav1.Condition{
 				{Type: appv1alpha1.AppConditionRunning, Status: running, Reason: "Test"},
@@ -115,6 +124,8 @@ users:
 
 	scheme := k8sruntime.NewScheme()
 	assert.NilError(t, appv1alpha1.AddToScheme(scheme))
+	assert.NilError(t, corev1.AddToScheme(scheme))
+	assert.NilError(t, limav1alpha1.AddToScheme(scheme))
 	app := newApp(metav1.ConditionTrue, metav1.ConditionFalse)
 	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(app).WithStatusSubresource(app).Build()
 	r := &Reconciler{Client: c, apiReader: c, K3sConfigPath: k3sConfigPath}
@@ -136,7 +147,25 @@ users:
 	assert.Equal(t, result, ctrl.Result{RequeueAfter: requeueInProgress})
 
 	// c. A reachable guest without Cluster API stays untouched. Reaching it
-	// at all shows the client was rebuilt from the changed k3s.yaml.
+	// at all shows the client was rebuilt from the changed k3s.yaml. The
+	// node VM and input ConfigMap of an earlier guest cluster still go, even
+	// with an owned finalizer, and the current guest cluster's node VM stays.
+	guest, err := client.New(env.Config, client.Options{Scheme: guestScheme})
+	assert.NilError(t, err)
+	var kubeSystem corev1.Namespace
+	assert.NilError(t, guest.Get(ctx, client.ObjectKey{Name: metav1.NamespaceSystem}, &kubeSystem))
+	oldLabels := map[string]string{guestClusterUIDLabel: "old-cluster", machineUIDLabel: "old-machine"}
+	ownedFinalizer := []string{base.OwnedFinalizerFor("LimaMachine")}
+	stale := []client.Object{
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "stale", Labels: oldLabels, Finalizers: ownedFinalizer},
+		&corev1.ConfigMap{Namespace: appv1alpha1.AppNamespace, Name: "stale-source", Labels: oldLabels, Finalizers: ownedFinalizer},
+	}
+	current := &limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "current", Labels: map[string]string{
+		guestClusterUIDLabel: string(kubeSystem.UID), machineUIDLabel: "current-machine",
+	}}
+	for _, obj := range append(stale, current) {
+		assert.NilError(t, c.Create(ctx, obj))
+	}
 	assert.NilError(t, os.WriteFile(k3sConfigPath, kubeConfig, 0o600))
 	result, err = r.Reconcile(ctx, req)
 	assert.NilError(t, err)
@@ -145,6 +174,11 @@ users:
 		_, err := guestCRDs.Get(ctx, crd.Name, metav1.GetOptions{})
 		assert.Assert(t, apierrors.IsNotFound(err), "%s: %v", crd.Name, err)
 	}
+	for _, obj := range stale {
+		err := c.Get(ctx, client.ObjectKeyFromObject(obj), obj)
+		assert.Assert(t, apierrors.IsNotFound(err), "%s was not removed: %v", obj.GetName(), err)
+	}
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(current), current), "the current guest cluster's LimaVM")
 
 	// d. Once Cluster API's Machine CRD exists, our CRDs are installed.
 	_, err = guestCRDs.Create(ctx, machineCRD(), metav1.CreateOptions{})
@@ -160,8 +194,6 @@ users:
 	}
 
 	// e. A LimaCluster is marked provisioned and ready.
-	guest, err := client.New(env.Config, client.Options{Scheme: guestScheme})
-	assert.NilError(t, err)
 	cluster := &capiv1alpha1.LimaCluster{ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "test"}}
 	assert.NilError(t, guest.Create(ctx, cluster))
 	result, err = r.Reconcile(ctx, req)
@@ -178,7 +210,7 @@ users:
 
 func TestReconcileLimaMachines(t *testing.T) {
 	env := testapiserver.Start(t)
-	ctx := t.Context()
+	ctx := logf.IntoContext(t.Context(), testr.New(t))
 	clientset, err := apiextensionsclientset.NewForConfig(env.Config)
 	assert.NilError(t, err)
 	_, err = clientset.ApiextensionsV1().CustomResourceDefinitions().Create(ctx, machineCRD(), metav1.CreateOptions{})
@@ -267,6 +299,14 @@ func TestReconcileLimaMachines(t *testing.T) {
 	assertReady("badsecret", capiv1alpha1.UnsupportedBootstrapDataReason)
 	assertReady(longName, capiv1alpha1.InvalidNameReason)
 	assertReady("taken", capiv1alpha1.NameConflictReason)
+
+	// Only a LimaMachine with an owner Machine gets the finalizer.
+	for name, want := range map[string]bool{"happy": true, "orphan": false} {
+		var limaMachine capiv1alpha1.LimaMachine
+		assert.NilError(t, guest.Get(ctx, client.ObjectKey{Namespace: "default", Name: name}, &limaMachine))
+		assert.Equal(t, controllerutil.ContainsFinalizer(&limaMachine, capiv1alpha1.MachineFinalizer), want,
+			"%s: has the LimaMachine finalizer", name)
+	}
 
 	var happy capiv1alpha1.LimaMachine
 	assert.NilError(t, guest.Get(ctx, client.ObjectKey{Namespace: "default", Name: "happy"}, &happy))
@@ -421,6 +461,119 @@ func TestReconcileLimaMachines(t *testing.T) {
 	ready = apimeta.FindStatusCondition(happy.Status.Conditions, capiv1alpha1.ReadyCondition)
 	assert.Equal(t, ready.Reason, capiv1alpha1.ReadyReason)
 	assertAddress("192.168.105.6")
+
+	// The node VMs run only while the App runs with Kubernetes enabled. The
+	// unlabelled "taken" LimaVM is not a node VM, so it stays stopped.
+	setApp := func(running, kubernetes bool, conditions metav1.ConditionStatus) {
+		t.Helper()
+		assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(app), app))
+		app.Spec.Running = running
+		app.Spec.Kubernetes.Enabled = kubernetes
+		assert.NilError(t, c.Update(ctx, app))
+		assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(app), app))
+		for i := range app.Status.Conditions {
+			app.Status.Conditions[i].Status = conditions
+		}
+		assert.NilError(t, c.Status().Update(ctx, app))
+		_, err := r.Reconcile(ctx, req)
+		assert.NilError(t, err)
+	}
+	assertRunning := func(step string, want bool) {
+		t.Helper()
+		assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(vm), vm))
+		assert.Equal(t, vm.Spec.Running, want, "%s: happy's LimaVM spec.running", step)
+		assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(taken), taken))
+		assert.Assert(t, !taken.Spec.Running, "%s: the unlabelled taken LimaVM was started", step)
+	}
+	setApp(false, true, metav1.ConditionFalse)
+	assertRunning("App stopped", false)
+	setApp(true, false, metav1.ConditionTrue)
+	assertRunning("Kubernetes disabled", false)
+	var staleVMs limav1alpha1.LimaVMList
+	assert.NilError(t, c.List(ctx, &staleVMs, client.HasLabels{machineUIDLabel}))
+	setApp(true, true, metav1.ConditionTrue)
+	assertRunning("App running with Kubernetes", true)
+
+	// This pass reads the LimaVMs from a cache that does not have the
+	// previous pass's write yet.
+	stale := *r
+	stale.Client = interceptor.NewClient(c, interceptor.Funcs{
+		List: func(ctx context.Context, cl client.WithWatch, list client.ObjectList, opts ...client.ListOption) error {
+			if vms, ok := list.(*limav1alpha1.LimaVMList); ok {
+				staleVMs.DeepCopyInto(vms)
+				return nil
+			}
+			return cl.List(ctx, list, opts...)
+		},
+	})
+	_, err = stale.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	assertRunning("stale LimaVM cache", true)
+
+	// The node VMs and input ConfigMaps of another guest cluster, or of a
+	// LimaMachine that is gone, are removed even when they have an owned
+	// finalizer.
+	goneLabels := maps.Clone(wantLabels)
+	goneLabels[machineUIDLabel] = "unknown-machine"
+	staleLabels := maps.Clone(wantLabels)
+	staleLabels[guestClusterUIDLabel] = "old-cluster"
+	ownedFinalizer := []string{base.OwnedFinalizerFor("LimaMachine")}
+	garbage := []client.Object{
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "gone", Labels: goneLabels, Finalizers: ownedFinalizer},
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "stale", Labels: staleLabels, Finalizers: ownedFinalizer},
+		&corev1.ConfigMap{Namespace: appv1alpha1.AppNamespace, Name: "gone-source", Labels: goneLabels},
+	}
+	for _, obj := range garbage {
+		assert.NilError(t, c.Create(ctx, obj))
+	}
+	r.probes["unknown-machine"] = probeRecord{}
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	for _, obj := range garbage {
+		err := c.Get(ctx, client.ObjectKeyFromObject(obj), obj)
+		assert.Assert(t, apierrors.IsNotFound(err), "garbage %s was not removed: %v", obj.GetName(), err)
+	}
+	_, ok := r.probes["unknown-machine"]
+	assert.Assert(t, !ok, "the probe of an unknown LimaMachine was kept")
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(vm), vm), "happy's LimaVM")
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(taken), taken), "the taken LimaVM")
+
+	// Deleting a LimaMachine deletes its node VM and input ConfigMap, and the
+	// LimaMachine stays until the LimaVM is gone. The LimaVM controller
+	// doesn't run here, so the test adds its cleanup finalizer.
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(vm), vm))
+	vm.Finalizers = append(vm.Finalizers, base.CleanupFinalizerName)
+	assert.NilError(t, c.Update(ctx, vm))
+	lingering := &corev1.ConfigMap{Namespace: appv1alpha1.AppNamespace, Name: "happy-source", Labels: wantLabels}
+	assert.NilError(t, c.Create(ctx, lingering))
+	assert.NilError(t, guest.Delete(ctx, &happy))
+	result, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	assert.Equal(t, result, ctrl.Result{RequeueAfter: requeueInProgress})
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(vm), vm))
+	assert.Assert(t, !vm.DeletionTimestamp.IsZero(), "happy's LimaVM is not being deleted")
+	assert.DeepEqual(t, vm.Finalizers, []string{base.CleanupFinalizerName})
+	err = c.Get(ctx, client.ObjectKeyFromObject(lingering), lingering)
+	assert.Assert(t, apierrors.IsNotFound(err), "happy's input ConfigMap was not deleted: %v", err)
+	assert.NilError(t, guest.Get(ctx, client.ObjectKeyFromObject(&happy), &happy), "the happy LimaMachine is gone before its LimaVM")
+
+	vm.Finalizers = nil
+	assert.NilError(t, c.Update(ctx, vm))
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	err = guest.Get(ctx, client.ObjectKeyFromObject(&happy), &happy)
+	assert.Assert(t, apierrors.IsNotFound(err), "the happy LimaMachine kept its finalizer: %v", err)
+	_, ok = r.probes[happy.UID]
+	assert.Assert(t, !ok, "the probe of the deleted happy LimaMachine was kept")
+
+	// Deleting a LimaMachine whose LimaVM belongs to something else leaves
+	// that LimaVM alone.
+	assert.NilError(t, guest.Delete(ctx, &capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "taken"}}))
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	err = guest.Get(ctx, client.ObjectKey{Namespace: "default", Name: "taken"}, &capiv1alpha1.LimaMachine{})
+	assert.Assert(t, apierrors.IsNotFound(err), "the taken LimaMachine kept its finalizer: %v", err)
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(taken), taken), "the unlabelled taken LimaVM")
 }
 
 // guestKubeConfig returns a kubeconfig with full access to env.

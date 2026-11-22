@@ -67,16 +67,19 @@ func (e *controlPlaneError) Error() string { return e.err.Error() }
 func (e *controlPlaneError) Unwrap() error { return e.err }
 
 // reconcileLimaMachines creates the node VM of every LimaMachine in the guest
-// cluster and sets each LimaMachine's Ready condition. It reports whether any
-// LimaMachine still waits for its Machine, its bootstrap data or its node VM.
-func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1.App) (bool, error) {
-	var kubeSystem corev1.Namespace
-	if err := r.guestClient.Get(ctx, client.ObjectKey{Name: metav1.NamespaceSystem}, &kubeSystem); err != nil {
-		return false, fmt.Errorf("get the kube-system Namespace: %w", err)
-	}
+// cluster and sets each LimaMachine's Ready condition. clusterUID is the UID
+// of the guest cluster's kube-system Namespace. It deletes the node VM of a
+// deleted LimaMachine, and removes this guest cluster's node VMs whose
+// LimaMachine is gone. It reports whether any LimaMachine still waits for its
+// Machine, its bootstrap data or its node VM, and whether any deleted
+// LimaMachine waits for its node VM to disappear.
+func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1.App, clusterUID types.UID) (bool, error) {
 	var list capiv1alpha1.LimaMachineList
 	if err := r.guestClient.List(ctx, &list); err != nil {
 		return false, fmt.Errorf("list LimaMachines: %w", err)
+	}
+	if err := r.collectGarbage(ctx, clusterUID, list.Items); err != nil {
+		return false, err
 	}
 	inProgress := false
 	var errs []error
@@ -84,10 +87,16 @@ func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1
 	for i := range list.Items {
 		machine := &list.Items[i]
 		if !machine.DeletionTimestamp.IsZero() {
+			deleting, err := r.deleteNodeVM(ctx, machine)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			inProgress = inProgress || deleting
 			continue
 		}
 		oldStatus := machine.Status.DeepCopy()
-		reason, message, err := r.provisionLimaMachine(ctx, app, kubeSystem.UID, machine)
+		reason, message, err := r.provisionLimaMachine(ctx, app, clusterUID, machine)
 		if err != nil {
 			errs = append(errs, err)
 			continue
@@ -141,6 +150,13 @@ func (r *Reconciler) provisionLimaMachine(ctx context.Context, app *appv1alpha1.
 			return capiv1alpha1.WaitingForMachineOwnerReason, fmt.Sprintf("Machine %s does not exist", owner.Name), nil
 		}
 		return "", "", fmt.Errorf("get Machine %s/%s: %w", machine.Namespace, owner.Name, err)
+	}
+	// Update replaces machine with the server's copy, so it comes before
+	// the changes to machine's status, as the provider ID update below does.
+	if controllerutil.AddFinalizer(machine, capiv1alpha1.MachineFinalizer) {
+		if err := r.guestClient.Update(ctx, machine); err != nil {
+			return "", "", fmt.Errorf("add finalizer to LimaMachine %s/%s: %w", machine.Namespace, machine.Name, err)
+		}
 	}
 
 	if err := ValidateMachineName(r.LimaHome, machine.Name); err != nil {
@@ -327,8 +343,7 @@ func (r *Reconciler) createNodeVM(ctx context.Context, app *appv1alpha1.App, clu
 		Finalizers: []string{base.OwnedFinalizerFor("LimaMachine")},
 		Spec: limav1alpha1.LimaVMSpec{
 			TemplateRef: limav1alpha1.TemplateReference{Name: inputKey.Name, Namespace: inputKey.Namespace},
-			// The pass runs only while the App runs with Kubernetes ready.
-			Running: true,
+			Running:     nodeVMsRunning(app),
 		},
 	}
 	if err := r.createOwnedByApp(ctx, app, &vm); err != nil {
@@ -399,6 +414,195 @@ func (r *Reconciler) createOwnedByApp(ctx context.Context, app *appv1alpha1.App,
 	}
 	if err := r.Create(ctx, obj); err != nil {
 		return &controlPlaneError{fmt.Errorf("create %s: %w", client.ObjectKeyFromObject(obj), err)}
+	}
+	return nil
+}
+
+// nodeVMsRunning reports whether the node VMs should run. Rancher and Cluster
+// API manage them from the App's k3s cluster, so they run only while the App
+// runs with Kubernetes enabled.
+func nodeVMsRunning(app *appv1alpha1.App) bool {
+	return app.Spec.Running && app.Spec.Kubernetes.Enabled
+}
+
+// syncNodeVMsRunning starts or stops every node VM in rdd's control plane to
+// match nodeVMsRunning. It leaves node VMs that are being deleted alone.
+func (r *Reconciler) syncNodeVMsRunning(ctx context.Context, app *appv1alpha1.App) error {
+	var vms limav1alpha1.LimaVMList
+	if err := r.List(ctx, &vms, client.InNamespace(appv1alpha1.AppNamespace), client.HasLabels{machineUIDLabel}); err != nil {
+		return &controlPlaneError{fmt.Errorf("list node LimaVMs: %w", err)}
+	}
+	running := nodeVMsRunning(app)
+	for i := range vms.Items {
+		vm := &vms.Items[i]
+		if base.IsBeingDeleted(vm) || vm.Spec.Running == running {
+			continue
+		}
+		// A pass can read a LimaVM before the cache has the previous pass's
+		// write. Update would send the resourceVersion from that stale read,
+		// and the API server would reject it with a conflict. A merge patch
+		// does not include the resourceVersion, so the API server applies it
+		// to the current object.
+		patch := client.MergeFrom(vm.DeepCopy())
+		vm.Spec.Running = running
+		if err := r.Patch(ctx, vm, patch); err != nil {
+			return &controlPlaneError{fmt.Errorf("patch LimaVM %s: %w", client.ObjectKeyFromObject(vm), err)}
+		}
+	}
+	return nil
+}
+
+// deleteNodeVM deletes the node VM and input ConfigMap of machine, a
+// LimaMachine that is being deleted. Once the LimaVM is gone, it removes
+// MachineFinalizer, so that the guest cluster can delete machine. It reports
+// whether it found the LimaVM, in which case a later pass has to remove the
+// finalizer. A LimaVM that belongs to something else stays untouched.
+func (r *Reconciler) deleteNodeVM(ctx context.Context, machine *capiv1alpha1.LimaMachine) (bool, error) {
+	if !controllerutil.ContainsFinalizer(machine, capiv1alpha1.MachineFinalizer) {
+		return false, nil
+	}
+	var input corev1.ConfigMap
+	inputKey := client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: machine.Name + inputConfigMapSuffix}
+	inputExists, err := r.getOwned(ctx, r.Client, inputKey, &input, machine.UID)
+	if err != nil {
+		return false, err
+	}
+	if inputExists == owned {
+		if err := r.removeNodeObject(ctx, &input); err != nil {
+			return false, err
+		}
+	}
+
+	var vm limav1alpha1.LimaVM
+	vmKey := client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: machine.Name}
+	vmExists, err := r.getOwned(ctx, r.Client, vmKey, &vm, machine.UID)
+	if err != nil {
+		return false, err
+	}
+	if vmExists == owned {
+		// The LimaVM's cleanup finalizer keeps it until the LimaVM
+		// controller has stopped the VM and deleted its disk.
+		if err := r.removeNodeObject(ctx, &vm); err != nil {
+			return false, err
+		}
+		return true, nil
+	}
+
+	controllerutil.RemoveFinalizer(machine, capiv1alpha1.MachineFinalizer)
+	if err := r.guestClient.Update(ctx, machine); err != nil {
+		return false, fmt.Errorf("remove finalizer from LimaMachine %s/%s: %w", machine.Namespace, machine.Name, err)
+	}
+	delete(r.probes, machine.UID)
+	return false, nil
+}
+
+// collectGarbage removes each node VM and input ConfigMap in rdd's control
+// plane that belongs to the guest cluster with clusterUID and to a
+// LimaMachine that is not in machines. A LimaMachine that loses its
+// finalizer before rdd deletes its node VM leaves such objects behind.
+// Removing the input ConfigMaps matters too, because each one holds
+// Rancher's registration token. collectGarbage also forgets the probes of
+// LimaMachines that are gone.
+//
+// collectGarbage skips the objects of another guest cluster, because
+// removeOtherClusterNodeObjects removed them earlier in the same pass. The
+// cache can still show such an object with its owned finalizer, and removing
+// that finalizer again from the stale copy fails the pass with a conflict.
+func (r *Reconciler) collectGarbage(ctx context.Context, clusterUID types.UID, machines []capiv1alpha1.LimaMachine) error {
+	machineUIDs := make(map[types.UID]bool, len(machines))
+	for i := range machines {
+		machineUIDs[machines[i].UID] = true
+	}
+	_, err := r.removeNodeObjects(ctx, func(labels map[string]string) string {
+		if labels[guestClusterUIDLabel] == string(clusterUID) && !machineUIDs[types.UID(labels[machineUIDLabel])] {
+			return "its LimaMachine is gone"
+		}
+		return ""
+	})
+	if err != nil {
+		return err
+	}
+	for uid := range r.probes {
+		if !machineUIDs[uid] {
+			delete(r.probes, uid)
+		}
+	}
+	return nil
+}
+
+// removeOtherClusterNodeObjects removes the node VMs and input ConfigMaps in
+// rdd's control plane that belong to a guest cluster other than the one with
+// clusterUID, and forgets the probes of their LimaMachines. A reset of the
+// App's k3s cluster leaves such objects behind. Unlike collectGarbage, it
+// doesn't need a list of LimaMachines, so it works on a guest cluster without
+// Cluster API.
+func (r *Reconciler) removeOtherClusterNodeObjects(ctx context.Context, clusterUID types.UID) error {
+	removed, err := r.removeNodeObjects(ctx, func(labels map[string]string) string {
+		if labels[guestClusterUIDLabel] != string(clusterUID) {
+			return "it belongs to another guest cluster"
+		}
+		return ""
+	})
+	for _, uid := range removed {
+		delete(r.probes, uid)
+	}
+	return err
+}
+
+// removeNodeObjects removes each node VM and input ConfigMap in rdd's
+// control plane whose labels make garbage return a non-empty reason. It
+// returns the LimaMachine UIDs of the removed objects.
+func (r *Reconciler) removeNodeObjects(ctx context.Context, garbage func(labels map[string]string) string) ([]types.UID, error) {
+	log := logf.FromContext(ctx)
+	var vms limav1alpha1.LimaVMList
+	var configMaps corev1.ConfigMapList
+	for _, list := range []client.ObjectList{&vms, &configMaps} {
+		if err := r.List(ctx, list, client.InNamespace(appv1alpha1.AppNamespace), client.HasLabels{machineUIDLabel}); err != nil {
+			return nil, &controlPlaneError{fmt.Errorf("list node objects: %w", err)}
+		}
+	}
+	type nodeObject struct {
+		kind string
+		obj  client.Object
+	}
+	var objects []nodeObject
+	for i := range vms.Items {
+		objects = append(objects, nodeObject{"LimaVM", &vms.Items[i]})
+	}
+	for i := range configMaps.Items {
+		objects = append(objects, nodeObject{"ConfigMap", &configMaps.Items[i]})
+	}
+	var removed []types.UID
+	for _, object := range objects {
+		obj := object.obj
+		labels := obj.GetLabels()
+		reason := garbage(labels)
+		if reason == "" {
+			continue
+		}
+		log.Info("Removing node object", "kind", object.kind, "object", client.ObjectKeyFromObject(obj), "reason", reason)
+		if err := r.removeNodeObject(ctx, obj); err != nil {
+			return removed, err
+		}
+		removed = append(removed, types.UID(labels[machineUIDLabel]))
+	}
+	return removed, nil
+}
+
+// removeNodeObject takes the LimaMachine's owned finalizer off obj, a node
+// LimaVM or input ConfigMap, then deletes obj unless it is already being
+// deleted. rdd's webhook rejects deleting an object that still has an owned
+// finalizer.
+func (r *Reconciler) removeNodeObject(ctx context.Context, obj client.Object) error {
+	key := client.ObjectKeyFromObject(obj)
+	if err := base.RemoveOwnedFinalizer(ctx, r.Client, obj, "LimaMachine"); err != nil {
+		return &controlPlaneError{fmt.Errorf("%s: %w", key, err)}
+	}
+	if base.IsBeingDeleted(obj) {
+		return nil
+	}
+	if err := client.IgnoreNotFound(r.Delete(ctx, obj)); err != nil {
+		return &controlPlaneError{fmt.Errorf("delete %s: %w", key, err)}
 	}
 	return nil
 }
