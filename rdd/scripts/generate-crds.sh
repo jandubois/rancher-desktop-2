@@ -53,3 +53,9 @@ for apigroup in $API_GROUPS; do
 		cat "$crd_path" >> "$mock_path"
 	done
 done
+
+# The Cluster API provider CRDs go into the guest cluster, not into rdd's API
+# server, so they are bundled on their own.
+rm -f "$TMPDIR"/*.yaml
+go tool controller-gen "crd:omitToolVersion=true" "paths=./pkg/capi/..." "output:crd:dir=${TMPDIR}"
+cat "$TMPDIR/header.txt" "$TMPDIR"/*.yaml > pkg/capi/crds.yaml
