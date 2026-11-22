@@ -5,6 +5,8 @@
 package capi
 
 import (
+	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,6 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	k8sruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -335,6 +338,89 @@ func TestReconcileLimaMachines(t *testing.T) {
 		ready := assertReady("happy", failure.reason)
 		assert.Assert(t, strings.Contains(ready.Message, "--namespace "+appv1alpha1.AppNamespace+" happy "), ready.Message)
 	}
+
+	// Once the LimaVM runs, the probe decides Ready. A probe that finds the
+	// marker holds until the VM restarts.
+	var probes int
+	var probeStatus nodeStatus
+	var probeErr error
+	r.probeNode = func(_ context.Context, vmName string) (nodeStatus, error) {
+		assert.Equal(t, vmName, "happy")
+		probes++
+		return probeStatus, probeErr
+	}
+	// boot marks the LimaVM running for the restartCount-th time.
+	boot := func(restartCount int32) {
+		t.Helper()
+		assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(vm), vm))
+		vm.Status.Conditions = []metav1.Condition{
+			{Type: limavmcontrollers.ConditionCreated, Status: metav1.ConditionTrue, Reason: "Created"},
+			{Type: limavmcontrollers.ConditionRunning, Status: metav1.ConditionTrue, Reason: "Running"},
+		}
+		vm.Status.RestartCount = restartCount
+		assert.NilError(t, c.Update(ctx, vm))
+	}
+	reconcileHappy := func() {
+		t.Helper()
+		_, err := r.Reconcile(ctx, req)
+		assert.NilError(t, err)
+		assert.NilError(t, guest.Get(ctx, client.ObjectKey{Namespace: "default", Name: "happy"}, &happy))
+	}
+	assertAddress := func(address string) {
+		t.Helper()
+		assert.DeepEqual(t, happy.Status.Addresses, capiv1alpha1.MachineAddresses{
+			{Type: capiv1alpha1.MachineInternalIP, Address: address},
+			{Type: capiv1alpha1.MachineHostName, Address: "lima-happy"},
+		})
+	}
+
+	boot(1)
+	probeStatus = nodeStatus{address: "192.168.105.3", bootstrapped: true}
+	reconcileHappy()
+	ready := apimeta.FindStatusCondition(happy.Status.Conditions, capiv1alpha1.ReadyCondition)
+	assert.Assert(t, ready != nil)
+	assert.Equal(t, ready.Status, metav1.ConditionTrue)
+	assert.Equal(t, ready.Reason, capiv1alpha1.ReadyReason)
+	assert.Equal(t, happy.Spec.ProviderID, "k3s://lima-happy")
+	assertAddress("192.168.105.3")
+	assert.Assert(t, ptr.Deref(happy.Status.Initialization.Provisioned, false))
+	assert.Equal(t, probes, 1)
+
+	reconcileHappy()
+	assert.Equal(t, probes, 1, "the same boot is probed again")
+
+	boot(2)
+	probeStatus = nodeStatus{address: "192.168.105.4", bootstrapped: true}
+	reconcileHappy()
+	assert.Equal(t, probes, 2, "a restart is not probed")
+	assertAddress("192.168.105.4")
+
+	// A failed probe or a failed install script turns Ready False, but
+	// the LimaMachine stays provisioned.
+	boot(3)
+	probeErr = errors.New(secret)
+	reconcileHappy()
+	assertReady("happy", capiv1alpha1.ProvisioningReason)
+	assert.Assert(t, ptr.Deref(happy.Status.Initialization.Provisioned, false))
+
+	probeStatus, probeErr = nodeStatus{address: "192.168.105.5"}, nil
+	reconcileHappy()
+	assertReady("happy", capiv1alpha1.BootstrapFailedReason)
+	assert.Assert(t, ptr.Deref(happy.Status.Initialization.Provisioned, false))
+
+	// A failed probe keeps the last result of the boot.
+	probeErr = errors.New(secret)
+	reconcileHappy()
+	assertReady("happy", capiv1alpha1.BootstrapFailedReason)
+	probeErr = nil
+
+	// Lima can report the VM running before a slow install script finishes,
+	// so the same boot is probed again until the marker shows up.
+	probeStatus = nodeStatus{address: "192.168.105.6", bootstrapped: true}
+	reconcileHappy()
+	ready = apimeta.FindStatusCondition(happy.Status.Conditions, capiv1alpha1.ReadyCondition)
+	assert.Equal(t, ready.Reason, capiv1alpha1.ReadyReason)
+	assertAddress("192.168.105.6")
 }
 
 // guestKubeConfig returns a kubeconfig with full access to env.

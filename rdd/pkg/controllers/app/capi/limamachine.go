@@ -11,14 +11,17 @@ import (
 	"strings"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	limav1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
@@ -83,6 +86,7 @@ func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1
 		if !machine.DeletionTimestamp.IsZero() {
 			continue
 		}
+		oldStatus := machine.Status.DeepCopy()
 		reason, message, err := r.provisionLimaMachine(ctx, app, kubeSystem.UID, machine)
 		if err != nil {
 			errs = append(errs, err)
@@ -92,13 +96,20 @@ func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1
 		case capiv1alpha1.WaitingForMachineOwnerReason, capiv1alpha1.WaitingForBootstrapDataReason, capiv1alpha1.ProvisioningReason:
 			inProgress = true
 		}
-		if !apimeta.SetStatusCondition(&machine.Status.Conditions, metav1.Condition{
+		status := metav1.ConditionFalse
+		if reason == capiv1alpha1.ReadyReason {
+			status = metav1.ConditionTrue
+		}
+		apimeta.SetStatusCondition(&machine.Status.Conditions, metav1.Condition{
 			Type:               capiv1alpha1.ReadyCondition,
-			Status:             metav1.ConditionFalse,
+			Status:             status,
 			Reason:             reason,
 			Message:            message,
 			ObservedGeneration: machine.Generation,
-		}) {
+		})
+		// SetStatusCondition reports only a change to the condition, but a
+		// new probe can change the addresses while Ready stays True.
+		if equality.Semantic.DeepEqual(oldStatus, &machine.Status) {
 			continue
 		}
 		// As in reconcileLimaClusters, a LimaMachine that changed since the
@@ -111,11 +122,14 @@ func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1
 }
 
 // provisionLimaMachine creates the node VM of machine once rdd has everything
-// that the VM needs, and returns the reason and message for machine's Ready
-// condition. Neither may quote the bootstrap data, which holds Rancher's
-// registration token. Errors from rdd's control plane come back as a
-// controlPlaneError.
+// that the VM needs. Once the VM runs and its install script has succeeded,
+// it writes machine's provider ID to the guest cluster, and it sets machine's
+// addresses and provisioned status for the caller to write. It returns the
+// reason and message for machine's Ready condition. Neither may quote the
+// bootstrap data, which holds Rancher's registration token. Errors from rdd's
+// control plane come back as a controlPlaneError.
 func (r *Reconciler) provisionLimaMachine(ctx context.Context, app *appv1alpha1.App, clusterUID types.UID, machine *capiv1alpha1.LimaMachine) (reason, message string, err error) {
+	log := logf.FromContext(ctx)
 	owner := machineOwner(machine)
 	if owner == nil {
 		return capiv1alpha1.WaitingForMachineOwnerReason, "The LimaMachine does not have an owner Machine", nil
@@ -194,7 +208,56 @@ func (r *Reconciler) provisionLimaMachine(ctx context.Context, app *appv1alpha1.
 				failure.verb, rdd, vmKey.Namespace, vmKey.Name), nil
 		}
 	}
-	return capiv1alpha1.ProvisioningReason, "The node VM is being provisioned", nil
+	const provisioning = "The node VM is being provisioned"
+	if !apimeta.IsStatusConditionTrue(vm.Status.Conditions, limavmcontrollers.ConditionRunning) {
+		return capiv1alpha1.ProvisioningReason, provisioning, nil
+	}
+	// r.probes keeps the last probe of the current boot that found the VM's
+	// address. A restart can change the address, so a probe from an earlier
+	// boot doesn't count. Lima stops waiting for its boot scripts after a
+	// while, so the install script can still succeed after the VM runs.
+	// Until a probe finds the marker, probe again on every pass. A failed
+	// probe leaves the last result of the boot in place.
+	probe, ok := r.probes[machine.UID]
+	ok = ok && probe.restartCount == vm.Status.RestartCount
+	if !ok || !probe.status.bootstrapped {
+		status, err := r.probeNode(ctx, vm.Name)
+		switch {
+		case err != nil:
+			// The error can quote the VM's Lima template, which holds the
+			// registration token, so it stays out of the message.
+			log.V(1).Info("Cannot probe the node VM", "limaVM", vmKey, "err", err)
+		case status.address != "":
+			probe = probeRecord{restartCount: vm.Status.RestartCount, status: status}
+			if r.probes == nil {
+				r.probes = make(map[types.UID]probeRecord)
+			}
+			r.probes[machine.UID] = probe
+			ok = true
+		}
+		if !ok {
+			return capiv1alpha1.ProvisioningReason, provisioning, nil
+		}
+	}
+	if !probe.status.bootstrapped {
+		return capiv1alpha1.BootstrapFailedReason, "The install script has not succeeded in the node VM yet; a failed script runs again when the VM restarts", nil
+	}
+
+	// Update replaces machine with the server's copy, so it comes before
+	// the changes to machine's status.
+	hostname := "lima-" + machine.Name
+	if providerID := "k3s://" + hostname; machine.Spec.ProviderID != providerID {
+		machine.Spec.ProviderID = providerID
+		if err := r.guestClient.Update(ctx, machine); err != nil {
+			return "", "", fmt.Errorf("update LimaMachine %s/%s: %w", machine.Namespace, machine.Name, err)
+		}
+	}
+	machine.Status.Addresses = capiv1alpha1.MachineAddresses{
+		{Type: capiv1alpha1.MachineInternalIP, Address: probe.status.address},
+		{Type: capiv1alpha1.MachineHostName, Address: hostname},
+	}
+	machine.Status.Initialization.Provisioned = ptr.To(true)
+	return capiv1alpha1.ReadyReason, "", nil
 }
 
 // createNodeVM checks the owner Machine's version and bootstrap data, then

@@ -101,4 +101,8 @@ const (
 	// ProvisioningReason means rdd is creating the LimaMachine's node VM or
 	// has created it, and the VM hasn't reported a failure.
 	ProvisioningReason = "Provisioning"
+
+	// BootstrapFailedReason means the node VM runs, but the install script
+	// from the bootstrap data has not succeeded.
+	BootstrapFailedReason = "BootstrapFailed"
 )

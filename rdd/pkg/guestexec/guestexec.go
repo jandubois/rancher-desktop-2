@@ -5,8 +5,8 @@
 
 // Package guestexec runs commands inside a Lima VM over ssh.
 //
-// The caller must have set LIMA_HOME: the CLI sets it itself, and the lima
-// controller sets it in-process at startup.
+// The caller must set LIMA_HOME first. The CLI sets it itself, and the lima
+// and capi controllers set it in-process at startup.
 package guestexec
 
 import (

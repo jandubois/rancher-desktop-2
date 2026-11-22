@@ -6,6 +6,8 @@ package capi
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -47,6 +49,11 @@ func (c *controller) GetCRDData() string {
 }
 
 func (c *controller) RegisterWithManager(_ context.Context, mgr ctrl.Manager) error {
+	// guestexec reaches the node VMs through the Lima library, which reads
+	// LIMA_HOME.
+	if err := os.Setenv("LIMA_HOME", instance.LimaHome()); err != nil {
+		return fmt.Errorf("failed to set LIMA_HOME: %w", err)
+	}
 	if err := appv1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
 		return err
 	}
@@ -58,6 +65,7 @@ func (c *controller) RegisterWithManager(_ context.Context, mgr ctrl.Manager) er
 		apiReader:     mgr.GetAPIReader(),
 		K3sConfigPath: instance.K3sConfig(),
 		LimaHome:      instance.LimaHome(),
+		probeNode:     probeNodeOverSSH,
 	}
 	return r.SetupWithManager(mgr)
 }

@@ -110,6 +110,20 @@ type Reconciler struct {
 	guestClient client.Client
 	// crdsInstalled is set once our CRDs are installed through crdClient.
 	crdsInstalled bool
+
+	// probeNode reads the state of a running node VM. RegisterWithManager
+	// sets it to probeNodeOverSSH; tests replace it.
+	probeNode func(ctx context.Context, vmName string) (nodeStatus, error)
+	// probes holds the last complete probe of each LimaMachine's node VM,
+	// keyed by the LimaMachine's UID.
+	probes map[types.UID]probeRecord
+}
+
+// probeRecord is a complete probe of a node VM, with the LimaVM's restart
+// count at the time of the probe.
+type probeRecord struct {
+	restartCount int32
+	status       nodeStatus
 }
 
 // Reconcile installs our CRDs into the guest cluster when it is running and
