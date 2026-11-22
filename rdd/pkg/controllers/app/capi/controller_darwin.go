@@ -10,6 +10,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
+	limav1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 )
@@ -49,9 +50,14 @@ func (c *controller) RegisterWithManager(_ context.Context, mgr ctrl.Manager) er
 	if err := appv1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
 		return err
 	}
+	if err := limav1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
+		return err
+	}
 	r := &Reconciler{
 		Client:        mgr.GetClient(),
+		apiReader:     mgr.GetAPIReader(),
 		K3sConfigPath: instance.K3sConfig(),
+		LimaHome:      instance.LimaHome(),
 	}
 	return r.SetupWithManager(mgr)
 }

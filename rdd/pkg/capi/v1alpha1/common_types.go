@@ -65,3 +65,40 @@ const (
 	// the same reason for its own true Ready conditions.
 	ReadyReason = "Ready"
 )
+
+// Reasons for a false ReadyCondition on a LimaMachine.
+const (
+	// WaitingForMachineOwnerReason means the LimaMachine doesn't have an
+	// owner reference to a Cluster API Machine, or that Machine doesn't exist
+	// yet.
+	WaitingForMachineOwnerReason = "WaitingForMachineOwner"
+
+	// UnsupportedDistributionReason means the owner Machine's version is not
+	// a K3s version. The provider supports only K3s downstream clusters.
+	UnsupportedDistributionReason = "UnsupportedDistribution"
+
+	// InvalidNameReason means the LimaMachine's name doesn't work as the
+	// name of a Lima instance, has a character that Lima changes in the VM's
+	// hostname, or makes the hostname or one of the VM's socket paths too
+	// long.
+	InvalidNameReason = "InvalidName"
+
+	// WaitingForBootstrapDataReason means the owner Machine doesn't name its
+	// bootstrap data Secret yet, or that Secret doesn't exist yet. Cluster
+	// API uses the same reason.
+	WaitingForBootstrapDataReason = "WaitingForBootstrapData"
+
+	// UnsupportedBootstrapDataReason means the bootstrap data is not the
+	// cloud-config that Rancher generates.
+	UnsupportedBootstrapDataReason = "UnsupportedBootstrapData"
+
+	// NameConflictReason means the LimaVM or the input ConfigMap that the
+	// LimaMachine needs already exists in rdd's control plane and belongs to
+	// something else, or a LimaVM in another namespace has the LimaMachine's
+	// name.
+	NameConflictReason = "NameConflict"
+
+	// ProvisioningReason means rdd is creating the LimaMachine's node VM or
+	// has created it, and the VM hasn't reported a failure.
+	ProvisioningReason = "Provisioning"
+)

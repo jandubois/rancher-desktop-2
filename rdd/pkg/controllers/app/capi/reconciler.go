@@ -7,26 +7,34 @@ package capi
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"time"
 
+	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1client "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/workqueue"
 	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	crcontroller "sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
+	limav1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
 	guestcapi "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi"
 	capiv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/predicates"
@@ -47,14 +55,15 @@ const (
 	crdEstablishTimeout = 30 * time.Second
 
 	// requeueInProgress is the wait before the next pass when the guest
-	// cluster cannot be reached, our CRDs cannot be installed, or our
-	// infrastructure objects cannot be read or updated.
+	// cluster cannot be reached, our CRDs cannot be installed, our
+	// infrastructure objects cannot be read or updated, or a LimaMachine
+	// waits for its Machine, its bootstrap data or its node VM.
 	requeueInProgress = 5 * time.Second
 
 	// requeueIdle is the wait between passes while the guest cluster lacks
-	// Cluster API, or after a pass that brought our infrastructure objects up
-	// to date. The reconciler doesn't watch the guest cluster, so a new
-	// LimaCluster waits up to this long before a pass picks it up.
+	// Cluster API, or after a pass that didn't leave any LimaMachine waiting.
+	// The reconciler doesn't watch the guest cluster, so a new LimaCluster or
+	// LimaMachine waits up to this long before a pass picks it up.
 	requeueIdle = 30 * time.Second
 )
 
@@ -64,18 +73,26 @@ var guestScheme = newGuestScheme()
 func newGuestScheme() *runtime.Scheme {
 	scheme := runtime.NewScheme()
 	utilruntime.Must(capiv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(corev1.AddToScheme(scheme))
 	return scheme
 }
 
 // Reconciler installs the Lima infrastructure provider's CRDs into the App's
 // k3s cluster once Cluster API is present there, then marks every LimaCluster
-// in that cluster provisioned and ready.
+// in that cluster provisioned and ready, and creates a node VM for every
+// LimaMachine.
 type Reconciler struct {
 	// Client talks to rdd's control plane, which holds the App.
 	client.Client
+	// apiReader reads rdd's control plane without Client's cache.
+	apiReader client.Reader
 
 	// K3sConfigPath is the path of the App's k3s kubeconfig, k3s.yaml.
 	K3sConfigPath string
+
+	// LimaHome is rdd's LIMA_HOME, which holds the node VMs' instance
+	// directories. It limits the length of a LimaMachine's name.
+	LimaHome string
 
 	// Reconcile never runs concurrently with itself, because
 	// MaxConcurrentReconciles keeps its default of 1. So the guest
@@ -96,9 +113,10 @@ type Reconciler struct {
 }
 
 // Reconcile installs our CRDs into the guest cluster when it is running and
-// has Cluster API, then marks the LimaClusters there provisioned and ready. A
-// failed request to the guest cluster leads to a requeue, never to a returned
-// error.
+// has Cluster API, then marks the LimaClusters there provisioned and ready,
+// and creates the LimaMachines' node VMs. A failed request to the guest cluster
+// leads to a requeue, unless the same pass also has an error from rdd's
+// control plane. Then Reconcile returns both.
 func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
 
@@ -143,6 +161,19 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
 	}
 
+	inProgress, err := r.reconcileLimaMachines(ctx, &app)
+	if err != nil {
+		// reconcileLimaMachines joins the errors of all LimaMachines, so returning
+		// the joined error keeps every one of them in controller-runtime's log.
+		if _, ok := errors.AsType[*controlPlaneError](err); ok {
+			return ctrl.Result{}, err
+		}
+		log.V(1).Info("Cannot reconcile LimaMachines in the guest cluster", "err", err)
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+	if inProgress {
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
 	return ctrl.Result{RequeueAfter: requeueIdle}, nil
 }
 
@@ -279,6 +310,26 @@ func conditionStatus(app *appv1alpha1.App, conditionType string) metav1.Conditio
 func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&appv1alpha1.App{}, builder.WithPredicates(predicates.WatchEventLogger("capi-reconciler"), appPredicate())).
+		// A change to a node VM starts a pass, so that the LimaMachine's
+		// Ready condition follows the VM's status.
+		Watches(&limav1alpha1.LimaVM{},
+			handler.EnqueueRequestsFromMapFunc(func(context.Context, client.Object) []reconcile.Request {
+				return []reconcile.Request{{NamespacedName: types.NamespacedName{Name: appName}}}
+			}),
+			builder.WithPredicates(predicate.NewPredicateFuncs(func(obj client.Object) bool {
+				_, ok := obj.GetLabels()[machineUIDLabel]
+				return ok
+			}))).
+		// When Reconcile returns an error, controller-runtime ignores the
+		// pass's RequeueAfter. It retries instead after a backoff that grows
+		// with each failure of the same request. Every request uses the App's
+		// key, so while one LimaMachine's error persists, that backoff also
+		// decides when the next timed pass comes for every other LimaMachine.
+		// Limiting the backoff to requeueIdle keeps those passes at most as
+		// far apart as idle ones.
+		WithOptions(crcontroller.Options{
+			RateLimiter: workqueue.NewTypedItemExponentialFailureRateLimiter[reconcile.Request](5*time.Millisecond, requeueIdle),
+		}).
 		Named("capi-reconciler").
 		Complete(r)
 }
