@@ -56,6 +56,7 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/cli/help"
 	// Import controller packages to trigger init() functions for embedded mode.
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/app"
+	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi"
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/demo"
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/engine"
 	_ "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/k3sversions"
