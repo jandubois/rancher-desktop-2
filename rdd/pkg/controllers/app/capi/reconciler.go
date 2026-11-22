@@ -15,7 +15,10 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -25,6 +28,7 @@ import (
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	guestcapi "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi"
+	capiv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/predicates"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/crds"
 )
@@ -43,16 +47,29 @@ const (
 	crdEstablishTimeout = 30 * time.Second
 
 	// requeueInProgress is the wait before the next pass when the guest
-	// cluster cannot be reached or installing our CRDs failed.
+	// cluster cannot be reached, our CRDs cannot be installed, or our
+	// infrastructure objects cannot be read or updated.
 	requeueInProgress = 5 * time.Second
 
 	// requeueIdle is the wait between passes while the guest cluster lacks
-	// Cluster API or already has our CRDs.
+	// Cluster API, or after a pass that brought our infrastructure objects up
+	// to date. The reconciler doesn't watch the guest cluster, so a new
+	// LimaCluster waits up to this long before a pass picks it up.
 	requeueIdle = 30 * time.Second
 )
 
+// guestScheme holds the types that guestClient reads and writes.
+var guestScheme = newGuestScheme()
+
+func newGuestScheme() *runtime.Scheme {
+	scheme := runtime.NewScheme()
+	utilruntime.Must(capiv1alpha1.AddToScheme(scheme))
+	return scheme
+}
+
 // Reconciler installs the Lima infrastructure provider's CRDs into the App's
-// k3s cluster once Cluster API is present there.
+// k3s cluster once Cluster API is present there, then marks every LimaCluster
+// in that cluster provisioned and ready.
 type Reconciler struct {
 	// Client talks to rdd's control plane, which holds the App.
 	client.Client
@@ -64,16 +81,24 @@ type Reconciler struct {
 	// MaxConcurrentReconciles keeps its default of 1. So the guest
 	// connection cached below doesn't need a lock.
 
-	// guestKubeConfig is the k3s.yaml content that crdClient was built from.
+	// guestKubeConfig is the k3s.yaml content that crdClient and guestClient
+	// were built from.
 	guestKubeConfig []byte
 	// crdClient reaches the guest cluster's CRDs.
 	crdClient apiextensionsv1client.CustomResourceDefinitionInterface
+	// guestClient reaches our infrastructure objects in the guest cluster. It
+	// reads straight from the guest's API server. A cached client would keep
+	// copies of guest objects in rdd, and its watches would have to start and
+	// stop with the guest cluster.
+	guestClient client.Client
 	// crdsInstalled is set once our CRDs are installed through crdClient.
 	crdsInstalled bool
 }
 
 // Reconcile installs our CRDs into the guest cluster when it is running and
-// has Cluster API.
+// has Cluster API, then marks the LimaClusters there provisioned and ready. A
+// failed request to the guest cluster leads to a requeue, never to a returned
+// error.
 func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
 
@@ -113,6 +138,11 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		r.crdsInstalled = true
 	}
 
+	if err := r.reconcileLimaClusters(ctx); err != nil {
+		log.V(1).Info("Cannot reconcile LimaClusters in the guest cluster", "err", err)
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+
 	return ctrl.Result{RequeueAfter: requeueIdle}, nil
 }
 
@@ -136,8 +166,13 @@ func (r *Reconciler) connectGuest() error {
 	if err != nil {
 		return fmt.Errorf("create guest CRD client: %w", err)
 	}
+	guestClient, err := client.New(cfg, client.Options{Scheme: guestScheme})
+	if err != nil {
+		return fmt.Errorf("create guest client: %w", err)
+	}
 	r.guestKubeConfig = data
 	r.crdClient = clientset.CustomResourceDefinitions()
+	r.guestClient = guestClient
 	r.crdsInstalled = false
 	return nil
 }
@@ -168,6 +203,40 @@ func (r *Reconciler) installCRDs(ctx context.Context) error {
 	for _, name := range created {
 		if err := crds.WaitEstablished(ctx, r.crdClient, name, crdEstablishTimeout); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+// reconcileLimaClusters marks every LimaCluster in the guest cluster
+// provisioned and ready. A LimaCluster doesn't have infrastructure of its own,
+// because the node VMs belong to LimaMachines. So it is provisioned as soon as
+// we see it. reconcileLimaClusters skips the write for a LimaCluster that is
+// already marked provisioned and ready.
+func (r *Reconciler) reconcileLimaClusters(ctx context.Context) error {
+	var list capiv1alpha1.LimaClusterList
+	if err := r.guestClient.List(ctx, &list); err != nil {
+		return fmt.Errorf("list LimaClusters: %w", err)
+	}
+	for i := range list.Items {
+		cluster := &list.Items[i]
+		changed := !ptr.Deref(cluster.Status.Initialization.Provisioned, false)
+		cluster.Status.Initialization.Provisioned = ptr.To(true)
+		if apimeta.SetStatusCondition(&cluster.Status.Conditions, metav1.Condition{
+			Type:               capiv1alpha1.ReadyCondition,
+			Status:             metav1.ConditionTrue,
+			Reason:             capiv1alpha1.ReadyReason,
+			ObservedGeneration: cluster.Generation,
+		}) {
+			changed = true
+		}
+		if !changed {
+			continue
+		}
+		// The update sends the resourceVersion that List returned, so it
+		// fails if the LimaCluster changed since then. The next pass retries.
+		if err := r.guestClient.Status().Update(ctx, cluster); err != nil {
+			return fmt.Errorf("update LimaCluster %s/%s status: %w", cluster.Namespace, cluster.Name, err)
 		}
 	}
 	return nil

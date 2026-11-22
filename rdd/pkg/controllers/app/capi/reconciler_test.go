@@ -15,16 +15,19 @@ import (
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	guestcapi "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi"
+	capiv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/crds"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/testapiserver"
 )
@@ -148,6 +151,22 @@ users:
 		assert.Equal(t, stored.Labels["cluster.x-k8s.io/v1beta2"], "v1alpha1", crd.Name)
 		assert.Assert(t, established(stored), "%s is not established", crd.Name)
 	}
+
+	// e. A LimaCluster is marked provisioned and ready.
+	guest, err := client.New(env.Config, client.Options{Scheme: guestScheme})
+	assert.NilError(t, err)
+	cluster := &capiv1alpha1.LimaCluster{ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "test"}}
+	assert.NilError(t, guest.Create(ctx, cluster))
+	result, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	assert.Equal(t, result, ctrl.Result{RequeueAfter: requeueIdle})
+	assert.NilError(t, guest.Get(ctx, client.ObjectKeyFromObject(cluster), cluster))
+	assert.Assert(t, cluster.Status.Initialization.Provisioned != nil && *cluster.Status.Initialization.Provisioned)
+	ready := apimeta.FindStatusCondition(cluster.Status.Conditions, capiv1alpha1.ReadyCondition)
+	assert.Assert(t, ready != nil)
+	assert.Equal(t, ready.Status, metav1.ConditionTrue)
+	assert.Equal(t, ready.Reason, capiv1alpha1.ReadyReason)
+	assert.Equal(t, ready.ObservedGeneration, cluster.Generation)
 }
 
 // setConditionsTrue sets every condition of app to True.

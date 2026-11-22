@@ -53,3 +53,15 @@ type MachineAddress struct {
 
 // MachineAddresses is a slice of MachineAddress items reported by the provider.
 type MachineAddresses []MachineAddress
+
+const (
+	// ReadyCondition is the condition type that tells Cluster API whether an
+	// infrastructure object is ready. Cluster API v1beta2 mirrors it into the
+	// InfrastructureReady condition of the Cluster or Machine that references
+	// the object.
+	ReadyCondition = "Ready"
+
+	// ReadyReason is the reason for a true ReadyCondition. Cluster API uses
+	// the same reason for its own true Ready conditions.
+	ReadyReason = "Ready"
+)
