@@ -9,8 +9,9 @@ load '../../helpers/load'
 # Cluster API's Machine and Cluster and for Rancher's RKEControlPlane, one
 # object of each kind, and a bootstrap Secret. The tests check that the
 # provider installs its CRDs once the Machine CRD exists and boots a node VM
-# for a LimaMachine, and that the node VM runs the install script once. The
-# node VM stops with the App and goes away with its LimaMachine.
+# for a LimaMachine, that the node VM has its guest-to-guest route after each
+# boot, and that the node VM runs the install script once. The node VM stops
+# with the App and goes away with its LimaMachine.
 
 APP_NAME="app"
 GUEST_NAMESPACE="default"
@@ -75,6 +76,35 @@ EOF
 assert_install_script_ran_once() {
     run_e -0 rdd limavm shell "${MACHINE}" cat /var/lib/bats-capi/install-runs
     assert_output "ran"
+}
+
+# Lima's boot script adds a route to the vzNAT subnet through the gateway, so
+# that the guests can reach each other. On this guest it adds the route only
+# while systemd-networkd is active. rd-init restarts systemd-networkd during
+# boot, so lima-init must start after that restart, or the script can run
+# while networkd restarts and skip the route. This helper checks the start
+# order as well as the route, so that it fails even on a boot where the
+# script happens to win that race.
+assert_guest_to_guest_route() {
+    local lima_init_start
+    local gateway
+    local subnet
+    run_e -0 rdd limavm shell "${MACHINE}" \
+        systemctl show --property=ExecMainStartTimestampMonotonic --value lima-init
+    lima_init_start=${output}
+    run_e -0 rdd limavm shell "${MACHINE}" \
+        systemctl show --property=ActiveEnterTimestampMonotonic --value systemd-networkd
+    assert_output_lt "${lima_init_start}"
+
+    # macOS picks the vzNAT subnet, so read it and the gateway from the guest.
+    run_e -0 rdd limavm shell "${MACHINE}" ip -4 route show default dev lima0
+    assert_output
+    read -r _ _ gateway _ <<<"${output}"
+    run_e -0 rdd limavm shell "${MACHINE}" ip -4 route show dev lima0 proto kernel scope link
+    assert_output
+    read -r subnet _ <<<"${output}"
+    run_e -0 rdd limavm shell "${MACHINE}" ip -4 route show exact "${subnet}" dev lima0
+    assert_output --partial "via ${gateway}"
 }
 
 @test "the provider leaves a cluster without Cluster API alone" {
@@ -206,6 +236,10 @@ EOF
     refute_output
 }
 
+@test "the node VM has its guest-to-guest route" {
+    assert_guest_to_guest_route
+}
+
 @test "the node VM ran the install script" {
     assert_install_script_ran_once
 }
@@ -225,6 +259,10 @@ EOF
     rdd ctl wait --for=jsonpath='{.status.restartCount}'=2 limavm/"${MACHINE}" \
         --namespace="${RDD_APP_NAMESPACE}" --timeout=600s
     assert_install_script_ran_once
+}
+
+@test "the restarted node VM still has its guest-to-guest route" {
+    assert_guest_to_guest_route
 }
 
 @test "deleting the LimaMachine deletes its node VM" {

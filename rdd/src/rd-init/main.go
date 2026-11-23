@@ -59,28 +59,51 @@ func run(ctx context.Context) error {
 		return fmt.Errorf("failed to reload udev: %w", err)
 	}
 
-	// Notify ready before we reload the other units; otherwise we end up
-	// blocking startup due to a loop with systemd-networkd.
-	if _, err := daemon.SdNotify(true, daemon.SdNotifyReady); err != nil {
-		return fmt.Errorf("failed to notify systemd: %w", err)
+	// Queue the unit restarts before notifying ready. A unit that is ordered
+	// after rd-init starts once rd-init is ready. If it is also ordered after
+	// one of these units, as lima-init is after systemd-networkd, it waits
+	// only for a restart that is already queued by then.
+	//
+	// But wait for the results only after notifying ready. systemd-networkd
+	// starts after network-pre.target, which waits for rd-init to be ready,
+	// so waiting first would block boot.
+	//
+	// The channels are buffered because go-systemd sends each job result
+	// while holding a lock, and it needs the same lock to queue another job
+	// and to deliver any other result. So an unread result would block both.
+	type restartJob struct {
+		unit string
+		ch   chan string
 	}
-
+	var jobs []restartJob
 	seenUnits := make(map[string]bool)
 	for _, unit := range units {
 		if seenUnits[unit] {
 			continue
 		}
 		seenUnits[unit] = true
-		ch := make(chan string)
+		ch := make(chan string, 1)
 		_, err = conn.RestartUnitContext(ctx, unit, "replace", ch)
 		if err != nil {
 			return fmt.Errorf("failed to start unit %s: %w", unit, err)
 		}
+		jobs = append(jobs, restartJob{unit: unit, ch: ch})
+	}
+
+	if _, err := daemon.SdNotify(true, daemon.SdNotifyReady); err != nil {
+		return fmt.Errorf("failed to notify systemd: %w", err)
+	}
+
+	for _, job := range jobs {
 		select {
-		case result := <-ch:
-			slog.InfoContext(ctx, "restarted systemd unit", "unit", unit, "result", result)
+		case result := <-job.ch:
+			if result == "done" {
+				slog.InfoContext(ctx, "restarted systemd unit", "unit", job.unit, "result", result)
+			} else {
+				slog.ErrorContext(ctx, "failed to restart systemd unit", "unit", job.unit, "result", result)
+			}
 		case <-ctx.Done():
-			return fmt.Errorf("context closed while waiting for systemd unit %s: %w", unit, ctx.Err())
+			return fmt.Errorf("context closed while waiting for systemd unit %s: %w", job.unit, ctx.Err())
 		}
 	}
 
