@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR logs named startup timing points and shows a static, sandboxed splash from Electron&#39;s <code>ready</code> until the first app window is visible. The design is sound. The one Important finding: the &quot;Incompatible RDD Service&quot; box, the startup error that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/463" class="gh-ref" data-title="GUI doesn&#39;t appear until the control plane is running" data-state="open" data-type="issue">#463</a> describes, comes up over the still-spinning splash, and the obvious fix of closing the splash first deactivates the box on macOS. Hiding the splash fixes both. The five suggestions are optional.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 1&#39;s fixes were squashed into the PR&#39;s two commits and force-pushed as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f1960db7"><code>4f1960db7</code></a> (timing) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a> (splash). The quoted code and line numbers below refer to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e2d1f4ae"><code>1e2d1f4ae</code></a>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -517,6 +523,7 @@ index 7d7a3daf6..f3f74a18f 100644
   * Remove the splash window, if it is open.
   */</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a> with the review&#39;s patch: <code>hideSplash()</code> runs before both startup error boxes, and <code>rdd-ctl.spec.ts</code> checks the order.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -543,6 +550,7 @@ index 7d7a3daf6..f3f74a18f 100644
 </code></pre>
     <p>Only the first window that <code>createWindow()</code> builds can close the splash, and only when that window shows or finishes loading. If that window&#39;s page fails to load, or the user closes the main window before its page finishes loading, no later window takes over. The splash then stays on screen until the app quits, and the timing line never reaches the log. A harness that loads the real modules against a stand-in Electron reproduced the second case. A reopened main window finished loading with the splash still open. A packaged build loads a local <code>app://</code> page, so both triggers are rare.</p>
     <p>Fix: also close the splash from the first window&#39;s <code>closed</code> event and from a main-frame <code>did-fail-load</code> (check <code>isMainFrame</code>).</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. The first window&#39;s <code>closed</code> ends startup for any first window. A main-frame <code>did-fail-load</code> or a <code>render-process-gone</code> ends it only for the visible main window, because closing the splash when a hidden dialog&#39;s page fails would leave nothing on screen. <code>window/__tests__/index.spec.ts</code> covers each trigger.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/splash.ts">
       <div class="finding-title" id="S2">
@@ -587,6 +595,7 @@ Electron.app.whenReady().then(async() =&gt; {
 
     // make sure we have the macOS version cached before calling getMacOsVersion()</code></pre>
     <p>Fix: log the error code and description from a <code>did-fail-load</code> listener, then call <code>hideSplash()</code> from I1&#39;s patch, since <code>closeSplash()</code> on the only window hides the dock icon. Wrap <code>openSplash()</code> in a <code>try</code>/<code>catch</code> that logs and continues.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. A <code>did-fail-load</code> listener logs the failure and calls <code>hideSplash()</code>, and a try/catch inside <code>openSplash()</code> logs a constructor throw. <code>window/__tests__/splash.spec.ts</code> covers both.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/splash.ts">
       <div class="finding-title" id="S3">
@@ -620,6 +629,7 @@ export function openMain() {
 
   const defaultWidth = Math.min(Math.trunc(width * 0.8), 1280);</code></pre>
     <p>Fix: export the two background constants and pass <code>backgroundColor: nativeTheme.shouldUseDarkColors ? darkBackground : lightBackground</code> from <code>openMain()</code>, or limit the comment to the dialog path.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. <code>openMain()</code> sets <code>backgroundColor</code> from the theme and updates it on <code>nativeTheme</code> <code>updated</code>, so the comment holds on both paths.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/index.ts">
       <div class="finding-title" id="S4">
@@ -643,6 +653,7 @@ function onFirstWindowVisible(mark: string) {
  * @param url The URL to load into the window.</code></pre>
     <p><code>reportStartup()</code> has this one caller, so the marks reach the log only once a window shows. A launch that ends at I1&#39;s box, at <code>showErrorDialog</code>, or in the <code>whenReady</code> catch that quits never writes its marks, and a user who reports that launch sends a log without the line.</p>
     <p>Fix: also call <code>reportStartup(Logging.background)</code> from a <code>will-quit</code> handler. It writes only once, so a launch that reached a window keeps its report unchanged. Not run.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f1960db7"><code>4f1960db7</code></a> with a <code>will-quit</code> handler. An Electron probe showed the line reaches the file before exit.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/utils/startupTiming.ts">
       <div class="finding-title" id="S5">
@@ -662,6 +673,7 @@ function onFirstWindowVisible(mark: string) {
   log.log(`Startup timing (${ description }): ${ entries.join(&#39;, &#39;) }`);
 }</code></pre>
     <p>The PR doesn&#39;t test the one-shot report, marks made after it, the fallback when <code>process.getCreationTime()</code> returns <code>null</code>, or the <code>createWindow()</code> hook that closes the splash, and the e2e specs skip the splash. A unit test has to stub <code>process.getCreationTime</code>, which only Electron defines. Under Jest&#39;s Node, <code>reportStartup()</code> throws <code>TypeError: process.getCreationTime is not a function</code>; the shipped code is safe only because its one caller runs in Electron&#39;s main process. The tests are optional, since a regression shows on every launch. A test of the hook can follow <code>window/__tests__/dashboard.spec.ts</code>, which drives <code>createWindow()</code> with a mocked Electron.</p>
+    <p><strong>Outcome:</strong> declined. The tests are optional, and the S1 spec now drives the first-window hook.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -673,6 +685,7 @@ function onFirstWindowVisible(mark: string) {
       <li><strong>(future)</strong> While the app is starting, <code>second-instance</code> and macOS <code>activate</code> do nothing (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1e2d1f4aecf3821d068a1e619553412d3836c180/background.ts#L88"><code>background.ts:88</code></a>, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1e2d1f4aecf3821d068a1e619553412d3836c180/background.ts#L285"><code>background.ts:285</code></a>). If those handlers raised the splash, a second launch would bring a covered splash to the front. <span class="pill pill-claude">Claude Opus 5.5</span></li>
       <li><strong>(future)</strong> If <code>isFirstRunNeeded()</code> hangs, the user now sees a spinner without a close button where they used to see nothing. The PR body leaves <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/463" class="gh-ref" data-title="GUI doesn&#39;t appear until the control plane is running" data-state="open" data-type="issue">#463</a>&#39;s error half for later. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p><strong>Outcome:</strong> declined for this PR; the three concerns are tracked as future splash work.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><strong>(in-scope)</strong> The splash page is a static data URL in a sandboxed window with <code>default-src &#39;none&#39;</code>. It escapes the name and version and doesn&#39;t wait for the renderer bundle. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
@@ -698,6 +711,7 @@ function onFirstWindowVisible(mark: string) {
 
     <div class="card card-neutral">
     <p>The splash commit and the PR body say the splash closes before a startup error box. After I1&#39;s patch the splash hides there instead, so both should say &quot;hides&quot;. The comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1e2d1f4aecf3821d068a1e619553412d3836c180/pkg/rancher-desktop/window/splash.ts#L9-L11"><code>splash.ts:9-11</code></a> holds only on the first-run dialog path (S3). No user documentation is needed.</p>
+    <p><strong>Outcome:</strong> fixed. The message of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a> and the PR body now say the splash hides before a startup error box.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
