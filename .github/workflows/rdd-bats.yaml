@@ -73,7 +73,14 @@ jobs:
         - bats-lima
         - bats-docker
         - bats-nerdctl
+        - bats-capi
         - bats-others
+        # The Cluster API provider runs only on macOS.
+        exclude:
+        - runs-on: ubuntu-latest
+          suite: bats-capi
+        - runs-on: windows-latest
+          suite: bats-capi
     # Run on ubuntu-latest if we don't need to actually run the tests, because
     # they start faster (and are cheaper).
     runs-on: ${{ case(needs.check-paths.outputs.should-run == 'true', matrix.runs-on, 'ubuntu-latest') }}
@@ -260,11 +267,11 @@ jobs:
       shell: bash
       run: |
         case "${{ matrix.suite }}" in
-          bats-app|bats-lima|bats-docker|bats-nerdctl)
+          bats-app|bats-lima|bats-docker|bats-nerdctl|bats-capi)
             echo "BATS_TARGET=${{ matrix.suite }}" >> "$GITHUB_ENV"
             ;;
           bats-others)
-            echo "BATS_EXCLUDES=bats-app bats-lima bats-docker" >> "$GITHUB_ENV"
+            echo "BATS_EXCLUDES=bats-app bats-lima bats-docker bats-capi" >> "$GITHUB_ENV"
             echo "BATS_TARGET=bats-all" >> "$GITHUB_ENV"
             ;;
           *)
