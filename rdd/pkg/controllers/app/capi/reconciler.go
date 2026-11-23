@@ -57,8 +57,9 @@ const (
 	// requeueInProgress is the wait before the next pass when the guest
 	// cluster cannot be reached, our CRDs cannot be installed, our
 	// infrastructure objects cannot be read or updated, a LimaMachine
-	// waits for its Machine, its bootstrap data or its node VM, or a deleted
-	// LimaMachine waits for its node VM to disappear.
+	// waits for its Machine, its cluster's control plane, its bootstrap data
+	// or its node VM, or a deleted LimaMachine waits for its node VM to
+	// disappear.
 	requeueInProgress = 5 * time.Second
 
 	// requeueIdle is the wait between passes while the guest cluster lacks

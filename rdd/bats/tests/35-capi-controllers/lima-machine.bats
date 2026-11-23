@@ -4,12 +4,13 @@
 
 load '../../helpers/load'
 
-# Cluster API infrastructure provider tests. Cluster API isn't installed in
-# the App's cluster, so a minimal Machine CRD, a Machine and a bootstrap
-# Secret stand in for it. The tests check that the provider installs its CRDs
-# once the Machine CRD exists and boots a node VM for a LimaMachine, and that
-# the node VM runs the install script once. The node VM stops with the App and
-# goes away with its LimaMachine.
+# Cluster API infrastructure provider tests. Neither Cluster API nor Rancher
+# is installed in the App's cluster, so the tests create minimal CRDs for
+# Cluster API's Machine and Cluster and for Rancher's RKEControlPlane, one
+# object of each kind, and a bootstrap Secret. The tests check that the
+# provider installs its CRDs once the Machine CRD exists and boots a node VM
+# for a LimaMachine, and that the node VM runs the install script once. The
+# node VM stops with the App and goes away with its LimaMachine.
 
 APP_NAME="app"
 GUEST_NAMESPACE="default"
@@ -33,6 +34,32 @@ local_setup_file() {
 
 guest_kubectl() {
     rdd kubectl --kubeconfig="${RDD_K3S_CONFIG}" "$@"
+}
+
+# Applies a minimal CRD for a kind that the tests create objects of. Its
+# schema accepts any fields. Waits until the guest cluster serves the kind.
+apply_stand_in_crd() { # <group> <version> <kind> <plural>
+    guest_kubectl apply --filename=- <<EOF
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: $4.$1
+spec:
+  group: $1
+  names:
+    kind: $3
+    plural: $4
+  scope: Namespaced
+  versions:
+  - name: $2
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        x-kubernetes-preserve-unknown-fields: true
+EOF
+    guest_kubectl wait --for=condition=Established "crd/$4.$1" --timeout=60s
 }
 
 assert_provider_crds() {
@@ -59,29 +86,7 @@ assert_install_script_ran_once() {
 }
 
 @test "the provider installs its CRDs once Cluster API's Machine CRD exists" {
-    guest_kubectl apply --filename=- <<'EOF'
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  name: machines.cluster.x-k8s.io
-spec:
-  group: cluster.x-k8s.io
-  names:
-    kind: Machine
-    listKind: MachineList
-    plural: machines
-    singular: machine
-  scope: Namespaced
-  versions:
-  - name: v1beta2
-    served: true
-    storage: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        x-kubernetes-preserve-unknown-fields: true
-EOF
-    guest_kubectl wait --for=condition=Established crd/machines.cluster.x-k8s.io --timeout=60s
+    apply_stand_in_crd cluster.x-k8s.io v1beta2 Machine machines
     # The provider looks for the Machine CRD every 30 seconds while idle.
     try --max 24 --delay 5 -- assert_provider_crds
     guest_kubectl wait --for=condition=Established \
@@ -112,6 +117,31 @@ EOF
     guest_kubectl create secret generic "${MACHINE}-bootstrap" \
         --namespace="${GUEST_NAMESPACE}" --from-file=value="${cloud_config}"
 
+    apply_stand_in_crd cluster.x-k8s.io v1beta2 Cluster clusters
+    apply_stand_in_crd rke.cattle.io v1 RKEControlPlane rkecontrolplanes
+    # Rancher sets the Kubernetes version only on the cluster's control
+    # plane, not on the Machine.
+    guest_kubectl apply --filename=- <<EOF
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: bats-cluster
+  namespace: ${GUEST_NAMESPACE}
+spec:
+  controlPlaneRef:
+    apiGroup: rke.cattle.io
+    kind: RKEControlPlane
+    name: bats-cluster
+---
+apiVersion: rke.cattle.io/v1
+kind: RKEControlPlane
+metadata:
+  name: bats-cluster
+  namespace: ${GUEST_NAMESPACE}
+spec:
+  kubernetesVersion: v1.32.0+k3s1
+EOF
+
     guest_kubectl apply --filename=- <<EOF
 apiVersion: cluster.x-k8s.io/v1beta2
 kind: Machine
@@ -120,7 +150,6 @@ metadata:
   namespace: ${GUEST_NAMESPACE}
 spec:
   clusterName: bats-cluster
-  version: v1.32.0+k3s1
   bootstrap:
     dataSecretName: ${MACHINE}-bootstrap
 EOF

@@ -26,6 +26,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	k8sruntime "k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -213,8 +214,22 @@ func TestReconcileLimaMachines(t *testing.T) {
 	ctx := logf.IntoContext(t.Context(), testr.New(t))
 	clientset, err := apiextensionsclientset.NewForConfig(env.Config)
 	assert.NilError(t, err)
-	_, err = clientset.ApiextensionsV1().CustomResourceDefinitions().Create(ctx, machineCRD(), metav1.CreateOptions{})
-	assert.NilError(t, err)
+	guestCRDs := clientset.ApiextensionsV1().CustomResourceDefinitions()
+	// installCRD creates crd in the guest cluster and waits until the guest
+	// cluster serves its kind.
+	installCRD := func(crd *apiextensionsv1.CustomResourceDefinition) {
+		t.Helper()
+		_, err := guestCRDs.Create(ctx, crd, metav1.CreateOptions{})
+		assert.NilError(t, err)
+		assert.NilError(t, crds.WaitEstablished(ctx, guestCRDs, crd.Name, time.Minute))
+	}
+	rkeControlPlane := schema.GroupVersionKind{Group: "rke.cattle.io", Version: "v1", Kind: "RKEControlPlane"}
+	// k3sControlPlane stands in for a control plane provider that follows
+	// Cluster API's contract and sets spec.version.
+	k3sControlPlane := schema.GroupVersionKind{Group: "controlplane.cluster.x-k8s.io", Version: "v1beta2", Kind: "KThreesControlPlane"}
+	installCRD(machineCRD())
+	installCRD(standInCRD(rkeControlPlane.Group, rkeControlPlane.Version, rkeControlPlane.Kind, "rkecontrolplanes"))
+	installCRD(standInCRD(k3sControlPlane.Group, k3sControlPlane.Version, k3sControlPlane.Kind, "kthreescontrolplanes"))
 	k3sConfigPath := filepath.Join(t.TempDir(), "k3s.yaml")
 	assert.NilError(t, os.WriteFile(k3sConfigPath, guestKubeConfig(t, env), 0o600))
 
@@ -244,15 +259,41 @@ func TestReconcileLimaMachines(t *testing.T) {
 		Namespace: "default", Name: "unsupported",
 		Data: map[string][]byte{"value": []byte("#cloud-config\n{}\n")},
 	}))
-	// createMachine creates a LimaMachine. Unless version is empty, it also
-	// creates a Machine with the given version and bootstrap Secret name, and
-	// makes that Machine the LimaMachine's owner.
-	createMachine := func(name, version, secretName string) {
+	// createCluster creates a Cluster API Cluster name whose controlPlaneRef
+	// names a control plane object of kind controlPlane, and creates that
+	// object with the given spec. A zero controlPlane leaves out the
+	// controlPlaneRef, and a nil spec leaves out the control plane object.
+	createCluster := func(name string, controlPlane schema.GroupVersionKind, spec map[string]any) {
+		t.Helper()
+		cluster := &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{}}}
+		if !controlPlane.Empty() {
+			cluster.Object["spec"] = map[string]any{"controlPlaneRef": map[string]any{
+				"apiGroup": controlPlane.Group, "kind": controlPlane.Kind, "name": name,
+			}}
+		}
+		cluster.SetGroupVersionKind(clusterGVK)
+		cluster.SetNamespace("default")
+		cluster.SetName(name)
+		assert.NilError(t, guest.Create(ctx, cluster))
+		if spec == nil {
+			return
+		}
+		object := &unstructured.Unstructured{Object: map[string]any{"spec": spec}}
+		object.SetGroupVersionKind(controlPlane)
+		object.SetNamespace("default")
+		object.SetName(name)
+		assert.NilError(t, guest.Create(ctx, object))
+	}
+	// createMachine creates a LimaMachine. Unless clusterName is empty, it
+	// also creates a Machine in that cluster with the given bootstrap Secret
+	// name, and makes that Machine the LimaMachine's owner. Like Rancher's
+	// Machines, the Machine doesn't have a spec.version.
+	createMachine := func(name, clusterName, secretName string) {
 		t.Helper()
 		limaMachine := &capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: name}}
-		if version != "" {
+		if clusterName != "" {
 			machine := &unstructured.Unstructured{Object: map[string]any{
-				"spec": map[string]any{"version": version, "bootstrap": map[string]any{"dataSecretName": secretName}},
+				"spec": map[string]any{"clusterName": clusterName, "bootstrap": map[string]any{"dataSecretName": secretName}},
 			}}
 			machine.SetGroupVersionKind(machineGVK)
 			machine.SetNamespace("default")
@@ -264,16 +305,6 @@ func TestReconcileLimaMachines(t *testing.T) {
 		}
 		assert.NilError(t, guest.Create(ctx, limaMachine))
 	}
-	const k3s = "v1.36.6+k3s1"
-	longName := strings.Repeat("a", 60)
-	createMachine("happy", k3s, "bootstrap")
-	createMachine("orphan", "", "")
-	createMachine("rke2", "v1.36.6+rke2r1", "bootstrap")
-	createMachine("nosecret", k3s, "")
-	createMachine("badsecret", k3s, "unsupported")
-	createMachine(longName, k3s, "bootstrap")
-	createMachine("taken", k3s, "bootstrap")
-
 	// assertReady checks that LimaMachine name has a False Ready condition
 	// with the given reason, and returns that condition.
 	assertReady := func(name, reason string) *metav1.Condition {
@@ -289,12 +320,56 @@ func TestReconcileLimaMachines(t *testing.T) {
 		return ready
 	}
 
+	// Until the guest cluster serves the Cluster kind, a LimaMachine waits
+	// for its control plane.
+	createMachine("nocluster", "missing", "bootstrap")
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	ready := assertReady("nocluster", capiv1alpha1.WaitingForControlPlaneReason)
+	assert.Equal(t, ready.Message, "The guest cluster does not serve Cluster.cluster.x-k8s.io yet")
+
+	installCRD(standInCRD(clusterGVK.Group, clusterGVK.Version, clusterGVK.Kind, "clusters"))
+	createCluster("k3s", rkeControlPlane, map[string]any{"kubernetesVersion": "v1.36.6+k3s1"})
+	createCluster("rke2", rkeControlPlane, map[string]any{"kubernetesVersion": "v1.36.6+rke2r1"})
+	createCluster("nocontrolplane", rkeControlPlane, nil)
+	createCluster("noref", schema.GroupVersionKind{}, nil)
+	createCluster("unserved", schema.GroupVersionKind{Group: "controlplane.example.com", Version: "v1", Kind: "UnservedControlPlane"}, nil)
+	createCluster("noversion", rkeControlPlane, map[string]any{})
+	createCluster("k3sprovider", k3sControlPlane, map[string]any{"version": "v1.36.6+k3s1"})
+
+	longName := strings.Repeat("a", 60)
+	createMachine("happy", "k3s", "bootstrap")
+	createMachine("orphan", "", "")
+	createMachine("rke2", "rke2", "bootstrap")
+	createMachine("nocontrolplane", "nocontrolplane", "bootstrap")
+	createMachine("noref", "noref", "bootstrap")
+	createMachine("unserved", "unserved", "bootstrap")
+	createMachine("noversion", "noversion", "bootstrap")
+	// k3sprovider gets unsupported bootstrap data, so it stops right after it
+	// passes the version check, and rdd doesn't create a LimaVM for it.
+	createMachine("k3sprovider", "k3sprovider", "unsupported")
+	createMachine("nosecret", "k3s", "")
+	createMachine("badsecret", "k3s", "unsupported")
+	createMachine(longName, "k3s", "bootstrap")
+	createMachine("taken", "k3s", "bootstrap")
+
 	result, err := r.Reconcile(ctx, req)
 	assert.NilError(t, err)
 	assert.Equal(t, result, ctrl.Result{RequeueAfter: requeueInProgress})
 	assertReady("happy", capiv1alpha1.ProvisioningReason)
 	assertReady("orphan", capiv1alpha1.WaitingForMachineOwnerReason)
 	assertReady("rke2", capiv1alpha1.UnsupportedDistributionReason)
+	// The first pass looked up the cluster.x-k8s.io group while that group
+	// had only the Machine kind. The guest client still finds the Cluster
+	// kind that was added to the group afterwards.
+	ready = assertReady("nocluster", capiv1alpha1.WaitingForControlPlaneReason)
+	assert.Equal(t, ready.Message, "Cluster missing does not exist")
+	assertReady("nocontrolplane", capiv1alpha1.WaitingForControlPlaneReason)
+	assertReady("noref", capiv1alpha1.WaitingForControlPlaneReason)
+	ready = assertReady("unserved", capiv1alpha1.WaitingForControlPlaneReason)
+	assert.Equal(t, ready.Message, "The guest cluster does not serve UnservedControlPlane.controlplane.example.com yet")
+	assertReady("noversion", capiv1alpha1.WaitingForControlPlaneReason)
+	assertReady("k3sprovider", capiv1alpha1.UnsupportedBootstrapDataReason)
 	assertReady("nosecret", capiv1alpha1.WaitingForBootstrapDataReason)
 	assertReady("badsecret", capiv1alpha1.UnsupportedBootstrapDataReason)
 	assertReady(longName, capiv1alpha1.InvalidNameReason)
@@ -417,7 +492,7 @@ func TestReconcileLimaMachines(t *testing.T) {
 	boot(1)
 	probeStatus = nodeStatus{address: "192.168.105.3", bootstrapped: true}
 	reconcileHappy()
-	ready := apimeta.FindStatusCondition(happy.Status.Conditions, capiv1alpha1.ReadyCondition)
+	ready = apimeta.FindStatusCondition(happy.Status.Conditions, capiv1alpha1.ReadyCondition)
 	assert.Assert(t, ready != nil)
 	assert.Equal(t, ready.Status, metav1.ConditionTrue)
 	assert.Equal(t, ready.Reason, capiv1alpha1.ReadyReason)
@@ -576,6 +651,147 @@ func TestReconcileLimaMachines(t *testing.T) {
 	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(taken), taken), "the unlabelled taken LimaVM")
 }
 
+// TestReconcileLimaMachinesFailedVM checks that a LimaMachine whose node VM
+// rdd fails to create or to remove doesn't stop the other LimaMachines. It
+// also checks that a LimaVM name used in another namespace is a NameConflict,
+// and that a failed LimaVM create deletes the input ConfigMap, so the next
+// pass renders the template again.
+func TestReconcileLimaMachinesFailedVM(t *testing.T) {
+	env := testapiserver.Start(t)
+	ctx := logf.IntoContext(t.Context(), testr.New(t))
+	clientset, err := apiextensionsclientset.NewForConfig(env.Config)
+	assert.NilError(t, err)
+	guestCRDs := clientset.ApiextensionsV1().CustomResourceDefinitions()
+	for _, crd := range []*apiextensionsv1.CustomResourceDefinition{
+		machineCRD(),
+		standInCRD(clusterGVK.Group, clusterGVK.Version, clusterGVK.Kind, "clusters"),
+		standInCRD("rke.cattle.io", "v1", "RKEControlPlane", "rkecontrolplanes"),
+	} {
+		_, err := guestCRDs.Create(ctx, crd, metav1.CreateOptions{})
+		assert.NilError(t, err)
+		assert.NilError(t, crds.WaitEstablished(ctx, guestCRDs, crd.Name, time.Minute))
+	}
+	k3sConfigPath := filepath.Join(t.TempDir(), "k3s.yaml")
+	assert.NilError(t, os.WriteFile(k3sConfigPath, guestKubeConfig(t, env), 0o600))
+
+	scheme := k8sruntime.NewScheme()
+	assert.NilError(t, appv1alpha1.AddToScheme(scheme))
+	assert.NilError(t, corev1.AddToScheme(scheme))
+	assert.NilError(t, limav1alpha1.AddToScheme(scheme))
+	conflict := &limav1alpha1.LimaVM{Namespace: "default", Name: "a-conflict"}
+	apiServer := fake.NewClientBuilder().WithScheme(scheme).WithObjects(newApp(metav1.ConditionTrue, metav1.ConditionTrue), conflict).Build()
+	// apiServer is the API reader, and c the cached client in front of it.
+	// That cache keeps returning a-broken's input ConfigMap after the
+	// ConfigMap is deleted.
+	broken := true
+	stuck := false
+	var cachedInput *corev1.ConfigMap
+	c := interceptor.NewClient(apiServer, interceptor.Funcs{
+		Update: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.UpdateOption) error {
+			if _, ok := obj.(*limav1alpha1.LimaVM); ok && stuck && obj.GetName() == "a-broken" {
+				return apierrors.NewInternalError(errors.New("stuck"))
+			}
+			return c.Update(ctx, obj, opts...)
+		},
+		Create: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.CreateOption) error {
+			if _, ok := obj.(*limav1alpha1.LimaVM); ok && broken && obj.GetName() == "a-broken" {
+				return apierrors.NewInternalError(errors.New("broken"))
+			}
+			if cm, ok := obj.(*corev1.ConfigMap); ok && cm.Name == "a-broken"+inputConfigMapSuffix {
+				cachedInput = cm.DeepCopy()
+			}
+			return c.Create(ctx, obj, opts...)
+		},
+		Get: func(ctx context.Context, c client.WithWatch, key client.ObjectKey, obj client.Object, opts ...client.GetOption) error {
+			if cm, ok := obj.(*corev1.ConfigMap); ok && cachedInput != nil && key == client.ObjectKeyFromObject(cachedInput) {
+				cachedInput.DeepCopyInto(cm)
+				return nil
+			}
+			return c.Get(ctx, key, obj, opts...)
+		},
+	})
+	r := &Reconciler{Client: c, apiReader: apiServer, K3sConfigPath: k3sConfigPath, LimaHome: "/l"}
+	req := ctrl.Request{NamespacedName: types.NamespacedName{Name: appName}}
+	// The first pass installs our CRDs.
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+
+	guest, err := client.New(env.Config, client.Options{Scheme: guestScheme})
+	assert.NilError(t, err)
+	assert.NilError(t, guest.Create(ctx, &corev1.Secret{
+		Namespace: "default", Name: "bootstrap",
+		Data: map[string][]byte{"value": cloudConfigFor("", gzipBase64(t, []byte("true\n")), "", "")},
+	}))
+	cluster := &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{
+		"controlPlaneRef": map[string]any{"apiGroup": "rke.cattle.io", "kind": "RKEControlPlane", "name": "k3s"},
+	}}}
+	cluster.SetGroupVersionKind(clusterGVK)
+	cluster.SetNamespace("default")
+	cluster.SetName("k3s")
+	assert.NilError(t, guest.Create(ctx, cluster))
+	controlPlane := &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{"kubernetesVersion": "v1.36.6+k3s1"}}}
+	controlPlane.SetGroupVersionKind(schema.GroupVersionKind{Group: "rke.cattle.io", Version: "v1", Kind: "RKEControlPlane"})
+	controlPlane.SetNamespace("default")
+	controlPlane.SetName("k3s")
+	assert.NilError(t, guest.Create(ctx, controlPlane))
+	createLimaMachine := func(name string) {
+		t.Helper()
+		machine := &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{
+			"clusterName": "k3s", "bootstrap": map[string]any{"dataSecretName": "bootstrap"},
+		}}}
+		machine.SetGroupVersionKind(machineGVK)
+		machine.SetNamespace("default")
+		machine.SetName(name)
+		assert.NilError(t, guest.Create(ctx, machine))
+		assert.NilError(t, guest.Create(ctx, &capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{
+			Namespace: "default", Name: name,
+			OwnerReferences: []metav1.OwnerReference{{
+				APIVersion: machineGVK.GroupVersion().String(), Kind: machineGVK.Kind, Name: name, UID: machine.GetUID(),
+			}},
+		}}))
+	}
+	// The guest cluster lists LimaMachines by name, so the failing ones come
+	// first.
+	for _, name := range []string{"a-broken", "a-conflict", "b-happy"} {
+		createLimaMachine(name)
+	}
+
+	_, err = r.Reconcile(ctx, req)
+	assert.ErrorContains(t, err, "a-broken")
+	assert.NilError(t, c.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: "b-happy"}, &limav1alpha1.LimaVM{}),
+		"b-happy's node VM")
+	var limaMachine capiv1alpha1.LimaMachine
+	assert.NilError(t, guest.Get(ctx, client.ObjectKey{Namespace: "default", Name: "a-conflict"}, &limaMachine))
+	ready := apimeta.FindStatusCondition(limaMachine.Status.Conditions, capiv1alpha1.ReadyCondition)
+	assert.Assert(t, ready != nil)
+	assert.Equal(t, ready.Reason, capiv1alpha1.NameConflictReason)
+	assert.Assert(t, strings.Contains(ready.Message, "default/a-conflict"), ready.Message)
+	err = c.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: "a-conflict"}, &limav1alpha1.LimaVM{})
+	assert.Assert(t, apierrors.IsNotFound(err), "a-conflict's node VM: %v", err)
+	for _, name := range []string{"a-conflict", "a-broken"} {
+		err = apiServer.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: name + inputConfigMapSuffix}, &corev1.ConfigMap{})
+		assert.Assert(t, apierrors.IsNotFound(err), "%s's input ConfigMap: %v", name, err)
+	}
+
+	// The cache still holds a-broken's deleted input ConfigMap, but the next
+	// pass creates the ConfigMap again from a newly rendered template.
+	broken = false
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	assert.NilError(t, apiServer.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: "a-broken" + inputConfigMapSuffix}, &corev1.ConfigMap{}),
+		"a-broken's input ConfigMap")
+
+	// A deleted LimaMachine whose node VM rdd fails to remove doesn't hold
+	// back the LimaMachines after it either.
+	stuck = true
+	assert.NilError(t, guest.Delete(ctx, &capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "a-broken"}}))
+	createLimaMachine("c-late")
+	_, err = r.Reconcile(ctx, req)
+	assert.ErrorContains(t, err, "stuck")
+	assert.NilError(t, c.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: "c-late"}, &limav1alpha1.LimaVM{}),
+		"c-late's node VM")
+}
+
 // guestKubeConfig returns a kubeconfig with full access to env.
 func guestKubeConfig(t *testing.T, env *envtest.Environment) []byte {
 	t.Helper()
@@ -605,18 +821,24 @@ func established(crd *apiextensionsv1.CustomResourceDefinition) bool {
 
 // machineCRD returns a minimal stand-in for Cluster API's Machine CRD.
 func machineCRD() *apiextensionsv1.CustomResourceDefinition {
+	return standInCRD("cluster.x-k8s.io", "v1beta2", "Machine", "machines")
+}
+
+// standInCRD returns a minimal namespaced CRD for kind in group and version
+// that accepts any fields.
+func standInCRD(group, version, kind, plural string) *apiextensionsv1.CustomResourceDefinition {
 	preserve := true
 	return &apiextensionsv1.CustomResourceDefinition{
-		ObjectMeta: metav1.ObjectMeta{Name: machineCRDName},
+		ObjectMeta: metav1.ObjectMeta{Name: plural + "." + group},
 		Spec: apiextensionsv1.CustomResourceDefinitionSpec{
-			Group: "cluster.x-k8s.io",
+			Group: group,
 			Names: apiextensionsv1.CustomResourceDefinitionNames{
-				Kind:   "Machine",
-				Plural: "machines",
+				Kind:   kind,
+				Plural: plural,
 			},
 			Scope: apiextensionsv1.NamespaceScoped,
 			Versions: []apiextensionsv1.CustomResourceDefinitionVersion{{
-				Name:    "v1beta2",
+				Name:    version,
 				Served:  true,
 				Storage: true,
 				Schema: &apiextensionsv1.CustomResourceValidation{

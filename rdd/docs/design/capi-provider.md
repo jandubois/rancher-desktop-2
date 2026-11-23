@@ -89,7 +89,7 @@ The reconciler polls the guest cluster's API server, over a second controller ma
 
 The types are in `pkg/capi/v1alpha1`, outside `pkg/apis`. `scripts/generate-crds.sh` adds every CRD under `pkg/apis` to the CRD files that RDD installs in its own control plane, and to the mock controller's bundle. The provider's CRDs belong in the guest cluster instead, so the script writes them to `pkg/capi/crds.yaml`, which RDD embeds.
 
-The types don't import CAPI's Go module. `APIEndpoint` and `MachineAddress` copy the JSON form of CAPI's v1beta2 types, and the provider reads `Machine` objects as unstructured data. Each of the provider's CRDs has the label `cluster.x-k8s.io/v1beta2: v1alpha1`, which tells CAPI that version `v1alpha1` implements its v1beta2 contract.
+The types don't import CAPI's Go module. `APIEndpoint` and `MachineAddress` copy the JSON form of CAPI's v1beta2 types, and the provider reads `Machine` and `Cluster` objects, and the control plane object that a `Cluster` references, as unstructured data. Each of the provider's CRDs has the label `cluster.x-k8s.io/v1beta2: v1alpha1`, which tells CAPI that version `v1alpha1` implements its v1beta2 contract.
 
 The provider installs its CRDs through `pkg/util/crds`, the same code that installs RDD's own. It creates a missing CRD, updates one whose spec or labels differ, and waits until the API server serves each new CRD. It does this once per guest connection, so a CRD deleted by hand comes back only when RDD restarts or `k3s.yaml` changes.
 
@@ -149,7 +149,8 @@ The `Ready` condition's reason tells how far a `LimaMachine` has got.
 | `WaitingForMachineOwner` | The `LimaMachine` doesn't have an owner `Machine` yet, or that `Machine` doesn't exist. |
 | `InvalidName` | The name can't be a Lima instance name, contains a `.`, or makes the hostname or a socket path too long. |
 | `NameConflict` | The `LimaVM` or `ConfigMap` that the `LimaMachine` needs belongs to something else, or a `LimaVM` in another namespace has its name. |
-| `UnsupportedDistribution` | The `Machine`'s version isn't a k3s version. |
+| `WaitingForControlPlane` | The `Machine` doesn't name its `Cluster` yet, the guest cluster doesn't serve the `Cluster` kind or the control plane's kind yet, or the `Cluster`, its `controlPlaneRef`, the control plane object or that object's version doesn't exist yet. |
+| `UnsupportedDistribution` | The Kubernetes version of the cluster's control plane isn't a k3s version. RDD reads it from the control plane's `spec.kubernetesVersion`, where Rancher sets it, or else from `spec.version`, the field defined in Cluster API's contract. Rancher doesn't set the version on the `Machine`. |
 | `WaitingForBootstrapData` | The `Machine` doesn't name its bootstrap `Secret` yet, or that `Secret` doesn't exist. |
 | `UnsupportedBootstrapData` | The bootstrap data isn't the cloud-config that Rancher generates. |
 | `Provisioning` | RDD is creating the node VM, or waits for it to run and answer the probe. |
@@ -189,4 +190,4 @@ CAPI's contract says that a provider should honor a paused cluster (`spec.paused
 
 ## Tests
 
-The `bats-capi` suite in `bats/tests/35-capi-controllers` tests the provider without Rancher. It installs a minimal `Machine` CRD and creates a `Machine`, a `LimaMachine` and a bootstrap `Secret` whose script appends a line to a file. Then it follows the node VM through creation, a restart, an App stop and deletion. CI runs it on macOS only.
+The `bats-capi` suite in `bats/tests/35-capi-controllers` tests the provider without Rancher. It installs minimal CRDs for CAPI's `Machine` and `Cluster` and for Rancher's `RKEControlPlane`, and creates one object of each kind, a `LimaMachine` and a bootstrap `Secret` whose script appends a line to a file. Then it follows the node VM through creation, a restart, an App stop and deletion. CI runs it on macOS only.

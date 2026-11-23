@@ -73,8 +73,16 @@ const (
 	// yet.
 	WaitingForMachineOwnerReason = "WaitingForMachineOwner"
 
-	// UnsupportedDistributionReason means the owner Machine's version is not
-	// a K3s version. The provider supports only K3s downstream clusters.
+	// WaitingForControlPlaneReason means the owner Machine doesn't name its
+	// Cluster yet, the guest cluster doesn't serve the Cluster kind or the
+	// control plane's kind yet, or the Cluster, its control plane reference,
+	// the control plane object or that object's Kubernetes version doesn't
+	// exist yet.
+	WaitingForControlPlaneReason = "WaitingForControlPlane"
+
+	// UnsupportedDistributionReason means the Kubernetes version on the
+	// control plane of the owner Machine's Cluster is not a K3s version. The
+	// provider supports only K3s downstream clusters.
 	UnsupportedDistributionReason = "UnsupportedDistribution"
 
 	// InvalidNameReason means the LimaMachine's name doesn't work as the

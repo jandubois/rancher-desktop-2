@@ -57,6 +57,10 @@ const (
 // unstructured objects so that it doesn't depend on Cluster API's Go module.
 var machineGVK = schema.GroupVersionKind{Group: "cluster.x-k8s.io", Version: "v1beta2", Kind: "Machine"}
 
+// clusterGVK is Cluster API's Cluster. The provider reads Clusters as
+// unstructured objects too.
+var clusterGVK = schema.GroupVersionKind{Group: "cluster.x-k8s.io", Version: "v1beta2", Kind: "Cluster"}
+
 // controlPlaneError wraps an error from rdd's control plane. Reconcile returns
 // such an error, so controller-runtime retries with backoff. An error from the
 // guest cluster is only logged, and Reconcile requeues, unless the same pass
@@ -71,8 +75,8 @@ func (e *controlPlaneError) Unwrap() error { return e.err }
 // of the guest cluster's kube-system Namespace. It deletes the node VM of a
 // deleted LimaMachine, and removes this guest cluster's node VMs whose
 // LimaMachine is gone. It reports whether any LimaMachine still waits for its
-// Machine, its bootstrap data or its node VM, and whether any deleted
-// LimaMachine waits for its node VM to disappear.
+// Machine, its cluster's control plane, its bootstrap data or its node VM,
+// and whether any deleted LimaMachine waits for its node VM to disappear.
 func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1.App, clusterUID types.UID) (bool, error) {
 	var list capiv1alpha1.LimaMachineList
 	if err := r.guestClient.List(ctx, &list); err != nil {
@@ -102,7 +106,7 @@ func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1
 			continue
 		}
 		switch reason {
-		case capiv1alpha1.WaitingForMachineOwnerReason, capiv1alpha1.WaitingForBootstrapDataReason, capiv1alpha1.ProvisioningReason:
+		case capiv1alpha1.WaitingForMachineOwnerReason, capiv1alpha1.WaitingForControlPlaneReason, capiv1alpha1.WaitingForBootstrapDataReason, capiv1alpha1.ProvisioningReason:
 			inProgress = true
 		}
 		status := metav1.ConditionFalse
@@ -194,7 +198,8 @@ func (r *Reconciler) provisionLimaMachine(ctx context.Context, app *appv1alpha1.
 	// The LimaVM has its own copy of the template, so the input ConfigMap is
 	// no longer needed. Neither is the bootstrap data. So once the VM exists,
 	// rdd stops reading the registration token, and a later change to the
-	// Machine's version or its Secret doesn't change the Ready condition.
+	// cluster's Kubernetes version or the Machine's Secret doesn't change the
+	// Ready condition.
 	var input corev1.ConfigMap
 	inputExists, err := r.getOwned(ctx, r.Client, inputKey, &input, machine.UID)
 	if err != nil {
@@ -276,15 +281,18 @@ func (r *Reconciler) provisionLimaMachine(ctx context.Context, app *appv1alpha1.
 	return capiv1alpha1.ReadyReason, "", nil
 }
 
-// createNodeVM checks the owner Machine's version and bootstrap data, then
-// creates the input ConfigMap inputKey and the LimaVM vmKey for machine. It
-// returns the reason and message for machine's Ready condition, like
-// provisionLimaMachine.
+// createNodeVM checks the cluster's control plane version and the owner
+// Machine's bootstrap data, then creates the input ConfigMap inputKey and the
+// LimaVM vmKey for machine. It returns the reason and message for machine's
+// Ready condition, like provisionLimaMachine.
 func (r *Reconciler) createNodeVM(ctx context.Context, app *appv1alpha1.App, clusterUID types.UID, machine *capiv1alpha1.LimaMachine, capiMachine *unstructured.Unstructured, vmKey, inputKey client.ObjectKey) (reason, message string, err error) {
-	version, _, _ := unstructured.NestedString(capiMachine.Object, "spec", "version")
+	version, reason, message, err := r.controlPlaneVersion(ctx, machine.Namespace, capiMachine)
+	if reason != "" || err != nil {
+		return reason, message, err
+	}
 	if !strings.Contains(version, "+k3s") {
 		return capiv1alpha1.UnsupportedDistributionReason,
-			fmt.Sprintf("Machine version %q is not a K3s version; only K3s clusters are supported", version), nil
+			fmt.Sprintf("The cluster's Kubernetes version %q is not a K3s version; only K3s clusters are supported", version), nil
 	}
 
 	secretName, _, _ := unstructured.NestedString(capiMachine.Object, "spec", "bootstrap", "dataSecretName")
@@ -355,6 +363,67 @@ func (r *Reconciler) createNodeVM(ctx context.Context, app *appv1alpha1.App, clu
 		return "", "", err
 	}
 	return capiv1alpha1.ProvisioningReason, "Creating the node VM", nil
+}
+
+// controlPlaneVersion returns the Kubernetes version of the control plane
+// object that the Cluster of capiMachine references. It looks up both the
+// Cluster and the control plane object in namespace. Rancher sets the version
+// only on the control plane object, not on the Machine.
+//
+// While the Machine doesn't name its Cluster, or the guest cluster doesn't
+// serve the Cluster kind or the control plane's kind, controlPlaneVersion
+// returns WaitingForControlPlaneReason and a message for the Ready condition
+// instead. It does the same while the Cluster, its control plane reference,
+// the control plane object or its version doesn't exist yet.
+func (r *Reconciler) controlPlaneVersion(ctx context.Context, namespace string, capiMachine *unstructured.Unstructured) (version, reason, message string, err error) {
+	clusterName, _, _ := unstructured.NestedString(capiMachine.Object, "spec", "clusterName")
+	if clusterName == "" {
+		return "", capiv1alpha1.WaitingForControlPlaneReason, "The Machine does not name its Cluster yet", nil
+	}
+	cluster := &unstructured.Unstructured{}
+	cluster.SetGroupVersionKind(clusterGVK)
+	if err := r.guestClient.Get(ctx, client.ObjectKey{Namespace: namespace, Name: clusterName}, cluster); err != nil {
+		if apierrors.IsNotFound(err) {
+			return "", capiv1alpha1.WaitingForControlPlaneReason, fmt.Sprintf("Cluster %s does not exist", clusterName), nil
+		}
+		if apimeta.IsNoMatchError(err) {
+			return "", capiv1alpha1.WaitingForControlPlaneReason, fmt.Sprintf("The guest cluster does not serve %s yet", clusterGVK.GroupKind()), nil
+		}
+		return "", "", "", fmt.Errorf("get Cluster %s/%s: %w", namespace, clusterName, err)
+	}
+	group, _, _ := unstructured.NestedString(cluster.Object, "spec", "controlPlaneRef", "apiGroup")
+	kind, _, _ := unstructured.NestedString(cluster.Object, "spec", "controlPlaneRef", "kind")
+	name, _, _ := unstructured.NestedString(cluster.Object, "spec", "controlPlaneRef", "name")
+	if kind == "" || name == "" {
+		return "", capiv1alpha1.WaitingForControlPlaneReason, fmt.Sprintf("Cluster %s does not reference its control plane yet", clusterName), nil
+	}
+	groupKind := schema.GroupKind{Group: group, Kind: kind}
+	mapping, err := r.guestClient.RESTMapper().RESTMapping(groupKind)
+	if err != nil {
+		if apimeta.IsNoMatchError(err) {
+			return "", capiv1alpha1.WaitingForControlPlaneReason, fmt.Sprintf("The guest cluster does not serve %s yet", groupKind), nil
+		}
+		return "", "", "", fmt.Errorf("map %s: %w", groupKind, err)
+	}
+	controlPlane := &unstructured.Unstructured{}
+	controlPlane.SetGroupVersionKind(mapping.GroupVersionKind)
+	if err := r.guestClient.Get(ctx, client.ObjectKey{Namespace: namespace, Name: name}, controlPlane); err != nil {
+		if apierrors.IsNotFound(err) {
+			return "", capiv1alpha1.WaitingForControlPlaneReason, fmt.Sprintf("%s %s does not exist", kind, name), nil
+		}
+		return "", "", "", fmt.Errorf("get %s %s/%s: %w", groupKind, namespace, name, err)
+	}
+	// Cluster API's contract defines the control plane's version as
+	// spec.version, but Rancher's RKEControlPlane stores it in
+	// spec.kubernetesVersion.
+	version, _, _ = unstructured.NestedString(controlPlane.Object, "spec", "kubernetesVersion")
+	if version == "" {
+		version, _, _ = unstructured.NestedString(controlPlane.Object, "spec", "version")
+	}
+	if version == "" {
+		return "", capiv1alpha1.WaitingForControlPlaneReason, fmt.Sprintf("%s %s does not have a Kubernetes version yet", kind, name), nil
+	}
+	return version, "", "", nil
 }
 
 // machineOwner returns machine's owner reference to a Cluster API Machine, or
