@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261124-114053-pr-1359</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261124-114053-pr-1359</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-11-24 11:40</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>PR</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/pull/1359" class="gh-ref" data-title="Translate Windows bind mount paths in a Docker API proxy" data-state="open" data-type="pr">#1359</a> — Translate Windows bind mount paths in a Docker API proxy</td></tr>
+      <tr><td>Branch</td><td><code>docker-proxy</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/01c915b0b"><code>01c915b0b</code></a> Share host path helpers between the nerdctl stub and the Docker proxy<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> Add a Docker API proxy that translates Windows bind mount paths<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3b468f4e9"><code>3b468f4e9</code></a> Serve the Windows Docker pipe through the Docker API proxy<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> Translate extended-length drive paths in host path helpers</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4"><code>cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; the switch to <code>httputil.ReverseProxy</code> lets an empty create request panic the proxy&#39;s handler, and the suite doesn&#39;t pin the setting that keeps backend connections from outliving <code>Serve</code>. Both have patches with tests.</td></tr>
+      <tr><td>Wall-clock time</td><td><code>22 min 31 s</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The PR serves <code>\\.\pipe\docker_engine</code> through a proxy built on <code>httputil.ReverseProxy</code>. The proxy rewrites drive-absolute bind sources in <code>POST /containers/create</code> to <code>/mnt/&lt;drive&gt;</code> paths, and the shared path helpers now translate <code>\\?\C:\</code> paths too. The relay switch broke one thing. An empty create request panics the proxy&#39;s handler, so the client gets <code>EOF</code> instead of dockerd&#39;s 400. And the suite doesn&#39;t pin <code>DisableKeepAlives</code>, which keeps backend connections from outliving <code>Serve</code>. Both come with patches and tests.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/dockerproxy/containers_create_body.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> An empty <code>POST /containers/create</code> panics the proxy&#39;s handler <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/containers_create_body.go#L136-L154">rdd/pkg/dockerproxy/containers_create_body.go</a></div>
+      <pre data-start="136" data-line="141-149"><code class="language-go">
+// readContainersCreateBody reads a POST /containers/create request body.  It
+// puts the original bytes back into the request first, so that the request
+// still reaches dockerd unchanged if decoding fails or finds duplicate keys.
+func readContainersCreateBody(req *http.Request) (*containersCreateBody, error) {
+	buf, err := io.ReadAll(req.Body)
+	if err != nil {
+		return nil, fmt.Errorf(&quot;could not read request body: %w&quot;, err)
+	}
+	// Leave http.NoBody in place, because Request.Write sends any other empty
+	// body chunked.
+	if req.Body != http.NoBody {
+		req.Body = io.NopCloser(bytes.NewReader(buf))
+	}
+	body := &amp;containersCreateBody{raw: buf}
+	if err := json.Unmarshal(buf, &amp;body.top); err != nil {
+		return nil, fmt.Errorf(&quot;could not unmarshal request body: %w&quot;, err)
+	}
+	if err := checkDuplicateKeys(buf); err != nil {</code></pre>
+    <p><code>httputil.ReverseProxy</code> sets the outgoing body to nil when <code>Content-Length</code> is 0 (<code>reverseproxy.go:435-437</code> in Go 1.27.4), before it calls <code>Rewrite</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L73"><code>proxy.go:73</code></a> hands that request to <code>mungeContainersCreate</code>, and <code>io.ReadAll(nil)</code> at line 141 dereferences nil. net/http recovers the panic, prints the trace to stderr and drops the connection, so the client gets <code>EOF</code>. Before this PR, the byte bridge passed the request on, and dockerd answered 400.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L68-L78">rdd/pkg/dockerproxy/proxy.go</a></div>
+      <pre data-start="68" data-line="73"><code class="language-go">				return
+			}
+			// If the body can&#39;t be decoded or translated, the request still
+			// holds it as the client sent it. The proxy forwards it
+			// untranslated and leaves dockerd to accept or reject it.
+			if err := mungeContainersCreate(logger, r.Out); err != nil {
+				logger.Error(err, &quot;Could not translate container create request&quot;)
+			}
+		},
+		// DisableCompression stops the Transport from asking dockerd for
+		// gzip when the client doesn&#39;t send an Accept-Encoding header. If</code></pre>
+    <p>The <code>http.NoBody</code> branch at line 147 came from round 1&#39;s S2 fix for the hand-written relay. But under <code>Serve</code> the body is nil, so only the <code>empty body</code> subtest, built with <code>http.NoBody</code> by hand, reaches it. In the probe below, the same empty POST to <code>/v1.47/build</code> gets dockerd&#39;s 400.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/containers_create_body.go#L142-L152">rdd/pkg/dockerproxy/containers_create_body.go</a></div>
+      <pre data-start="142" data-line="147"><code class="language-go">	if err != nil {
+		return nil, fmt.Errorf(&quot;could not read request body: %w&quot;, err)
+	}
+	// Leave http.NoBody in place, because Request.Write sends any other empty
+	// body chunked.
+	if req.Body != http.NoBody {
+		req.Body = io.NopCloser(bytes.NewReader(buf))
+	}
+	body := &amp;containersCreateBody{raw: buf}
+	if err := json.Unmarshal(buf, &amp;body.top); err != nil {
+		return nil, fmt.Errorf(&quot;could not unmarshal request body: %w&quot;, err)</code></pre>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/dockerproxy/probe_emptybody_test.go; from rdd/ run:
+// go test -count=1 -run TestProbeEmptyBody -v ./pkg/dockerproxy
+package dockerproxy
+
+import (
+	&quot;context&quot;
+	&quot;io&quot;
+	&quot;net/http&quot;
+	&quot;testing&quot;
+)
+
+// An empty POST reaches the backend for any path; for /containers/create the
+// munger reads r.Out.Body, which httputil sets to nil when Content-Length is 0.
+func TestProbeEmptyBody(t *testing.T) {
+	for _, path := range []string{&quot;/v1.47/build&quot;, &quot;/v1.47/containers/create&quot;} {
+		t.Run(path, func(t *testing.T) {
+			backend := listenBackend(t)
+			server := &amp;http.Server{Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+				http.Error(w, &quot;config cannot be empty&quot;, http.StatusBadRequest)
+			})}
+			go func() { _ = server.Serve(backend) }()
+			t.Cleanup(func() { server.Close() })
+			proxyAddr := startProxy(t, backend.Addr().String())
+			ctx, cancel := context.WithTimeout(t.Context(), testTimeout)
+			defer cancel()
+			req, _ := http.NewRequestWithContext(ctx, http.MethodPost, &quot;http://&quot;+proxyAddr+path, http.NoBody)
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				t.Fatalf(&quot;client error: %v&quot;, err)
+			}
+			defer resp.Body.Close()
+			body, _ := io.ReadAll(resp.Body)
+			t.Logf(&quot;status %d body %q&quot;, resp.StatusCode, body)
+		})
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go test -count=1 -run TestProbeEmptyBody -v ./pkg/dockerproxy
+=== RUN   TestProbeEmptyBody
+=== RUN   TestProbeEmptyBody//v1.47/build
+    probe_emptybody_test.go:33: status 400 body &quot;config cannot be empty\n&quot;
+=== RUN   TestProbeEmptyBody//v1.47/containers/create
+2026/11/24 12:04:14 http: panic serving 127.0.0.1:62504: runtime error: invalid memory address or nil pointer dereference
+goroutine 56 [running]:
+net/http.(*conn).serve.func1()
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/net/http/server.go:1963 +0xac
+panic({0x…?, 0x…?})
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/runtime/panic.go:859 +0x120
+io.ReadAll({0x0, 0x0})
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/io/io.go:722 +0xc4
+github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerproxy.readContainersCreateBody(0x…)
+	.../rdd/pkg/dockerproxy/containers_create_body.go:141 +0x50
+github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerproxy.mungeContainersCreate({{0x0?, 0x0?}, 0x…?}, 0x…)
+	.../rdd/pkg/dockerproxy/containers_create.go:28 +0x40
+github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerproxy.Serve.func1(0x…)
+	.../rdd/pkg/dockerproxy/proxy.go:73 +0x19c
+net/http/httputil.(*ReverseProxy).ServeHTTP(0x…, {0x…, 0x…}, 0x…)
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/net/http/httputil/reverseproxy.go:503 +0x748
+net/http.serverHandler.ServeHTTP({0x…?}, {0x…?, 0x…?}, 0x1?)
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/net/http/server.go:3440 +0xb0
+net/http.(*conn).serve(0x…, {0x…, 0x…})
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/net/http/server.go:2161 +0x5a0
+created by net/http.(*Server).Serve in goroutine 54
+	/opt/homebrew/Cellar/go/1.27.4/libexec/src/net/http/server.go:3608 +0x3e8
+    probe_emptybody_test.go:29: client error: Post &quot;http://127.0.0.1:62503/v1.47/containers/create&quot;: EOF
+--- FAIL: TestProbeEmptyBody (0.00s)
+    --- PASS: TestProbeEmptyBody//v1.47/build (0.00s)
+    --- FAIL: TestProbeEmptyBody//v1.47/containers/create (0.00s)
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerproxy	0.353s
+FAIL</code></pre>
+      </details>
+    <p>Fix: return an error for a nil body, so that <code>Rewrite</code> logs it and forwards the request as the client sent it. The patch also drops the <code>http.NoBody</code> branch, since <code>Serve</code> never reaches it.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/dockerproxy/containers_create_body.go b/rdd/pkg/dockerproxy/containers_create_body.go
+index 5659542a3..440dfb5b7 100644
+--- a/rdd/pkg/dockerproxy/containers_create_body.go
++++ b/rdd/pkg/dockerproxy/containers_create_body.go
+@@ -7,6 +7,7 @@ package dockerproxy
+ import (
+ 	&quot;bytes&quot;
+ 	&quot;encoding/json&quot;
++	&quot;errors&quot;
+ 	&quot;fmt&quot;
+ 	&quot;io&quot;
+ 	&quot;net/http&quot;
+@@ -138,15 +139,15 @@ func decodeField(object map[string]json.RawMessage, name string, value any) (str
+ // puts the original bytes back into the request first, so that the request
+ // still reaches dockerd unchanged if decoding fails or finds duplicate keys.
+ func readContainersCreateBody(req *http.Request) (*containersCreateBody, error) {
++	// httputil.ReverseProxy sets an empty request body to nil.
++	if req.Body == nil {
++		return nil, errors.New(&quot;request has no body&quot;)
++	}
+ 	buf, err := io.ReadAll(req.Body)
+ 	if err != nil {
+ 		return nil, fmt.Errorf(&quot;could not read request body: %w&quot;, err)
+ 	}
+-	// Leave http.NoBody in place, because Request.Write sends any other empty
+-	// body chunked.
+-	if req.Body != http.NoBody {
+-		req.Body = io.NopCloser(bytes.NewReader(buf))
+-	}
++	req.Body = io.NopCloser(bytes.NewReader(buf))
+ 	body := &amp;containersCreateBody{raw: buf}
+ 	if err := json.Unmarshal(buf, &amp;body.top); err != nil {
+ 		return nil, fmt.Errorf(&quot;could not unmarshal request body: %w&quot;, err)
+diff --git a/rdd/pkg/dockerproxy/containers_create_body_test.go b/rdd/pkg/dockerproxy/containers_create_body_test.go
+index c4550d503..158716806 100644
+--- a/rdd/pkg/dockerproxy/containers_create_body_test.go
++++ b/rdd/pkg/dockerproxy/containers_create_body_test.go
+@@ -125,13 +125,12 @@ func TestContainersCreateBody(t *testing.T) {
+ 		assert.Equal(t, string(buf), input)
+ 	})
+ 
+-	t.Run(&quot;empty body&quot;, func(t *testing.T) {
+-		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, &quot;http://nowhere.invalid/&quot;, http.NoBody)
++	t.Run(&quot;no body&quot;, func(t *testing.T) {
++		req, err := http.NewRequestWithContext(t.Context(), http.MethodPost, &quot;http://nowhere.invalid/&quot;, nil)
+ 		assert.NilError(t, err)
+ 		_, err = readContainersCreateBody(req)
+-		assert.ErrorContains(t, err, &quot;could not unmarshal request body&quot;)
+-		// Request.Write sends any other empty body chunked.
+-		assert.Equal(t, req.Body, http.NoBody)
++		assert.ErrorContains(t, err, &quot;request has no body&quot;)
++		assert.Assert(t, req.Body == nil)
+ 	})
+ 
+ 	t.Run(&quot;duplicate keys&quot;, func(t *testing.T) {
+diff --git a/rdd/pkg/dockerproxy/proxy_test.go b/rdd/pkg/dockerproxy/proxy_test.go
+index 966b1b046..dcc421cc2 100644
+--- a/rdd/pkg/dockerproxy/proxy_test.go
++++ b/rdd/pkg/dockerproxy/proxy_test.go
+@@ -120,6 +120,31 @@ func TestServeTranslatesContainersCreate(t *testing.T) {
+ 	assert.DeepEqual(t, body.Unknown, map[string]int{&quot;a&quot;: 1})
+ }
+ 
++func TestServeForwardsEmptyContainersCreate(t *testing.T) {
++	backend := listenBackend(t)
++	server := &amp;http.Server{
++		ReadHeaderTimeout: testTimeout,
++		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++			http.Error(w, &quot;config cannot be empty&quot;, http.StatusBadRequest)
++		}),
++	}
++	go func() { _ = server.Serve(backend) }()
++	t.Cleanup(func() { server.Close() })
++
++	proxyAddr := startProxy(t, backend.Addr().String())
++	ctx, cancel := context.WithTimeout(t.Context(), testTimeout)
++	defer cancel()
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, &quot;http://&quot;+proxyAddr+&quot;/v1.47/containers/create&quot;, http.NoBody)
++	assert.NilError(t, err)
++	resp, err := http.DefaultClient.Do(req)
++	assert.NilError(t, err)
++	defer resp.Body.Close()
++	respBody, err := io.ReadAll(resp.Body)
++	assert.NilError(t, err)
++	assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
++	assert.Equal(t, string(respBody), &quot;config cannot be empty\n&quot;)
++}
++
+ func TestServeRelaysFinalResponseAfterContinue(t *testing.T) {
+ 	backend := listenBackend(t)
+ 	server := &amp;http.Server{</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/dockerproxy/proxy.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> The suite doesn&#39;t pin <code>DisableKeepAlives</code>, which keeps backend connections from outliving <code>Serve</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L76-L92">rdd/pkg/dockerproxy/proxy.go</a></div>
+      <pre data-start="76" data-line="81-87"><code class="language-go">		},
+		// DisableCompression stops the Transport from asking dockerd for
+		// gzip when the client doesn&#39;t send an Accept-Encoding header. If
+		// dockerd answered with gzip, the Transport would unzip the response
+		// itself, and the client would get it without its Content-Length.
+		Transport: &amp;http.Transport{
+			DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+				return dial(ctx)
+			},
+			DisableKeepAlives:  true,
+			DisableCompression: true,
+		},
+		ErrorHandler: func(w http.ResponseWriter, req *http.Request, err error) {
+			// net/http cancels the request context when the client goes
+			// away or half-closes. The error then only says that the request
+			// was cancelled, so it isn&#39;t logged.
+			if req.Context().Err() == nil {</code></pre>
+    <p>With keep-alives on, the Transport keeps an idle connection to dockerd with no timeout, since <code>IdleConnTimeout</code> is 0. <code>Serve</code>&#39;s shutdown closes only the server, so that connection outlives <code>Serve</code>, and each host-switch restart would leave one behind. Setting the flag to false leaves the whole package suite green. The line also lacks a comment, though its neighbour <code>DisableCompression</code> has one. If someone deletes the setting, the suite still passes and the proxy doesn&#39;t log an error. Only the connections left behind by restarts would show it, so the test is required. The probe stops <code>Serve</code> after one request and finds the backend connection <code>closed</code> on the reviewed tree and <code>idle</code> with the flag off.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-keepalive.sh; run from rdd/: bash probe-keepalive.sh
+# Runs one request through Serve, stops Serve, and reports the backend
+# connection&#39;s state a second later, on the tree and with
+# DisableKeepAlives set to false through a go test overlay.
+set -eu
+probe=pkg/dockerproxy/probe_keepalive_test.go
+tmp=$(mktemp -d)
+trap &#39;rm -rf &quot;${tmp:?}&quot; &quot;${probe:?}&quot;&#39; EXIT
+cat &gt; &quot;$probe&quot; &lt;&lt;&#39;EOF&#39;
+package dockerproxy
+
+import (
+	&quot;context&quot;
+	&quot;io&quot;
+	&quot;net&quot;
+	&quot;net/http&quot;
+	&quot;sync&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;github.com/go-logr/logr&quot;
+)
+
+func TestProbeBackendConnAfterServe(t *testing.T) {
+	backend := listenBackend(t)
+	var mu sync.Mutex
+	states := map[net.Conn]http.ConnState{}
+	server := &amp;http.Server{
+		Handler:   http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { _, _ = io.WriteString(w, &quot;ok&quot;) }),
+		ConnState: func(c net.Conn, s http.ConnState) { mu.Lock(); states[c] = s; mu.Unlock() },
+	}
+	go func() { _ = server.Serve(backend) }()
+	t.Cleanup(func() { server.Close() })
+
+	listener, err := net.Listen(&quot;tcp&quot;, &quot;127.0.0.1:0&quot;)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	dial := func(ctx context.Context) (net.Conn, error) {
+		var d net.Dialer
+		return d.DialContext(ctx, &quot;tcp&quot;, backend.Addr().String())
+	}
+	go func() { done &lt;- Serve(ctx, logr.Discard(), listener, dial) }()
+	resp, err := http.Get(&quot;http://&quot; + listener.Addr().String() + &quot;/v1.47/version&quot;)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _ = io.ReadAll(resp.Body)
+	resp.Body.Close()
+	cancel()
+	&lt;-done
+	time.Sleep(time.Second)
+	mu.Lock()
+	defer mu.Unlock()
+	for _, s := range states {
+		t.Logf(&quot;backend connection 1s after Serve returned: %v&quot;, s)
+	}
+}
+EOF
+sed &#39;s/DisableKeepAlives: *true,/DisableKeepAlives: false,/&#39; pkg/dockerproxy/proxy.go &gt; &quot;$tmp/proxy.go&quot;
+printf &#39;{&quot;Replace&quot;:{&quot;%s/pkg/dockerproxy/proxy.go&quot;:&quot;%s/proxy.go&quot;}}&#39; &quot;$PWD&quot; &quot;$tmp&quot; &gt; &quot;$tmp/overlay.json&quot;
+echo &#39;== tree as reviewed&#39;
+go test -count=1 -run TestProbeBackendConnAfterServe -v ./pkg/dockerproxy | grep -E &#39;Serve returned|^ok|^FAIL&#39;
+echo &#39;== DisableKeepAlives: false&#39;
+go test -count=1 -overlay &quot;$tmp/overlay.json&quot; -run TestProbeBackendConnAfterServe -v ./pkg/dockerproxy | grep -E &#39;Serve returned|^ok|^FAIL&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-keepalive.sh
+== tree as reviewed
+    probe_keepalive_test.go:49: backend connection 1s after Serve returned: closed
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerproxy	1.301s
+== DisableKeepAlives: false
+    probe_keepalive_test.go:49: backend connection 1s after Serve returned: idle
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/dockerproxy	1.297s</code></pre>
+      </details>
+    <p>Fix: explain the setting in a comment, and add a test that the backend sees <code>Connection: close</code>. The Transport sends that header only when keep-alives are off.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/dockerproxy/proxy.go b/rdd/pkg/dockerproxy/proxy.go
+index c22e3d032..f6f120229 100644
+--- a/rdd/pkg/dockerproxy/proxy.go
++++ b/rdd/pkg/dockerproxy/proxy.go
+@@ -74,6 +74,11 @@ func Serve(ctx context.Context, logger logr.Logger, listener net.Listener, dial
+ 				logger.Error(err, &quot;Could not translate container create request&quot;)
+ 			}
+ 		},
++		// DisableKeepAlives closes each connection to dockerd when its
++		// response ends. Otherwise the Transport would keep an idle
++		// connection open with no timeout, and it would stay open after
++		// Serve returns.
++		//
+ 		// DisableCompression stops the Transport from asking dockerd for
+ 		// gzip when the client doesn&#39;t send an Accept-Encoding header. If
+ 		// dockerd answered with gzip, the Transport would unzip the response
+diff --git a/rdd/pkg/dockerproxy/proxy_test.go b/rdd/pkg/dockerproxy/proxy_test.go
+index 966b1b046..5f04590a6 100644
+--- a/rdd/pkg/dockerproxy/proxy_test.go
++++ b/rdd/pkg/dockerproxy/proxy_test.go
+@@ -196,6 +196,37 @@ func TestServeKeepsRequestContentLength(t *testing.T) {
+ 	}
+ }
+ 
++func TestServeClosesEachBackendConnection(t *testing.T) {
++	closeRequests := make(chan bool, 1)
++	backend := listenBackend(t)
++	server := &amp;http.Server{
++		ReadHeaderTimeout: testTimeout,
++		Handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
++			// req.Close reports the client&#39;s Connection: close header.
++			closeRequests &lt;- req.Close
++			w.WriteHeader(http.StatusNoContent)
++		}),
++	}
++	go func() { _ = server.Serve(backend) }()
++	t.Cleanup(func() { server.Close() })
++
++	proxyAddr := startProxy(t, backend.Addr().String())
++	ctx, cancel := context.WithTimeout(t.Context(), testTimeout)
++	defer cancel()
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, &quot;http://&quot;+proxyAddr+&quot;/v1.47/version&quot;, http.NoBody)
++	assert.NilError(t, err)
++	resp, err := http.DefaultClient.Do(req)
++	assert.NilError(t, err)
++	defer resp.Body.Close()
++	assert.Equal(t, resp.StatusCode, http.StatusNoContent)
++	select {
++	case closeRequested := &lt;-closeRequests:
++		assert.Assert(t, closeRequested)
++	case &lt;-ctx.Done():
++		assert.Assert(t, false, &quot;the backend did not receive the request&quot;)
++	}
++}
++
+ func TestServeTruncatedResponseFailsClient(t *testing.T) {
+ 	backend := listenBackend(t)
+ 	go func() {</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/proxy.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> Bytes that a client sends before dockerd&#39;s 101 never reach dockerd <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L52-L62">rdd/pkg/dockerproxy/proxy.go</a></div>
+      <pre data-start="52" data-line="57"><code class="language-go">
+// Serve accepts Docker API connections on listener and forwards each request
+// over a new connection from dial. It stops when ctx is done, and then
+// returns nil.
+func Serve(ctx context.Context, logger logr.Logger, listener net.Listener, dial func(context.Context) (net.Conn, error)) error {
+	proxy := &amp;httputil.ReverseProxy{
+		Rewrite: func(r *httputil.ProxyRequest) {
+			r.Out.URL.Scheme = &quot;http&quot;
+			r.Out.URL.Host = backendHost
+			r.Out.Host = &quot;&quot;
+			// net/http&#39;s server answers the client&#39;s `Expect: 100-continue`</code></pre>
+    <p><code>handleUpgradeResponse</code> (<code>reverseproxy.go:841-878</code> in Go 1.27.4) copies from the hijacked connection and ignores the <code>bufio.Reader</code> that <code>Hijack</code> returns, so client bytes that net/http had already buffered are lost. RD1&#39;s relay forwarded them (<code>util/reverse_proxy.go:211-224</code> at <code>abdf23c74</code>), and so did the byte bridge. A probe that wrote <code>early </code> right behind an attach request and <code>late</code> after the 101 saw the backend echo only <code>late</code>, in 3 of 3 runs. The Docker CLI uses moby&#39;s Go client, and that client checks for the 101 before it returns the connection (<code>client/hijack.go:106</code>, v0.6.3), so the CLI isn&#39;t affected.</p>
+    <p>Fix: add this limit to the package comment, next to the half-close trade-off.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/proxy.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> The suite doesn&#39;t pin <code>DisableCompression</code> or the cancelled-context check in <code>ErrorHandler</code> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L83-L101">rdd/pkg/dockerproxy/proxy.go</a></div>
+      <pre data-start="83" data-line="88-96"><code class="language-go">				return dial(ctx)
+			},
+			DisableKeepAlives:  true,
+			DisableCompression: true,
+		},
+		ErrorHandler: func(w http.ResponseWriter, req *http.Request, err error) {
+			// net/http cancels the request context when the client goes
+			// away or half-closes. The error then only says that the request
+			// was cancelled, so it isn&#39;t logged.
+			if req.Context().Err() == nil {
+				logger.Error(err, &quot;Could not forward request to dockerd&quot;, &quot;method&quot;, req.Method, &quot;path&quot;, req.URL.Path)
+			}
+			http.Error(w, &quot;could not forward the request to dockerd: &quot;+err.Error(), http.StatusBadGateway)
+		},
+	}
+	server := &amp;http.Server{
+		ReadHeaderTimeout: time.Minute,
+		Handler:           proxy,
+	}</code></pre>
+    <p>Setting <code>DisableCompression</code> at line 86 to false, or deleting the context check at line 92, leaves the package suite green. Without the first, the Transport adds <code>Accept-Encoding: gzip</code> to a request whose client didn&#39;t send one, which changes a response only if dockerd gzips it. Without the second, the proxy logs an error for every client that leaves mid-request. Neither breaks a client, so both tests are optional.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L81-L91">rdd/pkg/dockerproxy/proxy.go</a></div>
+      <pre data-start="81" data-line="86"><code class="language-go">		Transport: &amp;http.Transport{
+			DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+				return dial(ctx)
+			},
+			DisableKeepAlives:  true,
+			DisableCompression: true,
+		},
+		ErrorHandler: func(w http.ResponseWriter, req *http.Request, err error) {
+			// net/http cancels the request context when the client goes
+			// away or half-closes. The error then only says that the request
+			// was cancelled, so it isn&#39;t logged.</code></pre>
+    <p>Fix: a backend that asserts the request lacks an <code>Accept-Encoding</code> header, and a recording logger in a client-cancellation test.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/proxy.go">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> The proxy&#39;s server writes panics and accept errors outside logr <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/proxy.go#L93-L106">rdd/pkg/dockerproxy/proxy.go</a></div>
+      <pre data-start="93" data-line="98-101"><code class="language-go">				logger.Error(err, &quot;Could not forward request to dockerd&quot;, &quot;method&quot;, req.Method, &quot;path&quot;, req.URL.Path)
+			}
+			http.Error(w, &quot;could not forward the request to dockerd: &quot;+err.Error(), http.StatusBadGateway)
+		},
+	}
+	server := &amp;http.Server{
+		ReadHeaderTimeout: time.Minute,
+		Handler:           proxy,
+	}
+	stop := context.AfterFunc(ctx, func() {
+		server.Close()
+	})
+	defer stop()
+</code></pre>
+    <p><code>Serve</code> doesn&#39;t set the <code>http.Server</code>&#39;s <code>ErrorLog</code>, so net/http prints a recovered handler panic (I1&#39;s, for one) and its accept-retry messages through the standard <code>log</code> package, outside the <code>docker-proxy</code> logger. <code>ReverseProxy.ErrorLog</code> is unset too.</p>
+    <p>Fix: set both to a <code>*log.Logger</code> that writes through <code>logger</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="PR description">
+      <div class="finding-title" id="S4">
+        <span class="finding-num">S4.</span> The PR description says <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> hasn&#39;t merged <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S4" class="pilcrow">&#182;</a>
+      </div>
+    <p>The description says &quot;That PR hasn&#39;t merged yet, so if it changes before it merges, this PR needs the same change.&quot; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> merged on 2026-11-24 at its head <code>abdf23c74</code>, and the ported files match RD1&#39;s <code>main</code> byte for byte, so the port itself doesn&#39;t need to change.</p>
+    <p>Fix: say that the code matches RD1&#39;s <code>main</code> since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> merged.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/bats/tests/40-docker/bind-mount.bats">
+      <div class="finding-title" id="S5">
+        <span class="finding-num">S5.</span> <code>bind-mount.bats</code> doesn&#39;t mount an extended-length path <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S5" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/bats/tests/40-docker/bind-mount.bats#L15-L30">rdd/bats/tests/40-docker/bind-mount.bats</a></div>
+      <pre data-start="15" data-line="20-25"><code class="language-bash">
+local_setup() {
+    create_file &quot;${BATS_TEST_TMPDIR}/shared/file&quot; &lt;&lt;&lt;marker
+}
+
+@test &quot;--volume mounts a directory given as a backslash drive path&quot; {
+    run -0 winpath &quot;${BATS_TEST_TMPDIR}/shared&quot;
+    volume=&quot;${output}:/data:ro&quot;
+    run -0 ctrctl run --rm --volume &quot;${volume}&quot; &quot;${IMAGE_BUSYBOX}&quot; cat /data/file
+    assert_output marker
+}
+
+@test &quot;--mount type=bind mounts a directory given as a forward-slash drive path&quot; {
+    run -0 host_path &quot;${BATS_TEST_TMPDIR}/shared&quot;
+    mount=&quot;type=bind,source=${output},target=/data&quot;
+    run -0 ctrctl run --rm --mount &quot;${mount}&quot; &quot;${IMAGE_BUSYBOX}&quot; cat /data/file</code></pre>
+    <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> makes the proxy translate <code>\\?\C:\src</code>, and unit tests pin the translated string, but the Windows BATS tests never hand such a path to <code>docker.exe</code>. This review hasn&#39;t checked whether the Docker CLI passes the prefix on in the create request. A regression would show up as dockerd naming the untranslated path, so the test is optional.</p>
+    <p>Fix: a third test in <code>bind-mount.bats</code> that puts <code>\\?\</code> in front of the <code>winpath</code> output.</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <p>None beyond round 1&#39;s, which are under Acknowledged Limitations.</p>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>The <code>Serve</code>-level tests pin round 1&#39;s relay behaviours with the new relay. Deleting the <code>Expect</code> strip fails <code>TestServeRelaysFinalResponseAfterContinue</code>, and detaching the backend request from the client&#39;s context fails <code>TestServeClientDisconnectClosesBackend</code>. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>The munger edits the raw JSON and keeps the fields that it doesn&#39;t know, so the proxy doesn&#39;t need to lower dockerd&#39;s <code>API-Version</code> header, as RD1&#39;s model-based munger did. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>The extended-length handling went into the shared helpers, so <code>rdd nerdctl</code> gets it too, and each new branch has a test that fails when the branch is deleted. <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>I1, required, since a user sees the bug as an opaque <code>EOF</code> in place of dockerd&#39;s 400. The patch&#39;s <code>TestServeForwardsEmptyContainersCreate</code> fails against the reviewed code with <code>EOF</code>, and the reworked <code>no body</code> subtest crashes the test binary with a nil dereference. Both pass with the fix, alone and in the package&#39;s <code>-race</code> run.</li>
+      <li>I2, required, since the suite passes without the setting and the leak shows only as connections left open across restarts. <code>TestServeClosesEachBackendConnection</code> passes with the patch and fails with <code>DisableKeepAlives: false</code>.</li>
+      <li>S2 and S5, optional. Losing S2&#39;s settings leaves clients working, and a regression in S5&#39;s path shows up as a dockerd error that names the untranslated path.</li>
+      <li>Deleting any other guard that round 1&#39;s fixes added fails a test. <code>TestServeRelaysFinalResponseAfterContinue</code> pins the <code>Expect</code> strip; <code>TestTranslateHostPath</code>, <code>TestTranslateHostPathRootedUnderUNCOrExtendedCwd</code> and <code>TestIsDriveAbsolute</code> pin the two callers of <code>trimExtendedPrefix</code>; <code>TestCutVolumeSource</code> pins the extended-length branch of <code>CutVolumeSource</code>; and <code>TestVolumeArgHandler</code> pins the widened <code>windowsDrive</code>.</li>
+      <li>Runs in this review, in the lead worktree at the review SHA: <code>gofmt -l</code> is clean; <code>go test -count=1 -race</code> passes for <code>dockerproxy</code>, <code>guestexec</code>, <code>nerdctlstub</code> and <code>socketbridge</code>; <code>GOOS=windows go vet</code> and <code>GOOS=windows go test -c</code> pass for those four and <code>hostswitch</code>. Setting either <code>DisableKeepAlives</code> or <code>DisableCompression</code> to false leaves the <code>dockerproxy</code> suite green. Both patches apply in sequence and pass the package&#39;s <code>-race</code> run.</li>
+      <li>CI at the review SHA passes 48 checks and skips 6. Windows <code>bats-docker</code> passed all 46 tests, among them both <code>bind-mount.bats</code> tests and <code>run --interactive passes stdin and its EOF to the container</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The PR description is stale about <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> (S4).</li>
+      <li><code>rdd/docs/design/nerdctl.md</code> lists the host path forms that the nerdctl stub rewrites, but not the <code>\\?\C:\</code> form that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> adds. It&#39;s one missing line, so adding it is optional. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 1&#39;s limitations still hold, checked against the code:</p>
+    <ul>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/containers_create_body.go#L20-L28"><code>containers_create_body.go:20-28</code></a>: a host path in a field that a newer API version adds goes through untranslated.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/containers_create_body.go#L84-L93"><code>containers_create_body.go:84-93</code></a>: a body that repeats a key in different case goes through untranslated.</li>
+      <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/dockerproxy/containers_create.go#L21-L23"><code>containers_create.go:21-23</code></a>: relative paths and rooted paths such as <code>/var/run/docker.sock</code> stay untranslated.</li>
+    </ul>
+    <p>Declined in prior rounds:</p>
+    <ul>
+      <li>The backend dial waits for Hyper-V&#39;s own timeout (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/cbdcd73e41e6d5fa37ce266f50e0525beb9f39f4/rdd/pkg/hostswitch/hostswitch_windows.go#L190-L192"><code>hostswitch_windows.go:190-192</code></a>), declined Round 1. It is inherited from the merge-base <code>HostBridge</code>, and the fix belongs in <code>socketbridge.DialVsock</code> for both bridges. It is tracked.</li>
+      <li>No direct <code>CutVolumeSource</code> table test and no forward-slash source in <code>TestMungeContainersCreateMounts</code>, declined Round 1 as optional. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> has since added <code>TestCutVolumeSource</code>.</li>
+      <li>Hijacked connections outlive <code>Serve</code>&#39;s shutdown, declined Round 1 as future work; the merge-base bridge also left connections open.</li>
+      <li>Attach and exec without an <code>Upgrade</code> header lose stdin, declined Round 1 as future work; the Docker CLI sends <code>Upgrade: tcp</code>, and RD1 has the same gap.</li>
+      <li>The Docker pipe name is global, declined Round 1 as pre-existing.</li>
+      <li>The pipe gets go-winio&#39;s default security descriptor, declined Round 1 as pre-existing.</li>
+    </ul>
+    <p>Do not re-suggest:</p>
+    <ul>
+      <li>Replacing <code>string(bytes.TrimSpace(...)) == &quot;null&quot;</code> in <code>findKey</code> to save an allocation; it doesn&#39;t allocate.</li>
+      <li>Deriving <code>startProxy</code>&#39;s context from <code>t.Context()</code>; its cleanup already cancels it.</li>
+      <li>Making <code>pathRoot</code> handle an extended-length UNC working directory (<code>\\?\UNC\server\share</code>). It returns <code>//?/UNC</code> there, so <code>\data</code> becomes <code>//?/UNC/data</code>, but <code>pathRoot</code> predates this PR, and the guest mounts neither that path nor <code>//?/UNC/server/share/data</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found I1 by running an empty create request through <code>Serve</code>, and its nil-guard fix is the one that the patch uses. S1 and S3 are its own; S1 came from a probe of pipelined bytes that ran three times. It ran nine single-guard mutations and, like Codex and Flash, caught the prompt&#39;s miscount of <code>trimExtendedPrefix</code>&#39;s callers. It rated a test for <code>DisableKeepAlives</code> optional. The report makes it required, because the suite passes without the setting and the leak shows only across restarts.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex found I1 independently, and an overlay that put round 1&#39;s relay back showed that the old relay forwarded the same request, which pins the regression on the relay switch. It was the only agent to show that without <code>DisableKeepAlives</code> the backend connection stays open after <code>Serve</code> returns. Its I1 fix kept the <code>http.NoBody</code> branch alive by turning nil into <code>http.NoBody</code>; the report&#39;s patch removes the branch, since <code>Serve</code> never reaches it. Every claim it made checked out against its command log.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash missed I1. Its testing table credited the <code>http.NoBody</code> branch with keeping empty bodies unchunked, and it marked <code>containers_create_body.go</code> as reviewed with no issues. Its <code>pathRoot</code> finding has a real mechanism, but the code predates the PR and the output is a UNC path that the guest can&#39;t mount either way; its claim that <code>pathRoot</code> contradicts its doc comment is wrong. S5 is its own. Its verification notes claim a <code>-race</code> run and <code>GOOS=windows go vet ./...</code>, but its command log shows plain <code>go test</code> and <code>go vet</code> of the named packages.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini Pro didn&#39;t review. Its quota ran out at launch, with a reset 2h28m away, well past when the other agents would finish, so I dropped it without a retry.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>11m 08s</td><td>11m 41s</td><td>0m 54s</td><td>14m 57s</td></tr>
+        <tr><td>Findings</td><td>2I 4S</td><td>2I 2S</td><td>—</td><td>1I 3S</td></tr>
+        <tr><td>Tool calls</td><td>51 (Bash 46, Read 5)</td><td>24 (shell 19, stdin 5)</td><td>—</td><td>80 (run<em>shell</em>command 47, grep<em>search 18, read</em>file 13)</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>3</td><td>—</td><td>4</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>Files reviewed</td><td>14</td><td>14</td><td>—</td><td>14</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>—</td><td>1</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2I 4S</strong></td><td><strong>2I 2S</strong></td><td><strong>none</strong></td><td><strong>1I 3S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p>Reconciliation: Claude Opus 5.5 pass 1, unpinned <code>DisableKeepAlives</code> and <code>DisableCompression</code> (its S4): suggestion → important I2 for the <code>DisableKeepAlives</code> half, the rest S2. Gemini 3.5 Flash pass 1, unpinned transport options (its S2): suggestion → important I2 for the <code>DisableKeepAlives</code> part, the rest S2. Gemini 3.5 Flash pass 1, <code>pathRoot</code> with an extended-length UNC working directory: dropped as pre-existing with no effect, recorded under Acknowledged Limitations.</p>
+    <p>Claude and Codex both found the one defect, each with a run through <code>Serve</code>. Codex added the evidence that made I2 required, and Claude added S1 and S3. Flash added S5 and little else.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>S4 is about the PR description, which doesn&#39;t have a file to cite, so its citation draws a lint warning that stays.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
