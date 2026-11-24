@@ -242,6 +242,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The branch replaces the byte-for-byte bridge on <code>\\.\pipe\docker_engine</code> with RD1&#39;s Docker API proxy, so drive-absolute bind sources in <code>POST /containers/create</code> reach dockerd as <code>/mnt/&lt;drive&gt;</code> paths. The path translation and the raw JSON editing hold up. The defects are in the HTTP relay. A streamed response keeps its backend connection after the client leaves, and a response that the backend cuts short reaches the client as complete. Its comment misstates the standard library&#39;s proxy. Nothing has run on Windows yet.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The branch was rewritten after this review. The fixes went into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/469e23f22"><code>469e23f22</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/977e51327"><code>977e51327</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d5eacbe3f"><code>d5eacbe3f</code></a>), and S3 is the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d39a4c332"><code>d39a4c332</code></a>. Line numbers in this report refer to the review SHA.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -443,6 +449,7 @@ index 5d43a6d74..05ed7ef28 100644
  	// `docker logs -f` reaches the client as it arrives.
  	fw := newFlushedWriter(ctx, w)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a> with this patch. Verification found that net/http also ends ctx when a client half-closes, so such a client loses the rest of a normal response, as it would through <code>httputil.ReverseProxy</code>. The maintainer kept the fix, and the comment at the site states the trade-off. Do not re-suggest keeping the response for a half-closing client.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="I2">
@@ -578,6 +585,7 @@ index 5d43a6d74..d90353b3b 100644
  }
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a> with this patch. The two new tests also gained <code>http.NoBody</code> and <code>defer resp.Body.Close()</code> for gocritic and bodyclose.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="I3">
@@ -679,6 +687,7 @@ index 5d43a6d74..79f2cb723 100644
  	// DialContext connects to the backend.
  	DialContext func(ctx context.Context, _, _ string) (net.Conn, error)</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a> with this patch.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -701,6 +710,7 @@ index 5d43a6d74..79f2cb723 100644
 	defer backendResponse.Body.Close()</code></pre>
     <p>The proxy forwards the client&#39;s <code>Expect</code> header, so dockerd answers <code>100 Continue</code> before its final response. The proxy reads and relays only that first response, and net/http then completes the exchange with an empty <code>200</code>. Codex&#39;s probe through <code>Serve</code> turned a <code>201</code> with a body into an empty <code>200</code>. This stays harmless while clients on the pipe leave <code>Expect</code> out; the moby Go client that the Docker CLI uses doesn&#39;t set it.</p>
     <p>Fix: keep reading while <code>backendResponse.StatusCode &lt; 200</code> and the status isn&#39;t <code>101</code>. With that loop, the probe returns the <code>201</code>, and the package tests pass.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>. The loop skips every 1xx except 101, and <code>TestServeRelaysFinalResponseAfterContinue</code> covers it.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="S2">
@@ -725,6 +735,7 @@ index 5d43a6d74..79f2cb723 100644
 	// Prevent automatic connection closure</code></pre>
     <p><code>NewRequestWithContext</code> can&#39;t know the length of <code>r.Body</code>, so <code>newReq.ContentLength</code> stays 0 and <code>Request.Write</code> sends the body chunked. A probe through <code>Serve</code> showed a client&#39;s <code>Content-Length: 2</code> arriving as <code>ContentLength=-1</code> with <code>Transfer-Encoding: chunked</code>. dockerd&#39;s start handler rejects <code>-1</code> as a deprecated non-empty body (<code>api/server/router/container/container_routes.go:217</code> in moby v28.5.2). So a client that sends <code>{}</code> to <code>/start</code> works directly and fails through the proxy. The moby client sends a nil body there.</p>
     <p>Fix: <code>newReq.ContentLength = r.ContentLength</code> after line 78. The probe then shows <code>ContentLength=2</code>, and the package tests pass.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>, with <code>TestServeKeepsRequestContentLength</code>. Verification also found an empty create body going out chunked, so <code>readContainersCreateBody</code> now keeps <code>http.NoBody</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestexec/hostpath.go">
       <div class="finding-title" id="S3">
@@ -758,6 +769,7 @@ func IsDriveAbsolute(hostPath string) bool {
 			input, err := json.Marshal(map[string]any{&quot;HostConfig&quot;: map[string]any{&quot;Binds&quot;: []string{tc.bind}}})
 			assert.NilError(t, err)</code></pre>
     <p>Fix: strip a leading <code>\\?\</code> before the drive check in both helpers, or note beside <code>IsDriveAbsolute</code> that such paths stay untranslated.</p>
+    <p><strong>Outcome:</strong> fixed in the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d39a4c332"><code>d39a4c332</code></a>, in the shared helpers, so the nerdctl stub translates such paths too. The stub&#39;s check for a volume without a container path accepts the prefix as well.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/hostswitch/hostswitch_windows.go">
       <div class="finding-title" id="S4">
@@ -778,6 +790,7 @@ func IsDriveAbsolute(hostPath string) bool {
 			return nil</code></pre>
     <p>The dial closure drops its context, and <code>DialVsock</code> calls <code>hvsock.Dial</code>, which blocks. RD1&#39;s <code>dialHvsock</code> gave up after one second, and its comment says that the dial otherwise times out after 30 seconds. While rdd-guest isn&#39;t listening, each Docker request waits for Hyper-V to refuse the dial, and a client that gives up leaves its goroutine waiting. The merge-base <code>HostBridge</code> dialed the same way, so the port inherits this.</p>
     <p>Fix: run the dial in a goroutine and return on <code>ctx.Done()</code> or a short timer, as RD1 did.</p>
+    <p><strong>Outcome:</strong> declined. The merge-base <code>HostBridge</code> dialed the same way, and the fix belongs in <code>socketbridge.DialVsock</code> for both bridges; it is tracked in pending-work.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/containers_create_test.go">
       <div class="finding-title" id="S5">
@@ -813,6 +826,7 @@ func TestMungeContainersCreateMounts(t *testing.T) {
 		}
 		if mount.Type != mountTypeBind || !guestexec.IsDriveAbsolute(mount.Source) {</code></pre>
     <p>Fix: move the null before the translated mount in both <code>input</code> and <code>want</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>. The suite now fails when <code>continue</code> becomes <code>break</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/40-docker/bind-mount.bats">
       <div class="finding-title" id="S6">
@@ -837,6 +851,7 @@ local_setup() {
 </code></pre>
     <p>The repo&#39;s BATS conventions write fixtures through <code>create_file</code>, which writes through PowerShell under a WSL-hosted bats, and keep MSYS2-only tools such as <code>cygpath</code> out of a test whose only guard is <code>skip_on_unix</code>. <code>winpath</code> in <code>helpers/paths.bash</code> already picks <code>cygpath -w</code> or <code>wslpath -w</code>. CI runs bats under MSYS2 only, so both gaps are latent.</p>
     <p>Fix: <code>create_file &quot;${BATS_TEST_TMPDIR}/shared/file&quot; &lt;&lt;&lt;marker</code> in <code>local_setup</code>, and <code>run -0 winpath &quot;${BATS_TEST_TMPDIR}/shared&quot;</code> in the <code>--volume</code> test.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d5eacbe3f"><code>d5eacbe3f</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="S7">
@@ -859,6 +874,7 @@ type flushedWriter struct {
 	mu     sync.Mutex         // Mutex to protect concurrent access to the writer and dirty flag.</code></pre>
     <p>Every caller folds <code>err.Error()</code> into <code>msg</code>, so the error ends up in the message text, and logr&#39;s error field stays empty.</p>
     <p>Fix: pass <code>err</code> to <code>sendError</code> and hand it to <code>Logger.Error</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>. The four error responses send the same text as before; only the Flusher check&#39;s text changed.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -872,6 +888,7 @@ type flushedWriter struct {
       <li><strong>(pre-existing) The Docker pipe name is global, and a failed listen leaves the pipe to whoever else holds it.</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/977e51327a05f50ff7a64e5984245e1b5a3bd198/rdd/pkg/hostswitch/hostswitch_windows.go#L185-L187"><code>hostswitch_windows.go:185-187</code></a> logs the <code>ListenPipe</code> failure and continues, as the merge-base bridge did. The repo&#39;s review context already records this. <span class="pill pill-gemini">Gemini 3.1 Pro</span></li>
       <li><strong>(pre-existing) The pipe gets go-winio&#39;s default security descriptor</strong>, as the merge-base bridge&#39;s did. A multi-user Windows host would need an SDDL that admits only the current user. <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
     </ul>
+    <p><strong>Outcome:</strong> all five declined as future or pre-existing work; they don&#39;t change this PR&#39;s code. Each is tracked in pending-work.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>The create munger edits raw JSON, so fields from newer API versions reach dockerd, and a body it doesn&#39;t change goes out byte-identical (<code>TestMungeContainersCreateUnchangedBody</code>). A body that repeats a key in different case goes through untranslated. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
@@ -891,6 +908,7 @@ type flushedWriter struct {
       <li>Nothing on this branch has run on Windows. CI&#39;s Windows <code>bats-docker</code> job will be the first run of <code>bind-mount.bats</code> and of the new <code>run --interactive</code> test in <code>container.bats</code>. At the merge-base, the byte-mode pipe gives an accepted connection no <code>CloseWrite</code>, so the stdin test should fail there, which pins the message-mode listener. This is reasoned, not run.</li>
       <li>Runs in this review, in the lead worktree at the review SHA: <code>gofmt -l</code> is clean; <code>go test -count=1 -race</code> passes for <code>dockerproxy</code>, <code>guestexec</code>, <code>nerdctlstub</code> and <code>socketbridge</code>; <code>GOOS=windows go test -c</code> and <code>GOOS=windows go vet</code> pass for those four and <code>hostswitch</code>. The I1 and I2 patches, applied in either order, pass <code>go test -race ./pkg/dockerproxy</code>, and all three patches apply in sequence. Claude&#39;s golangci-lint run reported 0 issues, native and with <code>GOOS=windows</code>.</li>
     </ul>
+    <p><strong>Outcome:</strong> the I1 and I2 tests went in with their patches, and the S5 test now puts the null first. The optional gaps were declined; S3 added a direct <code>TestCutVolumeSource</code>.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
@@ -901,6 +919,7 @@ type flushedWriter struct {
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/977e51327a05f50ff7a64e5984245e1b5a3bd198/rdd/pkg/dockerproxy/reverse_proxy.go#L60-L61"><code>reverse_proxy.go:60-61</code></a> says that cancelling <code>ctx</code> ends the backend request. I1&#39;s patch corrects it.</li>
       <li>The package comment in <code>proxy.go</code> says that the proxy forwards everything apart from bind paths unchanged. S2&#39;s re-framing makes that untrue for request bodies.</li>
     </ul>
+    <p><strong>Outcome:</strong> all three corrected, by I3, I1 and S2.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
