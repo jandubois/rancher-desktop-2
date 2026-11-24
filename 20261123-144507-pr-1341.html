@@ -246,7 +246,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>Round 1&#39;s fixes were squashed into the PR&#39;s two commits and force-pushed as <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f1960db7"><code>4f1960db7</code></a> (timing) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a> (splash). The quoted code and line numbers below refer to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e2d1f4ae"><code>1e2d1f4ae</code></a>.</p>
+    <p>Round 1&#39;s fixes are in the PR&#39;s two commits, now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f1960db7"><code>4f1960db7</code></a> (timing) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a> (splash). Round 2 then amended the splash commit, which was <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. The quoted code and line numbers below refer to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1e2d1f4ae"><code>1e2d1f4ae</code></a>.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -523,7 +523,7 @@ index 7d7a3daf6..f3f74a18f 100644
   * Remove the splash window, if it is open.
   */</code></pre>
       </details>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a> with the review&#39;s patch: <code>hideSplash()</code> runs before both startup error boxes, and <code>rdd-ctl.spec.ts</code> checks the order.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a> with the review&#39;s patch: <code>hideSplash()</code> runs before both startup error boxes, and <code>rdd-ctl.spec.ts</code> checks the order.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -550,7 +550,7 @@ index 7d7a3daf6..f3f74a18f 100644
 </code></pre>
     <p>Only the first window that <code>createWindow()</code> builds can close the splash, and only when that window shows or finishes loading. If that window&#39;s page fails to load, or the user closes the main window before its page finishes loading, no later window takes over. The splash then stays on screen until the app quits, and the timing line never reaches the log. A harness that loads the real modules against a stand-in Electron reproduced the second case. A reopened main window finished loading with the splash still open. A packaged build loads a local <code>app://</code> page, so both triggers are rare.</p>
     <p>Fix: also close the splash from the first window&#39;s <code>closed</code> event and from a main-frame <code>did-fail-load</code> (check <code>isMainFrame</code>).</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. The first window&#39;s <code>closed</code> ends startup for any first window. A main-frame <code>did-fail-load</code> or a <code>render-process-gone</code> ends it only for the visible main window, because closing the splash when a hidden dialog&#39;s page fails would leave nothing on screen. <code>window/__tests__/index.spec.ts</code> covers each trigger.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a>. The first window&#39;s <code>closed</code> ends startup for any first window. A main-frame <code>did-fail-load</code> or a <code>render-process-gone</code> ends it only for the visible main window, because closing the splash when a hidden dialog&#39;s page fails would leave nothing on screen. <code>window/__tests__/index.spec.ts</code> covers each trigger.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/splash.ts">
       <div class="finding-title" id="S2">
@@ -595,7 +595,7 @@ Electron.app.whenReady().then(async() =&gt; {
 
     // make sure we have the macOS version cached before calling getMacOsVersion()</code></pre>
     <p>Fix: log the error code and description from a <code>did-fail-load</code> listener, then call <code>hideSplash()</code> from I1&#39;s patch, since <code>closeSplash()</code> on the only window hides the dock icon. Wrap <code>openSplash()</code> in a <code>try</code>/<code>catch</code> that logs and continues.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. A <code>did-fail-load</code> listener logs the failure and calls <code>hideSplash()</code>, and a try/catch inside <code>openSplash()</code> logs a constructor throw. <code>window/__tests__/splash.spec.ts</code> covers both.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a>. A <code>did-fail-load</code> listener logs the failure and calls <code>hideSplash()</code>, and a try/catch inside <code>openSplash()</code> logs a constructor throw. <code>window/__tests__/splash.spec.ts</code> covers both.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/splash.ts">
       <div class="finding-title" id="S3">
@@ -629,7 +629,7 @@ export function openMain() {
 
   const defaultWidth = Math.min(Math.trunc(width * 0.8), 1280);</code></pre>
     <p>Fix: export the two background constants and pass <code>backgroundColor: nativeTheme.shouldUseDarkColors ? darkBackground : lightBackground</code> from <code>openMain()</code>, or limit the comment to the dialog path.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a>. <code>openMain()</code> sets <code>backgroundColor</code> from the theme and updates it on <code>nativeTheme</code> <code>updated</code>, so the comment holds on both paths.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a>. <code>openMain()</code> sets <code>backgroundColor</code> from the theme and updates it on <code>nativeTheme</code> <code>updated</code>, so the comment holds on both paths.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/index.ts">
       <div class="finding-title" id="S4">
@@ -711,7 +711,7 @@ function onFirstWindowVisible(mark: string) {
 
     <div class="card card-neutral">
     <p>The splash commit and the PR body say the splash closes before a startup error box. After I1&#39;s patch the splash hides there instead, so both should say &quot;hides&quot;. The comment at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/1e2d1f4aecf3821d068a1e619553412d3836c180/pkg/rancher-desktop/window/splash.ts#L9-L11"><code>splash.ts:9-11</code></a> holds only on the first-run dialog path (S3). No user documentation is needed.</p>
-    <p><strong>Outcome:</strong> fixed. The message of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/85ae8c752"><code>85ae8c752</code></a> and the PR body now say the splash hides before a startup error box.</p>
+    <p><strong>Outcome:</strong> fixed. The message of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a> says the splash hides before a startup error box, and the PR body doesn&#39;t mention error boxes.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>

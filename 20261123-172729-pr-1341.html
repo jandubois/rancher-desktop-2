@@ -396,6 +396,7 @@ index 40ce61ad9..db2850dff 100644
      openSplash();
      FakeWindow.last.webContents.emit(&#39;did-fail-load&#39;, {}, -2, &#39;ERR_FAILED&#39;, &#39;data:text/html&#39;, true);</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b891a8bba"><code>b891a8bba</code></a> with the review&#39;s patch. With the <code>off()</code> line deleted, the second of the two new tests fails.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -464,6 +465,7 @@ mainEvents.on(&#39;before-quit&#39;, () =&gt; {
   getWindow(&#39;FirstRun&#39;)?.destroy();
 });</code></pre>
     <p>Fix: tests for the first three fit the existing <code>FakeWindow</code> specs. A test of the theme background has to drive <code>openMain()</code> with stubs for <code>screen</code> and <code>nativeTheme</code>.</p>
+    <p><strong>Outcome:</strong> declined as optional.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -473,6 +475,7 @@ mainEvents.on(&#39;before-quit&#39;, () =&gt; {
     <ul>
       <li><strong>(in-scope)</strong> When a hidden first window&#39;s page fails to load, the splash keeps spinning until the user quits (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/85ae8c752d85863e5b88b4253ecdd108942d3358/pkg/rancher-desktop/window/index.ts#L96-L98"><code>window/index.ts:96-98</code></a>), and the maintainers haven&#39;t ruled on whether that should change. On macOS the dock icon can quit the app. On Windows and Linux the splash is frameless and RD2 doesn&#39;t show a tray yet (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/85ae8c752d85863e5b88b4253ecdd108942d3358/background.ts#L168"><code>background.ts:168</code></a>), so the user can only close the splash, from the taskbar or with Alt+F4. That leaves the app running with no visible window (reasoned, not run). The reviewers raised two alternatives: close the splash, which leaves the screen empty as at the merge-base, or show an error box, which is <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/463" class="gh-ref" data-title="GUI doesn&#39;t appear until the control plane is running" data-state="open" data-type="issue">#463</a>&#39;s unfinished half. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.1 Pro</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
     </ul>
+    <p><strong>Outcome:</strong> addressed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1349" class="gh-ref" data-title="Show an error box when the first window fails to load" data-state="open" data-type="pr">#1349</a>, which is stacked on this PR. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/1349" class="gh-ref" data-title="Show an error box when the first window fails to load" data-state="open" data-type="pr">#1349</a> makes the app hide the splash, show an error box and quit when the first window&#39;s page fails to load.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li><strong>(in-scope)</strong> <code>hideSplash()</code> and <code>closeSplash()</code> divide along the measured <code>window-all-closed</code> behaviour, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/85ae8c752d85863e5b88b4253ecdd108942d3358/pkg/rancher-desktop/window/splash.ts#L126-L131"><code>splash.ts:126-131</code></a> gives the reason. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
