@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep Review: 20261123-201524-rancher-manager</title>
+  <style>
+code[class*=language-],pre[class*=language-]{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+  </style>
+  <style>
+/* Deep Review — canonical stylesheet
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Edit this file to change the look of all future reviews.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+  background: #f8f9fb;
+  margin: 0;
+  padding: 2rem 1rem;
+}
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin-bottom: 0.5rem; color: #111827; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 1rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.4rem; }
+h3 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.8rem; }
+hr { border: none; border-top: 2px solid #e5e7eb; margin: 2rem 0; }
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace; font-size: 0.85em; background: #f3f4f6; padding: 0.15em 0.35em; border-radius: 4px; }
+
+/* Code blocks — override Prism defaults */
+pre { margin: 0 !important; border-radius: 0 0 8px 8px !important; }
+pre[class*="language-"] { font-size: 0.78rem; line-height: 1.3; }
+pre code { background: none; padding: 0; }
+
+/* Report metadata table */
+.meta-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.meta-table td { padding: 0.35rem 0.6rem; border: 1px solid #e5e7eb; vertical-align: top; }
+.meta-table td:first-child { font-weight: 600; width: 140px; background: #f9fafb; white-space: nowrap; }
+
+/* Cards — every section and finding lives in a card */
+.card { border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+.card-neutral { background: #f1f3f5; border: 1px solid #d5d9e0; }
+.card-critical { background: #ffeef0; border: 1px solid #f5c6cb; }
+.card-important { background: #fff0e0; border: 1px solid #f5d9a8; }
+.card-suggestion { background: #f0f6ff; border: 1px solid #c7d9f5; }
+.card-design { background: #f0faf4; border: 1px solid #b7e4c7; }
+
+/* Severity section headings — colored to match their cards */
+.section-critical { color: #9b1c1c; }
+.section-important { color: #92400e; }
+.section-suggestion { color: #1e40af; }
+.section-design { color: #065f46; }
+
+/* Agent attribution pills */
+.pill { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15em 0.55em; border-radius: 999px; margin-right: 0.3em; vertical-align: middle; letter-spacing: 0.01em; }
+.pill-claude { background: #e9d5ff; color: #6b21a8; }
+.pill-codex { background: #d1fae5; color: #065f46; }
+.pill-gemini { background: #ffe4e6; color: #9f1239; }
+.pill-qwen { background: #fed7aa; color: #9a3412; }
+.pill-gemma { background: #fef9c3; color: #854d0e; }
+.pill-glm { background: #cffafe; color: #155e75; }
+
+/* Finding titles */
+.finding-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.6rem; line-height: 1.4; }
+.finding-num { font-weight: 800; }
+.pass-tag, .title-note { font-weight: 400; color: #6b7280; }
+
+/* Code file header — dark bar above each source code block.
+ * The filename is a GitHub permalink to the displayed line range.
+ * Text color is light gray (#adbac7) for the bar, green (#7ee787)
+ * for the hyperlink — matching GitHub's dark-mode file header. */
+.code-file-header { background: #2d333b; color: #adbac7; font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace; font-size: 0.75rem; padding: 0.4rem 0.9rem; border-radius: 8px 8px 0 0; margin-top: 0.8rem; }
+.code-file-header a { color: #7ee787; }
+.code-file-header a:hover { text-decoration: underline; }
+
+/* Line numbers (CSS counters) and line highlighting */
+.code-line { display: block; }
+.code-line::before {
+  content: counter(line);
+  counter-increment: line;
+  display: inline-block;
+  width: 3em;
+  margin-right: 0.8em;
+  padding-right: 0.5em;
+  text-align: right;
+  color: #636e7b;
+  border-right: 1px solid #3d4556;
+  user-select: none;
+}
+.line-hl { background: rgba(255, 199, 0, 0.18); }
+
+/* Pilcrow anchor links — hidden until parent is hovered */
+.pilcrow { color: #d1d5db; text-decoration: none; font-weight: 400; margin-left: 0.4em; opacity: 0; transition: opacity 0.15s; }
+h2:hover .pilcrow, h3:hover .pilcrow, .finding-title:hover .pilcrow { opacity: 1; }
+.pilcrow:hover { color: #6b7280; text-decoration: none; }
+
+/* Tables written directly in a section body. parseTable classes only the
+ * Retro and Summary tables, so every other one arrives unclassed. */
+table:not([class]) { width: 100%; border-collapse: collapse; margin: 0.8rem 0; font-size: 0.9rem; }
+table:not([class]) th, table:not([class]) td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; vertical-align: top; }
+table:not([class]) th { background: #f3f4f6; font-weight: 600; }
+table:not([class]) tr:nth-child(even) { background: #f9fafb; }
+/* A long path or job name offers no break of its own, so one cell can push
+ * the whole page into a horizontal scroll. Let those tokens wrap. */
+table:not([class]) code { overflow-wrap: anywhere; }
+
+/* Collapsible folds, for the bulk detail a report keeps out of the way */
+details { margin: 0.8rem 0; }
+summary { cursor: pointer; font-weight: 600; }
+
+/* Agent retro summary table */
+.retro-table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.9rem; table-layout: fixed; }
+.retro-table th, .retro-table td { padding: 0.45rem 0.7rem; border: 1px solid #e5e7eb; text-align: left; }
+.retro-table th { background: #f3f4f6; font-weight: 600; }
+.retro-table tr:nth-child(even) { background: #f9fafb; }
+
+/* Supply-chain Summary table — first column gets breathing room,
+ * numeric middle columns center, header keeps its label on one line. */
+.summary-table { width: 100%; border-collapse: collapse; margin: 0.4rem 0 0.8rem; font-size: 0.92rem; }
+.summary-table th, .summary-table td {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid #d5d9e0;
+  vertical-align: top;
+  text-align: left;
+}
+.summary-table th { background: rgba(255, 255, 255, 0.65); font-weight: 600; white-space: nowrap; }
+.summary-table td:first-child { min-width: 11rem; white-space: nowrap; }
+.summary-table th:not(:first-child):not(:last-child),
+.summary-table td:not(:first-child):not(:last-child) { text-align: center; }
+
+/* Lists and paragraphs inside cards */
+.card ul, .card ol { margin: 0.4rem 0; padding-left: 1.5rem; }
+.card li { margin-bottom: 0.3rem; }
+.card p { margin: 0.5rem 0; }
+.card p:first-child { margin-top: 0; }
+
+/* Supply-chain issue rows — used by issueList for bullets that
+ * uniformly start with a `file:line` reference. The location renders
+ * in a dark bar above the description so the eye picks up the path
+ * separately from the prose. */
+.issue-list { margin: 0.6rem 0; }
+.issue-row {
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.55);
+}
+.issue-loc {
+  background: #2d333b;
+  color: #adbac7;
+  padding: 0.3rem 0.7rem;
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+.issue-loc a { color: #7ee787; text-decoration: none; }
+.issue-loc a:hover { text-decoration: underline; }
+.issue-loc code { background: none; padding: 0; color: inherit; font-size: 1em; }
+.issue-desc { padding: 0.55rem 0.8rem; }
+.issue-desc code { font-size: 0.85em; }
+
+/* Verdict highlight in metadata table */
+.verdict { font-weight: 700; }
+
+/* GitHub reference tooltips — shown on hover for #N links */
+.gh-tooltip {
+  position: absolute;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 0.55em 0.75em;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  max-width: 380px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.gh-tooltip-state {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  margin-right: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+.gh-state-open { background: #238636; color: #fff; }
+.gh-state-closed { background: #848d97; color: #fff; }
+.gh-state-merged { background: #8957e5; color: #fff; }
+.gh-tooltip-title { vertical-align: baseline; }
+
+/* Mobile */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.5rem; }
+  .card { padding: 0.9rem 1rem; }
+  pre code { font-size: 0.72rem; }
+}
+
+/* Reproducers and patches, collapsed so a long block keeps the next finding on screen */
+details.fold { margin: 0.8rem 0; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden; }
+details.fold > summary { cursor: pointer; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 600; color: #57606a; background: #f6f8fa; user-select: none; }
+details.fold > summary:hover { background: #eef1f4; }
+details.fold[open] > summary { border-bottom: 1px solid #d0d7de; }
+details.fold pre { border-radius: 0 !important; }
+details.fold .code-file-header { margin-top: 0; border-radius: 0; }
+
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Deep Review: 20261123-201524-rancher-manager</h1>
+
+    <table class="meta-table">
+      <tr><td>Date</td><td>2026-11-23 20:15</td></tr>
+      <tr><td>Repo</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2">rancher-sandbox/rancher-desktop-2</a></td></tr>
+      <tr><td>Round</td><td>2 (of target)</td></tr>
+      <tr><td>Author</td><td><a href="https://github.com/jandubois">@jandubois</a></td></tr>
+      <tr><td>Branch</td><td><code>rancher-manager</code></td></tr>
+      <tr><td>Commits</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/36211e1e8"><code>36211e1e8</code></a> Install the App&#39;s k3s as k3s-rancher-desktop.service<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0a135b0bb"><code>0a135b0bb</code></a> rdd: point Lima at the vznat-guest-route fork<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8174f7621"><code>8174f7621</code></a> rdd: add types and CRDs for a Lima Cluster API provider<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0dcdbd42f"><code>0dcdbd42f</code></a> rdd: translate Rancher&#39;s CAPI bootstrap into a Lima template<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3bb1129e3"><code>3bb1129e3</code></a> rdd: share the envtest API server setup between tests<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d8363f6c0"><code>d8363f6c0</code></a> rdd: move CRD installation into a package of its own<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8fd289231"><code>8fd289231</code></a> rdd: stop sending an update for every CRD on every start<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ed93c7fa"><code>6ed93c7fa</code></a> rdd: install the Lima provider&#39;s CRDs once k3s runs Cluster API<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/09268be2b"><code>09268be2b</code></a> rdd: mark LimaClusters provisioned in the guest cluster<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d68651047"><code>d68651047</code></a> rdd: create a node VM for each LimaMachine<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/65f08ae18"><code>65f08ae18</code></a> rdd: mark a LimaMachine provisioned once its node VM bootstraps<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/850f9b85e"><code>850f9b85e</code></a> rdd: delete node VMs with their LimaMachines and stop them with the App<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d412c2fc6"><code>d412c2fc6</code></a> rdd: test the Lima Cluster API provider in BATS<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/deb5c7907"><code>deb5c7907</code></a> rdd: document the Lima Cluster API provider<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a> rdd: take a LimaMachine&#39;s K3s version from the control plane<br><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a> rdd: start lima-init after rd-init restarts systemd-networkd</td></tr>
+      <tr><td>Review SHA</td><td><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c77cf746142a7b16d42fab83b4a9bb2f"><code>7e89b754c77cf746142a7b16d42fab83b4a9bb2f</code></a></td></tr>
+      <tr><td>Reviewers</td><td><span class="pill pill-claude">Claude Opus 5.5</span> (effort: high), <span class="pill pill-codex">Codex GPT 6 Astra</span> (effort: high), <span class="pill pill-gemini">Gemini 3.5 Flash</span> (effort: default)</td></tr>
+      <tr><td>Verdict</td><td><span class="verdict">Merge with fixes</span> &mdash; two guards that round 1&#39;s fixes added have no test, and a BATS comment contradicts Lima&#39;s behavior</td></tr>
+      <tr><td>Wall-clock time</td><td><code>41 min 39 s (excludes 37 min 50 s waiting on 2 questions)</code></td></tr>
+    </table>
+
+    <hr>
+
+    <hr>
+    <h2 id="executive-summary">Executive Summary <a href="#executive-summary" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The branch adds a macOS Cluster API infrastructure provider that boots a Lima node VM for each LimaMachine. All six round-1 fixes work. But the tests miss two of the guards they added, the CRD rules that keep negative sizes away from rdd&#39;s template webhook and the <code>continue</code> that keeps a failed node VM removal from stalling the other LimaMachines. A BATS comment also still says that Lima reports Running only after the boot scripts finish.</p>
+    </div>
+    <hr>
+    <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-critical">
+    <p>None.</p>
+    </div>
+    <hr>
+    <h2 id="important-issues" class="section-important">Important Issues <a href="#important-issues" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-important" data-file="rdd/pkg/capi/v1alpha1/limamachine_types.go">
+      <div class="finding-title" id="I1">
+        <span class="finding-num">I1.</span> No test pins the CRD rules that keep non-positive sizes away from rdd&#39;s template webhook <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#I1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/capi/v1alpha1/limamachine_types.go#L29-L40">rdd/pkg/capi/v1alpha1/limamachine_types.go</a></div>
+      <pre data-start="29" data-line="34-35"><code class="language-go">	// +kubebuilder:validation:Minimum=0
+	CPUs int `json:&quot;cpus,omitempty&quot;`
+	// memory is the amount of RAM to allocate to the machine&#39;s VM, as a
+	// Kubernetes resource quantity (e.g. &quot;4Gi&quot;). When unset, the VM gets 3Gi.
+	// +optional
+	// +kubebuilder:validation:XValidation:rule=&quot;quantity(string(self)).isGreaterThan(quantity(&#39;0&#39;))&quot;,message=&quot;memory must be positive&quot;
+	Memory *resource.Quantity `json:&quot;memory,omitempty&quot;`
+	// disk is the size of the machine&#39;s VM disk, as a Kubernetes resource
+	// quantity (e.g. &quot;100Gi&quot;). When unset, the VM gets Lima&#39;s default disk
+	// size.
+	// +optional
+	// +kubebuilder:validation:XValidation:rule=&quot;quantity(string(self)).isGreaterThan(quantity(&#39;0&#39;))&quot;,message=&quot;disk must be positive&quot;</code></pre>
+    <p>Round 1&#39;s I1 fix relies on these rules. Without them, a LimaMachine with <code>memory: -1Gi</code> renders a template that rdd&#39;s Lima template webhook rejects. <code>createNodeVM</code> then fails on every pass, and the rejection shows up only in rdd&#39;s log. The probe below removes the four CEL rules from <code>crds.yaml</code>, and every test in both provider packages still passes. The <code>cpus</code> minimum (line 29) doesn&#39;t have a test either.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/capi/v1alpha1/limamachine_types.go#L24-L34">rdd/pkg/capi/v1alpha1/limamachine_types.go</a></div>
+      <pre data-start="24" data-line="29"><code class="language-go">	// +kubebuilder:validation:MaxLength=512
+	ProviderID string `json:&quot;providerID,omitempty&quot;`
+	// cpus is the number of vCPUs to allocate to the machine&#39;s VM.
+	// When unset (0), the VM gets 2 vCPUs.
+	// +optional
+	// +kubebuilder:validation:Minimum=0
+	CPUs int `json:&quot;cpus,omitempty&quot;`
+	// memory is the amount of RAM to allocate to the machine&#39;s VM, as a
+	// Kubernetes resource quantity (e.g. &quot;4Gi&quot;). When unset, the VM gets 3Gi.
+	// +optional
+	// +kubebuilder:validation:XValidation:rule=&quot;quantity(string(self)).isGreaterThan(quantity(&#39;0&#39;))&quot;,message=&quot;memory must be positive&quot;</code></pre>
+    <p>The test is required, because deleting the guard brings back a failure that the LimaMachine never reports.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-size-rules.sh; run from the repo root: bash probe-size-rules.sh
+set -o errexit -o nounset -o pipefail
+cd rdd
+tmp=$(mktemp -d)
+cp pkg/capi/crds.yaml &quot;${tmp:?}/crds.yaml&quot;
+trap &#39;cp &quot;${tmp:?}/crds.yaml&quot; pkg/capi/crds.yaml; rm -rf &quot;${tmp:?}&quot;&#39; EXIT
+
+echo &quot;== 1. Remove the four CEL rules that require positive sizes; the tests still pass&quot;
+grep -v -E &#39;x-kubernetes-validations:|must be positive|isGreaterThan&#39; &quot;${tmp}/crds.yaml&quot; &gt;pkg/capi/crds.yaml
+git diff --stat -- pkg/capi/crds.yaml
+go test -count=1 ./pkg/capi/... ./pkg/controllers/app/capi/...
+cp &quot;${tmp}/crds.yaml&quot; pkg/capi/crds.yaml
+
+echo &quot;== 2. Without the rules, a negative size reaches rdd&#39;s Lima template webhook&quot;
+cat &gt;&quot;${tmp}/sizes_test.go&quot; &lt;&lt;&#39;EOF&#39;
+package limavm
+
+import (
+	&quot;testing&quot;
+
+	&quot;k8s.io/apimachinery/pkg/api/resource&quot;
+
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1&quot;
+	capiv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi&quot;
+)
+
+// TestProbeSizes renders a LimaMachine&#39;s template as the provider does and
+// validates it as the template ConfigMap webhook does.
+func TestProbeSizes(t *testing.T) {
+	for _, tc := range []struct{ field, value string }{
+		{&quot;memory&quot;, &quot;4Gi&quot;}, {&quot;memory&quot;, &quot;-1Gi&quot;}, {&quot;disk&quot;, &quot;100Gi&quot;}, {&quot;disk&quot;, &quot;-1Gi&quot;},
+	} {
+		q := resource.MustParse(tc.value)
+		var spec capiv1alpha1.LimaMachineSpec
+		if tc.field == &quot;memory&quot; {
+			spec.Memory = &amp;q
+		} else {
+			spec.Disk = &amp;q
+		}
+		template, err := capi.LimaTemplate(spec, []byte(&quot;true\n&quot;))
+		if err != nil {
+			t.Fatalf(&quot;render: %v&quot;, err)
+		}
+		_, err = validateTemplateData(t.Context(), map[string]string{v1alpha1.TemplateConfigMapKey: string(template)})
+		t.Logf(&quot;%s=%s: %v&quot;, tc.field, tc.value, err)
+	}
+}
+EOF
+printf &#39;{&quot;Replace&quot;:{&quot;%s/pkg/controllers/lima/limavm/zz_sizes_test.go&quot;:&quot;%s/sizes_test.go&quot;}}&#39; &quot;$PWD&quot; &quot;${tmp}&quot; &gt;&quot;${tmp}/overlay.json&quot;
+go test -count=1 -overlay &quot;${tmp}/overlay.json&quot; -run TestProbeSizes -v ./pkg/controllers/lima/limavm/ | grep -E &#39;sizes_test|^(ok|FAIL)&#39;</code></pre>
+      <pre><code class="language-text">$ bash probe-size-rules.sh
+== 1. Remove the four CEL rules that require positive sizes; the tests still pass
+ rdd/pkg/capi/crds.yaml | 12 ------------
+ 1 file changed, 12 deletions(-)
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi	0.417s
+?   	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi/v1alpha1	[no test files]
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	70.006s
+== 2. Without the rules, a negative size reaches rdd&#39;s Lima template webhook
+# github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/lima/limavm.test
+ld: warning: ignoring duplicate libraries: &#39;-lobjc&#39;
+    zz_sizes_test.go:31: memory=4Gi: &lt;nil&gt;
+    zz_sizes_test.go:31: memory=-1Gi: failed to validate template: field `memory` has an invalid value: invalid size: &#39;-1073741824&#39;
+    zz_sizes_test.go:31: disk=100Gi: &lt;nil&gt;
+    zz_sizes_test.go:31: disk=-1Gi: failed to validate template: field `disk` has an invalid value: invalid size: &#39;-1073741824&#39;
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/lima/limavm	0.605s</code></pre>
+      </details>
+    <p>Fix: add <code>TestLimaMachineRejectsInvalidSizes</code> to <code>rdd/pkg/capi/crds_test.go</code>. It runs the API server&#39;s own schema and CEL validation on both CRDs. It passes at the review SHA, and it fails with the CEL rules removed (<code>LimaMachine memory=0: []</code>) or with the <code>cpus</code> minimum removed (<code>LimaMachine cpus=-1: []</code>).</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/capi/crds_test.go b/rdd/pkg/capi/crds_test.go
+index 7ef2842d1..fd64fa525 100644
+--- a/rdd/pkg/capi/crds_test.go
++++ b/rdd/pkg/capi/crds_test.go
+@@ -13,7 +13,11 @@ import (
+ 	&quot;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions&quot;
+ 	apiextensionsv1 &quot;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1&quot;
+ 	structuralschema &quot;k8s.io/apiextensions-apiserver/pkg/apiserver/schema&quot;
++	&quot;k8s.io/apiextensions-apiserver/pkg/apiserver/schema/cel&quot;
+ 	structuraldefaulting &quot;k8s.io/apiextensions-apiserver/pkg/apiserver/schema/defaulting&quot;
++	&quot;k8s.io/apiextensions-apiserver/pkg/apiserver/validation&quot;
++	&quot;k8s.io/apimachinery/pkg/util/validation/field&quot;
++	celconfig &quot;k8s.io/apiserver/pkg/apis/cel&quot;
+ 
+ 	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/crds&quot;
+ )
+@@ -63,3 +67,55 @@ func TestLimaClusterDefaultsControlPlaneEndpoint(t *testing.T) {
+ 	assert.NilError(t, err)
+ 	assert.Equal(t, string(spec), `{&quot;controlPlaneEndpoint&quot;:{&quot;host&quot;:&quot;localhost&quot;,&quot;port&quot;:6443}}`)
+ }
++
++// TestLimaMachineRejectsInvalidSizes checks that the LimaMachine and
++// LimaMachineTemplate CRDs reject a negative cpus, and a memory or disk that
++// isn&#39;t positive. Without these rules, a negative memory or disk reaches the
++// Lima template webhook, which rejects the node VM with an error that only
++// rdd&#39;s log shows. The test runs the API server&#39;s own schema and CEL
++// validation.
++func TestLimaMachineRejectsInvalidSizes(t *testing.T) {
++	kinds := 0
++	for _, crd := range decodeCRDs(t) {
++		kind := crd.Spec.Names.Kind
++		if kind == &quot;LimaCluster&quot; {
++			continue
++		}
++		kinds++
++		var schema apiextensions.JSONSchemaProps
++		assert.NilError(t, apiextensionsv1.Convert_v1_JSONSchemaProps_To_apiextensions_JSONSchemaProps(
++			crd.Spec.Versions[0].Schema.OpenAPIV3Schema, &amp;schema, nil))
++		structural, err := structuralschema.NewStructural(&amp;schema)
++		assert.NilError(t, err)
++		schemaValidator, _, err := validation.NewSchemaValidator(&amp;schema)
++		assert.NilError(t, err)
++		celValidator := cel.NewValidator(structural, true, celconfig.PerCallLimit)
++		for _, tc := range []struct {
++			field string
++			value any
++			valid bool
++		}{
++			{&quot;cpus&quot;, int64(0), true},
++			{&quot;cpus&quot;, int64(2), true},
++			{&quot;cpus&quot;, int64(-1), false},
++			{&quot;memory&quot;, &quot;4Gi&quot;, true},
++			{&quot;memory&quot;, int64(1 &lt;&lt; 30), true},
++			{&quot;memory&quot;, &quot;0&quot;, false},
++			{&quot;memory&quot;, &quot;-1Gi&quot;, false},
++			{&quot;disk&quot;, &quot;100Gi&quot;, true},
++			{&quot;disk&quot;, int64(0), false},
++			{&quot;disk&quot;, &quot;-1Gi&quot;, false},
++		} {
++			spec := map[string]any{tc.field: tc.value}
++			if kind == &quot;LimaMachineTemplate&quot; {
++				spec = map[string]any{&quot;template&quot;: map[string]any{&quot;spec&quot;: spec}}
++			}
++			obj := map[string]any{&quot;spec&quot;: spec}
++			errs := validation.ValidateCustomResource(field.NewPath(&quot;&quot;), obj, schemaValidator)
++			celErrs, _ := celValidator.Validate(t.Context(), field.NewPath(&quot;&quot;), structural, obj, nil, celconfig.RuntimeCELCostBudget)
++			errs = append(errs, celErrs...)
++			assert.Equal(t, len(errs) == 0, tc.valid, &quot;%s %s=%v: %v&quot;, kind, tc.field, tc.value, errs)
++		}
++	}
++	assert.Equal(t, kinds, 2)
++}</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/pkg/controllers/app/capi/limamachine.go">
+      <div class="finding-title" id="I2">
+        <span class="finding-num">I2.</span> No test pins the <code>continue</code> that keeps a failed node VM removal from stalling the other LimaMachines <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L88-L102">rdd/pkg/controllers/app/capi/limamachine.go</a></div>
+      <pre data-start="88" data-line="93-97"><code class="language-go">	var errs []error
+	// An error with one LimaMachine doesn&#39;t stop the others.
+	for i := range list.Items {
+		machine := &amp;list.Items[i]
+		if !machine.DeletionTimestamp.IsZero() {
+			deleting, err := r.deleteNodeVM(ctx, machine)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			inProgress = inProgress || deleting
+			continue
+		}
+		oldStatus := machine.Status.DeepCopy()
+		reason, message, err := r.provisionLimaMachine(ctx, app, clusterUID, machine)</code></pre>
+    <p>Round 1&#39;s I1 fix replaced the early returns in <code>reconcileLimaMachines</code> with <code>continue</code>, but <code>TestReconcileLimaMachinesFailedVM</code> covers only the create path. Turning this deletion branch back into <code>return false, err</code> leaves all three reconcile tests green. That brings back the stall from round 1&#39;s I1. A LimaMachine whose node VM rdd can&#39;t remove holds back every LimaMachine listed after it, and their conditions don&#39;t say why.</p>
+    <p>The failure depends on the order that the guest cluster lists LimaMachines in, so the test is required.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-bash"># Save as probe-delete-continue.sh; run from the repo root: bash probe-delete-continue.sh
+# Turns the deletion branch&#39;s `continue` in reconcileLimaMachines back into the
+# `return` that round 1&#39;s I1 removed, then runs the provider&#39;s reconcile tests.
+set -o errexit -o nounset -o pipefail
+f=rdd/pkg/controllers/app/capi/limamachine.go
+trap &#39;git checkout -- &quot;$f&quot;&#39; EXIT
+python3 - &quot;$f&quot; &lt;&lt;&#39;EOF&#39;
+import sys
+path = sys.argv[1]
+text = open(path).read()
+old = (&quot;\t\t\tif err != nil {\n\t\t\t\terrs = append(errs, err)\n\t\t\t\tcontinue\n\t\t\t}\n&quot;
+       &quot;\t\t\tinProgress = inProgress || deleting&quot;)
+new = &quot;\t\t\tif err != nil {\n\t\t\t\treturn false, err\n\t\t\t}\n\t\t\tinProgress = inProgress || deleting&quot;
+assert text.count(old) == 1
+open(path, &quot;w&quot;).write(text.replace(old, new))
+EOF
+git diff --stat -- &quot;$f&quot;
+go -C rdd test -count=1 -run &#39;^(TestReconcile|TestReconcileLimaMachines|TestReconcileLimaMachinesFailedVM)$&#39; ./pkg/controllers/app/capi/</code></pre>
+      <pre><code class="language-text">$ bash probe-delete-continue.sh
+ rdd/pkg/controllers/app/capi/limamachine.go | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	69.774s
+$ git apply fix.diff   # the patch below
+$ bash probe-delete-continue.sh
+ rdd/pkg/controllers/app/capi/limamachine.go | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+--- FAIL: TestReconcileLimaMachinesFailedVM (9.67s)
+    reconciler_test.go:791: assertion failed: error is not nil: limavms.lima.rancherdesktop.io &quot;c-late&quot; not found: c-late&#39;s node VM
+FAIL
+FAIL	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	69.298s
+FAIL</code></pre>
+      </details>
+    <p>Fix: extend <code>TestReconcileLimaMachinesFailedVM</code>. Make the update that removes <code>a-broken</code>&#39;s owned finalizer fail, delete that LimaMachine, add <code>c-late</code>, and assert that <code>c-late</code> still gets its node VM. With the patch applied, the probe&#39;s mutant fails at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/reconciler_test.go#L791"><code>reconciler_test.go:791</code></a>, as the second run shows.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/pkg/controllers/app/capi/reconciler_test.go b/rdd/pkg/controllers/app/capi/reconciler_test.go
+index efdc17487..fa5f01d61 100644
+--- a/rdd/pkg/controllers/app/capi/reconciler_test.go
++++ b/rdd/pkg/controllers/app/capi/reconciler_test.go
+@@ -652,9 +652,10 @@ func TestReconcileLimaMachines(t *testing.T) {
+ }
+ 
+ // TestReconcileLimaMachinesFailedVM checks that one LimaMachine&#39;s failure
+-// doesn&#39;t stop the others, that a LimaVM name used in another namespace is a
+-// NameConflict, and that a failed LimaVM create deletes the input ConfigMap,
+-// so the next pass renders the template again.
++// doesn&#39;t stop the others, whether rdd fails to create or to remove its node
++// VM, that a LimaVM name used in another namespace is a NameConflict, and
++// that a failed LimaVM create deletes the input ConfigMap, so the next pass
++// renders the template again.
+ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
+ 	env := testapiserver.Start(t)
+ 	ctx := logf.IntoContext(t.Context(), testr.New(t))
+@@ -683,8 +684,15 @@ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
+ 	// That cache keeps returning a-broken&#39;s input ConfigMap after the
+ 	// ConfigMap is deleted.
+ 	broken := true
++	unremovable := false
+ 	var cachedInput *corev1.ConfigMap
+ 	c := interceptor.NewClient(apiServer, interceptor.Funcs{
++		Update: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.UpdateOption) error {
++			if _, ok := obj.(*limav1alpha1.LimaVM); ok &amp;&amp; unremovable &amp;&amp; obj.GetName() == &quot;a-broken&quot; {
++				return apierrors.NewInternalError(errors.New(&quot;unremovable&quot;))
++			}
++			return c.Update(ctx, obj, opts...)
++		},
+ 		Create: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.CreateOption) error {
+ 			if _, ok := obj.(*limav1alpha1.LimaVM); ok &amp;&amp; broken &amp;&amp; obj.GetName() == &quot;a-broken&quot; {
+ 				return apierrors.NewInternalError(errors.New(&quot;broken&quot;))
+@@ -726,9 +734,8 @@ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
+ 	controlPlane.SetNamespace(&quot;default&quot;)
+ 	controlPlane.SetName(&quot;k3s&quot;)
+ 	assert.NilError(t, guest.Create(ctx, controlPlane))
+-	// The guest cluster lists LimaMachines by name, so the failing ones come
+-	// first.
+-	for _, name := range []string{&quot;a-broken&quot;, &quot;a-conflict&quot;, &quot;b-happy&quot;} {
++	createLimaMachine := func(name string) {
++		t.Helper()
+ 		machine := &amp;unstructured.Unstructured{Object: map[string]any{&quot;spec&quot;: map[string]any{
+ 			&quot;clusterName&quot;: &quot;k3s&quot;, &quot;bootstrap&quot;: map[string]any{&quot;dataSecretName&quot;: &quot;bootstrap&quot;},
+ 		}}}
+@@ -743,6 +750,11 @@ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
+ 			}},
+ 		}}))
+ 	}
++	// The guest cluster lists LimaMachines by name, so the failing ones come
++	// first.
++	for _, name := range []string{&quot;a-broken&quot;, &quot;a-conflict&quot;, &quot;b-happy&quot;} {
++		createLimaMachine(name)
++	}
+ 
+ 	_, err = r.Reconcile(ctx, req)
+ 	assert.ErrorContains(t, err, &quot;a-broken&quot;)
+@@ -768,6 +780,16 @@ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
+ 	assert.NilError(t, err)
+ 	assert.NilError(t, apiServer.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: &quot;a-broken&quot; + inputConfigMapSuffix}, &amp;corev1.ConfigMap{}),
+ 		&quot;a-broken&#39;s input ConfigMap&quot;)
++
++	// A deleted LimaMachine whose node VM rdd fails to remove doesn&#39;t hold
++	// back the LimaMachines after it either.
++	unremovable = true
++	assert.NilError(t, guest.Delete(ctx, &amp;capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{Namespace: &quot;default&quot;, Name: &quot;a-broken&quot;}}))
++	createLimaMachine(&quot;c-late&quot;)
++	_, err = r.Reconcile(ctx, req)
++	assert.ErrorContains(t, err, &quot;unremovable&quot;)
++	assert.NilError(t, c.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: &quot;c-late&quot;}, &amp;limav1alpha1.LimaVM{}),
++		&quot;c-late&#39;s node VM&quot;)
+ }
+ 
+ // guestKubeConfig returns a kubeconfig with full access to env.</code></pre>
+      </details>
+    </div>
+    <div class="card card-important" data-file="rdd/bats/tests/35-capi-controllers/lima-machine.bats">
+      <div class="finding-title" id="I3">
+        <span class="finding-num">I3.</span> A BATS comment says that Lima reports Running only after the boot scripts finish <span class="pill pill-codex">Codex GPT 6 Astra</span><a href="#I3" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/bats/tests/35-capi-controllers/lima-machine.bats#L251-L263">rdd/bats/tests/35-capi-controllers/lima-machine.bats</a></div>
+      <pre data-start="251" data-line="256-258"><code class="language-bash">}
+
+@test &quot;the install script does not run again when the node VM restarts&quot; {
+    rdd set --wait=false running=true
+    rdd ctl wait --for=condition=KubernetesReady app/&quot;${APP_NAME}&quot; --timeout=900s
+    # restartCount counts the times that the node VM reached Running, and Lima
+    # reports Running only after the boot scripts finish. So at 2, the
+    # restarted VM has finished its boot scripts.
+    rdd ctl wait --for=jsonpath=&#39;{.status.restartCount}&#39;=2 limavm/&quot;${MACHINE}&quot; \
+        --namespace=&quot;${RDD_APP_NAMESPACE}&quot; --timeout=600s
+    assert_install_script_ran_once
+}
+</code></pre>
+    <p>Round 1&#39;s S3 fix corrected this claim in the design doc (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L141"><code>capi-provider.md:141</code></a>) but left the test comment. Lima&#39;s hostagent waits for the boot scripts with 200 tries 3 seconds apart (<code>pkg/hostagent/requirements.go:44-45</code> in the pinned Lima fork). When that wait fails, <code>startHostAgentRoutines</code> returns an error, and the hostagent still reports Running with <code>Degraded</code> set (<code>hostagent.go:549-553</code>).</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L136-L146">rdd/docs/design/capi-provider.md</a></div>
+      <pre data-start="136" data-line="141"><code class="language-markdown">
+A `LimaVM` or `ConfigMap` in the `rancher-desktop` namespace that already has one of these names, but doesn&#39;t have a label with the `LimaMachine`&#39;s UID, belongs to something else. So does a `LimaVM` named `&lt;name&gt;` in any other namespace, because Lima instance names are unique on the host. RDD leaves such an object alone and sets the `NameConflict` reason. RDD&#39;s webhook rejects a `LimaVM` whose name is taken in any namespace, but that error would reach only RDD&#39;s log. So RDD checks the name itself before it creates the `LimaVM`, and the conflict shows as the `LimaMachine`&#39;s `Ready` reason.
+
+### Readiness
+
+RDD probes a node VM over SSH once its `LimaVM` reports `Running`. The probe reads the IPv4 address of `lima0`, the vzNAT interface, and checks for the guard&#39;s marker. Lima reports a VM as running once its boot scripts have run, whether or not they succeeded. It also reports the VM as running once it stops waiting for them. Lima doesn&#39;t report a failed boot script, and the `Degraded` status that it sets when it stops waiting doesn&#39;t reach the `LimaVM`. So RDD learns from the marker whether the install script succeeded, and it probes on every pass until it finds the marker. After that, RDD probes again only after a restart.
+
+Once the probe finds both the address and the marker, RDD sets the `LimaMachine`&#39;s `spec.providerID` to `k3s://lima-&lt;name&gt;`, the ID that k3s gives the `Node`, and puts the `lima0` address and the hostname in `status.addresses`. It then sets `status.initialization.provisioned` and marks the `LimaMachine` ready. RDD never unsets `provisioned`. Without the marker, the `Ready` reason is `BootstrapFailed`. A script that is still running can succeed later, and a failed one runs again at the next boot.
+
+The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
+</code></pre>
+    <p>rdd&#39;s hostagent watcher treats that event as Running, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L176"><code>limavm_lifecycle.go:176</code></a> increments <code>restartCount</code>. So a <code>restartCount</code> of 2 doesn&#39;t prove that the restarted VM finished its boot scripts.</p>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go#L171-L181">rdd/pkg/controllers/lima/limavm/controllers/limavm_lifecycle.go</a></div>
+      <pre data-start="171" data-line="176"><code class="language-go">		return ctrl.Result{}, nil
+
+	case phase == phaseRunning &amp;&amp; shouldRun:
+		if !base.HasConditionWithReason(limaVM.Status.Conditions, ConditionRunning, metav1.ConditionTrue, ReasonStarted) {
+			patch := client.MergeFrom(limaVM.DeepCopy())
+			limaVM.Status.RestartCount++
+			r.setCondition(ctx, limaVM, ConditionRunning, metav1.ConditionTrue, ReasonStarted, &quot;Lima instance is running&quot;)
+			if err := r.Status().Patch(ctx, limaVM, patch); err != nil {
+				logger.Error(err, &quot;Failed to update running condition&quot;)
+				return ctrl.Result{}, err
+			}</code></pre>
+    <p>Unproven: reaching the timeout path needs a boot that outlasts Lima&#39;s wait for the boot scripts, and the in-process tests can&#39;t get there. The evidence is the pinned Lima fork&#39;s source, cited above.</p>
+    <p>Fix: say what the wait guarantees.</p>
+      <details class="fold">
+        <summary>Patch</summary>
+      <pre><code class="language-diff">diff --git a/rdd/bats/tests/35-capi-controllers/lima-machine.bats b/rdd/bats/tests/35-capi-controllers/lima-machine.bats
+index 6350a0fe4..99295c6b2 100644
+--- a/rdd/bats/tests/35-capi-controllers/lima-machine.bats
++++ b/rdd/bats/tests/35-capi-controllers/lima-machine.bats
+@@ -253,9 +253,9 @@ EOF
+ @test &quot;the install script does not run again when the node VM restarts&quot; {
+     rdd set --wait=false running=true
+     rdd ctl wait --for=condition=KubernetesReady app/&quot;${APP_NAME}&quot; --timeout=900s
+-    # restartCount counts the times that the node VM reached Running, and Lima
+-    # reports Running only after the boot scripts finish. So at 2, the
+-    # restarted VM has finished its boot scripts.
++    # restartCount counts the times that the node VM reached Running. Lima
++    # reports Running once the boot scripts finish, or once its wait for them
++    # times out, so at 2 the restarted VM has usually finished them.
+     rdd ctl wait --for=jsonpath=&#39;{.status.restartCount}&#39;=2 limavm/&quot;${MACHINE}&quot; \
+         --namespace=&quot;${RDD_APP_NAMESPACE}&quot; --timeout=600s
+     assert_install_script_ran_once</code></pre>
+      </details>
+    </div>
+    <hr>
+    <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/capi/reconciler.go">
+      <div class="finding-title" id="S1">
+        <span class="finding-num">S1.</span> One LimaMachine&#39;s persistent control-plane error slows every LimaMachine&#39;s timed passes to one every 16m40s <span class="pill pill-claude">Claude Opus 5.5</span><a href="#S1" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/reconciler.go#L198-L209">rdd/pkg/controllers/app/capi/reconciler.go</a></div>
+      <pre data-start="198" data-line="203-204"><code class="language-go">
+	inProgress, err := r.reconcileLimaMachines(ctx, &amp;app, kubeSystem.UID)
+	if err != nil {
+		// reconcileLimaMachines joins the errors of all LimaMachines, so returning
+		// the joined error keeps every one of them in controller-runtime&#39;s log.
+		if _, ok := errors.AsType[*controlPlaneError](err); ok {
+			return ctrl.Result{}, err
+		}
+		log.V(1).Info(&quot;Cannot reconcile LimaMachines in the guest cluster&quot;, &quot;err&quot;, err)
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+	if inProgress {</code></pre>
+    <p>Any <code>controlPlaneError</code> in the joined result makes <code>Reconcile</code> return an error and no <code>RequeueAfter</code>. controller-runtime v0.24.1 drops the 5-second requeue and backs the App&#39;s key off from 5 ms to 1000 s (<code>pkg/internal/controller/controller.go:483-494</code>). Every request uses that key. So while one LimaMachine&#39;s create keeps failing, every step that only a timed pass drives slows for all of them. Those steps are noticing a new LimaMachine or its bootstrap Secret, and round 1&#39;s repeated probe. LimaVM and App events still start passes.</p>
+    <p>The probe injects the error from a leftover <code>&lt;name&gt;-template</code> ConfigMap. It&#39;s a Suggestion because the known persistent causes are rare.</p>
+      <details class="fold">
+        <summary>Reproducer</summary>
+      <pre><code class="language-go">// Save as rdd/pkg/controllers/app/capi/zz_probe_backoff_test.go; run from the repo root:
+// go -C rdd test -count=1 -run TestProbeBackoff -v ./pkg/controllers/app/capi/ | grep -E &#39;pass|failure|^(ok|FAIL)&#39;
+
+package capi
+
+import (
+	&quot;context&quot;
+	&quot;errors&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+	&quot;time&quot;
+
+	&quot;github.com/go-logr/logr/testr&quot;
+	&quot;gotest.tools/v3/assert&quot;
+	corev1 &quot;k8s.io/api/core/v1&quot;
+	apiextensionsv1 &quot;k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1&quot;
+	apiextensionsclientset &quot;k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset&quot;
+	apierrors &quot;k8s.io/apimachinery/pkg/api/errors&quot;
+	metav1 &quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;
+	&quot;k8s.io/apimachinery/pkg/apis/meta/v1/unstructured&quot;
+	k8sruntime &quot;k8s.io/apimachinery/pkg/runtime&quot;
+	&quot;k8s.io/apimachinery/pkg/runtime/schema&quot;
+	&quot;k8s.io/apimachinery/pkg/types&quot;
+	&quot;k8s.io/client-go/util/workqueue&quot;
+	ctrl &quot;sigs.k8s.io/controller-runtime&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client/fake&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/client/interceptor&quot;
+	logf &quot;sigs.k8s.io/controller-runtime/pkg/log&quot;
+	&quot;sigs.k8s.io/controller-runtime/pkg/reconcile&quot;
+
+	appv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1&quot;
+	limav1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1&quot;
+	capiv1alpha1 &quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/capi/v1alpha1&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/crds&quot;
+	&quot;github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/testapiserver&quot;
+)
+
+// TestProbeBackoff: one LimaMachine whose LimaVM create keeps failing, next
+// to one that waits for its bootstrap data. With the failing one present, a
+// pass returns an error and no RequeueAfter; without it, the pass requeues
+// after requeueInProgress.
+func TestProbeBackoff(t *testing.T) {
+	env := testapiserver.Start(t)
+	ctx := logf.IntoContext(t.Context(), testr.New(t))
+	clientset, err := apiextensionsclientset.NewForConfig(env.Config)
+	assert.NilError(t, err)
+	guestCRDs := clientset.ApiextensionsV1().CustomResourceDefinitions()
+	for _, crd := range []*apiextensionsv1.CustomResourceDefinition{
+		machineCRD(),
+		standInCRD(clusterGVK.Group, clusterGVK.Version, clusterGVK.Kind, &quot;clusters&quot;),
+		standInCRD(&quot;rke.cattle.io&quot;, &quot;v1&quot;, &quot;RKEControlPlane&quot;, &quot;rkecontrolplanes&quot;),
+	} {
+		_, err := guestCRDs.Create(ctx, crd, metav1.CreateOptions{})
+		assert.NilError(t, err)
+		assert.NilError(t, crds.WaitEstablished(ctx, guestCRDs, crd.Name, time.Minute))
+	}
+	k3sConfigPath := filepath.Join(t.TempDir(), &quot;k3s.yaml&quot;)
+	assert.NilError(t, os.WriteFile(k3sConfigPath, guestKubeConfig(t, env), 0o600))
+
+	scheme := k8sruntime.NewScheme()
+	assert.NilError(t, appv1alpha1.AddToScheme(scheme))
+	assert.NilError(t, corev1.AddToScheme(scheme))
+	assert.NilError(t, limav1alpha1.AddToScheme(scheme))
+	apiServer := fake.NewClientBuilder().WithScheme(scheme).WithObjects(newApp(metav1.ConditionTrue, metav1.ConditionTrue)).Build()
+	broken := true
+	c := interceptor.NewClient(apiServer, interceptor.Funcs{
+		Create: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.CreateOption) error {
+			if _, ok := obj.(*limav1alpha1.LimaVM); ok &amp;&amp; broken &amp;&amp; obj.GetName() == &quot;a-broken&quot; {
+				// What rdd&#39;s LimaVM defaulter returns when &lt;name&gt;-template is left over.
+				return apierrors.NewForbidden(schema.GroupResource{Group: &quot;lima.rancherdesktop.io&quot;, Resource: &quot;limavms&quot;}, &quot;a-broken&quot;,
+					errors.New(&quot;failed to create template ConfigMap: configmaps \&quot;a-broken-template\&quot; already exists&quot;))
+			}
+			return c.Create(ctx, obj, opts...)
+		},
+	})
+	r := &amp;Reconciler{Client: c, apiReader: apiServer, K3sConfigPath: k3sConfigPath, LimaHome: &quot;/l&quot;}
+	req := ctrl.Request{NamespacedName: types.NamespacedName{Name: appName}}
+	_, err = r.Reconcile(ctx, req)
+	assert.NilError(t, err)
+
+	guest, err := client.New(env.Config, client.Options{Scheme: guestScheme})
+	assert.NilError(t, err)
+	assert.NilError(t, guest.Create(ctx, &amp;corev1.Secret{
+		Namespace: &quot;default&quot;, Name: &quot;bootstrap&quot;,
+		Data: map[string][]byte{&quot;value&quot;: cloudConfigFor(&quot;&quot;, gzipBase64(t, []byte(&quot;true\n&quot;)), &quot;&quot;, &quot;&quot;)},
+	}))
+	cluster := &amp;unstructured.Unstructured{Object: map[string]any{&quot;spec&quot;: map[string]any{
+		&quot;controlPlaneRef&quot;: map[string]any{&quot;apiGroup&quot;: &quot;rke.cattle.io&quot;, &quot;kind&quot;: &quot;RKEControlPlane&quot;, &quot;name&quot;: &quot;k3s&quot;},
+	}}}
+	cluster.SetGroupVersionKind(clusterGVK)
+	cluster.SetNamespace(&quot;default&quot;)
+	cluster.SetName(&quot;k3s&quot;)
+	assert.NilError(t, guest.Create(ctx, cluster))
+	controlPlane := &amp;unstructured.Unstructured{Object: map[string]any{&quot;spec&quot;: map[string]any{&quot;kubernetesVersion&quot;: &quot;v1.36.6+k3s1&quot;}}}
+	controlPlane.SetGroupVersionKind(schema.GroupVersionKind{Group: &quot;rke.cattle.io&quot;, Version: &quot;v1&quot;, Kind: &quot;RKEControlPlane&quot;})
+	controlPlane.SetNamespace(&quot;default&quot;)
+	controlPlane.SetName(&quot;k3s&quot;)
+	assert.NilError(t, guest.Create(ctx, controlPlane))
+	// b-waiting&#39;s Machine names a bootstrap Secret that doesn&#39;t exist yet.
+	for name, secret := range map[string]string{&quot;a-broken&quot;: &quot;bootstrap&quot;, &quot;b-waiting&quot;: &quot;not-yet&quot;} {
+		machine := &amp;unstructured.Unstructured{Object: map[string]any{&quot;spec&quot;: map[string]any{
+			&quot;clusterName&quot;: &quot;k3s&quot;, &quot;bootstrap&quot;: map[string]any{&quot;dataSecretName&quot;: secret},
+		}}}
+		machine.SetGroupVersionKind(machineGVK)
+		machine.SetNamespace(&quot;default&quot;)
+		machine.SetName(name)
+		assert.NilError(t, guest.Create(ctx, machine))
+		assert.NilError(t, guest.Create(ctx, &amp;capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{
+			Namespace: &quot;default&quot;, Name: name,
+			OwnerReferences: []metav1.OwnerReference{{
+				APIVersion: machineGVK.GroupVersion().String(), Kind: machineGVK.Kind, Name: name, UID: machine.GetUID(),
+			}},
+		}}))
+	}
+
+	for pass := 1; pass &lt;= 3; pass++ {
+		result, err := r.Reconcile(ctx, req)
+		t.Logf(&quot;broken pass %d: RequeueAfter=%v err=%v&quot;, pass, result.RequeueAfter, err)
+	}
+	broken = false
+	result, err := r.Reconcile(ctx, req)
+	t.Logf(&quot;fixed pass:     RequeueAfter=%v err=%v&quot;, result.RequeueAfter, err)
+
+	// controller-runtime&#39;s default per-item limiter, which an error return feeds.
+	limiter := workqueue.DefaultTypedControllerRateLimiter[reconcile.Request]()
+	var total time.Duration
+	for failure := 1; failure &lt;= 20; failure++ {
+		d := limiter.When(req)
+		total += d
+		if failure%4 == 0 || failure &gt;= 17 {
+			t.Logf(&quot;failure %2d: next pass after %v (elapsed %v)&quot;, failure, d, total.Round(time.Second))
+		}
+	}
+}</code></pre>
+      <pre><code class="language-text">$ go -C rdd test -count=1 -run TestProbeBackoff -v ./pkg/controllers/app/capi/ | grep -E &#39;pass|failure|^(ok|FAIL)&#39;
+    zz_probe_backoff_test.go:120: broken pass 1: RequeueAfter=0s err=create rancher-desktop/a-broken: limavms.lima.rancherdesktop.io &quot;a-broken&quot; is forbidden: failed to create template ConfigMap: configmaps &quot;a-broken-template&quot; already exists
+    zz_probe_backoff_test.go:120: broken pass 2: RequeueAfter=0s err=create rancher-desktop/a-broken: limavms.lima.rancherdesktop.io &quot;a-broken&quot; is forbidden: failed to create template ConfigMap: configmaps &quot;a-broken-template&quot; already exists
+    zz_probe_backoff_test.go:120: broken pass 3: RequeueAfter=0s err=create rancher-desktop/a-broken: limavms.lima.rancherdesktop.io &quot;a-broken&quot; is forbidden: failed to create template ConfigMap: configmaps &quot;a-broken-template&quot; already exists
+    zz_probe_backoff_test.go:124: fixed pass:     RequeueAfter=5s err=&lt;nil&gt;
+    zz_probe_backoff_test.go:133: failure  4: next pass after 40ms (elapsed 0s)
+    zz_probe_backoff_test.go:133: failure  8: next pass after 640ms (elapsed 1s)
+    zz_probe_backoff_test.go:133: failure 12: next pass after 10.24s (elapsed 20s)
+    zz_probe_backoff_test.go:133: failure 16: next pass after 2m43.84s (elapsed 5m28s)
+    zz_probe_backoff_test.go:133: failure 17: next pass after 5m27.68s (elapsed 10m55s)
+    zz_probe_backoff_test.go:133: failure 18: next pass after 10m55.36s (elapsed 21m51s)
+    zz_probe_backoff_test.go:133: failure 19: next pass after 16m40s (elapsed 38m31s)
+    zz_probe_backoff_test.go:133: failure 20: next pass after 16m40s (elapsed 55m11s)
+ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	9.235s</code></pre>
+      </details>
+    <p>Fix: limit the backoff to <code>requeueIdle</code> in <code>SetupWithManager</code>, with <code>WithOptions</code> and <code>workqueue.NewTypedItemExponentialFailureRateLimiter[reconcile.Request](5*time.Millisecond, requeueIdle)</code>. This package declares a <code>controller</code> type, so the import needs an alias. Or return an error only when rdd&#39;s API server fails, and report a create rejection in that LimaMachine&#39;s <code>Ready</code>. The maintainers haven&#39;t picked one.</p>
+    </div>
+    <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/capi/limamachine.go">
+      <div class="finding-title" id="S2">
+        <span class="finding-num">S2.</span> Six more branches that round 1&#39;s fixes added have no test <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S2" class="pilcrow">&#182;</a>
+      </div>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L125-L135">rdd/pkg/controllers/app/capi/limamachine.go</a></div>
+      <pre data-start="125" data-line="130"><code class="language-go">			continue
+		}
+		// As in reconcileLimaClusters, a LimaMachine that changed since the
+		// List fails the update, and the next pass retries.
+		if err := r.guestClient.Status().Update(ctx, machine); err != nil {
+			errs = append(errs, fmt.Errorf(&quot;update LimaMachine %s/%s status: %w&quot;, machine.Namespace, machine.Name, err))
+		}
+	}
+	return inProgress, errors.Join(errs...)
+}
+</code></pre>
+    <p>Each of these mutations leaves the three reconcile tests green:</p>
+    <ul>
+      <li>returning on a failed status update here;</li>
+      <li>keeping only the first error instead of <code>errors.Join</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L133"><code>limamachine.go:133</code></a>);</li>
+      <li>returning <code>cpErr.err</code> from <code>Reconcile</code> instead of the joined error (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/reconciler.go#L204"><code>reconciler.go:204</code></a>);</li>
+      <li>dropping the <code>errors.Join</code> after a failed input ConfigMap delete (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L355-L356"><code>limamachine.go:355-356</code></a>);</li>
+      <li>letting a probe that finds no address drop the boot&#39;s last result (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L246-L256"><code>limamachine.go:246-256</code></a>);</li>
+      <li>returning a guest-only error from <code>Reconcile</code> instead of requeueing (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/reconciler.go#L206-L207"><code>reconciler.go:206-207</code></a>).</li>
+    </ul>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L128-L138">rdd/pkg/controllers/app/capi/limamachine.go</a></div>
+      <pre data-start="128" data-line="133"><code class="language-go">		// List fails the update, and the next pass retries.
+		if err := r.guestClient.Status().Update(ctx, machine); err != nil {
+			errs = append(errs, fmt.Errorf(&quot;update LimaMachine %s/%s status: %w&quot;, machine.Namespace, machine.Name, err))
+		}
+	}
+	return inProgress, errors.Join(errs...)
+}
+
+// provisionLimaMachine creates the node VM of machine once rdd has everything
+// that the VM needs. Once the VM runs and its install script has succeeded,
+// it writes machine&#39;s provider ID to the guest cluster, and it sets machine&#39;s</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L241-L261">rdd/pkg/controllers/app/capi/limamachine.go</a></div>
+      <pre data-start="241" data-line="246-256"><code class="language-go">		switch {
+		case err != nil:
+			// The error can quote the VM&#39;s Lima template, which holds the
+			// registration token, so it stays out of the message.
+			log.V(1).Info(&quot;Cannot probe the node VM&quot;, &quot;limaVM&quot;, vmKey, &quot;err&quot;, err)
+		case status.address != &quot;&quot;:
+			probe = probeRecord{restartCount: vm.Status.RestartCount, status: status}
+			if r.probes == nil {
+				r.probes = make(map[types.UID]probeRecord)
+			}
+			r.probes[machine.UID] = probe
+			ok = true
+		}
+		if !ok {
+			return capiv1alpha1.ProvisioningReason, provisioning, nil
+		}
+	}
+	if !probe.status.bootstrapped {
+		return capiv1alpha1.BootstrapFailedReason, &quot;The install script has not succeeded in the node VM yet; a failed script runs again when the VM restarts&quot;, nil
+	}
+</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L350-L361">rdd/pkg/controllers/app/capi/limamachine.go</a></div>
+      <pre data-start="350" data-line="355-356"><code class="language-go">		},
+	}
+	if err := r.createOwnedByApp(ctx, app, &amp;vm); err != nil {
+		// Without the input ConfigMap, the next pass renders the template
+		// again, so a corrected spec takes effect.
+		if deleteErr := client.IgnoreNotFound(r.Delete(ctx, &amp;input)); deleteErr != nil {
+			return &quot;&quot;, &quot;&quot;, errors.Join(err, &amp;controlPlaneError{fmt.Errorf(&quot;delete ConfigMap %s: %w&quot;, inputKey, deleteErr)})
+		}
+		return &quot;&quot;, &quot;&quot;, err
+	}
+	return capiv1alpha1.ProvisioningReason, &quot;Creating the node VM&quot;, nil
+}</code></pre>
+      <div class="code-file-header"><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/reconciler.go#L199-L212">rdd/pkg/controllers/app/capi/reconciler.go</a></div>
+      <pre data-start="199" data-line="204-207"><code class="language-go">	inProgress, err := r.reconcileLimaMachines(ctx, &amp;app, kubeSystem.UID)
+	if err != nil {
+		// reconcileLimaMachines joins the errors of all LimaMachines, so returning
+		// the joined error keeps every one of them in controller-runtime&#39;s log.
+		if _, ok := errors.AsType[*controlPlaneError](err); ok {
+			return ctrl.Result{}, err
+		}
+		log.V(1).Info(&quot;Cannot reconcile LimaMachines in the guest cluster&quot;, &quot;err&quot;, err)
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+	if inProgress {
+		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
+	}
+	return ctrl.Result{RequeueAfter: requeueIdle}, nil</code></pre>
+    <p>Each failure either clears within a pass or two or changes only what rdd logs, so these tests are optional.</p>
+    <p>Fix: in <code>TestReconcileLimaMachinesFailedVM</code>, give two LimaMachines control-plane errors and assert that the returned error names both, and make one status update and one input ConfigMap delete fail. Add a stub-probe step that returns no address and no error, and a guest-only error through <code>Reconcile</code>.</p>
+    </div>
+    <div class="card card-suggestion" data-file="d68651047">
+      <div class="finding-title" id="S3">
+        <span class="finding-num">S3.</span> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d68651047"><code>d68651047</code></a>&#39;s message doesn&#39;t describe the I1 fix that it absorbed <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span><a href="#S3" class="pilcrow">&#182;</a>
+      </div>
+    <p>Folding round 1&#39;s fixes moved its I1 fix into this commit. That fix is the loop that continues past a failed LimaMachine, the cross-namespace <code>NameConflict</code> check, the deletion of the input ConfigMap after a failed create, and the uncached read of that ConfigMap. The message still describes only node VM creation. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a> has the test for round 1&#39;s I1, and round 1 deferred folding that commit to the branch split.</p>
+    <p>Fix: add a paragraph to the message, for example: &quot;A LimaMachine whose node VM rdd can&#39;t create or remove must not hold back the others. When a LimaVM in another namespace already uses the name, report <code>NameConflict</code> before the webhook rejects the create. After a failed create, delete the input ConfigMap, so a corrected spec renders again.&quot;</p>
+    </div>
+    <hr>
+    <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-design">
+    <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>(in-scope) In the same pass, <code>collectGarbage</code> repeats from the cache what <code>removeOtherClusterNodeObjects</code> already did. A cached LimaVM that still shows its owned finalizer gets a second <code>Update</code> from <code>base.RemoveOwnedFinalizer</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/base/finalizer.go#L84"><code>finalizer.go:84</code></a>) with a stale resourceVersion, and the 409 ends the pass before the LimaMachine loop runs. The next pass, 5 ms later, recovers. It takes a change of the guest cluster&#39;s UID with Cluster API present, and round 1 found that no user action changes that UID while the App exists. Dropping the other-cluster case from <code>collectGarbage</code>&#39;s predicate would give each removal reason one owner. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(in-scope) Open question: rd-init queues a restart of every unit before READY, the mount units included (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/src/rd-init/main.go#L86"><code>rdd/src/rd-init/main.go:86</code></a>, <code>:93</code>). The maintainers haven&#39;t ruled on restarting every unit versus only the networking ones. <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>(in-scope) Reading the input ConfigMap through <code>apiReader</code> covers the one case that the cache gets wrong, the 5 ms retry after a failed create, and the interceptor in <code>TestReconcileLimaMachinesFailedVM</code> models that cache. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+      <li>(in-scope) The cross-namespace name check reports the conflict in the LimaMachine&#39;s <code>Ready</code> condition, where the webhook&#39;s rejection would have shown up only in rdd&#39;s log. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li>(in-scope) Removing another guest cluster&#39;s node VMs before the Cluster API check means that a replacement cluster without Cluster API doesn&#39;t leave them running. <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="testing-assessment">Testing Assessment <a href="#testing-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Before launch, <code>make -C rdd generate</code> left the tree unchanged. <code>go vet</code> on the changed packages (and on rd-init with <code>GOOS=linux</code>), <code>go mod tidy -diff</code>, and <code>go test -race</code> on the nine changed packages all passed. rd-init&#39;s tests build only on Linux, so they didn&#39;t run. With all three patches applied to a clean tree, <code>go test -race</code> passed for <code>pkg/capi/...</code> and <code>pkg/controllers/app/capi/...</code>, and <code>golangci-lint</code> reported 0 issues for both. In CI, every BATS job on the review SHA passed except macOS <code>bats-capi</code>, whose runner lost contact with GitHub partway through (a known flake), so that job doesn&#39;t have a result. The same job passed on round 1&#39;s SHA.</p>
+    <ol>
+      <li>I1: required. A user wouldn&#39;t see the failure, because, without the rules, the webhook&#39;s rejection shows up only in rdd&#39;s log.</li>
+      <li>I2: required. A failed removal would stall every LimaMachine listed after it, and which ones those are depends on the order of the guest cluster&#39;s list.</li>
+      <li>S2: optional. Each mutation either still logs an error or clears on the next pass.</li>
+    </ol>
+    <p>Existing tests already pin the other round-1 guards. <code>TestReconcileLimaMachinesFailedVM</code> pins the cross-namespace check, the input ConfigMap deletion after a failed create, the <code>apiReader</code> read, and the create path&#39;s <code>continue</code>. Step c of <code>TestReconcile</code> pins removing another guest cluster&#39;s node objects before the Cluster API check. <code>TestReconcileLimaMachines</code> pins the repeated probe, and <code>TestValidateMachineName</code> pins the dot check.</p>
+    <p>A row for <code>_</code> in <code>TestValidateMachineName</code> isn&#39;t needed. The API server validates every custom resource name as a DNS subdomain (<code>apiextensions-apiserver</code> v0.36.4, <code>pkg/registry/customresource/validator.go:53</code>), so a LimaMachine name can&#39;t contain <code>_</code>.</p>
+    </div>
+    <hr>
+    <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>The only wrong statement is I3&#39;s BATS comment, which Lima&#39;s hostagent contradicts.</li>
+      <li>The design doc matches the code after the round-1 fixes. Two gaps are already tracked. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L71"><code>capi-provider.md:71</code></a> doesn&#39;t say that a <code>BootstrapFailed</code> LimaMachine doesn&#39;t count as waiting, and the failure message&#39;s <code>rdd ctl</code> command (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L223"><code>limamachine.go:223</code></a>) lacks <code>--instance</code>.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <ul>
+      <li>S3.</li>
+      <li>Folding <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a> into the commits that it corrects, and moving <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a> into its own PR, wait for the branch split, as round 1 recorded.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 1&#39;s entries, each confirmed this round:</p>
+    <ul>
+      <li>The provider ignores a paused cluster and the <code>cluster.x-k8s.io/managed-by</code> label (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L189"><code>capi-provider.md:189</code></a>), as ruled. The code under <code>pkg/controllers/app/capi</code> doesn&#39;t read either.</li>
+      <li>A CRD deleted by hand comes back only after rdd restarts or <code>k3s.yaml</code> changes (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L94"><code>capi-provider.md:94</code></a>).</li>
+      <li>A failed install runs again only at the next boot, and the first boot needs the openSUSE package repositories (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L119-L121"><code>capi-provider.md:119-121</code></a>). Round 1&#39;s S3 fix probes again but doesn&#39;t run the script again.</li>
+      <li>The token can reach the host log only if Lima fails to parse a template that it marshalled itself (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L185"><code>capi-provider.md:185</code></a>).</li>
+      <li>New LimaClusters and LimaMachines can wait up to 30 seconds, because the reconciler polls the guest cluster (<code>reconciler.go:62-66</code>), and longer while S1&#39;s backoff applies.</li>
+      <li>Do not re-suggest a race on <code>os.Setenv(&quot;LIMA_HOME&quot;)</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/controller_darwin.go#L54"><code>controller_darwin.go:54</code></a>). Go guards its environment with <code>syscall.envLock</code>, and the lima controller sets the same variable to the same value.</li>
+      <li>Do not re-suggest reading <code>controlPlaneRef.namespace</code> or <code>controlPlaneRef.apiVersion</code>. Cluster API v1beta2&#39;s <code>controlPlaneRef</code> has <code>apiGroup</code> and no namespace.</li>
+      <li>Do not re-suggest listing rdd&#39;s datastore as another place that keeps the token. The <code>&lt;name&gt;-template</code> copy keeps the token in the same datastore for the VM&#39;s life, and the doc lists it.</li>
+    </ul>
+    <p>Declined in prior rounds:</p>
+    <ul>
+      <li>The single worker probes node VMs one at a time — declined Round 1: future work, tracked separately.</li>
+      <li>Fold <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2dcb6e30b"><code>2dcb6e30b</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>) into the commits it corrects — declined Round 1: done when the branch is split into PRs.</li>
+      <li>Move <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ef7545810"><code>ef7545810</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a>) into its own PR — declined Round 1: done when the branch is split into PRs.</li>
+    </ul>
+    <p>New this round:</p>
+    <ul>
+      <li>Do not re-suggest testing or documenting <code>_</code> in LimaMachine names. The API server rejects <code>_</code> in every custom resource name.</li>
+      <li>Do not re-suggest <code>|| return 1</code> in <code>assert_guest_to_guest_route</code>. The <code>@test</code> bodies call it directly, so errexit stops at a failed assertion, and the file hasn&#39;t changed since round 1 dropped the same finding.</li>
+    </ul>
+    </div>
+    <hr>
+    <h2 id="agent-performance-retro">Agent Performance Retro <a href="#agent-performance-retro" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <h3 id="claude-opus-5-5"><span class="pill pill-claude">Claude Opus 5.5</span> <a href="#claude-opus-5-5" class="pilcrow">&#182;</a></h3>
+    <p>Claude found the CEL test gap (I1) with a probe that runs the API server&#39;s own CEL validator, and it was the only reviewer to trace the backoff (S1) through controller-runtime&#39;s source and compile a fix. It also raised the stale-cache concern and part of S2. Its proposed test covered <code>memory</code> and <code>disk</code> only, and it missed the <code>cpus</code> minimum and the LimaMachineTemplate CRD. It reasoned S1 from source without running it; the consolidator&#39;s probe confirmed the mechanism.</p>
+    <h3 id="codex-gpt-6-astra"><span class="pill pill-codex">Codex GPT 6 Astra</span> <a href="#codex-gpt-6-astra" class="pilcrow">&#182;</a></h3>
+    <p>Codex covered the most ground. Its I1 test gap included both CRDs and the <code>cpus</code> minimum, it alone named the deletion path (I2), and it alone caught the BATS comment that round 1&#39;s S3 fix left behind (I3). Its probes ran with control cases, among them a mutation that keeps only the first error. Its I1 put required and optional test gaps at one severity, and the consolidation split them into I2 and S2. Its underscore test row was dropped, because the API server rejects <code>_</code> in names.</p>
+    <h3 id="gemini-3-1-pro"><span class="pill pill-gemini">Gemini 3.1 Pro</span> <a href="#gemini-3-1-pro" class="pilcrow">&#182;</a></h3>
+    <p>Gemini 3.1 Pro reached its quota 19 commands in, and the CLI reported a reset after 17h47m42s, so it was dropped from this round and didn&#39;t produce a review.</p>
+    <h3 id="gemini-3-5-flash"><span class="pill pill-gemini">Gemini 3.5 Flash</span> <a href="#gemini-3-5-flash" class="pilcrow">&#182;</a></h3>
+    <p>Flash found the CEL test gap and part of S2. It re-raised round 1&#39;s dropped <code>|| return 1</code> finding against a file that hasn&#39;t changed, and it rated a documentation omission about <code>_</code> as Important, although no LimaMachine name can contain one. Its command log doesn&#39;t show a run of <code>TestValidateMachineNameUnderscore</code>, so the passing output that it quotes for that test didn&#39;t come from a run. Two of its <code>git diff</code> commands were refused by policy.</p>
+    <h3 id="summary">Summary <a href="#summary" class="pilcrow">&#182;</a></h3>
+    <table class="retro-table">
+      <thead><tr><th></th><th><span class="pill pill-claude">Claude Opus 5.5</span></th><th><span class="pill pill-codex">Codex GPT 6 Astra</span></th><th><span class="pill pill-gemini">Gemini 3.1 Pro</span></th><th><span class="pill pill-gemini">Gemini 3.5 Flash</span></th></tr></thead>
+      <tbody>
+        <tr><td>Duration</td><td>13m 01s</td><td>13m 19s</td><td>4m 50s</td><td>17m 25s</td></tr>
+        <tr><td>Findings</td><td>1I 3S</td><td>3I 2S</td><td>—</td><td>1I 2S</td></tr>
+        <tr><td>Tool calls</td><td>61 (Bash 54, Read 7)</td><td>33 (shell 29, stdin 4)</td><td>19 (run<em>shell</em>command 19)</td><td>112 (read<em>file 46, grep</em>search 33, run<em>shell</em>command 29)</td></tr>
+        <tr><td>Design observations</td><td>3</td><td>4</td><td>—</td><td>4</td></tr>
+        <tr><td>False positives</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>Unique insights</td><td>2</td><td>2</td><td>0</td><td>0</td></tr>
+        <tr><td>Files reviewed</td><td>50</td><td>50</td><td>—</td><td>50</td></tr>
+        <tr><td>Coverage misses</td><td>0</td><td>0</td><td>—</td><td>0</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>1I 3S</strong></td><td><strong>3I 2S</strong></td><td><strong>none</strong></td><td><strong>1I 2S</strong></td></tr>
+        <tr><td>Downgraded</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>Dropped</td><td>0</td><td>1</td><td>0</td><td>2</td></tr>
+      </tbody>
+    </table>
+    <p>Codex and Claude provided nearly all the value. Codex found two of the three Important findings alone, and Claude found the one Suggestion that needed controller-runtime&#39;s source. Flash agreed with both on the CEL gap, but its other two Important claims didn&#39;t hold.</p>
+    <p>Reconciliation: Codex pass 1 I1 (failure isolation): split into I2 (important) and S2 (important → suggestion). Codex pass 1 S1 (underscore row): suggestion → dropped. Gemini 3.5 Flash pass 1 I2 (<code>_</code> in the design doc): important → dropped. Gemini 3.5 Flash pass 1 I3 (<code>|| return 1</code>): important → rejected, as in round 1. Gemini 3.5 Flash pass 1 S1 (underscore row): suggestion → dropped.</p>
+    </div>
+    <hr>
+    <h2 id="review-process-notes">Review Process Notes <a href="#review-process-notes" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>S3 is about a commit message, so it cites the commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d68651047"><code>d68651047</code></a> rather than a file, and the citation lint&#39;s one unresolved warning is for that finding.</p>
+    <h3 id="repo-context-updates">Repo context updates <a href="#repo-context-updates" class="pilcrow">&#182;</a></h3>
+    <ul>
+      <li>[repo] The API server validates every custom resource&#39;s name as a DNS subdomain (<code>apiextensions-apiserver</code>, <code>pkg/registry/customresource/validator.go</code>), so a name can&#39;t contain <code>_</code>, uppercase letters or other characters outside <code>[a-z0-9.-]</code>. Rate a finding, test gap or doc gap about such characters in a custom resource&#39;s name as unreachable.</li>
+      <li>[repo] controller-runtime ignores <code>RequeueAfter</code> whenever <code>Reconcile</code> returns an error, and backs the request&#39;s key off from 5 ms to 1000 s until a pass succeeds. A reconciler that maps every object to one request key slows every object&#39;s time-driven work while any one object keeps failing. Flag a returned error in such a reconciler when other objects depend on its timed requeue.</li>
+    </ul>
+    </div>
+  </main>
+  <script>window.Prism = window.Prism || {}; Prism.manual = true;</script>
+  <script>
+/**
+ * Minified by jsDelivr using Terser v5.39.0.
+ * Original file: /npm/prismjs@1.29.0/prism.js
+ *
+ * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+ */
+var _self="undefined"!=typeof window?window:"undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?self:{},Prism=function(e){var t=/(?:^|\s)lang(?:uage)?-([\w-]+)(?=\s|$)/i,n=0,a={},r={manual:e.Prism&&e.Prism.manual,disableWorkerMessageHandler:e.Prism&&e.Prism.disableWorkerMessageHandler,util:{encode:function e(t){return t instanceof s?new s(t.type,e(t.content),t.alias):Array.isArray(t)?t.map(e):t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\u00a0/g," ")},type:function(e){return Object.prototype.toString.call(e).slice(8,-1)},objId:function(e){return e.__id||Object.defineProperty(e,"__id",{value:++n}),e.__id},clone:function e(t,n){var a,s;switch(n=n||{},r.util.type(t)){case"Object":if(s=r.util.objId(t),n[s])return n[s];for(var i in a={},n[s]=a,t)t.hasOwnProperty(i)&&(a[i]=e(t[i],n));return a;case"Array":return s=r.util.objId(t),n[s]?n[s]:(a=[],n[s]=a,t.forEach((function(t,r){a[r]=e(t,n)})),a);default:return t}},getLanguage:function(e){for(;e;){var n=t.exec(e.className);if(n)return n[1].toLowerCase();e=e.parentElement}return"none"},setLanguage:function(e,n){e.className=e.className.replace(RegExp(t,"gi"),""),e.classList.add("language-"+n)},currentScript:function(){if("undefined"==typeof document)return null;if("currentScript"in document)return document.currentScript;try{throw new Error}catch(a){var e=(/at [^(\r\n]*\((.*):[^:]+:[^:]+\)$/i.exec(a.stack)||[])[1];if(e){var t=document.getElementsByTagName("script");for(var n in t)if(t[n].src==e)return t[n]}return null}},isActive:function(e,t,n){for(var a="no-"+t;e;){var r=e.classList;if(r.contains(t))return!0;if(r.contains(a))return!1;e=e.parentElement}return!!n}},languages:{plain:a,plaintext:a,text:a,txt:a,extend:function(e,t){var n=r.util.clone(r.languages[e]);for(var a in t)n[a]=t[a];return n},insertBefore:function(e,t,n,a){var s=(a=a||r.languages)[e],i={};for(var o in s)if(s.hasOwnProperty(o)){if(o==t)for(var l in n)n.hasOwnProperty(l)&&(i[l]=n[l]);n.hasOwnProperty(o)||(i[o]=s[o])}var u=a[e];return a[e]=i,r.languages.DFS(r.languages,(function(t,n){n===u&&t!=e&&(this[t]=i)})),i},DFS:function e(t,n,a,s){s=s||{};var i=r.util.objId;for(var o in t)if(t.hasOwnProperty(o)){n.call(t,o,t[o],a||o);var l=t[o],u=r.util.type(l);"Object"!==u||s[i(l)]?"Array"!==u||s[i(l)]||(s[i(l)]=!0,e(l,n,o,s)):(s[i(l)]=!0,e(l,n,null,s))}}},plugins:{},highlightAll:function(e,t){r.highlightAllUnder(document,e,t)},highlightAllUnder:function(e,t,n){var a={callback:n,container:e,selector:'code[class*="language-"], [class*="language-"] code, code[class*="lang-"], [class*="lang-"] code'};r.hooks.run("before-highlightall",a),a.elements=Array.prototype.slice.apply(a.container.querySelectorAll(a.selector)),r.hooks.run("before-all-elements-highlight",a);for(var s,i=0;s=a.elements[i++];)r.highlightElement(s,!0===t,a.callback)},highlightElement:function(t,n,a){var s=r.util.getLanguage(t),i=r.languages[s];r.util.setLanguage(t,s);var o=t.parentElement;o&&"pre"===o.nodeName.toLowerCase()&&r.util.setLanguage(o,s);var l={element:t,language:s,grammar:i,code:t.textContent};function u(e){l.highlightedCode=e,r.hooks.run("before-insert",l),l.element.innerHTML=l.highlightedCode,r.hooks.run("after-highlight",l),r.hooks.run("complete",l),a&&a.call(l.element)}if(r.hooks.run("before-sanity-check",l),(o=l.element.parentElement)&&"pre"===o.nodeName.toLowerCase()&&!o.hasAttribute("tabindex")&&o.setAttribute("tabindex","0"),!l.code)return r.hooks.run("complete",l),void(a&&a.call(l.element));if(r.hooks.run("before-highlight",l),l.grammar)if(n&&e.Worker){var g=new Worker(r.filename);g.onmessage=function(e){u(e.data)},g.postMessage(JSON.stringify({language:l.language,code:l.code,immediateClose:!0}))}else u(r.highlight(l.code,l.grammar,l.language));else u(r.util.encode(l.code))},highlight:function(e,t,n){var a={code:e,grammar:t,language:n};if(r.hooks.run("before-tokenize",a),!a.grammar)throw new Error('The language "'+a.language+'" has no grammar.');return a.tokens=r.tokenize(a.code,a.grammar),r.hooks.run("after-tokenize",a),s.stringify(r.util.encode(a.tokens),a.language)},tokenize:function(e,t){var n=t.rest;if(n){for(var a in n)t[a]=n[a];delete t.rest}var r=new l;return u(r,r.head,e),o(e,r,t,r.head,0),function(e){var t=[],n=e.head.next;for(;n!==e.tail;)t.push(n.value),n=n.next;return t}(r)},hooks:{all:{},add:function(e,t){var n=r.hooks.all;n[e]=n[e]||[],n[e].push(t)},run:function(e,t){var n=r.hooks.all[e];if(n&&n.length)for(var a,s=0;a=n[s++];)a(t)}},Token:s};function s(e,t,n,a){this.type=e,this.content=t,this.alias=n,this.length=0|(a||"").length}function i(e,t,n,a){e.lastIndex=t;var r=e.exec(n);if(r&&a&&r[1]){var s=r[1].length;r.index+=s,r[0]=r[0].slice(s)}return r}function o(e,t,n,a,l,c){for(var d in n)if(n.hasOwnProperty(d)&&n[d]){var p=n[d];p=Array.isArray(p)?p:[p];for(var m=0;m<p.length;++m){if(c&&c.cause==d+","+m)return;var h=p[m],f=h.inside,v=!!h.lookbehind,b=!!h.greedy,y=h.alias;if(b&&!h.pattern.global){var F=h.pattern.toString().match(/[imsuy]*$/)[0];h.pattern=RegExp(h.pattern.source,F+"g")}for(var x=h.pattern||h,k=a.next,w=l;k!==t.tail&&!(c&&w>=c.reach);w+=k.value.length,k=k.next){var A=k.value;if(t.length>e.length)return;if(!(A instanceof s)){var P,$=1;if(b){if(!(P=i(x,w,e,v))||P.index>=e.length)break;var S=P.index,E=P.index+P[0].length,_=w;for(_+=k.value.length;S>=_;)_+=(k=k.next).value.length;if(w=_-=k.value.length,k.value instanceof s)continue;for(var j=k;j!==t.tail&&(_<E||"string"==typeof j.value);j=j.next)$++,_+=j.value.length;$--,A=e.slice(w,_),P.index-=w}else if(!(P=i(x,0,A,v)))continue;S=P.index;var C=P[0],L=A.slice(0,S),z=A.slice(S+C.length),O=w+A.length;c&&O>c.reach&&(c.reach=O);var T=k.prev;if(L&&(T=u(t,T,L),w+=L.length),g(t,T,$),k=u(t,T,new s(d,f?r.tokenize(C,f):C,y,C)),z&&u(t,k,z),$>1){var M={cause:d+","+m,reach:O};o(e,t,n,k.prev,w,M),c&&M.reach>c.reach&&(c.reach=M.reach)}}}}}}function l(){var e={value:null,prev:null,next:null},t={value:null,prev:e,next:null};e.next=t,this.head=e,this.tail=t,this.length=0}function u(e,t,n){var a=t.next,r={value:n,prev:t,next:a};return t.next=r,a.prev=r,e.length++,r}function g(e,t,n){for(var a=t.next,r=0;r<n&&a!==e.tail;r++)a=a.next;t.next=a,a.prev=t,e.length-=r}if(e.Prism=r,s.stringify=function e(t,n){if("string"==typeof t)return t;if(Array.isArray(t)){var a="";return t.forEach((function(t){a+=e(t,n)})),a}var s={type:t.type,content:e(t.content,n),tag:"span",classes:["token",t.type],attributes:{},language:n},i=t.alias;i&&(Array.isArray(i)?Array.prototype.push.apply(s.classes,i):s.classes.push(i)),r.hooks.run("wrap",s);var o="";for(var l in s.attributes)o+=" "+l+'="'+(s.attributes[l]||"").replace(/"/g,"&quot;")+'"';return"<"+s.tag+' class="'+s.classes.join(" ")+'"'+o+">"+s.content+"</"+s.tag+">"},!e.document)return e.addEventListener?(r.disableWorkerMessageHandler||e.addEventListener("message",(function(t){var n=JSON.parse(t.data),a=n.language,s=n.code,i=n.immediateClose;e.postMessage(r.highlight(s,r.languages[a],a)),i&&e.close()}),!1),r):r;var c=r.util.currentScript();function d(){r.manual||r.highlightAll()}if(c&&(r.filename=c.src,c.hasAttribute("data-manual")&&(r.manual=!0)),!r.manual){var p=document.readyState;"loading"===p||"interactive"===p&&c&&c.defer?document.addEventListener("DOMContentLoaded",d):window.requestAnimationFrame?window.requestAnimationFrame(d):window.setTimeout(d,16)}return r}(_self);
+/**
+ * Prism: Lightweight, robust, elegant syntax highlighting
+ *
+ * @license MIT <https://opensource.org/licenses/MIT>
+ * @author Lea Verou <https://lea.verou.me>
+ * @namespace
+ * @public
+ */"undefined"!=typeof module&&module.exports&&(module.exports=Prism),"undefined"!=typeof global&&(global.Prism=Prism),Prism.languages.markup={comment:{pattern:/<!--(?:(?!<!--)[\s\S])*?-->/,greedy:!0},prolog:{pattern:/<\?[\s\S]+?\?>/,greedy:!0},doctype:{pattern:/<!DOCTYPE(?:[^>"'[\]]|"[^"]*"|'[^']*')+(?:\[(?:[^<"'\]]|"[^"]*"|'[^']*'|<(?!!--)|<!--(?:[^-]|-(?!->))*-->)*\]\s*)?>/i,greedy:!0,inside:{"internal-subset":{pattern:/(^[^\[]*\[)[\s\S]+(?=\]>$)/,lookbehind:!0,greedy:!0,inside:null},string:{pattern:/"[^"]*"|'[^']*'/,greedy:!0},punctuation:/^<!|>$|[[\]]/,"doctype-tag":/^DOCTYPE/i,name:/[^\s<>'"]+/}},cdata:{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,greedy:!0},tag:{pattern:/<\/?(?!\d)[^\s>\/=$<%]+(?:\s(?:\s*[^\s>\/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))|(?=[\s/>])))+)?\s*\/?>/,greedy:!0,inside:{tag:{pattern:/^<\/?[^\s>\/]+/,inside:{punctuation:/^<\/?/,namespace:/^[^\s>\/:]+:/}},"special-attr":[],"attr-value":{pattern:/=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+)/,inside:{punctuation:[{pattern:/^=/,alias:"attr-equals"},{pattern:/^(\s*)["']|["']$/,lookbehind:!0}]}},punctuation:/\/?>/,"attr-name":{pattern:/[^\s>\/]+/,inside:{namespace:/^[^\s>\/:]+:/}}}},entity:[{pattern:/&[\da-z]{1,8};/i,alias:"named-entity"},/&#x?[\da-f]{1,8};/i]},Prism.languages.markup.tag.inside["attr-value"].inside.entity=Prism.languages.markup.entity,Prism.languages.markup.doctype.inside["internal-subset"].inside=Prism.languages.markup,Prism.hooks.add("wrap",(function(e){"entity"===e.type&&(e.attributes.title=e.content.replace(/&amp;/,"&"))})),Object.defineProperty(Prism.languages.markup.tag,"addInlined",{value:function(e,t){var n={};n["language-"+t]={pattern:/(^<!\[CDATA\[)[\s\S]+?(?=\]\]>$)/i,lookbehind:!0,inside:Prism.languages[t]},n.cdata=/^<!\[CDATA\[|\]\]>$/i;var a={"included-cdata":{pattern:/<!\[CDATA\[[\s\S]*?\]\]>/i,inside:n}};a["language-"+t]={pattern:/[\s\S]+/,inside:Prism.languages[t]};var r={};r[e]={pattern:RegExp(/(<__[^>]*>)(?:<!\[CDATA\[(?:[^\]]|\](?!\]>))*\]\]>|(?!<!\[CDATA\[)[\s\S])*?(?=<\/__>)/.source.replace(/__/g,(function(){return e})),"i"),lookbehind:!0,greedy:!0,inside:a},Prism.languages.insertBefore("markup","cdata",r)}}),Object.defineProperty(Prism.languages.markup.tag,"addAttribute",{value:function(e,t){Prism.languages.markup.tag.inside["special-attr"].push({pattern:RegExp(/(^|["'\s])/.source+"(?:"+e+")"+/\s*=\s*(?:"[^"]*"|'[^']*'|[^\s'">=]+(?=[\s>]))/.source,"i"),lookbehind:!0,inside:{"attr-name":/^[^\s=]+/,"attr-value":{pattern:/=[\s\S]+/,inside:{value:{pattern:/(^=\s*(["']|(?!["'])))\S[\s\S]*(?=\2$)/,lookbehind:!0,alias:[t,"language-"+t],inside:Prism.languages[t]},punctuation:[{pattern:/^=/,alias:"attr-equals"},/"|'/]}}}})}}),Prism.languages.html=Prism.languages.markup,Prism.languages.mathml=Prism.languages.markup,Prism.languages.svg=Prism.languages.markup,Prism.languages.xml=Prism.languages.extend("markup",{}),Prism.languages.ssml=Prism.languages.xml,Prism.languages.atom=Prism.languages.xml,Prism.languages.rss=Prism.languages.xml,function(e){var t=/(?:"(?:\\(?:\r\n|[\s\S])|[^"\\\r\n])*"|'(?:\\(?:\r\n|[\s\S])|[^'\\\r\n])*')/;e.languages.css={comment:/\/\*[\s\S]*?\*\//,atrule:{pattern:RegExp("@[\\w-](?:"+/[^;{\s"']|\s+(?!\s)/.source+"|"+t.source+")*?"+/(?:;|(?=\s*\{))/.source),inside:{rule:/^@[\w-]+/,"selector-function-argument":{pattern:/(\bselector\s*\(\s*(?![\s)]))(?:[^()\s]|\s+(?![\s)])|\((?:[^()]|\([^()]*\))*\))+(?=\s*\))/,lookbehind:!0,alias:"selector"},keyword:{pattern:/(^|[^\w-])(?:and|not|only|or)(?![\w-])/,lookbehind:!0}}},url:{pattern:RegExp("\\burl\\((?:"+t.source+"|"+/(?:[^\\\r\n()"']|\\[\s\S])*/.source+")\\)","i"),greedy:!0,inside:{function:/^url/i,punctuation:/^\(|\)$/,string:{pattern:RegExp("^"+t.source+"$"),alias:"url"}}},selector:{pattern:RegExp("(^|[{}\\s])[^{}\\s](?:[^{};\"'\\s]|\\s+(?![\\s{])|"+t.source+")*(?=\\s*\\{)"),lookbehind:!0},string:{pattern:t,greedy:!0},property:{pattern:/(^|[^-\w\xA0-\uFFFF])(?!\s)[-_a-z\xA0-\uFFFF](?:(?!\s)[-\w\xA0-\uFFFF])*(?=\s*:)/i,lookbehind:!0},important:/!important\b/i,function:{pattern:/(^|[^-a-z0-9])[-a-z0-9]+(?=\()/i,lookbehind:!0},punctuation:/[(){};:,]/},e.languages.css.atrule.inside.rest=e.languages.css;var n=e.languages.markup;n&&(n.tag.addInlined("style","css"),n.tag.addAttribute("style","css"))}(Prism),Prism.languages.clike={comment:[{pattern:/(^|[^\\])\/\*[\s\S]*?(?:\*\/|$)/,lookbehind:!0,greedy:!0},{pattern:/(^|[^\\:])\/\/.*/,lookbehind:!0,greedy:!0}],string:{pattern:/(["'])(?:\\(?:\r\n|[\s\S])|(?!\1)[^\\\r\n])*\1/,greedy:!0},"class-name":{pattern:/(\b(?:class|extends|implements|instanceof|interface|new|trait)\s+|\bcatch\s+\()[\w.\\]+/i,lookbehind:!0,inside:{punctuation:/[.\\]/}},keyword:/\b(?:break|catch|continue|do|else|finally|for|function|if|in|instanceof|new|null|return|throw|try|while)\b/,boolean:/\b(?:false|true)\b/,function:/\b\w+(?=\()/,number:/\b0x[\da-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:e[+-]?\d+)?/i,operator:/[<>]=?|[!=]=?=?|--?|\+\+?|&&?|\|\|?|[?*/~^%]/,punctuation:/[{}[\];(),.:]/},Prism.languages.javascript=Prism.languages.extend("clike",{"class-name":[Prism.languages.clike["class-name"],{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$A-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\.(?:constructor|prototype))/,lookbehind:!0}],keyword:[{pattern:/((?:^|\})\s*)catch\b/,lookbehind:!0},{pattern:/(^|[^.]|\.\.\.\s*)\b(?:as|assert(?=\s*\{)|async(?=\s*(?:function\b|\(|[$\w\xA0-\uFFFF]|$))|await|break|case|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally(?=\s*(?:\{|$))|for|from(?=\s*(?:['"]|$))|function|(?:get|set)(?=\s*(?:[#\[$\w\xA0-\uFFFF]|$))|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)\b/,lookbehind:!0}],function:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*(?:\.\s*(?:apply|bind|call)\s*)?\()/,number:{pattern:RegExp(/(^|[^\w$])/.source+"(?:"+/NaN|Infinity/.source+"|"+/0[bB][01]+(?:_[01]+)*n?/.source+"|"+/0[oO][0-7]+(?:_[0-7]+)*n?/.source+"|"+/0[xX][\dA-Fa-f]+(?:_[\dA-Fa-f]+)*n?/.source+"|"+/\d+(?:_\d+)*n/.source+"|"+/(?:\d+(?:_\d+)*(?:\.(?:\d+(?:_\d+)*)?)?|\.\d+(?:_\d+)*)(?:[Ee][+-]?\d+(?:_\d+)*)?/.source+")"+/(?![\w$])/.source),lookbehind:!0},operator:/--|\+\+|\*\*=?|=>|&&=?|\|\|=?|[!=]==|<<=?|>>>?=?|[-+*/%&|^!=<>]=?|\.{3}|\?\?=?|\?\.?|[~:]/}),Prism.languages.javascript["class-name"][0].pattern=/(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/,Prism.languages.insertBefore("javascript","keyword",{regex:{pattern:RegExp(/((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source+/\//.source+"(?:"+/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source+"|"+/(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source+")"+/(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),lookbehind:!0,greedy:!0,inside:{"regex-source":{pattern:/^(\/)[\s\S]+(?=\/[a-z]*$)/,lookbehind:!0,alias:"language-regex",inside:Prism.languages.regex},"regex-delimiter":/^\/|\/$/,"regex-flags":/^[a-z]+$/}},"function-variable":{pattern:/#?(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*[=:]\s*(?:async\s*)?(?:\bfunction\b|(?:\((?:[^()]|\([^()]*\))*\)|(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)\s*=>))/,alias:"function"},parameter:[{pattern:/(function(?:\s+(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*)?\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\))/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(^|[^$\w\xA0-\uFFFF])(?!\s)[_$a-z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*=>)/i,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/(\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*=>)/,lookbehind:!0,inside:Prism.languages.javascript},{pattern:/((?:\b|\s|^)(?!(?:as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|undefined|var|void|while|with|yield)(?![$\w\xA0-\uFFFF]))(?:(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*\s*)\(\s*|\]\s*\(\s*)(?!\s)(?:[^()\s]|\s+(?![\s)])|\([^()]*\))+(?=\s*\)\s*\{)/,lookbehind:!0,inside:Prism.languages.javascript}],constant:/\b[A-Z](?:[A-Z_]|\dx?)*\b/}),Prism.languages.insertBefore("javascript","string",{hashbang:{pattern:/^#!.*/,greedy:!0,alias:"comment"},"template-string":{pattern:/`(?:\\[\s\S]|\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}|(?!\$\{)[^\\`])*`/,greedy:!0,inside:{"template-punctuation":{pattern:/^`|`$/,alias:"string"},interpolation:{pattern:/((?:^|[^\\])(?:\\{2})*)\$\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})+\}/,lookbehind:!0,inside:{"interpolation-punctuation":{pattern:/^\$\{|\}$/,alias:"punctuation"},rest:Prism.languages.javascript}},string:/[\s\S]+/}},"string-property":{pattern:/((?:^|[,{])[ \t]*)(["'])(?:\\(?:\r\n|[\s\S])|(?!\2)[^\\\r\n])*\2(?=\s*:)/m,lookbehind:!0,greedy:!0,alias:"property"}}),Prism.languages.insertBefore("javascript","operator",{"literal-property":{pattern:/((?:^|[,{])[ \t]*)(?!\s)[_$a-zA-Z\xA0-\uFFFF](?:(?!\s)[$\w\xA0-\uFFFF])*(?=\s*:)/m,lookbehind:!0,alias:"property"}}),Prism.languages.markup&&(Prism.languages.markup.tag.addInlined("script","javascript"),Prism.languages.markup.tag.addAttribute(/on(?:abort|blur|change|click|composition(?:end|start|update)|dblclick|error|focus(?:in|out)?|key(?:down|up)|load|mouse(?:down|enter|leave|move|out|over|up)|reset|resize|scroll|select|slotchange|submit|unload|wheel)/.source,"javascript")),Prism.languages.js=Prism.languages.javascript,function(){if(void 0!==Prism&&"undefined"!=typeof document){Element.prototype.matches||(Element.prototype.matches=Element.prototype.msMatchesSelector||Element.prototype.webkitMatchesSelector);var e={js:"javascript",py:"python",rb:"ruby",ps1:"powershell",psm1:"powershell",sh:"bash",bat:"batch",h:"c",tex:"latex"},t="data-src-status",n="loading",a="loaded",r="pre[data-src]:not(["+t+'="'+a+'"]):not(['+t+'="'+n+'"])';Prism.hooks.add("before-highlightall",(function(e){e.selector+=", "+r})),Prism.hooks.add("before-sanity-check",(function(s){var i=s.element;if(i.matches(r)){s.code="",i.setAttribute(t,n);var o=i.appendChild(document.createElement("CODE"));o.textContent="Loading…";var l=i.getAttribute("data-src"),u=s.language;if("none"===u){var g=(/\.(\w+)$/.exec(l)||[,"none"])[1];u=e[g]||g}Prism.util.setLanguage(o,u),Prism.util.setLanguage(i,u);var c=Prism.plugins.autoloader;c&&c.loadLanguages(u),function(e,t,n){var a=new XMLHttpRequest;a.open("GET",e,!0),a.onreadystatechange=function(){4==a.readyState&&(a.status<400&&a.responseText?t(a.responseText):a.status>=400?n("✖ Error "+a.status+" while fetching file: "+a.statusText):n("✖ Error: File does not exist or is empty"))},a.send(null)}(l,(function(e){i.setAttribute(t,a);var n=function(e){var t=/^\s*(\d+)\s*(?:(,)\s*(?:(\d+)\s*)?)?$/.exec(e||"");if(t){var n=Number(t[1]),a=t[2],r=t[3];return a?r?[n,Number(r)]:[n,void 0]:[n,n]}}(i.getAttribute("data-range"));if(n){var r=e.split(/\r\n?|\n/g),s=n[0],l=null==n[1]?r.length:n[1];s<0&&(s+=r.length),s=Math.max(0,Math.min(s-1,r.length)),l<0&&(l+=r.length),l=Math.max(0,Math.min(l,r.length)),e=r.slice(s,l).join("\n"),i.hasAttribute("data-start")||i.setAttribute("data-start",String(s+1))}o.textContent=e,Prism.highlightElement(o)}),(function(e){i.setAttribute(t,"failed"),o.textContent=e}))}})),Prism.plugins.fileHighlight={highlight:function(e){for(var t,n=(e||document).querySelectorAll(r),a=0;t=n[a++];)Prism.highlightElement(t)}};var s=!1;Prism.fileHighlight=function(){s||(console.warn("Prism.fileHighlight is deprecated. Use `Prism.plugins.fileHighlight.highlight` instead."),s=!0),Prism.plugins.fileHighlight.highlight.apply(this,arguments)}}}();
+//# sourceMappingURL=/sm/1f55244a569fc0911044b5e4725a97872b6d85b0662a3429a809bb62f713c381.map
+Prism.languages.go=Prism.languages.extend("clike",{string:{pattern:/(^|[^\\])"(?:\\.|[^"\\\r\n])*"|`[^`]*`/,lookbehind:!0,greedy:!0},keyword:/\b(?:break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go(?:to)?|if|import|interface|map|package|range|return|select|struct|switch|type|var)\b/,boolean:/\b(?:_|false|iota|nil|true)\b/,number:[/\b0(?:b[01_]+|o[0-7_]+)i?\b/i,/\b0x(?:[a-f\d_]+(?:\.[a-f\d_]*)?|\.[a-f\d_]+)(?:p[+-]?\d+(?:_\d+)*)?i?(?!\w)/i,/(?:\b\d[\d_]*(?:\.[\d_]*)?|\B\.\d[\d_]*)(?:e[+-]?[\d_]+)?i?(?!\w)/i],operator:/[*\/%^!=]=?|\+[=+]?|-[=-]?|\|[=|]?|&(?:=|&|\^=?)?|>(?:>=?|=)?|<(?:<=?|=|-)?|:=|\.\.\./,builtin:/\b(?:append|bool|byte|cap|close|complex|complex(?:64|128)|copy|delete|error|float(?:32|64)|u?int(?:8|16|32|64)?|imag|len|make|new|panic|print(?:ln)?|real|recover|rune|string|uintptr)\b/}),Prism.languages.insertBefore("go","string",{char:{pattern:/'(?:\\.|[^'\\\r\n]){0,10}'/,greedy:!0}}),delete Prism.languages.go["class-name"];
+!function(e){var t="\\b(?:BASH|BASHOPTS|BASH_ALIASES|BASH_ARGC|BASH_ARGV|BASH_CMDS|BASH_COMPLETION_COMPAT_DIR|BASH_LINENO|BASH_REMATCH|BASH_SOURCE|BASH_VERSINFO|BASH_VERSION|COLORTERM|COLUMNS|COMP_WORDBREAKS|DBUS_SESSION_BUS_ADDRESS|DEFAULTS_PATH|DESKTOP_SESSION|DIRSTACK|DISPLAY|EUID|GDMSESSION|GDM_LANG|GNOME_KEYRING_CONTROL|GNOME_KEYRING_PID|GPG_AGENT_INFO|GROUPS|HISTCONTROL|HISTFILE|HISTFILESIZE|HISTSIZE|HOME|HOSTNAME|HOSTTYPE|IFS|INSTANCE|JOB|LANG|LANGUAGE|LC_ADDRESS|LC_ALL|LC_IDENTIFICATION|LC_MEASUREMENT|LC_MONETARY|LC_NAME|LC_NUMERIC|LC_PAPER|LC_TELEPHONE|LC_TIME|LESSCLOSE|LESSOPEN|LINES|LOGNAME|LS_COLORS|MACHTYPE|MAILCHECK|MANDATORY_PATH|NO_AT_BRIDGE|OLDPWD|OPTERR|OPTIND|ORBIT_SOCKETDIR|OSTYPE|PAPERSIZE|PATH|PIPESTATUS|PPID|PS1|PS2|PS3|PS4|PWD|RANDOM|REPLY|SECONDS|SELINUX_INIT|SESSION|SESSIONTYPE|SESSION_MANAGER|SHELL|SHELLOPTS|SHLVL|SSH_AUTH_SOCK|TERM|UID|UPSTART_EVENTS|UPSTART_INSTANCE|UPSTART_JOB|UPSTART_SESSION|USER|WINDOWID|XAUTHORITY|XDG_CONFIG_DIRS|XDG_CURRENT_DESKTOP|XDG_DATA_DIRS|XDG_GREETER_DATA_DIR|XDG_MENU_PREFIX|XDG_RUNTIME_DIR|XDG_SEAT|XDG_SEAT_PATH|XDG_SESSION_DESKTOP|XDG_SESSION_ID|XDG_SESSION_PATH|XDG_SESSION_TYPE|XDG_VTNR|XMODIFIERS)\\b",a={pattern:/(^(["']?)\w+\2)[ \t]+\S.*/,lookbehind:!0,alias:"punctuation",inside:null},n={bash:a,environment:{pattern:RegExp("\\$"+t),alias:"constant"},variable:[{pattern:/\$?\(\([\s\S]+?\)\)/,greedy:!0,inside:{variable:[{pattern:/(^\$\(\([\s\S]+)\)\)/,lookbehind:!0},/^\$\(\(/],number:/\b0x[\dA-Fa-f]+\b|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee]-?\d+)?/,operator:/--|\+\+|\*\*=?|<<=?|>>=?|&&|\|\||[=!+\-*/%<>^&|]=?|[?~:]/,punctuation:/\(\(?|\)\)?|,|;/}},{pattern:/\$\((?:\([^)]+\)|[^()])+\)|`[^`]+`/,greedy:!0,inside:{variable:/^\$\(|^`|\)$|`$/}},{pattern:/\$\{[^}]+\}/,greedy:!0,inside:{operator:/:[-=?+]?|[!\/]|##?|%%?|\^\^?|,,?/,punctuation:/[\[\]]/,environment:{pattern:RegExp("(\\{)"+t),lookbehind:!0,alias:"constant"}}},/\$(?:\w+|[#?*!@$])/],entity:/\\(?:[abceEfnrtv\\"]|O?[0-7]{1,3}|U[0-9a-fA-F]{8}|u[0-9a-fA-F]{4}|x[0-9a-fA-F]{1,2})/};e.languages.bash={shebang:{pattern:/^#!\s*\/.*/,alias:"important"},comment:{pattern:/(^|[^"{\\$])#.*/,lookbehind:!0},"function-name":[{pattern:/(\bfunction\s+)[\w-]+(?=(?:\s*\(?:\s*\))?\s*\{)/,lookbehind:!0,alias:"function"},{pattern:/\b[\w-]+(?=\s*\(\s*\)\s*\{)/,alias:"function"}],"for-or-select":{pattern:/(\b(?:for|select)\s+)\w+(?=\s+in\s)/,alias:"variable",lookbehind:!0},"assign-left":{pattern:/(^|[\s;|&]|[<>]\()\w+(?:\.\w+)*(?=\+?=)/,inside:{environment:{pattern:RegExp("(^|[\\s;|&]|[<>]\\()"+t),lookbehind:!0,alias:"constant"}},alias:"variable",lookbehind:!0},parameter:{pattern:/(^|\s)-{1,2}(?:\w+:[+-]?)?\w+(?:\.\w+)*(?=[=\s]|$)/,alias:"variable",lookbehind:!0},string:[{pattern:/((?:^|[^<])<<-?\s*)(\w+)\s[\s\S]*?(?:\r?\n|\r)\2/,lookbehind:!0,greedy:!0,inside:n},{pattern:/((?:^|[^<])<<-?\s*)(["'])(\w+)\2\s[\s\S]*?(?:\r?\n|\r)\3/,lookbehind:!0,greedy:!0,inside:{bash:a}},{pattern:/(^|[^\\](?:\\\\)*)"(?:\\[\s\S]|\$\([^)]+\)|\$(?!\()|`[^`]+`|[^"\\`$])*"/,lookbehind:!0,greedy:!0,inside:n},{pattern:/(^|[^$\\])'[^']*'/,lookbehind:!0,greedy:!0},{pattern:/\$'(?:[^'\\]|\\[\s\S])*'/,greedy:!0,inside:{entity:n.entity}}],environment:{pattern:RegExp("\\$?"+t),alias:"constant"},variable:n.variable,function:{pattern:/(^|[\s;|&]|[<>]\()(?:add|apropos|apt|apt-cache|apt-get|aptitude|aspell|automysqlbackup|awk|basename|bash|bc|bconsole|bg|bzip2|cal|cargo|cat|cfdisk|chgrp|chkconfig|chmod|chown|chroot|cksum|clear|cmp|column|comm|composer|cp|cron|crontab|csplit|curl|cut|date|dc|dd|ddrescue|debootstrap|df|diff|diff3|dig|dir|dircolors|dirname|dirs|dmesg|docker|docker-compose|du|egrep|eject|env|ethtool|expand|expect|expr|fdformat|fdisk|fg|fgrep|file|find|fmt|fold|format|free|fsck|ftp|fuser|gawk|git|gparted|grep|groupadd|groupdel|groupmod|groups|grub-mkconfig|gzip|halt|head|hg|history|host|hostname|htop|iconv|id|ifconfig|ifdown|ifup|import|install|ip|java|jobs|join|kill|killall|less|link|ln|locate|logname|logrotate|look|lpc|lpr|lprint|lprintd|lprintq|lprm|ls|lsof|lynx|make|man|mc|mdadm|mkconfig|mkdir|mke2fs|mkfifo|mkfs|mkisofs|mknod|mkswap|mmv|more|most|mount|mtools|mtr|mutt|mv|nano|nc|netstat|nice|nl|node|nohup|notify-send|npm|nslookup|op|open|parted|passwd|paste|pathchk|ping|pkill|pnpm|podman|podman-compose|popd|pr|printcap|printenv|ps|pushd|pv|quota|quotacheck|quotactl|ram|rar|rcp|reboot|remsync|rename|renice|rev|rm|rmdir|rpm|rsync|scp|screen|sdiff|sed|sendmail|seq|service|sftp|sh|shellcheck|shuf|shutdown|sleep|slocate|sort|split|ssh|stat|strace|su|sudo|sum|suspend|swapon|sync|sysctl|tac|tail|tar|tee|time|timeout|top|touch|tr|traceroute|tsort|tty|umount|uname|unexpand|uniq|units|unrar|unshar|unzip|update-grub|uptime|useradd|userdel|usermod|users|uudecode|uuencode|v|vcpkg|vdir|vi|vim|virsh|vmstat|wait|watch|wc|wget|whereis|which|who|whoami|write|xargs|xdg-open|yarn|yes|zenity|zip|zsh|zypper)(?=$|[)\s;|&])/,lookbehind:!0},keyword:{pattern:/(^|[\s;|&]|[<>]\()(?:case|do|done|elif|else|esac|fi|for|function|if|in|select|then|until|while)(?=$|[)\s;|&])/,lookbehind:!0},builtin:{pattern:/(^|[\s;|&]|[<>]\()(?:\.|:|alias|bind|break|builtin|caller|cd|command|continue|declare|echo|enable|eval|exec|exit|export|getopts|hash|help|let|local|logout|mapfile|printf|pwd|read|readarray|readonly|return|set|shift|shopt|source|test|times|trap|type|typeset|ulimit|umask|unalias|unset)(?=$|[)\s;|&])/,lookbehind:!0,alias:"class-name"},boolean:{pattern:/(^|[\s;|&]|[<>]\()(?:false|true)(?=$|[)\s;|&])/,lookbehind:!0},"file-descriptor":{pattern:/\B&\d\b/,alias:"important"},operator:{pattern:/\d?<>|>\||\+=|=[=~]?|!=?|<<[<-]?|[&\d]?>>|\d[<>]&?|[<>][&=]?|&[>&]?|\|[&|]?/,inside:{"file-descriptor":{pattern:/^\d/,alias:"important"}}},punctuation:/\$?\(\(?|\)\)?|\.\.|[{}[\];\\]/,number:{pattern:/(^|\s)(?:[1-9]\d*|0)(?:[.,]\d+)?\b/,lookbehind:!0}},a.inside=e.languages.bash;for(var s=["comment","function-name","for-or-select","assign-left","parameter","string","environment","function","keyword","builtin","boolean","file-descriptor","operator","punctuation","number"],o=n.variable[1].inside,i=0;i<s.length;i++)o[s[i]]=e.languages.bash[s[i]];e.languages.sh=e.languages.bash,e.languages.shell=e.languages.bash}(Prism);
+!function(e){e.languages.diff={coord:[/^(?:\*{3}|-{3}|\+{3}).*$/m,/^@@.*@@$/m,/^\d.*$/m]};var n={"deleted-sign":"-","deleted-arrow":"<","inserted-sign":"+","inserted-arrow":">",unchanged:" ",diff:"!"};Object.keys(n).forEach((function(a){var i=n[a],r=[];/^\w+$/.test(a)||r.push(/\w+/.exec(a)[0]),"diff"===a&&r.push("bold"),e.languages.diff[a]={pattern:RegExp("^(?:["+i+"].*(?:\r\n?|\n|(?![\\s\\S])))+","m"),alias:r,inside:{line:{pattern:/(.)(?=[\s\S]).*(?:\r\n?|\n)?/,lookbehind:!0},prefix:{pattern:/[\s\S]/,alias:/\w+/.exec(a)[0]}}}})),Object.defineProperty(e.languages.diff,"PREFIXES",{value:n})}(Prism);
+!function(n){function e(n){return n=n.replace(/<inner>/g,(function(){return"(?:\\\\.|[^\\\\\n\r]|(?:\n|\r\n?)(?![\r\n]))"})),RegExp("((?:^|[^\\\\])(?:\\\\{2})*)(?:"+n+")")}var t="(?:\\\\.|``(?:[^`\r\n]|`(?!`))+``|`[^`\r\n]+`|[^\\\\|\r\n`])+",a="\\|?__(?:\\|__)+\\|?(?:(?:\n|\r\n?)|(?![^]))".replace(/__/g,(function(){return t})),i="\\|?[ \t]*:?-{3,}:?[ \t]*(?:\\|[ \t]*:?-{3,}:?[ \t]*)+\\|?(?:\n|\r\n?)";n.languages.markdown=n.languages.extend("markup",{}),n.languages.insertBefore("markdown","prolog",{"front-matter-block":{pattern:/(^(?:\s*[\r\n])?)---(?!.)[\s\S]*?[\r\n]---(?!.)/,lookbehind:!0,greedy:!0,inside:{punctuation:/^---|---$/,"front-matter":{pattern:/\S+(?:\s+\S+)*/,alias:["yaml","language-yaml"],inside:n.languages.yaml}}},blockquote:{pattern:/^>(?:[\t ]*>)*/m,alias:"punctuation"},table:{pattern:RegExp("^"+a+i+"(?:"+a+")*","m"),inside:{"table-data-rows":{pattern:RegExp("^("+a+i+")(?:"+a+")*$"),lookbehind:!0,inside:{"table-data":{pattern:RegExp(t),inside:n.languages.markdown},punctuation:/\|/}},"table-line":{pattern:RegExp("^("+a+")"+i+"$"),lookbehind:!0,inside:{punctuation:/\||:?-{3,}:?/}},"table-header-row":{pattern:RegExp("^"+a+"$"),inside:{"table-header":{pattern:RegExp(t),alias:"important",inside:n.languages.markdown},punctuation:/\|/}}}},code:[{pattern:/((?:^|\n)[ \t]*\n|(?:^|\r\n?)[ \t]*\r\n?)(?: {4}|\t).+(?:(?:\n|\r\n?)(?: {4}|\t).+)*/,lookbehind:!0,alias:"keyword"},{pattern:/^```[\s\S]*?^```$/m,greedy:!0,inside:{"code-block":{pattern:/^(```.*(?:\n|\r\n?))[\s\S]+?(?=(?:\n|\r\n?)^```$)/m,lookbehind:!0},"code-language":{pattern:/^(```).+/,lookbehind:!0},punctuation:/```/}}],title:[{pattern:/\S.*(?:\n|\r\n?)(?:==+|--+)(?=[ \t]*$)/m,alias:"important",inside:{punctuation:/==+$|--+$/}},{pattern:/(^\s*)#.+/m,lookbehind:!0,alias:"important",inside:{punctuation:/^#+|#+$/}}],hr:{pattern:/(^\s*)([*-])(?:[\t ]*\2){2,}(?=\s*$)/m,lookbehind:!0,alias:"punctuation"},list:{pattern:/(^\s*)(?:[*+-]|\d+\.)(?=[\t ].)/m,lookbehind:!0,alias:"punctuation"},"url-reference":{pattern:/!?\[[^\]]+\]:[\t ]+(?:\S+|<(?:\\.|[^>\\])+>)(?:[\t ]+(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\)))?/,inside:{variable:{pattern:/^(!?\[)[^\]]+/,lookbehind:!0},string:/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^)\\])*\))$/,punctuation:/^[\[\]!:]|[<>]/},alias:"url"},bold:{pattern:e("\\b__(?:(?!_)<inner>|_(?:(?!_)<inner>)+_)+__\\b|\\*\\*(?:(?!\\*)<inner>|\\*(?:(?!\\*)<inner>)+\\*)+\\*\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^..)[\s\S]+(?=..$)/,lookbehind:!0,inside:{}},punctuation:/\*\*|__/}},italic:{pattern:e("\\b_(?:(?!_)<inner>|__(?:(?!_)<inner>)+__)+_\\b|\\*(?:(?!\\*)<inner>|\\*\\*(?:(?!\\*)<inner>)+\\*\\*)+\\*"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^.)[\s\S]+(?=.$)/,lookbehind:!0,inside:{}},punctuation:/[*_]/}},strike:{pattern:e("(~~?)(?:(?!~)<inner>)+\\2"),lookbehind:!0,greedy:!0,inside:{content:{pattern:/(^~~?)[\s\S]+(?=\1$)/,lookbehind:!0,inside:{}},punctuation:/~~?/}},"code-snippet":{pattern:/(^|[^\\`])(?:``[^`\r\n]+(?:`[^`\r\n]+)*``(?!`)|`[^`\r\n]+`(?!`))/,lookbehind:!0,greedy:!0,alias:["code","keyword"]},url:{pattern:e('!?\\[(?:(?!\\])<inner>)+\\](?:\\([^\\s)]+(?:[\t ]+"(?:\\\\.|[^"\\\\])*")?\\)|[ \t]?\\[(?:(?!\\])<inner>)+\\])'),lookbehind:!0,greedy:!0,inside:{operator:/^!/,content:{pattern:/(^\[)[^\]]+(?=\])/,lookbehind:!0,inside:{}},variable:{pattern:/(^\][ \t]?\[)[^\]]+(?=\]$)/,lookbehind:!0},url:{pattern:/(^\]\()[^\s)]+/,lookbehind:!0},string:{pattern:/(^[ \t]+)"(?:\\.|[^"\\])*"(?=\)$)/,lookbehind:!0}}}}),["url","bold","italic","strike"].forEach((function(e){["url","bold","italic","strike","code-snippet"].forEach((function(t){e!==t&&(n.languages.markdown[e].inside.content.inside[t]=n.languages.markdown[t])}))})),n.hooks.add("after-tokenize",(function(n){"markdown"!==n.language&&"md"!==n.language||function n(e){if(e&&"string"!=typeof e)for(var t=0,a=e.length;t<a;t++){var i=e[t];if("code"===i.type){var r=i.content[1],o=i.content[3];if(r&&o&&"code-language"===r.type&&"code-block"===o.type&&"string"==typeof r.content){var l=r.content.replace(/\b#/g,"sharp").replace(/\b\+\+/g,"pp"),s="language-"+(l=(/[a-z][\w-]*/i.exec(l)||[""])[0].toLowerCase());o.alias?"string"==typeof o.alias?o.alias=[o.alias,s]:o.alias.push(s):o.alias=[s]}}else n(i.content)}}(n.tokens)})),n.hooks.add("wrap",(function(e){if("code-block"===e.type){for(var t="",a=0,i=e.classes.length;a<i;a++){var s=e.classes[a],d=/language-(.+)/.exec(s);if(d){t=d[1];break}}var p=n.languages[t];if(p)e.content=n.highlight(e.content.replace(r,"").replace(/&(\w{1,8}|#x?[\da-f]{1,8});/gi,(function(n,e){var t;return"#"===(e=e.toLowerCase())[0]?(t="x"===e[1]?parseInt(e.slice(2),16):Number(e.slice(1)),l(t)):o[e]||n})),p,t);else if(t&&"none"!==t&&n.plugins.autoloader){var u="md-"+(new Date).valueOf()+"-"+Math.floor(1e16*Math.random());e.attributes.id=u,n.plugins.autoloader.loadLanguages(t,(function(){var e=document.getElementById(u);e&&(e.innerHTML=n.highlight(e.textContent,n.languages[t],t))}))}}}));var r=RegExp(n.languages.markup.tag.pattern.source,"gi"),o={amp:"&",lt:"<",gt:">",quot:'"'},l=String.fromCodePoint||String.fromCharCode;n.languages.md=n.languages.markdown}(Prism);
+  </script>
+  <script>
+/* Deep Review — Prism initialization and line-number wrapping.
+ * Inlined into each generated HTML file by the beautify-review skill.
+ * Runs synchronously at the end of <body> — no event listeners.
+ *
+ * Prerequisite: a preceding <script> must set Prism.manual = true
+ * before the Prism core <script> loads.
+ */
+
+Prism.highlightAll();
+
+document.querySelectorAll('pre[data-start]').forEach(function(pre) {
+  var startLine = parseInt(pre.getAttribute('data-start'), 10) || 1;
+  var hlAttr = pre.getAttribute('data-line') || '';
+
+  /* Parse data-line into a Set of line numbers to highlight.
+   * Accepts comma-separated values: "75,76,77" or ranges: "75-84". */
+  var hlLines = new Set();
+  hlAttr.split(',').forEach(function(part) {
+    part = part.trim();
+    if (!part) return;
+    var m = part.match(/^(\d+)-(\d+)$/);
+    if (m) {
+      for (var i = parseInt(m[1], 10); i <= parseInt(m[2], 10); i++) hlLines.add(i);
+    } else {
+      hlLines.add(parseInt(part, 10));
+    }
+  });
+
+  var code = pre.querySelector('code');
+  if (!code) return;
+
+  var html = code.innerHTML;
+  var lines = html.split('\n');
+  /* Strip a trailing empty line that Prism sometimes leaves. */
+  if (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+
+  var wrapped = lines.map(function(line, idx) {
+    var lineNum = startLine + idx;
+    var cls = 'code-line' + (hlLines.has(lineNum) ? ' line-hl' : '');
+    return '<span class="' + cls + '">' + line + '</span>';
+  });
+
+  /* Join with '' (empty string) — NOT '\n'.
+   * Inside <pre>, newlines are literal whitespace. Since .code-line uses
+   * display: block, joining with '\n' produces double line spacing. */
+  code.innerHTML = wrapped.join('');
+  pre.style.counterReset = 'line ' + (startLine - 1);
+});
+
+/* GitHub reference tooltips — show title and state on hover for #N links.
+ * Links must have class="gh-ref" and data-title set by the generator. */
+document.querySelectorAll('a.gh-ref[data-title]').forEach(function(link) {
+  var tip = null;
+
+  link.addEventListener('mouseenter', function() {
+    if (tip) return;
+    tip = document.createElement('div');
+    tip.className = 'gh-tooltip';
+
+    var state = link.getAttribute('data-state') || '';
+    var type = link.getAttribute('data-type') || 'issue';
+    var label = state.charAt(0).toUpperCase() + state.slice(1).toLowerCase();
+
+    var pill = document.createElement('span');
+    pill.className = 'gh-tooltip-state gh-state-' + state;
+    pill.textContent = label + (type === 'pr' ? ' PR' : '');
+
+    var title = document.createElement('span');
+    title.className = 'gh-tooltip-title';
+    title.textContent = link.getAttribute('data-title');
+
+    tip.appendChild(pill);
+    tip.appendChild(title);
+    document.body.appendChild(tip);
+
+    var rect = link.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = rect.left + window.scrollX;
+    var top = rect.top + window.scrollY - th - 8;
+
+    if (left + tw > window.innerWidth - 12) left = window.innerWidth - tw - 12;
+    if (left < 4) left = 4;
+    if (top < window.scrollY + 4) top = rect.bottom + window.scrollY + 8;
+
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.style.opacity = '1';
+  });
+
+  link.addEventListener('mouseleave', function() {
+    if (tip) { tip.remove(); tip = null; }
+  });
+});
+
+  </script>
+</body>
+</html>
