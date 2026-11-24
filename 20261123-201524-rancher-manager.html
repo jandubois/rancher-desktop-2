@@ -242,6 +242,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The branch adds a macOS Cluster API infrastructure provider that boots a Lima node VM for each LimaMachine. All six round-1 fixes work. But the tests miss two of the guards they added, the CRD rules that keep negative sizes away from rdd&#39;s template webhook and the <code>continue</code> that keeps a failed node VM removal from stalling the other LimaMachines. A BATS comment also still says that Lima reports Running only after the boot scripts finish.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 2&#39;s fixes were folded into the commits they fix, so every commit from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ed93c7fa"><code>6ed93c7fa</code></a> on has a new SHA, and the branch now ends with the three UI-extension commits that came after the review. The quoted code and line numbers below refer to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -426,6 +432,7 @@ index 7ef2842d1..fd64fa525 100644
 +	assert.Equal(t, kinds, 2)
 +}</code></pre>
       </details>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1f036f67c"><code>1f036f67c</code></a> (formerly <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ed93c7fa"><code>6ed93c7fa</code></a>), not in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8174f7621"><code>8174f7621</code></a>, which adds the CRD rules. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6ed93c7fa"><code>6ed93c7fa</code></a> also changes <code>crds_test.go</code>, and a fixup into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8174f7621"><code>8174f7621</code></a> conflicted with that change. In each of three verification passes, a deliberately broken rule got past the patch&#39;s rows. So <code>TestLimaMachineRejectsInvalidSizes</code> checks more than the patch did. For memory and disk it has a positive value, zero and a negative value, each as a string and as an integer. It fails with the CEL rules or the <code>cpus</code> minimum removed.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/controllers/app/capi/limamachine.go">
       <div class="finding-title" id="I2">
@@ -562,6 +569,7 @@ index efdc17487..fa5f01d61 100644
  
  // guestKubeConfig returns a kubeconfig with full access to env.</code></pre>
       </details>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2181ae752"><code>2181ae752</code></a> (formerly <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>) as the patch proposes, with the interceptor&#39;s flag and error text renamed from <code>unremovable</code> to <code>stuck</code>. With the deletion branch&#39;s <code>continue</code> turned back into <code>return</code>, the test fails at the assertion on c-late&#39;s node VM.</p>
     </div>
     <div class="card card-important" data-file="rdd/bats/tests/35-capi-controllers/lima-machine.bats">
       <div class="finding-title" id="I3">
@@ -629,6 +637,7 @@ index 6350a0fe4..99295c6b2 100644
          --namespace=&quot;${RDD_APP_NAMESPACE}&quot; --timeout=600s
      assert_install_script_ran_once</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b20d40084"><code>b20d40084</code></a> as the patch proposes, except that the comment says &quot;once it stops waiting for them&quot; instead of &quot;once its wait for them times out&quot;. On main, a comment in <code>hostagent_watcher.go</code> says that Lima never reports Degraded, and <code>cmd_lima.md</code> says that a <code>restartCount</code> increment means the VM has fully restarted. Both are wrong for the same reason, and pending-work tracks them for a PR against main. If the restarted VM&#39;s boot outlasts Lima&#39;s 10-minute wait, the test can still pass before the boot scripts finish, and so miss a broken guard. That stays open, because it takes a broken guard and a boot that slow at the same time.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -806,6 +815,7 @@ func TestProbeBackoff(t *testing.T) {
 ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	9.235s</code></pre>
       </details>
     <p>Fix: limit the backoff to <code>requeueIdle</code> in <code>SetupWithManager</code>, with <code>WithOptions</code> and <code>workqueue.NewTypedItemExponentialFailureRateLimiter[reconcile.Request](5*time.Millisecond, requeueIdle)</code>. This package declares a <code>controller</code> type, so the import needs an alias. Or return an error only when rdd&#39;s API server fails, and report a create rejection in that LimaMachine&#39;s <code>Ready</code>. The maintainers haven&#39;t picked one.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bc1f84b83"><code>bc1f84b83</code></a>. <code>SetupWithManager</code> limits the backoff to <code>requeueIdle</code>, and the design doc (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/07dc1a0f1"><code>07dc1a0f1</code></a>) says that the backoff grows to at most 30 seconds. <code>removeNodeObjects</code> still returns at its first failed removal, and pending-work tracks that.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/capi/limamachine.go">
       <div class="finding-title" id="S2">
@@ -896,6 +906,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	
 	return ctrl.Result{RequeueAfter: requeueIdle}, nil</code></pre>
     <p>Each failure either clears within a pass or two or changes only what rdd logs, so these tests are optional.</p>
     <p>Fix: in <code>TestReconcileLimaMachinesFailedVM</code>, give two LimaMachines control-plane errors and assert that the returned error names both, and make one status update and one input ConfigMap delete fail. Add a stub-probe step that returns no address and no error, and a guest-only error through <code>Reconcile</code>.</p>
+    <p><strong>Outcome:</strong> declined, because these tests are optional.</p>
     </div>
     <div class="card card-suggestion" data-file="d68651047">
       <div class="finding-title" id="S3">
@@ -903,6 +914,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	
       </div>
     <p>Folding round 1&#39;s fixes moved its I1 fix into this commit. That fix is the loop that continues past a failed LimaMachine, the cross-namespace <code>NameConflict</code> check, the deletion of the input ConfigMap after a failed create, and the uncached read of that ConfigMap. The message still describes only node VM creation. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a> has the test for round 1&#39;s I1, and round 1 deferred folding that commit to the branch split.</p>
     <p>Fix: add a paragraph to the message, for example: &quot;A LimaMachine whose node VM rdd can&#39;t create or remove must not hold back the others. When a LimaVM in another namespace already uses the name, report <code>NameConflict</code> before the webhook rejects the create. After a failed create, delete the input ConfigMap, so a corrected spec renders again.&quot;</p>
+    <p><strong>Outcome:</strong> fixed. The message of <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bc1f84b83"><code>bc1f84b83</code></a>, formerly <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d68651047"><code>d68651047</code></a>, has a new paragraph on how the create path handles a failure. It leaves out the removal path, since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/141c695ed"><code>141c695ed</code></a> adds that.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -913,6 +925,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	
       <li>(in-scope) In the same pass, <code>collectGarbage</code> repeats from the cache what <code>removeOtherClusterNodeObjects</code> already did. A cached LimaVM that still shows its owned finalizer gets a second <code>Update</code> from <code>base.RemoveOwnedFinalizer</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/base/finalizer.go#L84"><code>finalizer.go:84</code></a>) with a stale resourceVersion, and the 409 ends the pass before the LimaMachine loop runs. The next pass, 5 ms later, recovers. It takes a change of the guest cluster&#39;s UID with Cluster API present, and round 1 found that no user action changes that UID while the App exists. Dropping the other-cluster case from <code>collectGarbage</code>&#39;s predicate would give each removal reason one owner. <span class="pill pill-claude">Claude Opus 5.5</span></li>
       <li>(in-scope) Open question: rd-init queues a restart of every unit before READY, the mount units included (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/src/rd-init/main.go#L86"><code>rdd/src/rd-init/main.go:86</code></a>, <code>:93</code>). The maintainers haven&#39;t ruled on restarting every unit versus only the networking ones. <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
     </ul>
+    <p><strong>Outcome:</strong> the first concern is fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/141c695ed"><code>141c695ed</code></a>. <code>collectGarbage</code> now leaves another guest cluster&#39;s objects to <code>removeOtherClusterNodeObjects</code>. <code>syncNodeVMsRunning</code> can cause the same conflict, because it patches node VMs earlier in the pass, and pending-work tracks that. The second concern is declined. rd-init tells systemd that it is ready before it waits for any of the restarts, so restarting every unit can&#39;t hold up the boot, and a unit that needs a mount waits for that mount.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>(in-scope) Reading the input ConfigMap through <code>apiReader</code> covers the one case that the cache gets wrong, the 5 ms retry after a failed create, and the interceptor in <code>TestReconcileLimaMachinesFailedVM</code> models that cache. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
@@ -932,6 +945,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	
     </ol>
     <p>Existing tests already pin the other round-1 guards. <code>TestReconcileLimaMachinesFailedVM</code> pins the cross-namespace check, the input ConfigMap deletion after a failed create, the <code>apiReader</code> read, and the create path&#39;s <code>continue</code>. Step c of <code>TestReconcile</code> pins removing another guest cluster&#39;s node objects before the Cluster API check. <code>TestReconcileLimaMachines</code> pins the repeated probe, and <code>TestValidateMachineName</code> pins the dot check.</p>
     <p>A row for <code>_</code> in <code>TestValidateMachineName</code> isn&#39;t needed. The API server validates every custom resource name as a DNS subdomain (<code>apiextensions-apiserver</code> v0.36.4, <code>pkg/registry/customresource/validator.go:53</code>), so a LimaMachine name can&#39;t contain <code>_</code>.</p>
+    <p><strong>Outcome:</strong> both required tests written, I1&#39;s in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/1f036f67c"><code>1f036f67c</code></a> and I2&#39;s in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2181ae752"><code>2181ae752</code></a>. S2&#39;s optional tests were declined.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
@@ -941,6 +955,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	
       <li>The only wrong statement is I3&#39;s BATS comment, which Lima&#39;s hostagent contradicts.</li>
       <li>The design doc matches the code after the round-1 fixes. Two gaps are already tracked. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/docs/design/capi-provider.md#L71"><code>capi-provider.md:71</code></a> doesn&#39;t say that a <code>BootstrapFailed</code> LimaMachine doesn&#39;t count as waiting, and the failure message&#39;s <code>rdd ctl</code> command (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/7e89b754c77cf746142a7b16d42fab83b4a9bb2f/rdd/pkg/controllers/app/capi/limamachine.go#L223"><code>limamachine.go:223</code></a>) lacks <code>--instance</code>.</li>
     </ul>
+    <p><strong>Outcome:</strong> both tracked gaps fixed. The design doc (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/07dc1a0f1"><code>07dc1a0f1</code></a>) says that a <code>BootstrapFailed</code> LimaMachine doesn&#39;t count as waiting, so a LimaMachine whose install script outlasts Lima&#39;s wait can show up as provisioned up to 30 seconds after the script succeeds. The failure message (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/bc1f84b83"><code>bc1f84b83</code></a>) adds <code>--instance</code> on a non-default instance. Five CLI hints on main have the same gap, and pending-work tracks them for a PR against main.</p>
     </div>
     <hr>
     <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
@@ -950,6 +965,7 @@ ok  	github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/capi	
       <li>S3.</li>
       <li>Folding <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a> into the commits that it corrects, and moving <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a> into its own PR, wait for the branch split, as round 1 recorded.</li>
     </ul>
+    <p><strong>Outcome:</strong> S3 fixed. Folding <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2181ae752"><code>2181ae752</code></a> (formerly <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>) into the commits that it corrects, and moving <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/5ee49c806"><code>5ee49c806</code></a> (formerly <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a>) into its own PR, are still deferred to the branch split, as round 1 recorded; tracked in pending-work.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
