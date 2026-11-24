@@ -242,6 +242,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The branch adds a macOS Cluster API infrastructure provider to rdd. For each LimaMachine that Rancher&#39;s Cluster API creates in the App&#39;s k3s cluster, rdd boots a node VM from the App&#39;s own distro image. The design holds up, and it keeps the registration token out of conditions and errors. One Important defect remains. When rdd&#39;s webhooks reject one LimaMachine&#39;s LimaVM, every pass aborts there, and the LimaMachines listed after it never get node VMs.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>Round 1&#39;s fixes were folded into the commits they fix, so every commit from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/c395c85e0"><code>c395c85e0</code></a> on has a new SHA, and the branch now ends at <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a>. The quoted code and line numbers below refer to <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ef7545810"><code>ef7545810</code></a>.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -654,6 +660,7 @@ index b022bacf5..f3820c24e 100644
  func guestKubeConfig(t *testing.T, env *envtest.Environment) []byte {
  	t.Helper()</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d68651047"><code>d68651047</code></a>. The loop goes on past a LimaMachine whose provisioning fails, and returns the errors together at the end of the pass. Before creating a LimaVM, rdd reports <code>NameConflict</code> when another namespace uses the name. A failed create deletes the input ConfigMap, so the next pass renders the template again. <code>TestReconcileLimaMachinesFailedVM</code> covers these three changes. It is in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>, because it needs that commit&#39;s control-plane version lookup. The other trigger, a negative size, now fails S4&#39;s CRD rules. Unlike the review&#39;s patch, the fix doesn&#39;t set <code>CreateFailed</code>, so a create that rdd&#39;s webhook still rejects shows only in rdd&#39;s log; pending-work tracks reporting it on the LimaMachine.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -693,6 +700,7 @@ Rancher&#39;s bootstrap data includes the token that the node&#39;s system agent
 </code></pre>
     <p>The path is latent today. The App controller never recreates the App VM, and the Troubleshooting page&#39;s Reset Kubernetes and Factory Reset buttons send <code>k8s-reset</code> and <code>factory-reset</code>, but the main process doesn&#39;t handle either message. Deleting the App removes node VMs through <code>DeleteOwnedResources</code>. Once Reset Kubernetes reaches rdd, this becomes Important.</p>
     <p>Fix: read the <code>kube-system</code> UID before the Cluster API check and remove node objects labelled with another guest UID there. Keep the cleanup of missing LimaMachines behind a successful LimaMachine list.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/850f9b85e"><code>850f9b85e</code></a> as the Fix proposes. Step c of <code>TestReconcile</code> covers a changed UID with Cluster API absent.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/capi/template.go">
       <div class="finding-title" id="S2">
@@ -736,6 +744,7 @@ func ValidateMachineName(limaHome, name string) error {
 		}
 	}</code></pre>
     <p>Fix: reject <code>.</code> and <code>_</code> with <code>InvalidName</code>. Building the provider ID with <code>FromInstName</code> instead would let <code>a.b</code> and <code>a-b</code> share a Node name.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0dcdbd42f"><code>0dcdbd42f</code></a> as the Fix proposes, and <code>TestValidateMachineName</code> has a row with a dot.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/capi/limamachine.go">
       <div class="finding-title" id="S3">
@@ -783,6 +792,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
 			state.phase = phaseStopped
 			r.enqueueReconcile(name, namespace)</code></pre>
     <p>Fix: don&#39;t cache a probe that lacks the marker, and qualify the doc&#39;s sentence.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/65f08ae18"><code>65f08ae18</code></a>. rdd probes again on every pass until a probe finds the marker, and a failed probe keeps the boot&#39;s last result. <code>TestReconcileLimaMachines</code> covers both, and the design doc says Lima also reports a VM running when its wait for the boot scripts times out.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/capi/v1alpha1/limamachine_types.go">
       <div class="finding-title" id="S4">
@@ -802,6 +812,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
 	// disk is the size of the machine&#39;s VM disk, as a Kubernetes resource</code></pre>
     <p>The CRD doesn&#39;t set a minimum for <code>cpus</code>, and its quantity pattern accepts a leading <code>-</code> for <code>memory</code> and <code>disk</code>. With I1&#39;s patch, a negative <code>memory</code> or <code>disk</code> shows up as <code>CreateFailed</code>. But <code>cpus: -1</code> passes Lima&#39;s validation, which rejects only 0 (<code>pkg/limayaml/validate.go:108</code> in the Lima fork), and fails only when the VM starts. Validation in the CRD would reject all three when the user applies the template.</p>
     <p>Fix: add <code>+kubebuilder:validation:Minimum=1</code> to <code>cpus</code> and a CEL rule that requires positive <code>memory</code> and <code>disk</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/8174f7621"><code>8174f7621</code></a>. CEL rules require positive <code>memory</code> and <code>disk</code>, as proposed. But <code>cpus</code> gets <code>Minimum=0</code>. A <code>cpus</code> of 0 means unset and gives the VM 2 vCPUs, so the review&#39;s <code>Minimum=1</code> would reject a valid spec.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/controllers/app/capi/limamachine.go">
       <div class="finding-title" id="S5">
@@ -821,6 +832,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
 		}</code></pre>
     <p>The repo&#39;s controllers build their logger once at the top of a function and log through it, because an inline chain pushes its key/value pairs onto a continuation line where they are easy to miss. This is the only inline chain the branch adds.</p>
     <p>Fix: declare <code>log := logf.FromContext(ctx)</code> at the top of <code>provisionLimaMachine</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/65f08ae18"><code>65f08ae18</code></a>. <code>provisionLimaMachine</code> declares <code>log</code> at the top.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -830,6 +842,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
     <ul>
       <li>(future) The single reconcile worker probes node VMs one at a time, each for up to 15 seconds (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ef7545810add5a304f2320d2f1f800ba05f448ed/rdd/pkg/controllers/app/capi/probe_darwin.go#L16"><code>probe_darwin.go:16</code></a>). After an App start with several node VMs, one pass can take several times that, and deletions in the same pass wait for it. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p><strong>Outcome:</strong> declined for this branch. Serial probing slows a pass only with several node VMs, and parallel probes are a separate change, tracked in pending-work.</p>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
       <li>(in-scope) Conditions and errors never quote the registration token, base64 keeps the script away from Lima&#39;s <code>text/template</code> and its logging, and the design doc lists every place the token is stored. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-codex">Codex GPT 6 Astra</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
@@ -849,6 +862,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
       <li>S2: optional, because nobody has confirmed that Rancher lets a dot into a machine name. One <code>ValidateMachineName</code> row with a dot covers it.</li>
       <li>S3: dropped as a test, because it needs real boot waits.</li>
     </ol>
+    <p><strong>Outcome:</strong> all four tests written. I1&#39;s is <code>TestReconcileLimaMachinesFailedVM</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>), S1&#39;s is step c of <code>TestReconcile</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/850f9b85e"><code>850f9b85e</code></a>), S2&#39;s is the dotted row of <code>TestValidateMachineName</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/0dcdbd42f"><code>0dcdbd42f</code></a>), and S3&#39;s steps in <code>TestReconcileLimaMachines</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/65f08ae18"><code>65f08ae18</code></a>) use a stub probe, so they don&#39;t need real boot waits.</p>
     </div>
     <hr>
     <h2 id="documentation-assessment">Documentation Assessment <a href="#documentation-assessment" class="pilcrow">&#182;</a></h2>
@@ -859,6 +873,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ef7545810add5a304f2320d2f1f800ba05f448ed/rdd/docs/design/capi-provider.md#L128"><code>capi-provider.md:128</code></a> (the guest&#39;s hostname is <code>lima-&lt;name&gt;</code>) and <code>:140</code> (Lima reports Running only after the boot scripts) overstate what happens (S2, S3).</li>
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/ef7545810add5a304f2320d2f1f800ba05f448ed/rdd/docs/design/capi-provider.md#L170"><code>capi-provider.md:170</code></a> promises reset cleanup that runs only while Cluster API is present (S1).</li>
     </ul>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/deb5c7907"><code>deb5c7907</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>. The reason table and the <code>NameConflict</code> paragraph cover a LimaVM in another namespace that has the LimaMachine&#39;s name. The Names section adds the dot check. The Readiness section says that Lima also reports a VM running once it stops waiting for the boot scripts. And the cleanup paragraph says that a pass removes another guest cluster&#39;s node VMs with Cluster API absent too.</p>
     </div>
     <hr>
     <h2 id="commit-structure">Commit Structure <a href="#commit-structure" class="pilcrow">&#182;</a></h2>
@@ -868,6 +883,7 @@ The `Ready` condition&#39;s reason tells how far a `LimaMachine` has got.
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2dcb6e30b"><code>2dcb6e30b</code></a> corrects the version lookup that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/9f462e0b7"><code>9f462e0b7</code></a> added, and it edits the BATS file and the design doc from <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/b804aa541"><code>b804aa541</code></a> and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e8ce58e75"><code>e8ce58e75</code></a>. Fold it into those commits when the branch is split. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
       <li><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ef7545810"><code>ef7545810</code></a> fixes boot ordering in rd-init. The provider needs that fix, but the commit doesn&#39;t depend on the provider, so it can go into its own PR. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p><strong>Outcome:</strong> deferred until the branch is split into PRs, as the first item says; tracked in pending-work. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/2dcb6e30b"><code>2dcb6e30b</code></a> is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/35c2bcd9b"><code>35c2bcd9b</code></a>, and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ef7545810"><code>ef7545810</code></a> is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/7e89b754c"><code>7e89b754c</code></a>.</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
