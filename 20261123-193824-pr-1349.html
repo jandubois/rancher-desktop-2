@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>When the first app window fails to load its page, this commit hides the splash, shows an error box and quits. The handler and its guards are correct, and deleting any new branch fails a test. One Important finding remains: the spec doesn&#39;t pin the order of hide, box and quit, so moving either call leaves the suite green. Two suggestions cover a log line that blames the user for this quit and an unasserted <code>reportStartup()</code> call.</p>
     </div>
     <hr>
+    <h2 id="the-cited-code-has-changed">The cited code has changed <a href="#the-cited-code-has-changed" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>This review read <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/05e6643a9"><code>05e6643a9</code></a>. Addressing it amended that commit into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ae4a0000a"><code>ae4a0000a</code></a>, so the line numbers and snippets below describe the code before the fixes.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -354,6 +360,7 @@ index 670723520..01bdf9281 100644
    });
  </code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ae4a0000a"><code>ae4a0000a</code></a> with the patch above. Each reorder mutant fails 2 tests. Verification found the same gap in <code>rdd-ctl.spec.ts</code>, where moving <code>app.quit()</code> above the &quot;Incompatible RDD Service&quot; box passed; the same commit pins that order too.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -438,6 +445,7 @@ mainEvents.on(&#39;before-quit&#39;, () =&gt; {
  * Open a dialog warning the user that RD cannot be run as root/administrator,
  * and return once the user has acknowledged this.</code></pre>
     <p>Fix: drop the cause from the message, for example <code>console.log(&#39;Quitting during first-run&#39;);</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ae4a0000a"><code>ae4a0000a</code></a>; the line now reads <code>Quitting during first-run</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="pkg/rancher-desktop/window/__tests__/index.spec.ts">
       <div class="finding-title" id="S2">
@@ -486,6 +494,7 @@ Electron.app.on(&#39;window-all-closed&#39;, () =&gt; {
   Electron.app.dock?.hide();
 });</code></pre>
     <p>Fix: hoist the mock into <code>const reportStartup = jest.fn()</code>, clear it in <code>beforeEach</code>, and assert it in the failure test.</p>
+    <p><strong>Outcome:</strong> declined as optional; the <code>will-quit</code> handler still writes the timing line if the call is deleted, only later.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -493,8 +502,8 @@ Electron.app.on(&#39;window-all-closed&#39;, () =&gt; {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><strong>(in-scope)</strong> Showing only the error description in the box is an open question. Both measured failures arrive as <code>ERR_UNEXPECTED</code>, so every user sees &quot;(ERR_UNEXPECTED)&quot;, which they can&#39;t act on or usefully attach to a report. The URL and the code reach only the log. Naming the log directory in the box, as <code>fatalError.showLogsErrorDetail</code> does, would point the user at the line that names the URL. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span></li>
-      <li><strong>(future)</strong> Skipping -3 changes one case that the app can&#39;t reach today. For a visible first window, an aborted load used to end startup and close the splash; now the splash stays until <code>did-finish-load</code> or <code>closed</code>. The app never stops a load itself, so only a page that aborts its own load would hit this. <span class="pill pill-claude">Claude Opus 5.5</span></li>
+      <li><strong>(in-scope)</strong> Showing only the error description in the box is an open question. Both measured failures arrive as <code>ERR_UNEXPECTED</code>, so every user sees &quot;(ERR_UNEXPECTED)&quot;, which they can&#39;t act on or usefully attach to a report. The URL and the code reach only the log. Naming the log directory in the box, as <code>fatalError.showLogsErrorDetail</code> does, would point the user at the line that names the URL. <span class="pill pill-claude">Claude Opus 5.5</span> <span class="pill pill-gemini">Gemini 3.5 Flash</span> <strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ae4a0000a"><code>ae4a0000a</code></a>; the box keeps the error description and adds &quot;For details, see the logs in {logDir}.&quot; with <code>paths.log_dir</code>.</li>
+      <li><strong>(future)</strong> Skipping -3 changes one case that the app can&#39;t reach today. For a visible first window, an aborted load used to end startup and close the splash; now the splash stays until <code>did-finish-load</code> or <code>closed</code>. The app never stops a load itself, so only a page that aborts its own load would hit this. <span class="pill pill-claude">Claude Opus 5.5</span> <strong>Outcome:</strong> declined; the case is unreachable today.</li>
     </ul>
     <h3 id="strengths">Strengths <a href="#strengths" class="pilcrow">&#182;</a></h3>
     <ul>
