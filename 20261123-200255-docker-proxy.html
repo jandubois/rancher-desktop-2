@@ -245,7 +245,7 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-neutral">
-    <p>The branch was rewritten after this review. The fixes went into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/469e23f22"><code>469e23f22</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/977e51327"><code>977e51327</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d5eacbe3f"><code>d5eacbe3f</code></a>), and S3 is the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d39a4c332"><code>d39a4c332</code></a>. Line numbers in this report refer to the review SHA.</p>
+    <p>The branch was rewritten after this review. The fixes went into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/469e23f22"><code>469e23f22</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a>) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/977e51327"><code>977e51327</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3b468f4e9"><code>3b468f4e9</code></a>), and S3 is the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a>. After the fixes, <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> was rewritten again to relay with <code>httputil.ReverseProxy</code>, as the first design concern proposed, and <code>reverse_proxy.go</code> is gone. So the relay patches for I1, I2, I3, S1, S2 and S7 are no longer on the branch. The four tests that the I1, I2, S1 and S2 fixes added to <code>proxy_test.go</code> are still there, and so is S2&#39;s <code>http.NoBody</code> change in <code>readContainersCreateBody</code>. Line numbers in this report refer to the review SHA.</p>
     </div>
     <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
@@ -449,7 +449,7 @@ index 5d43a6d74..05ed7ef28 100644
  	// `docker logs -f` reaches the client as it arrives.
  	fw := newFlushedWriter(ctx, w)</code></pre>
       </details>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a> with this patch. Verification found that net/http also ends ctx when a client half-closes, so such a client loses the rest of a normal response, as it would through <code>httputil.ReverseProxy</code>. The maintainer kept the fix, and the comment at the site states the trade-off. Do not re-suggest keeping the response for a half-closing client.</p>
+    <p><strong>Outcome:</strong> fixed with this patch, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> then replaced along with the relay. <code>httputil.ReverseProxy</code> cancels the backend request when the client leaves, and <code>TestServeClientDisconnectClosesBackend</code> covers it. Verification found that net/http also ends ctx when a client half-closes, so such a client loses the rest of a normal response, through this patch and through <code>httputil.ReverseProxy</code> alike. The maintainer kept that behavior, and the <code>proxy.go</code> package comment states the trade-off. Do not re-suggest keeping the response for a half-closing client.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="I2">
@@ -585,7 +585,7 @@ index 5d43a6d74..d90353b3b 100644
  }
  </code></pre>
       </details>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a> with this patch. The two new tests also gained <code>http.NoBody</code> and <code>defer resp.Body.Close()</code> for gocritic and bodyclose.</p>
+    <p><strong>Outcome:</strong> fixed with this patch. The two new tests also gained <code>http.NoBody</code> and <code>defer resp.Body.Close()</code> for gocritic and bodyclose. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> then replaced the patch along with the relay. <code>httputil.ReverseProxy</code> aborts a response that the backend cuts short, and <code>TestServeTruncatedResponseFailsClient</code> covers it.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="I3">
@@ -687,7 +687,7 @@ index 5d43a6d74..79f2cb723 100644
  	// DialContext connects to the backend.
  	DialContext func(ctx context.Context, _, _ string) (net.Conn, error)</code></pre>
       </details>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a> with this patch.</p>
+    <p><strong>Outcome:</strong> fixed with this patch; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> then deleted the comment along with the relay.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -710,7 +710,7 @@ index 5d43a6d74..79f2cb723 100644
 	defer backendResponse.Body.Close()</code></pre>
     <p>The proxy forwards the client&#39;s <code>Expect</code> header, so dockerd answers <code>100 Continue</code> before its final response. The proxy reads and relays only that first response, and net/http then completes the exchange with an empty <code>200</code>. Codex&#39;s probe through <code>Serve</code> turned a <code>201</code> with a body into an empty <code>200</code>. This stays harmless while clients on the pipe leave <code>Expect</code> out; the moby Go client that the Docker CLI uses doesn&#39;t set it.</p>
     <p>Fix: keep reading while <code>backendResponse.StatusCode &lt; 200</code> and the status isn&#39;t <code>101</code>. With that loop, the probe returns the <code>201</code>, and the package tests pass.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>. The loop skips every 1xx except 101, and <code>TestServeRelaysFinalResponseAfterContinue</code> covers it.</p>
+    <p><strong>Outcome:</strong> fixed with a loop that skips every 1xx except 101, which <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> then replaced along with the relay. <code>Rewrite</code> now drops the client&#39;s <code>Expect</code> header, because the proxy&#39;s own net/http server already answers it, and <code>TestServeRelaysFinalResponseAfterContinue</code> checks that the client gets one 100 Continue and the final response.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="S2">
@@ -735,7 +735,7 @@ index 5d43a6d74..79f2cb723 100644
 	// Prevent automatic connection closure</code></pre>
     <p><code>NewRequestWithContext</code> can&#39;t know the length of <code>r.Body</code>, so <code>newReq.ContentLength</code> stays 0 and <code>Request.Write</code> sends the body chunked. A probe through <code>Serve</code> showed a client&#39;s <code>Content-Length: 2</code> arriving as <code>ContentLength=-1</code> with <code>Transfer-Encoding: chunked</code>. dockerd&#39;s start handler rejects <code>-1</code> as a deprecated non-empty body (<code>api/server/router/container/container_routes.go:217</code> in moby v28.5.2). So a client that sends <code>{}</code> to <code>/start</code> works directly and fails through the proxy. The moby client sends a nil body there.</p>
     <p>Fix: <code>newReq.ContentLength = r.ContentLength</code> after line 78. The probe then shows <code>ContentLength=2</code>, and the package tests pass.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>, with <code>TestServeKeepsRequestContentLength</code>. Verification also found an empty create body going out chunked, so <code>readContainersCreateBody</code> now keeps <code>http.NoBody</code>.</p>
+    <p><strong>Outcome:</strong> fixed, with <code>TestServeKeepsRequestContentLength</code>. <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> then replaced the relay with <code>httputil.ReverseProxy</code>, which keeps the Content-Length, and the test still passes. Verification also found an empty create body going out chunked, so <code>readContainersCreateBody</code> keeps <code>http.NoBody</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/guestexec/hostpath.go">
       <div class="finding-title" id="S3">
@@ -769,7 +769,7 @@ func IsDriveAbsolute(hostPath string) bool {
 			input, err := json.Marshal(map[string]any{&quot;HostConfig&quot;: map[string]any{&quot;Binds&quot;: []string{tc.bind}}})
 			assert.NilError(t, err)</code></pre>
     <p>Fix: strip a leading <code>\\?\</code> before the drive check in both helpers, or note beside <code>IsDriveAbsolute</code> that such paths stay untranslated.</p>
-    <p><strong>Outcome:</strong> fixed in the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d39a4c332"><code>d39a4c332</code></a>, in the shared helpers, so the nerdctl stub translates such paths too. The stub&#39;s check for a volume without a container path accepts the prefix as well.</p>
+    <p><strong>Outcome:</strong> fixed in the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a>, in the shared helpers, so the nerdctl stub translates such paths too. The stub&#39;s check for a volume without a container path accepts the prefix as well.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/hostswitch/hostswitch_windows.go">
       <div class="finding-title" id="S4">
@@ -826,7 +826,7 @@ func TestMungeContainersCreateMounts(t *testing.T) {
 		}
 		if mount.Type != mountTypeBind || !guestexec.IsDriveAbsolute(mount.Source) {</code></pre>
     <p>Fix: move the null before the translated mount in both <code>input</code> and <code>want</code>.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>. The suite now fails when <code>continue</code> becomes <code>break</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a>. The suite now fails when <code>continue</code> becomes <code>break</code>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/40-docker/bind-mount.bats">
       <div class="finding-title" id="S6">
@@ -851,7 +851,7 @@ local_setup() {
 </code></pre>
     <p>The repo&#39;s BATS conventions write fixtures through <code>create_file</code>, which writes through PowerShell under a WSL-hosted bats, and keep MSYS2-only tools such as <code>cygpath</code> out of a test whose only guard is <code>skip_on_unix</code>. <code>winpath</code> in <code>helpers/paths.bash</code> already picks <code>cygpath -w</code> or <code>wslpath -w</code>. CI runs bats under MSYS2 only, so both gaps are latent.</p>
     <p>Fix: <code>create_file &quot;${BATS_TEST_TMPDIR}/shared/file&quot; &lt;&lt;&lt;marker</code> in <code>local_setup</code>, and <code>run -0 winpath &quot;${BATS_TEST_TMPDIR}/shared&quot;</code> in the <code>--volume</code> test.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/d5eacbe3f"><code>d5eacbe3f</code></a>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3b468f4e9"><code>3b468f4e9</code></a>.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/reverse_proxy.go">
       <div class="finding-title" id="S7">
@@ -874,7 +874,7 @@ type flushedWriter struct {
 	mu     sync.Mutex         // Mutex to protect concurrent access to the writer and dirty flag.</code></pre>
     <p>Every caller folds <code>err.Error()</code> into <code>msg</code>, so the error ends up in the message text, and logr&#39;s error field stays empty.</p>
     <p>Fix: pass <code>err</code> to <code>sendError</code> and hand it to <code>Logger.Error</code>.</p>
-    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/4f90d03b3"><code>4f90d03b3</code></a>. The four error responses send the same text as before; only the Flusher check&#39;s text changed.</p>
+    <p><strong>Outcome:</strong> fixed, then deleted along with <code>sendError</code> and the rest of the relay in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a>. The proxy&#39;s <code>ErrorHandler</code> passes the error to the logger, but doesn&#39;t log it when the client has gone away or half-closed.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -882,7 +882,7 @@ type flushedWriter struct {
     <div class="card card-design">
     <h3 id="concerns">Concerns <a href="#concerns" class="pilcrow">&#182;</a></h3>
     <ul>
-      <li><em></em>(future) The hand-written relay has to get right what <code>net/http/httputil.ReverseProxy</code> already handles.<em></em> I1, I2, S1 and S2 are all in <code>reverse_proxy.go</code>, and Go&#39;s <code>ReverseProxy</code> handled I1, I2 and S1 in Codex&#39;s loopback probe, which didn&#39;t test S2. I3 covers the upgrade case. Codex also ran an upgrade probe. In it, the standard proxy relayed a client half-close and the response that followed. This review didn&#39;t rerun that probe, and neither proxy has run over a message-mode pipe. <span class="pill pill-codex">Codex GPT 6 Astra</span></li>
+      <li><em></em>(future) The hand-written relay has to get right what <code>net/http/httputil.ReverseProxy</code> already handles.<em></em> I1, I2, S1 and S2 are all in <code>reverse_proxy.go</code>, and Go&#39;s <code>ReverseProxy</code> handled I1, I2 and S1 in Codex&#39;s loopback probe, which didn&#39;t test S2. I3 covers the upgrade case. Codex also ran an upgrade probe. In it, the standard proxy relayed a client half-close and the response that followed. This review didn&#39;t rerun that probe, and neither proxy has run over a message-mode pipe. <span class="pill pill-codex">Codex GPT 6 Astra</span> <strong>Adopted after the review:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> relays with <code>httputil.ReverseProxy</code>.</li>
       <li><em></em>(future) Hijacked connections outlive <code>Serve</code>&#39;s shutdown, so a host-switch restart may fail to listen again.<em></em> <code>server.Close</code> leaves <code>docker run -it</code>, <code>docker exec -it</code> and BuildKit sessions open, and go-winio creates a pipe&#39;s first instance with <code>FILE_CREATE</code>. A still-open instance would then make the next <code>runOnce</code>&#39;s <code>ListenPipe</code> fail; nobody has tested that on Windows. The merge-base bridge left every connection open at shutdown, so this change doesn&#39;t make it worse. <span class="pill pill-claude">Claude Opus 5.5</span></li>
       <li><em></em>(future) Attach and exec without an <code>Upgrade</code> header lose stdin.<em></em> dockerd then answers <code>200</code> and streams raw output, and the proxy relays that output but not the client bytes that follow the request. The Docker CLI sends <code>Upgrade: tcp</code>. RD1 has the same limitation. <span class="pill pill-claude">Claude Opus 5.5</span></li>
       <li><strong>(pre-existing) The Docker pipe name is global, and a failed listen leaves the pipe to whoever else holds it.</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/blob/977e51327a05f50ff7a64e5984245e1b5a3bd198/rdd/pkg/hostswitch/hostswitch_windows.go#L185-L187"><code>hostswitch_windows.go:185-187</code></a> logs the <code>ListenPipe</code> failure and continues, as the merge-base bridge did. The repo&#39;s review context already records this. <span class="pill pill-gemini">Gemini 3.1 Pro</span></li>
