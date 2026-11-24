@@ -44,6 +44,10 @@ import (
 const (
 	appName = "app"
 
+	// controllerName is the capi controller's name, which also prefixes its
+	// passthrough endpoints.
+	controllerName = "capi"
+
 	// machineCRDName is Cluster API's Machine CRD. Its presence in the guest
 	// cluster tells us that CAPI is installed there.
 	machineCRDName = "machines.cluster.x-k8s.io"
@@ -56,14 +60,15 @@ const (
 
 	// requeueInProgress is the wait before the next pass when the guest
 	// cluster cannot be reached, our CRDs cannot be installed, our
-	// infrastructure objects cannot be read or updated, a LimaMachine
-	// waits for its Machine, its cluster's control plane, its bootstrap data
-	// or its node VM, or a deleted LimaMachine waits for its node VM to
-	// disappear.
+	// infrastructure objects cannot be read or updated, the UIPlugin has to
+	// wait, a LimaMachine waits for its Machine, its cluster's control plane,
+	// its bootstrap data or its node VM, or a deleted LimaMachine waits for
+	// its node VM to disappear.
 	requeueInProgress = 5 * time.Second
 
 	// requeueIdle is the wait between passes while the guest cluster lacks
-	// Cluster API, or after a pass that didn't leave any LimaMachine waiting.
+	// Cluster API, or after a pass in which neither a LimaMachine nor the
+	// UIPlugin had to wait.
 	// The reconciler doesn't watch the guest cluster, so a new LimaCluster or
 	// LimaMachine waits up to this long before a pass picks it up.
 	requeueIdle = 30 * time.Second
@@ -121,6 +126,12 @@ type Reconciler struct {
 	// probes holds the last complete probe of each LimaMachine's node VM,
 	// keyed by the LimaMachine's UID.
 	probes map[types.UID]probeRecord
+
+	// lookupPassthroughEndpoint returns the URL of rdd's passthrough server
+	// that serves the UI extension, or "" when none does.
+	// RegisterWithManager sets it; tests leave it nil, and then the
+	// reconciler doesn't create a UIPlugin.
+	lookupPassthroughEndpoint func(ctx context.Context) (string, error)
 }
 
 // probeRecord is a complete probe of a node VM, with the LimaVM's restart
@@ -133,6 +144,7 @@ type probeRecord struct {
 // Reconcile first starts or stops the node VMs to follow the App. Then, when
 // the guest cluster is running, it removes the node VMs of an earlier guest
 // cluster. When the guest cluster also has Cluster API, it installs our CRDs
+// there, registers the embedded UI extension with Rancher when Rancher runs
 // there, marks the LimaClusters provisioned and ready, creates and deletes
 // the LimaMachines' node VMs, and removes node VMs that no LimaMachine
 // claims. A failed request to the guest cluster leads to a requeue, unless
@@ -194,6 +206,22 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		r.crdsInstalled = true
 	}
 
+	// The UIPlugin only adds Rancher's UI for our provider, so a UIPlugin
+	// error doesn't stop this pass before the LimaClusters and LimaMachines.
+	// When the UIPlugin has to wait, for example for Rancher to create its
+	// namespace, the next pass comes after requeueInProgress. Any other
+	// UIPlugin error doesn't shorten the requeue, so an error that persists
+	// doesn't fill the log.
+	uiPluginPending := false
+	if err := r.reconcileUIPlugin(ctx); err != nil {
+		if errors.Is(err, errUIPluginPending) {
+			uiPluginPending = true
+			log.V(1).Info("Cannot write the UIPlugin yet", "err", err)
+		} else {
+			log.Error(err, "Failed to write the UIPlugin into the guest cluster")
+		}
+	}
+
 	if err := r.reconcileLimaClusters(ctx); err != nil {
 		log.V(1).Info("Cannot reconcile LimaClusters in the guest cluster", "err", err)
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
@@ -209,7 +237,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		log.V(1).Info("Cannot reconcile LimaMachines in the guest cluster", "err", err)
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
 	}
-	if inProgress {
+	if inProgress || uiPluginPending {
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
 	}
 	return ctrl.Result{RequeueAfter: requeueIdle}, nil

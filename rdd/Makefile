@@ -248,11 +248,16 @@ FORCE:
 # bin/rdd embeds the dashboard only when it has been staged, so building rdd
 # doesn't need Node. `make --directory=dashboard` from the repo root stages it.
 DASHBOARD_INDEX := $(wildcard pkg/steve/dashboard/index.html)
-DASHBOARD_TAG := $(if $(DASHBOARD_INDEX),with_dashboard)
+# The same make run also stages the Rancher UI extension for the capi
+# controller. rdd embeds the extension under a tag of its own,
+# with_uiextension, so rdd still builds when the dashboard is staged without
+# the extension.
+UIEXTENSION_FILES := $(wildcard pkg/controllers/app/capi/uiextension/files.txt)
+DASHBOARD_TAG := $(strip $(if $(DASHBOARD_INDEX),with_dashboard) $(if $(UIEXTENSION_FILES),with_uiextension))
 
 # The stamp changes only when DASHBOARD_TAG does, so bin/rdd rebuilds when the
-# dashboard appears or disappears, even if the staged files are older than
-# bin/rdd.
+# dashboard or the UI extension appears or disappears, even if the staged
+# files are older than bin/rdd.
 bin/.dashboard-tag: FORCE
 	@mkdir -p $(@D)
 	@test -f $@ && test "$$(cat $@)" = '$(DASHBOARD_TAG)' || echo '$(DASHBOARD_TAG)' > $@
@@ -270,7 +275,7 @@ endef
 # Only the rdd builds and bin/lima-controller embed the distro. Tests, lint and
 # the other standalone controllers build without with_distro and do not need
 # the image.
-bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE) $(DASHBOARD_INDEX) bin/.dashboard-tag
+bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE) $(DASHBOARD_INDEX) $(UIEXTENSION_FILES) bin/.dashboard-tag
 	$(call BUILD_RDD,$@,$(DASHBOARD_TAG))
 build-rdd: bin/rdd$(EXE)
 .PHONY: build-rdd
