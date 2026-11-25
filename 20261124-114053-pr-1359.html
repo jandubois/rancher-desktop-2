@@ -243,6 +243,12 @@ details.fold .code-file-header { margin-top: 0; border-radius: 0; }
     <p>The PR serves <code>\\.\pipe\docker_engine</code> through a proxy built on <code>httputil.ReverseProxy</code>. The proxy rewrites drive-absolute bind sources in <code>POST /containers/create</code> to <code>/mnt/&lt;drive&gt;</code> paths, and the shared path helpers now translate <code>\\?\C:\</code> paths too. The relay switch broke one thing. An empty create request panics the proxy&#39;s handler, so the client gets <code>EOF</code> instead of dockerd&#39;s 400. And the suite doesn&#39;t pin <code>DisableKeepAlives</code>, which keeps backend connections from outliving <code>Serve</code>. Both come with patches and tests.</p>
     </div>
     <hr>
+    <h2 id="code-changed-since-this-review">Code changed since this review <a href="#code-changed-since-this-review" class="pilcrow">&#182;</a></h2>
+
+    <div class="card card-neutral">
+    <p>The branch was rewritten after this review. The fixes went into <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/ecdad7b67"><code>ecdad7b67</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e94a7993c"><code>e94a7993c</code></a>) and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> (now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6efbbfff3"><code>6efbbfff3</code></a>), and <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/3b468f4e9"><code>3b468f4e9</code></a> is now <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/53fe2325f"><code>53fe2325f</code></a>. S3&#39;s fix for the host switch&#39;s HTTP server is the new commit <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a7bf0d9d4"><code>a7bf0d9d4</code></a>. The tests in <code>proxy_test.go</code> that start a fake dockerd now share a <code>startBackend</code> helper. Line numbers in this report refer to the review SHA.</p>
+    </div>
+    <hr>
     <h2 id="critical-issues" class="section-critical">Critical Issues <a href="#critical-issues" class="pilcrow">&#182;</a></h2>
 
     <div class="card card-critical">
@@ -469,6 +475,7 @@ index 966b1b046..dcc421cc2 100644
  	backend := listenBackend(t)
  	server := &amp;http.Server{</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed with this patch in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e94a7993c"><code>e94a7993c</code></a>, with two changes. The patch&#39;s comment said that ReverseProxy sets an empty body to nil, but it does so only when ContentLength is 0, and an empty chunked body still arrives as a non-nil reader. So the comment now names that condition. And the <code>no body</code> subtest builds its request with <code>http.NoBody</code> and then sets <code>Body</code> to nil, because gocritic&#39;s <code>httpNoBody</code> check flags a request built with a nil body.</p>
     </div>
     <div class="card card-important" data-file="rdd/pkg/dockerproxy/proxy.go">
       <div class="finding-title" id="I2">
@@ -632,6 +639,7 @@ index 966b1b046..5f04590a6 100644
  	backend := listenBackend(t)
  	go func() {</code></pre>
       </details>
+    <p><strong>Outcome:</strong> fixed with this patch in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e94a7993c"><code>e94a7993c</code></a>, with the test renamed to <code>TestServeClosesBackendConnectionAfterResponse</code>. The comment also says that <code>DisableKeepAlives</code> doesn&#39;t apply to a connection that switches protocols, as attach, exec, and buildx builds do, and that <code>server.Close</code> leaves such a connection open. The package comment now lists build among the requests that switch protocols.</p>
     </div>
     <hr>
     <h2 id="suggestions" class="section-suggestion">Suggestions <a href="#suggestions" class="pilcrow">&#182;</a></h2>
@@ -654,6 +662,7 @@ func Serve(ctx context.Context, logger logr.Logger, listener net.Listener, dial 
 			// net/http&#39;s server answers the client&#39;s `Expect: 100-continue`</code></pre>
     <p><code>handleUpgradeResponse</code> (<code>reverseproxy.go:841-878</code> in Go 1.27.4) copies from the hijacked connection and ignores the <code>bufio.Reader</code> that <code>Hijack</code> returns, so client bytes that net/http had already buffered are lost. RD1&#39;s relay forwarded them (<code>util/reverse_proxy.go:211-224</code> at <code>abdf23c74</code>), and so did the byte bridge. A probe that wrote <code>early </code> right behind an attach request and <code>late</code> after the 101 saw the backend echo only <code>late</code>, in 3 of 3 runs. The Docker CLI uses moby&#39;s Go client, and that client checks for the 101 before it returns the connection (<code>client/hijack.go:106</code>, v0.6.3), so the CLI isn&#39;t affected.</p>
     <p>Fix: add this limit to the package comment, next to the half-close trade-off.</p>
+    <p><strong>Outcome:</strong> the <code>proxy.go</code> package comment now states this limit (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e94a7993c"><code>e94a7993c</code></a>).</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/proxy.go">
       <div class="finding-title" id="S2">
@@ -693,6 +702,7 @@ func Serve(ctx context.Context, logger logr.Logger, listener net.Listener, dial 
 			// away or half-closes. The error then only says that the request
 			// was cancelled, so it isn&#39;t logged.</code></pre>
     <p>Fix: a backend that asserts the request lacks an <code>Accept-Encoding</code> header, and a recording logger in a client-cancellation test.</p>
+    <p><strong>Outcome:</strong> <code>TestServeLeavesAcceptEncodingToClient</code> pins <code>DisableCompression</code> (<a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e94a7993c"><code>e94a7993c</code></a>). The cancelled-context check still doesn&#39;t have a test, because a test can show that a cancelled request doesn&#39;t log an error only by waiting a fixed time first.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/pkg/dockerproxy/proxy.go">
       <div class="finding-title" id="S3">
@@ -715,6 +725,7 @@ func Serve(ctx context.Context, logger logr.Logger, listener net.Listener, dial 
 </code></pre>
     <p><code>Serve</code> doesn&#39;t set the <code>http.Server</code>&#39;s <code>ErrorLog</code>, so net/http prints a recovered handler panic (I1&#39;s, for one) and its accept-retry messages through the standard <code>log</code> package, outside the <code>docker-proxy</code> logger. <code>ReverseProxy.ErrorLog</code> is unset too.</p>
     <p>Fix: set both to a <code>*log.Logger</code> that writes through <code>logger</code>.</p>
+    <p><strong>Outcome:</strong> fixed in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/e94a7993c"><code>e94a7993c</code></a>, which sets both <code>ErrorLog</code> fields in <code>Serve</code>, and in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/a7bf0d9d4"><code>a7bf0d9d4</code></a>, which does the same for the host switch&#39;s HTTP server. The controllers&#39; passthrough proxy and the hostagent&#39;s server have the same gap. Both predate this PR, and the gap is tracked.</p>
     </div>
     <div class="card card-suggestion" data-file="PR description">
       <div class="finding-title" id="S4">
@@ -722,6 +733,7 @@ func Serve(ctx context.Context, logger logr.Logger, listener net.Listener, dial 
       </div>
     <p>The description says &quot;That PR hasn&#39;t merged yet, so if it changes before it merges, this PR needs the same change.&quot; <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> merged on 2026-11-24 at its head <code>abdf23c74</code>, and the ported files match RD1&#39;s <code>main</code> byte for byte, so the port itself doesn&#39;t need to change.</p>
     <p>Fix: say that the code matches RD1&#39;s <code>main</code> since <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> merged.</p>
+    <p><strong>Outcome:</strong> fixed; the PR description no longer says that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> hasn&#39;t merged.</p>
     </div>
     <div class="card card-suggestion" data-file="rdd/bats/tests/40-docker/bind-mount.bats">
       <div class="finding-title" id="S5">
@@ -746,6 +758,7 @@ local_setup() {
     run -0 ctrctl run --rm --mount &quot;${mount}&quot; &quot;${IMAGE_BUSYBOX}&quot; cat /data/file</code></pre>
     <p><a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> makes the proxy translate <code>\\?\C:\src</code>, and unit tests pin the translated string, but the Windows BATS tests never hand such a path to <code>docker.exe</code>. This review hasn&#39;t checked whether the Docker CLI passes the prefix on in the create request. A regression would show up as dockerd naming the untranslated path, so the test is optional.</p>
     <p>Fix: a third test in <code>bind-mount.bats</code> that puts <code>\\?\</code> in front of the <code>winpath</code> output.</p>
+    <p><strong>Outcome:</strong> test written in <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6efbbfff3"><code>6efbbfff3</code></a>. It mounts the path without <code>:ro</code>, because docker.exe rejects <code>\\?\C:\...:/data:ro</code> as having too many colons before anything reaches the proxy. The two-field form goes through docker.exe unchanged. The same commit adds extended-length test rows for the proxy&#39;s <code>Mounts</code> branch and for the nerdctl stub&#39;s <code>--volume</code> and <code>--mount</code> handlers, so a test now fails when any branch that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> changed breaks.</p>
     </div>
     <hr>
     <h2 id="design-observations" class="section-design">Design Observations <a href="#design-observations" class="pilcrow">&#182;</a></h2>
@@ -781,6 +794,7 @@ local_setup() {
       <li>The PR description is stale about <a href="https://github.com/rancher-sandbox/rancher-desktop-2/issues/11383" class="gh-ref">#11383</a> (S4).</li>
       <li><code>rdd/docs/design/nerdctl.md</code> lists the host path forms that the nerdctl stub rewrites, but not the <code>\\?\C:\</code> form that <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/cbdcd73e4"><code>cbdcd73e4</code></a> adds. It&#39;s one missing line, so adding it is optional. <span class="pill pill-claude">Claude Opus 5.5</span></li>
     </ul>
+    <p><strong>Outcome:</strong> <a href="https://github.com/rancher-sandbox/rancher-desktop-2/commit/6efbbfff3"><code>6efbbfff3</code></a> adds the extended-length form to <code>nerdctl.md</code>, and the PR description is fixed (S4).</p>
     </div>
     <hr>
     <h2 id="acknowledged-limitations">Acknowledged Limitations <a href="#acknowledged-limitations" class="pilcrow">&#182;</a></h2>
