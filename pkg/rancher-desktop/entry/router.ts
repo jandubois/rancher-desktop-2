@@ -15,6 +15,7 @@ import Snapshots from '../pages/Snapshots.vue';
 import SudoPrompt from '../pages/SudoPrompt.vue';
 import Troubleshooting from '../pages/Troubleshooting.vue';
 import UnmetPrerequisites from '../pages/UnmetPrerequisites.vue';
+import VirtualMachines from '../pages/VirtualMachines.vue';
 import Volumes from '../pages/Volumes.vue';
 import ContainerInfo from '../pages/containers/ContainerInfo.vue';
 import ExtensionsItem from '../pages/extensions/_root/_src/_id.vue';
@@ -56,6 +57,9 @@ export default createRouter({
     },
     {
       path: '/images/scans/:image-name?/:namespace?', component: ImagesScan, name: 'images-scans-image-name',
+    },
+    {
+      path: '/VirtualMachines', component: VirtualMachines, name: 'VirtualMachines',
     },
     {
       path: '/Snapshots', component: Snapshots, name: 'Snapshots',

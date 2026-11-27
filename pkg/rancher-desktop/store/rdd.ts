@@ -35,6 +35,13 @@ const resources = [
     path:       () => '/apis/rdd.rancherdesktop.io/v1alpha1/hostinfos',
     makeClient: config => config.makeApiClient(RDDClient.RddRancherdesktopIoV1alpha1Api),
   }),
+  defineResource({
+    name:       'limaVMs',
+    type:       'LimaVM',
+    path:       () => '/apis/lima.rancherdesktop.io/v1alpha1/limavms',
+    makeClient: config => config.makeApiClient(RDDClient.LimaRancherdesktopIoV1alpha1Api),
+    list:       client => client.listLimaVMForAllNamespaces(),
+  }),
 ] as const;
 
 export const state = () => ({
