@@ -602,7 +602,25 @@ func TestReconcileLimaMachines(t *testing.T) {
 		assert.NilError(t, c.Create(ctx, obj))
 	}
 	r.probes["unknown-machine"] = probeRecord{}
-	_, err = r.Reconcile(ctx, req)
+	// The client below returns the LimaVMs as they were before staleVM
+	// changed, as a lagging cache does. So removing staleVM's finalizer from
+	// that copy would fail with a conflict.
+	var cachedVMs limav1alpha1.LimaVMList
+	assert.NilError(t, c.List(ctx, &cachedVMs, client.HasLabels{machineUIDLabel}))
+	staleVM := garbage[1].(*limav1alpha1.LimaVM)
+	staleVM.Annotations = map[string]string{"changed": "true"}
+	assert.NilError(t, c.Update(ctx, staleVM))
+	cached := *r
+	cached.Client = interceptor.NewClient(c, interceptor.Funcs{
+		List: func(ctx context.Context, cl client.WithWatch, list client.ObjectList, opts ...client.ListOption) error {
+			if vms, ok := list.(*limav1alpha1.LimaVMList); ok {
+				cachedVMs.DeepCopyInto(vms)
+				return nil
+			}
+			return cl.List(ctx, list, opts...)
+		},
+	})
+	_, err = cached.Reconcile(ctx, req)
 	assert.NilError(t, err)
 	for _, obj := range garbage {
 		err := c.Get(ctx, client.ObjectKeyFromObject(obj), obj)
@@ -612,6 +630,24 @@ func TestReconcileLimaMachines(t *testing.T) {
 	assert.Assert(t, !ok, "the probe of an unknown LimaMachine was kept")
 	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(vm), vm), "happy's LimaVM")
 	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(taken), taken), "the taken LimaVM")
+
+	// The cache still holds a LimaVM of another guest cluster that is gone,
+	// and a node VM of the current guest cluster now has its name. That node
+	// VM stays.
+	reused := &limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "reused", UID: "current-uid", Labels: wantLabels, Finalizers: ownedFinalizer}
+	assert.NilError(t, c.Create(ctx, reused))
+	gone := reused.DeepCopy()
+	gone.UID = "old-uid"
+	gone.Labels = staleLabels
+	cachedVMs = limav1alpha1.LimaVMList{Items: []limav1alpha1.LimaVM{*gone}}
+	_, err = cached.Reconcile(ctx, req)
+	assert.NilError(t, err)
+	assert.NilError(t, c.Get(ctx, client.ObjectKeyFromObject(reused), reused))
+	assert.DeepEqual(t, reused.Finalizers, ownedFinalizer)
+	assert.Assert(t, reused.DeletionTimestamp.IsZero(), "the reused LimaVM is being deleted")
+	reused.Finalizers = nil
+	assert.NilError(t, c.Update(ctx, reused))
+	assert.NilError(t, c.Delete(ctx, reused))
 
 	// Deleting a LimaMachine deletes its node VM and input ConfigMap, and the
 	// LimaMachine stays until the LimaVM is gone. The LimaVM controller
@@ -684,11 +720,11 @@ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
 	// That cache keeps returning a-broken's input ConfigMap after the
 	// ConfigMap is deleted.
 	broken := true
-	stuck := false
+	stuck := map[string]bool{}
 	var cachedInput *corev1.ConfigMap
 	c := interceptor.NewClient(apiServer, interceptor.Funcs{
 		Update: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.UpdateOption) error {
-			if _, ok := obj.(*limav1alpha1.LimaVM); ok && stuck && obj.GetName() == "a-broken" {
+			if _, ok := obj.(*limav1alpha1.LimaVM); ok && stuck[obj.GetName()] {
 				return apierrors.NewInternalError(errors.New("stuck"))
 			}
 			return c.Update(ctx, obj, opts...)
@@ -783,13 +819,46 @@ func TestReconcileLimaMachinesFailedVM(t *testing.T) {
 
 	// A deleted LimaMachine whose node VM rdd fails to remove doesn't hold
 	// back the LimaMachines after it either.
-	stuck = true
+	stuck["a-broken"] = true
 	assert.NilError(t, guest.Delete(ctx, &capiv1alpha1.LimaMachine{ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "a-broken"}}))
 	createLimaMachine("c-late")
 	_, err = r.Reconcile(ctx, req)
 	assert.ErrorContains(t, err, "stuck")
 	assert.NilError(t, c.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: "c-late"}, &limav1alpha1.LimaVM{}),
 		"c-late's node VM")
+
+	// When rdd fails to remove a node VM of another guest cluster and one of
+	// a gone LimaMachine, it still removes the other garbage and creates a
+	// new LimaMachine's node VM.
+	var kubeSystem corev1.Namespace
+	assert.NilError(t, guest.Get(ctx, client.ObjectKey{Name: metav1.NamespaceSystem}, &kubeSystem))
+	oldLabels := map[string]string{guestClusterUIDLabel: "old-cluster", machineUIDLabel: "old-machine"}
+	goneLabels := map[string]string{guestClusterUIDLabel: string(kubeSystem.UID), machineUIDLabel: "gone-machine"}
+	ownedFinalizer := []string{base.OwnedFinalizerFor("LimaMachine")}
+	garbage := []client.Object{
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "b-old", Labels: oldLabels, Finalizers: ownedFinalizer},
+		&corev1.ConfigMap{Namespace: appv1alpha1.AppNamespace, Name: "b-old-source", Labels: oldLabels},
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "b-gone", Labels: goneLabels, Finalizers: ownedFinalizer},
+	}
+	stuckGarbage := []client.Object{
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "a-old", Labels: oldLabels, Finalizers: ownedFinalizer},
+		&limav1alpha1.LimaVM{Namespace: appv1alpha1.AppNamespace, Name: "a-gone", Labels: goneLabels, Finalizers: ownedFinalizer},
+	}
+	for _, obj := range append(garbage, stuckGarbage...) {
+		assert.NilError(t, c.Create(ctx, obj))
+	}
+	stuck["a-old"] = true
+	stuck["a-gone"] = true
+	createLimaMachine("d-new")
+	_, err = r.Reconcile(ctx, req)
+	assert.ErrorContains(t, err, "a-old")
+	assert.ErrorContains(t, err, "a-gone")
+	for _, obj := range garbage {
+		err := apiServer.Get(ctx, client.ObjectKeyFromObject(obj), obj)
+		assert.Assert(t, apierrors.IsNotFound(err), "garbage %s was not removed: %v", obj.GetName(), err)
+	}
+	assert.NilError(t, c.Get(ctx, client.ObjectKey{Namespace: appv1alpha1.AppNamespace, Name: "d-new"}, &limav1alpha1.LimaVM{}),
+		"d-new's node VM")
 }
 
 // guestKubeConfig returns a kubeconfig with full access to env.

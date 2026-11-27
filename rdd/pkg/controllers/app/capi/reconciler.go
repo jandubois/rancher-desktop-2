@@ -143,13 +143,8 @@ type probeRecord struct {
 
 // Reconcile first starts or stops the node VMs to follow the App. Then, when
 // the guest cluster is running, it removes the node VMs of an earlier guest
-// cluster. When the guest cluster also has Cluster API, it installs our CRDs
-// there, registers the embedded UI extension with Rancher when Rancher runs
-// there, marks the LimaClusters provisioned and ready, creates and deletes
-// the LimaMachines' node VMs, and removes node VMs that no LimaMachine
-// claims. A failed request to the guest cluster leads to a requeue, unless
-// the same pass also has an error from rdd's control plane. Then Reconcile
-// returns both.
+// cluster and calls reconcileClusterAPI. See controlPlaneError for which
+// errors Reconcile returns.
 func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
 
@@ -183,10 +178,25 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 	}
 	// The node VMs of an earlier guest cluster go first, so that a guest
 	// cluster without Cluster API, or a failure in a later step, doesn't keep
-	// them running.
-	if err := r.removeOtherClusterNodeObjects(ctx, kubeSystem.UID); err != nil {
-		return ctrl.Result{}, err
+	// them running. A node VM that rdd fails to remove doesn't end the pass
+	// either, so the LimaMachines of the current guest cluster still get
+	// their node VMs.
+	removeErr := r.removeOtherClusterNodeObjects(ctx, kubeSystem.UID)
+	result, err := r.reconcileClusterAPI(ctx, &app, kubeSystem.UID)
+	if removeErr != nil {
+		return ctrl.Result{}, errors.Join(removeErr, err)
 	}
+	return result, err
+}
+
+// reconcileClusterAPI returns right away when the guest cluster doesn't run
+// Cluster API. Otherwise it installs our CRDs there, registers the embedded
+// UI extension with Rancher when Rancher runs there, marks the LimaClusters
+// provisioned and ready, creates and deletes the LimaMachines' node VMs, and
+// removes the node VMs whose LimaMachine is gone. clusterUID is the UID of
+// the guest cluster's kube-system Namespace.
+func (r *Reconciler) reconcileClusterAPI(ctx context.Context, app *appv1alpha1.App, clusterUID types.UID) (ctrl.Result, error) {
+	log := logf.FromContext(ctx)
 
 	if _, err := r.crdClient.Get(ctx, machineCRDName, metav1.GetOptions{}); err != nil {
 		if apierrors.IsNotFound(err) {
@@ -227,7 +237,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Result
 		return ctrl.Result{RequeueAfter: requeueInProgress}, nil
 	}
 
-	inProgress, err := r.reconcileLimaMachines(ctx, &app, kubeSystem.UID)
+	inProgress, err := r.reconcileLimaMachines(ctx, app, clusterUID)
 	if err != nil {
 		// reconcileLimaMachines joins the errors of all LimaMachines, so returning
 		// the joined error keeps every one of them in controller-runtime's log.

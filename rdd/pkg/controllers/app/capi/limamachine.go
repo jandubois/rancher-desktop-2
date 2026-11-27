@@ -63,8 +63,9 @@ var clusterGVK = schema.GroupVersionKind{Group: "cluster.x-k8s.io", Version: "v1
 
 // controlPlaneError wraps an error from rdd's control plane. Reconcile returns
 // such an error, so controller-runtime retries with backoff. An error from the
-// guest cluster is only logged, and Reconcile requeues, unless the same pass
-// also has a controlPlaneError. Then Reconcile returns both.
+// guest cluster is only logged, and Reconcile requeues, unless
+// reconcileLimaMachines joins it with a controlPlaneError. Then Reconcile
+// returns both.
 type controlPlaneError struct{ err error }
 
 func (e *controlPlaneError) Error() string { return e.err.Error() }
@@ -82,11 +83,11 @@ func (r *Reconciler) reconcileLimaMachines(ctx context.Context, app *appv1alpha1
 	if err := r.guestClient.List(ctx, &list); err != nil {
 		return false, fmt.Errorf("list LimaMachines: %w", err)
 	}
-	if err := r.collectGarbage(ctx, clusterUID, list.Items); err != nil {
-		return false, err
-	}
 	inProgress := false
 	var errs []error
+	if err := r.collectGarbage(ctx, clusterUID, list.Items); err != nil {
+		errs = append(errs, err)
+	}
 	// An error with one LimaMachine doesn't stop the others.
 	for i := range list.Items {
 		machine := &list.Items[i]
@@ -574,9 +575,7 @@ func (r *Reconciler) deleteNodeVM(ctx context.Context, machine *capiv1alpha1.Lim
 // LimaMachines that are gone.
 //
 // collectGarbage skips the objects of another guest cluster, because
-// removeOtherClusterNodeObjects removed them earlier in the same pass. The
-// cache can still show such an object with its owned finalizer, and removing
-// that finalizer again from the stale copy fails the pass with a conflict.
+// removeOtherClusterNodeObjects tries to remove them earlier in the same pass.
 func (r *Reconciler) collectGarbage(ctx context.Context, clusterUID types.UID, machines []capiv1alpha1.LimaMachine) error {
 	machineUIDs := make(map[types.UID]bool, len(machines))
 	for i := range machines {
@@ -588,15 +587,12 @@ func (r *Reconciler) collectGarbage(ctx context.Context, clusterUID types.UID, m
 		}
 		return ""
 	})
-	if err != nil {
-		return err
-	}
 	for uid := range r.probes {
 		if !machineUIDs[uid] {
 			delete(r.probes, uid)
 		}
 	}
-	return nil
+	return err
 }
 
 // removeOtherClusterNodeObjects removes the node VMs and input ConfigMaps in
@@ -620,7 +616,8 @@ func (r *Reconciler) removeOtherClusterNodeObjects(ctx context.Context, clusterU
 
 // removeNodeObjects removes each node VM and input ConfigMap in rdd's
 // control plane whose labels make garbage return a non-empty reason. It
-// returns the LimaMachine UIDs of the removed objects.
+// returns the LimaMachine UIDs of the removed objects. An object that rdd
+// fails to remove doesn't stop the others.
 func (r *Reconciler) removeNodeObjects(ctx context.Context, garbage func(labels map[string]string) string) ([]types.UID, error) {
 	log := logf.FromContext(ctx)
 	var vms limav1alpha1.LimaVMList
@@ -642,6 +639,7 @@ func (r *Reconciler) removeNodeObjects(ctx context.Context, garbage func(labels 
 		objects = append(objects, nodeObject{"ConfigMap", &configMaps.Items[i]})
 	}
 	var removed []types.UID
+	var errs []error
 	for _, object := range objects {
 		obj := object.obj
 		labels := obj.GetLabels()
@@ -651,19 +649,35 @@ func (r *Reconciler) removeNodeObjects(ctx context.Context, garbage func(labels 
 		}
 		log.Info("Removing node object", "kind", object.kind, "object", client.ObjectKeyFromObject(obj), "reason", reason)
 		if err := r.removeNodeObject(ctx, obj); err != nil {
-			return removed, err
+			errs = append(errs, err)
+			continue
 		}
 		removed = append(removed, types.UID(labels[machineUIDLabel]))
 	}
-	return removed, nil
+	return removed, errors.Join(errs...)
 }
 
 // removeNodeObject takes the LimaMachine's owned finalizer off obj, a node
 // LimaVM or input ConfigMap, then deletes obj unless it is already being
 // deleted. rdd's webhook rejects deleting an object that still has an owned
-// finalizer.
+// finalizer. It first reads obj again from the API server. The cached copy
+// can miss a write from earlier in the same pass, such as the patch from
+// syncNodeVMsRunning, and updating that copy would fail with a conflict.
 func (r *Reconciler) removeNodeObject(ctx context.Context, obj client.Object) error {
 	key := client.ObjectKeyFromObject(obj)
+	uid := obj.GetUID()
+	if err := r.apiReader.Get(ctx, key, obj); err != nil {
+		if apierrors.IsNotFound(err) {
+			return nil
+		}
+		return &controlPlaneError{fmt.Errorf("get %s: %w", key, err)}
+	}
+	// A different UID means the object that the caller found to be garbage
+	// is gone, and another object has its name now. The caller hasn't
+	// checked that one, so it stays.
+	if obj.GetUID() != uid {
+		return nil
+	}
 	if err := base.RemoveOwnedFinalizer(ctx, r.Client, obj, "LimaMachine"); err != nil {
 		return &controlPlaneError{fmt.Errorf("%s: %w", key, err)}
 	}
