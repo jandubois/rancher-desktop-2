@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -31,6 +32,7 @@ type fakeShell struct {
 	input     chan string
 	resizes   chan termSize
 	exit      chan int
+	exitErr   error // the error that Wait returns; set it before exitWith
 	closeOnce sync.Once
 }
 
@@ -55,7 +57,12 @@ func (f *fakeShell) Resize(columns, rows int) error {
 	f.resizes <- termSize{columns, rows}
 	return nil
 }
-func (f *fakeShell) Wait() (int, error) { return <-f.exit, nil }
+
+func (f *fakeShell) Wait() (int, error) {
+	code := <-f.exit
+	return code, f.exitErr
+}
+
 func (f *fakeShell) Close() error {
 	f.closeOnce.Do(func() { _ = f.outR.Close() })
 	return nil
@@ -71,6 +78,16 @@ func (f *fakeShell) exitWith(code int) {
 	f.exit <- code
 	_ = f.outW.Close()
 }
+
+// failWith ends the shell with Wait returning err.
+func (f *fakeShell) failWith(err error) {
+	f.exitErr = err
+	f.exitWith(0)
+}
+
+// errLostConnection is the error that a Shell's Wait returns when the
+// connection closed before the shell's exit status or signal arrived.
+var errLostConnection = fmt.Errorf("%w: connection closed", io.ErrUnexpectedEOF)
 
 type started struct {
 	size  termSize
@@ -176,19 +193,20 @@ func receiveStatus(t *testing.T, conn *websocket.Conn) metav1.Status {
 	return status
 }
 
-func receiveClose(t *testing.T, conn *websocket.Conn) {
+func receiveClose(t *testing.T, conn *websocket.Conn, code int) {
 	t.Helper()
-	_, _, err := conn.ReadMessage()
+	_ = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+	_, data, err := conn.ReadMessage()
 	var closeErr *websocket.CloseError
-	assert.Assert(t, errors.As(err, &closeErr), "error %v", err)
-	assert.Equal(t, websocket.CloseNormalClosure, closeErr.Code)
+	assert.Assert(t, errors.As(err, &closeErr), "error %v, message %q", err, data)
+	assert.Equal(t, code, closeErr.Code)
 }
 
 // receiveEnd reads the status and then the close frame.
 func receiveEnd(t *testing.T, conn *websocket.Conn) metav1.Status {
 	t.Helper()
 	status := receiveStatus(t, conn)
-	receiveClose(t, conn)
+	receiveClose(t, conn, websocket.CloseNormalClosure)
 	return status
 }
 
@@ -284,7 +302,7 @@ func TestTakeOver(t *testing.T) {
 	// The server reads first's messages until first answers the close frame.
 	// The session drops this input, so the shell's first input is "from second".
 	send(t, first, remotecommand.StreamStdIn, "from first")
-	receiveClose(t, first)
+	receiveClose(t, first, websocket.CloseNormalClosure)
 	h.waitDetached()
 	receiveOutput(t, second)
 
@@ -297,11 +315,13 @@ func TestSessionEnd(t *testing.T) {
 		name     string
 		startErr error
 		code     int
+		waitErr  error
 		want     metav1.Status
 	}{
-		{"exit 0", nil, 0, *exitStatus(0, nil)},
-		{"exit 3", nil, 3, *exitStatus(3, nil)},
-		{"start error", errors.New("container isn't running"), 0, *errorStatus(errors.New("container isn't running"))},
+		{"exit 0", nil, 0, nil, *exitStatus(0, nil)},
+		{"exit 3", nil, 3, nil, *exitStatus(3, nil)},
+		{"signal", nil, 0, errors.New("signal: KILL"), *errorStatus(errors.New("signal: KILL"))},
+		{"start error", errors.New("container isn't running"), 0, nil, *errorStatus(errors.New("container isn't running"))},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -311,7 +331,9 @@ func TestSessionEnd(t *testing.T) {
 			receiveOutput(t, conn)
 			sendSize(t, conn, 80, 24)
 			if tt.startErr == nil {
-				h.nextStart().shell.exitWith(tt.code)
+				shell := h.nextStart().shell
+				shell.exitErr = tt.waitErr
+				shell.exitWith(tt.code)
 			}
 			assert.DeepEqual(t, tt.want, receiveEnd(t, conn))
 
@@ -331,4 +353,21 @@ func TestRequiresSubprotocol(t *testing.T) {
 	assert.Assert(t, resp != nil)
 	_ = resp.Body.Close()
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestSessionLosesShell(t *testing.T) {
+	h := newHarness(t)
+	conn := h.dial()
+	receiveOutput(t, conn)
+	sendSize(t, conn, 80, 24)
+	s := h.nextStart()
+	s.shell.output(t, "last words")
+	assert.Equal(t, "last words", receiveOutput(t, conn))
+	s.shell.failWith(errLostConnection)
+	receiveClose(t, conn, websocket.CloseInternalServerErr)
+
+	next := h.dial()
+	assert.Equal(t, receiveOutput(t, next), "", "replay of a new session")
+	sendSize(t, next, 80, 24)
+	h.nextStart()
 }

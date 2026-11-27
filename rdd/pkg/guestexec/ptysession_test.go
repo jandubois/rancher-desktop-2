@@ -13,6 +13,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/pem"
+	"errors"
 	"io"
 	"net"
 	"os"
@@ -65,12 +66,14 @@ type windowChange struct {
 
 // testServer is an SSH server that doesn't run commands. On exec it prints
 // "ran <command>", waits for one line of input, and exits with exitStatus.
+// With dropConnection set, it closes the connection after the output instead.
 type testServer struct {
 	addr             *net.TCPAddr
 	exitStatus       atomic.Uint32
 	ptys             chan ptyRequest
 	windowChanges    chan windowChange
 	ignoreKeepalives atomic.Bool
+	dropConnection   atomic.Bool
 	dialed           chan struct{}
 }
 
@@ -165,11 +168,11 @@ func (srv *testServer) serve(t *testing.T, conn net.Conn, config *ssh.ServerConf
 		if err != nil {
 			return
 		}
-		go srv.handleSession(ch, chReqs)
+		go srv.handleSession(sconn, ch, chReqs)
 	}
 }
 
-func (srv *testServer) handleSession(ch ssh.Channel, reqs <-chan *ssh.Request) {
+func (srv *testServer) handleSession(sconn *ssh.ServerConn, ch ssh.Channel, reqs <-chan *ssh.Request) {
 	for req := range reqs {
 		switch req.Type {
 		case "pty-req":
@@ -187,6 +190,10 @@ func (srv *testServer) handleSession(ch ssh.Channel, reqs <-chan *ssh.Request) {
 			_ = req.Reply(true, nil)
 			go func() {
 				_, _ = io.WriteString(ch, "ran "+e.Command+"\r\n")
+				if srv.dropConnection.Load() {
+					_ = sconn.Close()
+					return
+				}
 				if _, err := bufio.NewReader(ch).ReadString('\n'); err != nil {
 					return
 				}
@@ -268,8 +275,22 @@ func TestPTYSessionClosesUnansweredKeepalives(t *testing.T) {
 	}()
 	select {
 	case err := <-waited:
-		assert.Assert(t, err != nil, "Wait didn't return an error after the connection closed")
+		assert.Assert(t, errors.Is(err, io.ErrUnexpectedEOF), "error %v", err)
 	case <-time.After(5 * time.Second):
 		assert.Assert(t, false, "the session outlived unanswered keepalives")
 	}
+}
+
+func TestPTYSessionReportsLostConnection(t *testing.T) {
+	srv, inst := newTestServer(t, nil)
+	srv.dropConnection.Store(true)
+	s, err := StartPTYSession(t.Context(), inst, "my-shell", 80, 24)
+	assert.NilError(t, err)
+	defer s.Close()
+
+	output, err := io.ReadAll(s)
+	assert.NilError(t, err)
+	assert.Equal(t, string(output), "ran my-shell\r\n")
+	_, err = s.Wait()
+	assert.Assert(t, errors.Is(err, io.ErrUnexpectedEOF), "error %v", err)
 }

@@ -41,6 +41,9 @@ type Shell interface {
 	Read(p []byte) (int, error)
 	Write(p []byte) (int, error)
 	Resize(columns, rows int) error
+	// Wait waits for the shell to end and returns its exit status. An error
+	// that wraps io.ErrUnexpectedEOF means that the connection to the shell
+	// closed before the shell's exit status or signal arrived.
 	Wait() (int, error)
 	Close() error
 }
@@ -256,6 +259,11 @@ func (s *session) pumpOutput(shell Shell) {
 		}
 	}
 	code, err := shell.Wait()
+	if errors.Is(err, io.ErrUnexpectedEOF) {
+		s.log.V(5).Info("Lost the connection to the shell", "error", err)
+		s.end(shell, nil)
+		return
+	}
 	s.log.V(5).Info("Shell ended", "status", code, "error", err)
 	s.end(shell, exitStatus(code, err))
 }
@@ -284,7 +292,9 @@ func (s *session) output(p []byte) {
 }
 
 // end removes the session from the registry, so the next attach starts a new
-// shell, then sends the status to the client and closes the shell.
+// shell, then sends the status to the client and closes the shell. A nil
+// status means that the connection to the shell closed before the shell's
+// exit status or signal arrived; see client.finish.
 func (s *session) end(shell Shell, status *metav1.Status) {
 	s.registry.remove(s)
 	s.mu.Lock()
@@ -422,10 +432,11 @@ type client struct {
 	ready   chan struct{} // closed once the client is attached
 	resized bool          // guarded by session.mu
 
-	mu     sync.Mutex
-	queue  [][]byte
-	queued int
-	status *metav1.Status // set when the session ends for this client
+	mu       sync.Mutex
+	queue    [][]byte
+	queued   int
+	finished bool           // set when the session ends for this client
+	status   *metav1.Status // the status to send after the queue, nil for a lost shell
 
 	wake  chan struct{} // signals writeLoop
 	space chan struct{} // signals the output pump
@@ -468,7 +479,7 @@ func signal(ch chan struct{}) {
 // enqueue queues a message without waiting.
 func (c *client) enqueue(msg []byte) {
 	c.mu.Lock()
-	if c.status == nil {
+	if !c.finished {
 		c.queue = append(c.queue, msg)
 		c.queued += len(msg)
 	}
@@ -476,11 +487,15 @@ func (c *client) enqueue(msg []byte) {
 	signal(c.wake)
 }
 
-// finish queues the status after the queued output; writeLoop then closes
-// the connection.
+// finish queues the status after the queued output, and writeLoop then
+// closes the connection. A nil status means that the session lost its shell.
+// In that case writeLoop doesn't send a status, and it closes with code 1011
+// instead of 1000, because client-go's executor reports a 1000 close without
+// a status as success. Only the first call has an effect.
 func (c *client) finish(status *metav1.Status) {
 	c.mu.Lock()
-	if c.status == nil {
+	if !c.finished {
+		c.finished = true
 		c.status = status
 	}
 	c.mu.Unlock()
@@ -491,7 +506,7 @@ func (c *client) finish(status *metav1.Status) {
 func (c *client) waitForSpace() {
 	for {
 		c.mu.Lock()
-		ok := c.queued < maxQueued || c.status != nil
+		ok := c.queued < maxQueued || c.finished
 		c.mu.Unlock()
 		if ok {
 			return
@@ -506,7 +521,8 @@ func (c *client) waitForSpace() {
 
 // writeLoop writes the queued messages, then the status if the session ended
 // for this client, and returns when it has closed the connection or the
-// connection fails.
+// connection fails. It closes the connection itself, because a lost shell
+// needs code 1011, and Attach closes with code 1000.
 func (c *client) writeLoop() {
 	for {
 		c.mu.Lock()
@@ -523,9 +539,13 @@ func (c *client) writeLoop() {
 			}
 			continue
 		}
-		status := c.status
+		finished, status := c.finished, c.status
 		c.mu.Unlock()
-		if status != nil {
+		if finished {
+			if status == nil {
+				c.conn.Close(websocket.CloseInternalServerErr, "lost the connection to the shell")
+				return
+			}
 			if err := c.conn.WriteMessage(websocket.BinaryMessage, statusFrame(status)); err != nil {
 				c.log.V(5).Info("Failed to write status", "error", err)
 			}

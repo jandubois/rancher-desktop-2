@@ -8,12 +8,15 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
+	"strings"
 	"testing"
 	"time"
 
 	"gotest.tools/v3/assert"
 
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/client-go/util/exec"
@@ -100,6 +103,38 @@ func TestClientGoExecutorFailures(t *testing.T) {
 		h.startErr = errors.New("container isn't running")
 		err := waitResult(t, runExecutor(t, h, io.Discard))
 		assert.Error(t, err, "container isn't running")
+	})
+	t.Run("lost shell", func(t *testing.T) {
+		// The executor's stdout and stdin copiers each pass the 1011 close to
+		// client-go's error handlers, which log it by default. The test
+		// replaces the handlers to collect both reports instead, and waits
+		// for them, because the stdin copier can report after the executor
+		// returns.
+		handled := make(chan string, 10)
+		setVar(t, &utilruntime.ErrorHandlers, []utilruntime.ErrorHandler{
+			func(_ context.Context, err error, msg string, _ ...any) {
+				handled <- fmt.Sprintf("%s: %v", msg, err)
+			},
+		})
+		h := newHarness(t)
+		var stdout bytes.Buffer
+		result := runExecutor(t, h, &stdout)
+		s := h.nextStart()
+		s.shell.output(t, "hello")
+		s.shell.failWith(errLostConnection)
+		err := waitResult(t, result)
+		assert.Assert(t, err != nil, "the executor reported success")
+		var exitErr exec.CodeExitError
+		assert.Assert(t, !errors.As(err, &exitErr), "error %v", err)
+		assert.Equal(t, "hello", stdout.String())
+		for range 2 {
+			select {
+			case e := <-handled:
+				assert.Assert(t, strings.Contains(e, "close 1011"), "handled error %q", e)
+			case <-time.After(5 * time.Second):
+				assert.Assert(t, false, "client-go didn't report the close")
+			}
+		}
 	})
 	t.Run("take-over", func(t *testing.T) {
 		h := newHarness(t)

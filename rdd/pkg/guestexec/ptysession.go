@@ -225,12 +225,17 @@ func (s *PTYSession) Resize(columns, rows int) error {
 
 // Wait waits for the command to end and returns its exit status. It returns
 // an error when the command ends without an exit status, for example on a
-// signal, or when the connection drops.
+// signal. When the connection closes before the guest sends the exit status
+// or signal, the error wraps io.ErrUnexpectedEOF.
 func (s *PTYSession) Wait() (int, error) {
 	err := s.session.Wait()
 	var exitErr *ssh.ExitError
 	if errors.As(err, &exitErr) && exitErr.Signal() == "" {
 		return exitErr.ExitStatus(), nil
+	}
+	var missingErr *ssh.ExitMissingError
+	if errors.As(err, &missingErr) {
+		return 0, fmt.Errorf("%w: %w", io.ErrUnexpectedEOF, err)
 	}
 	if err != nil {
 		return 0, err
