@@ -83,7 +83,10 @@ func TestSyncTemplateLibrary(t *testing.T) {
 	unmanaged := libraryEntry(TemplateLibraryNamespace, "mine", "mine.yaml", "cpus: 2\n")
 	// An unmanaged ConfigMap at a stock path is taken over like an edit.
 	taken := libraryEntry(TemplateLibraryNamespace, "taken", "_images/new.yaml", "cpus: 4\n")
-	c := fake.NewClientBuilder().WithObjects(edited, gone, unmanaged, taken).Build()
+	// A ConfigMap at a stock name without the library label is taken over too.
+	unlabeled := libraryConfigMap("experimental.yaml", "vmType: vz\n")
+	unlabeled.Labels = nil
+	c := fake.NewClientBuilder().WithObjects(edited, gone, unmanaged, taken, unlabeled).Build()
 
 	assert.NilError(t, syncTemplateLibrary(t.Context(), c, c, bundle))
 
@@ -104,6 +107,8 @@ func TestSyncTemplateLibrary(t *testing.T) {
 	assert.DeepEqual(t, got, want)
 	assert.NilError(t, c.Get(t.Context(), client.ObjectKeyFromObject(taken), taken))
 	assert.Equal(t, taken.Labels[managedByLabel], TemplateLibraryManagedByValue)
+	assert.NilError(t, c.Get(t.Context(), client.ObjectKeyFromObject(unlabeled), unlabeled))
+	assert.Equal(t, unlabeled.Labels[managedByLabel], TemplateLibraryManagedByValue)
 
 	// A second pass over the library that the first one wrote succeeds too.
 	assert.NilError(t, syncTemplateLibrary(t.Context(), c, c, bundle))
