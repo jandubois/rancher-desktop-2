@@ -12,6 +12,8 @@ Create a new `LimaVM` instance `NAME` in `NAMESPACE` (or `default`) using `TEMPL
 
 `TEMPLATE` will be treated as a local filename or template URL if it contains a `/` or a `:`.  In that case the `create` command will create a ConfigMap in `NAMESPACE` called `NAME`. It will store the "fully embedded" template from the file or URL inside that ConfigMap and use it as the `spec.templateRef`. If a ConfigMap of this name already exists, then the `create` command will fail. If `LimaVM` creation succeeds then ownership of this ConfigMap is transferred to the `LimaVM` resource, and it will be deleted when the `LimaVM` instance is deleted. But when the command fails, then any ConfigMap created from a file or URL is deleted immediately.
 
+But if `TEMPLATE` starts with `template:`, such as `template:default`, the `create` command doesn't read a file. The ConfigMap called `NAME` then holds the single line `base: TEMPLATE`, and rdd resolves that name against Lima's stock templates in the `lima-templates` namespace when it creates the `LimaVM`. Ownership and cleanup of the ConfigMap work as for a file.
+
 - `--start` (default `false`): Set `spec.running=true` to start the VM immediately after creation.
 - `--wait` (default `true`): When used with `--start`, wait until the Running condition becomes True before returning.
 - `--timeout` (default `5m`): Maximum time to wait. A value of `0` waits indefinitely. Accepts Go duration strings (e.g., `30s`, `5m`). If the deadline expires, `rdd` exits with code 4.
