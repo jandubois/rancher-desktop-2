@@ -123,6 +123,10 @@ The `rdd limavm` commands would support:
 
 Currently, the reconciler force-stops the instance on deletion. Graceful shutdown on delete could be added via the grace period mechanism described above.
 
+### Shell
+
+An endpoint at `/passthrough/limavm/shell/${namespace}/${name}` opens an interactive shell in the instance. [Terminal sessions](terminal-sessions.md) describes the endpoint, its wire format, and how sessions outlive their clients.
+
 ### LimaVM Component Interactions
 
 ```mermaid
