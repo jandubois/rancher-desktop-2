@@ -22,7 +22,7 @@ import (
 func TestControllerManagerDiscoveryGroup(t *testing.T) {
 	const passthroughPort = 4321
 
-	cfg := testapiserver.Start(t)
+	cfg := testapiserver.Start(t).Config
 
 	healthServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -164,7 +164,7 @@ func TestControllerManagerDiscoveryGroup(t *testing.T) {
 }
 
 func TestInitDiscoveryAndMarkReady(t *testing.T) {
-	cfg := testapiserver.Start(t)
+	cfg := testapiserver.Start(t).Config
 
 	client, err := kubernetes.NewForConfig(cfg)
 	assert.NilError(t, err, "failed to create kubernetes client")

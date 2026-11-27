@@ -43,7 +43,7 @@ spec:
 `
 
 func TestApply(t *testing.T) {
-	clientset, err := apiextensionsclientset.NewForConfig(testapiserver.Start(t))
+	clientset, err := apiextensionsclientset.NewForConfig(testapiserver.Start(t).Config)
 	assert.NilError(t, err)
 	c := clientset.ApiextensionsV1().CustomResourceDefinitions()
 	ctx := t.Context()
