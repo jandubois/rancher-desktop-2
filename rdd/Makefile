@@ -169,7 +169,9 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 
 # Copy the stock templates out of the Lima module. The copy is redone from
 # scratch whenever go.mod or go.sum change, so a Lima bump also drops the
-# templates it removed. Files in the module cache are read-only, so the copy is
+# templates it removed. The copy is built next to the target and moved into
+# place last, so a failed build doesn't leave a directory that make would take
+# as up to date. Files in the module cache are read-only, so the copy is
 # made writable for the next rm. The module zip drops Lima's symlinked
 # templates, such as _images/ubuntu.yaml, so the script restores each one as a
 # copy of its target. The recipe runs the script through bash, because the
@@ -181,13 +183,14 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 # takes its base from Lima's limactl-url-fedora-rawhide URL plugin, which rdd
 # does not run.
 $(LIMA_TEMPLATES): go.mod go.sum
-	rm -rf $@
+	rm -rf $@ $@.tmp
 	go$(EXE) mod download github.com/lima-vm/lima/v2
-	cp -R "$$(go$(EXE) list -m -f '{{.Dir}}' github.com/lima-vm/lima/v2)/templates" $@
-	chmod -R u+w $@
-	bash scripts/restore-lima-template-aliases.sh $@
-	rm -f $@/README.md $@/experimental/fedora-rawhide.yaml
-	touch $@
+	cp -R "$$(go$(EXE) list -m -f '{{.Dir}}' github.com/lima-vm/lima/v2)/templates" $@.tmp
+	chmod -R u+w $@.tmp
+	bash scripts/restore-lima-template-aliases.sh $@.tmp
+	rm -f $@.tmp/README.md $@.tmp/experimental/fedora-rawhide.yaml
+	touch $@.tmp
+	mv $@.tmp $@
 
 # The downloader runs on every build, because the staged file names have no
 # architecture in them and only a rerun notices a build for a different one. It
@@ -452,7 +455,7 @@ check: test lint verify-generate
 clean:
 	-rm -r bin
 	-rm pkg/guestagent/lima-guestagent.*
-	-rm -rf $(LIMA_TEMPLATES)
+	-rm -rf $(LIMA_TEMPLATES) $(LIMA_TEMPLATES).tmp
 	-rm pkg/embedded/distro.*.xz
 	-rm -r $(OVERLAY_BUILD)
 .PHONY: clean
