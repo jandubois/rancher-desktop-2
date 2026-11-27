@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	metav1apply "k8s.io/client-go/applyconfigurations/meta/v1"
 	"k8s.io/klog/v2"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -131,7 +132,9 @@ func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
 			admissionregistrationv1.Create, // Only on CREATE - UPDATE doesn't need to create ConfigMap again
 		},
 		SideEffects: &sideEffectsNoneOnDryRun, // Creates ConfigMap normally, but not during dry-run
-		Defaulter:   &defaulter{Client: mgr.GetClient(), Reader: mgr.GetAPIReader()},
+		// The defaulter fetches http(s): and github: base templates during admission.
+		TimeoutSeconds: ptr.To[int32](30),
+		Defaulter:      &defaulter{Client: mgr.GetClient(), Reader: mgr.GetAPIReader()},
 	}
 
 	managers, err := base.SetupWebhookForResource(mgr, &v1alpha1.LimaVM{}, mutatingConfig)

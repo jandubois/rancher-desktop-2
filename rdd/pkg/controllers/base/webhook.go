@@ -98,6 +98,10 @@ type WebhookConfig[T runtime.Object] struct {
 	// Default is Fail if not specified
 	FailurePolicy *admissionregistrationv1.FailurePolicyType
 
+	// TimeoutSeconds is how long the API server waits for the webhook to respond
+	// Default is the API server's 10 seconds if not specified; the maximum is 30
+	TimeoutSeconds *int32
+
 	// ObjectSelector filters which objects the webhook should intercept based on labels
 	// If specified, only objects matching the selector will trigger the webhook
 	ObjectSelector *metav1apply.LabelSelectorApplyConfiguration
@@ -320,17 +324,17 @@ func (wm *webhookManagerImpl[T]) createWebhookConfiguration() error {
 }
 
 func (wm *webhookManagerImpl[T]) createValidatingWebhook(ctx context.Context, c client.Client, clientConfig *admissionregistrationv1apply.WebhookClientConfigApplyConfiguration, rules []*admissionregistrationv1apply.RuleWithOperationsApplyConfiguration, failurePolicy admissionregistrationv1.FailurePolicyType, sideEffects admissionregistrationv1.SideEffectClass) error {
+	webhook := admissionregistrationv1apply.ValidatingWebhook().
+		WithName(wm.config.WebhookName).
+		WithClientConfig(clientConfig).
+		WithRules(rules...).
+		WithFailurePolicy(failurePolicy).
+		WithSideEffects(sideEffects).
+		WithAdmissionReviewVersions("v1", "v1beta1").
+		WithObjectSelector(wm.config.ObjectSelector)
+	webhook.TimeoutSeconds = wm.config.TimeoutSeconds
 	applyConfig := admissionregistrationv1apply.ValidatingWebhookConfiguration(wm.config.Name).
-		WithWebhooks(
-			admissionregistrationv1apply.ValidatingWebhook().
-				WithName(wm.config.WebhookName).
-				WithClientConfig(clientConfig).
-				WithRules(rules...).
-				WithFailurePolicy(failurePolicy).
-				WithSideEffects(sideEffects).
-				WithAdmissionReviewVersions("v1", "v1beta1").
-				WithObjectSelector(wm.config.ObjectSelector),
-		)
+		WithWebhooks(webhook)
 
 	klog.Infof("Applying webhook configuration %s...", wm.config.Name)
 	if err := c.Apply(ctx, applyConfig, client.ForceOwnership, client.FieldOwner("rdd-webhook-manager")); err != nil {
@@ -341,17 +345,17 @@ func (wm *webhookManagerImpl[T]) createValidatingWebhook(ctx context.Context, c 
 }
 
 func (wm *webhookManagerImpl[T]) createMutatingWebhook(ctx context.Context, c client.Client, clientConfig *admissionregistrationv1apply.WebhookClientConfigApplyConfiguration, rules []*admissionregistrationv1apply.RuleWithOperationsApplyConfiguration, failurePolicy admissionregistrationv1.FailurePolicyType, sideEffects admissionregistrationv1.SideEffectClass) error {
+	webhook := admissionregistrationv1apply.MutatingWebhook().
+		WithName(wm.config.WebhookName).
+		WithClientConfig(clientConfig).
+		WithRules(rules...).
+		WithFailurePolicy(failurePolicy).
+		WithSideEffects(sideEffects).
+		WithAdmissionReviewVersions("v1", "v1beta1").
+		WithObjectSelector(wm.config.ObjectSelector)
+	webhook.TimeoutSeconds = wm.config.TimeoutSeconds
 	applyConfig := admissionregistrationv1apply.MutatingWebhookConfiguration(wm.config.Name).
-		WithWebhooks(
-			admissionregistrationv1apply.MutatingWebhook().
-				WithName(wm.config.WebhookName).
-				WithClientConfig(clientConfig).
-				WithRules(rules...).
-				WithFailurePolicy(failurePolicy).
-				WithSideEffects(sideEffects).
-				WithAdmissionReviewVersions("v1", "v1beta1").
-				WithObjectSelector(wm.config.ObjectSelector),
-		)
+		WithWebhooks(webhook)
 
 	klog.Infof("Applying webhook configuration %s...", wm.config.Name)
 	if err := c.Apply(ctx, applyConfig, client.ForceOwnership, client.FieldOwner("rdd-webhook-manager")); err != nil {
