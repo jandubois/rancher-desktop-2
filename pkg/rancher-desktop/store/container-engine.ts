@@ -1,5 +1,5 @@
 import { RootState } from '@pkg/entry/store';
-import { defineResource, resourceMutations, resourceState, resourceWatchActions, ResourceNames } from '@pkg/store/rddConnection';
+import { defineResource, isNotFound, resourceMutations, resourceState, resourceWatchActions, ResourceNames } from '@pkg/store/rddConnection';
 import { ActionContext, ActionTree, GetterTree, MutationsType } from '@pkg/store/ts-helpers';
 import { defined, RecursivePartial } from '@pkg/utils/typeUtils';
 import * as RDDClient from '@rdd-client';
@@ -19,14 +19,6 @@ function resourceFieldSelector(untypedContext: any): string | undefined {
   const currentNamespace = context.getters.currentNamespace;
 
   return currentNamespace ? `status.namespace=${ currentNamespace }` : undefined;
-}
-
-/**
- * Whether a delete failed because the resource no longer exists. The user
- * wanted it gone, so the delete actions do not report this as an error.
- */
-function isNotFound(error: unknown): error is RDDClient.ApiException<unknown> {
-  return error instanceof RDDClient.ApiException && error.code === 404;
 }
 
 const resources = [

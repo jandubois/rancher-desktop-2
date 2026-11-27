@@ -2,44 +2,13 @@ import { ElectronApplication, Page, expect, test } from '@playwright/test';
 
 import { NavPage } from './pages/nav-page';
 import { VolumesPage } from './pages/volumes-page';
-import { getRDDConfig, startSlowerDesktop, teardown, tool } from './utils/TestUtils';
+import {
+  answerMessageBox, CANCEL_DELETE, CONFIRM_DELETE, getRDDConfig, lastMessageBox, startSlowerDesktop, teardown, tool,
+} from './utils/TestUtils';
 
 import { APP_NAMESPACE } from '@/pkg/rancher-desktop/utils/rdd';
 import mockVolumes from '@/rdd/pkg/controllers/mock/testdata/volumes.json' with { type: 'json' };
 import * as RDDClient from '@rdd-client';
-
-/** Button indexes in the delete confirmation, matching its `buttons` array. */
-const CONFIRM_DELETE = 0;
-const CANCEL_DELETE = 1;
-
-/**
- * Replace the next native message box with one that answers `response` and
- * records the options it was given, so a test can assert what the user saw.
- */
-async function answerMessageBox(electronApp: ElectronApplication, response: number) {
-  await electronApp.evaluate(({ dialog }, response) => {
-    let resolve: (value: Electron.MessageBoxOptions) => void;
-    (globalThis as any).lastMessageBox = new Promise<Electron.MessageBoxOptions>(_resolve => { resolve = _resolve });
-    const original = dialog.showMessageBox;
-    dialog.showMessageBox = (windowOrOptions, maybeOptions?: Electron.MessageBoxOptions) => {
-      const options = maybeOptions ?? windowOrOptions as Electron.MessageBoxOptions;
-      dialog.showMessageBox = original;
-      resolve(options);
-
-      return Promise.resolve({ response, checkboxChecked: false });
-    };
-  }, response);
-}
-
-/** The options the last message box was shown with. */
-async function lastMessageBox(electronApp: ElectronApplication) {
-  return await electronApp.evaluate(() => Promise.race([
-    (globalThis as any).lastMessageBox,
-    new Promise((_resolve, reject) => setTimeout(
-      () => reject(new Error('Timeout waiting for last message box')),
-      10_000)),
-  ]));
-}
 
 let page: Page;
 

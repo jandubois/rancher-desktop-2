@@ -2,7 +2,7 @@ import { watch } from 'vue';
 import { Plugin } from 'vuex';
 
 import type { RootState } from '@pkg/entry/store';
-import { defineResource, resourceMutations, resourceState, resourceWatchActions } from '@pkg/store/rddConnection';
+import { defineResource, isNotFound, resourceMutations, resourceState, resourceWatchActions } from '@pkg/store/rddConnection';
 import { ActionTree, GetterTree, MutationsType } from '@pkg/store/ts-helpers';
 import ipcRenderer from '@pkg/utils/ipcRenderer';
 import * as RDDClient from '@rdd-client';
@@ -154,6 +154,31 @@ export const actions = {
     ).catch((err: Error) => {
       console.error(err);
       commit('SET_ERROR', err);
+    });
+  },
+
+  /** Ask the LimaVM controller to start or stop the given LimaVM. */
+  async limaVMSetRunning({ rootState, commit }, { namespace, name, running }: { namespace: string, name: string, running: boolean }) {
+    const { config } = rootState['rdd-connection'];
+    const client = config.makeApiClient(RDDClient.LimaRancherdesktopIoV1alpha1Api);
+
+    await client.patchNamespacedLimaVM(
+      { namespace, name, body: { spec: { running } } },
+      RDDClient.setHeaderOptions('Content-Type', RDDClient.PatchStrategy.MergePatch),
+    ).catch((err: Error) => {
+      commit('SET_ERROR', err);
+    });
+  },
+
+  /** Delete the given LimaVM. */
+  async limaVMDelete({ rootState, commit }, { namespace, name }: { namespace: string, name: string }) {
+    const { config } = rootState['rdd-connection'];
+    const client = config.makeApiClient(RDDClient.LimaRancherdesktopIoV1alpha1Api);
+
+    await client.deleteNamespacedLimaVM({ namespace, name }).catch((err: Error) => {
+      if (!isNotFound(err)) {
+        commit('SET_ERROR', err);
+      }
     });
   },
 } satisfies ActionTree<RDDState, RootState, typeof mutations, typeof getters>;

@@ -459,3 +459,36 @@ export async function getRDDConfig(): Promise<[RDDClient.KubeConfig, () => void]
   setGlobalDispatcher(new Agent({ connect: { ca: [...ca, ...rootCertificates] } }));
   return [config, () => setGlobalDispatcher(dispatcher)];
 }
+
+/** Button indexes in the delete confirmation, matching its `buttons` array. */
+export const CONFIRM_DELETE = 0;
+export const CANCEL_DELETE = 1;
+
+/**
+ * Replace the next native message box with one that answers `response` and
+ * records the options it was given, so a test can assert what the user saw.
+ */
+export async function answerMessageBox(electronApp: ElectronApplication, response: number) {
+  await electronApp.evaluate(({ dialog }, response) => {
+    let resolve: (value: Electron.MessageBoxOptions) => void;
+    (globalThis as any).lastMessageBox = new Promise<Electron.MessageBoxOptions>(_resolve => { resolve = _resolve });
+    const original = dialog.showMessageBox;
+    dialog.showMessageBox = (windowOrOptions, maybeOptions?: Electron.MessageBoxOptions) => {
+      const options = maybeOptions ?? windowOrOptions as Electron.MessageBoxOptions;
+      dialog.showMessageBox = original;
+      resolve(options);
+
+      return Promise.resolve({ response, checkboxChecked: false });
+    };
+  }, response);
+}
+
+/** The options the last message box was shown with. */
+export async function lastMessageBox(electronApp: ElectronApplication) {
+  return await electronApp.evaluate(() => Promise.race([
+    (globalThis as any).lastMessageBox,
+    new Promise((_resolve, reject) => setTimeout(
+      () => reject(new Error('Timeout waiting for last message box')),
+      10_000)),
+  ]));
+}

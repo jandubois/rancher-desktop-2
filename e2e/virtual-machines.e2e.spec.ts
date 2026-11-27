@@ -2,7 +2,9 @@ import { ElectronApplication, Page, expect, test } from '@playwright/test';
 
 import { NavPage } from './pages/nav-page';
 import { VirtualMachinesPage } from './pages/virtual-machines-page';
-import { getRDDConfig, rdd, startSlowerDesktop, teardown } from './utils/TestUtils';
+import {
+  answerMessageBox, CONFIRM_DELETE, getRDDConfig, lastMessageBox, rdd, startSlowerDesktop, teardown,
+} from './utils/TestUtils';
 
 import * as RDDClient from '@rdd-client';
 
@@ -65,7 +67,28 @@ test.describe('Virtual Machines Tests', () => {
     const row = virtualMachinesPage.getVirtualMachineRow(vmName);
 
     await expect(row).toBeVisible({ timeout: 15_000 });
-    await expect(row).toContainText(namespace);
+    await expect(virtualMachinesPage.getNamespaceGroup(namespace)).toBeVisible();
     await expect(virtualMachinesPage.getVirtualMachineStatus(vmName)).toHaveText('Pending');
+  });
+
+  test('should start and stop a virtual machine', async() => {
+    const virtualMachinesPage = new VirtualMachinesPage(page);
+    // The mock control plane doesn't run a LimaVM controller, so only the desired state changes.
+    const desiredRunning = async() => (await client.readNamespacedLimaVM({ namespace, name: vmName })).spec?.running;
+
+    await virtualMachinesPage.clickVirtualMachineAction(vmName, 'Start');
+    await expect.poll(desiredRunning).toBe(true);
+    await virtualMachinesPage.clickVirtualMachineAction(vmName, 'Stop');
+    await expect.poll(desiredRunning).toBe(false);
+  });
+
+  test('should delete a virtual machine', async() => {
+    const virtualMachinesPage = new VirtualMachinesPage(page);
+
+    await answerMessageBox(electronApp, CONFIRM_DELETE);
+    await virtualMachinesPage.clickVirtualMachineAction(vmName, 'Delete');
+    await expect(lastMessageBox(electronApp)).resolves.toMatchObject({ message: 'Delete 1 virtual machine?', detail: `${ namespace }/${ vmName }` });
+    await expect(virtualMachinesPage.getVirtualMachineRow(vmName)).toHaveCount(0, { timeout: 15_000 });
+    await expect(client.readNamespacedLimaVM({ namespace, name: vmName })).rejects.toMatchObject({ code: 404 });
   });
 });
