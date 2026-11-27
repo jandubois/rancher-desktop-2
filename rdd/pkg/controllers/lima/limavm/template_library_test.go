@@ -6,6 +6,8 @@ package limavm
 
 import (
 	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"testing/fstest"
@@ -119,6 +121,8 @@ func TestEmbedTemplate(t *testing.T) {
 		libraryEntry(TemplateLibraryNamespace, "stock", "stock.yaml", "base: template:_default/cpus\nvmType: qemu\n"),
 		libraryEntry(TemplateLibraryNamespace, "cpus", "_default/cpus.yaml", "cpus: 3\n"),
 		libraryEntry("user", "common", "common.yaml", "memory: 3GiB\n"),
+		libraryEntry("user", "setup", "scripts/setup.sh", "#!/bin/sh\necho from-library\n"),
+		libraryEntry("other", "common", "common.yaml", "cpus: 99\n"),
 	).Build()
 	d := &defaulter{Client: c, Reader: c}
 	ref := types.NamespacedName{Namespace: "user", Name: "webapp"}
@@ -140,6 +144,42 @@ func TestEmbedTemplate(t *testing.T) {
 	t.Run("unknown template name", func(t *testing.T) {
 		_, err := d.embedTemplate(t.Context(), ref, "base: template:nonexistent\n")
 		assert.ErrorContains(t, err, "template `nonexistent.yaml` not found")
+	})
+	t.Run("provision file", func(t *testing.T) {
+		out, err := d.embedTemplate(t.Context(), ref, "provision:\n- mode: system\n  file: scripts/setup.sh\n")
+		assert.NilError(t, err)
+		assert.Assert(t, !strings.Contains(out, "file:"), out)
+		assert.Assert(t, strings.Contains(out, "echo from-library"), out)
+	})
+	t.Run("references stay in the namespace", func(t *testing.T) {
+		hostFile := filepath.Join(t.TempDir(), "host.yaml")
+		assert.NilError(t, os.WriteFile(hostFile, []byte("cpus: 77\n"), 0o600))
+		// Put a template on stdin, so that a reference that reads "-" would leak it.
+		r, w, err := os.Pipe()
+		assert.NilError(t, err)
+		_, err = w.WriteString("cpus: 88\n")
+		assert.NilError(t, err)
+		stdin := os.Stdin
+		os.Stdin = r
+		t.Cleanup(func() { os.Stdin = stdin; w.Close(); r.Close() })
+
+		for name, base := range map[string]string{
+			"host path":          hostFile,
+			"file URL":           "file://" + hostFile,
+			"home directory":     "~/host.yaml",
+			"stdin":              `"-"`,
+			"parent directory":   "../other/common.yaml",
+			"root parent":        "/../other/common.yaml",
+			"template parent":    "template:../other/common",
+			"unknown URL scheme": "cm:other/common.yaml",
+		} {
+			t.Run(name, func(t *testing.T) {
+				out, err := d.embedTemplate(t.Context(), ref, "base: "+base+"\n")
+				for _, leak := range []string{"cpus: 77", "cpus: 88", "cpus: 99"} {
+					assert.Assert(t, !strings.Contains(out, leak), "err=%v out=%q", err, out)
+				}
+			})
+		}
 	})
 	t.Run("no references", func(t *testing.T) {
 		in := "# comment\nimages:\n- location: https://foo.test.\n"
@@ -169,6 +209,24 @@ func TestEmbedStockTemplates(t *testing.T) {
 			assert.NilError(t, err)
 		})
 	}
+}
+
+// TestStockTemplatesPassValidator checks that the library validator admits every
+// bundled file as the sync writes it.
+func TestStockTemplatesPassValidator(t *testing.T) {
+	bundle := limatemplates.FS()
+	v := &LibraryConfigMapValidator{Reader: fake.NewClientBuilder().Build()}
+	err := fs.WalkDir(bundle, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() {
+			return err
+		}
+		content, err := fs.ReadFile(bundle, path)
+		assert.NilError(t, err)
+		_, err = v.ValidateCreate(t.Context(), libraryConfigMap(path, string(content)))
+		assert.Check(t, err, path)
+		return nil
+	})
+	assert.NilError(t, err)
 }
 
 func TestLibraryConfigMapValidator(t *testing.T) {

@@ -351,7 +351,7 @@ bin/$(1)-controller$$(EXE): $$(GOLANG_SOURCES) $$(EMBEDDED_SOURCES)
 build-$(1)-controller: bin/$(1)-controller$$(EXE)
 .PHONY: build-$(1)-controller
 
-test-$(1)-controllers:
+test-$(1)-controllers: $(LIMA_TEMPLATES)
 	go$$(EXE) test -v ./pkg/controllers/$(1)/...
 .PHONY: test-$(1)-controllers
 
