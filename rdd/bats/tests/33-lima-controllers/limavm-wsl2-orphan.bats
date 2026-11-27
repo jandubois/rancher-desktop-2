@@ -120,13 +120,5 @@ EOF
 }
 
 @test "cleanup" {
-    rdd ctl delete limavm "${VM_NAME}" --namespace "${NAMESPACE}"
-    # A failed wsl.exe --unregister can deadlock wslservice.exe and block the
-    # reconciler's store.Inspect, so wrap the wait in an outer timeout. Kill
-    # wslservice.exe to recover.
-    if ! timeout 90 rdd ctl wait --for=delete \
-        "limavm/${VM_NAME}" --namespace "${NAMESPACE}" --timeout=60s; then
-        MSYS_NO_PATHCONV=1 taskkill.exe /F /IM wslservice.exe || true
-        false
-    fi
+    delete_limavm "${VM_NAME}" "${NAMESPACE}"
 }

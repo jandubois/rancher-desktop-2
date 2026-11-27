@@ -43,6 +43,7 @@ func NewCommand() *cobra.Command {
 	hostagentCommand.Flags().String("socket", "", "Path of hostagent socket")
 	hostagentCommand.Flags().Bool("run-gui", false, "Run GUI synchronously within hostagent")
 	hostagentCommand.Flags().Bool("progress", false, "Show provision script progress")
+	hostagentCommand.Flags().String("nerdctl-archive", "", "Local file path (not URL) of nerdctl-full-VERSION-GOOS-GOARCH.tar.gz")
 	hostagentCommand.Flags().Bool("debug", false, "Enable debug logging")
 	return hostagentCommand
 }
@@ -127,6 +128,13 @@ func hostagentAction(cmd *cobra.Command, args []string) error {
 	}
 	if showProgress {
 		opts = append(opts, hostagent.WithCloudInitProgress(showProgress))
+	}
+	nerdctlArchive, err := cmd.Flags().GetString("nerdctl-archive")
+	if err != nil {
+		return err
+	}
+	if nerdctlArchive != "" {
+		opts = append(opts, hostagent.WithNerdctlArchive(nerdctlArchive))
 	}
 	ha, err := hostagent.New(ctx, instName, stdout, signalCh, opts...)
 	if err != nil {

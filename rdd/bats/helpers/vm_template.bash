@@ -4,17 +4,19 @@
 # Usage in test files:
 #   VM_TEMPLATE=$(vm_template)
 # Supports RDD_VM_TYPE on Unix (expands to `vmType: <value>` when set).
+# The optional argument replaces the body of the `containerd:` key. Without
+# it, the template turns containerd off.
 
-vm_template() {
+vm_template() { # [containerd-body]
+    local containerd=${1:-$'  system: false\n  user: false'}
     if is_windows; then
-        cat <<'YAML'
+        cat <<YAML
 vmType: wsl2
 images:
 - location: embedded:///distro.tar.xz
 mountType: wsl2
 containerd:
-  system: false
-  user: false
+${containerd}
 YAML
     else
         cat <<YAML
@@ -22,8 +24,7 @@ images:
 - location: embedded:///distro.raw.xz
 ${RDD_VM_TYPE:+vmType: ${RDD_VM_TYPE}}
 containerd:
-  system: false
-  user: false
+${containerd}
 YAML
     fi
 }
