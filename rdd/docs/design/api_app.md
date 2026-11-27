@@ -32,6 +32,16 @@ All user data is stored on the `LimaDisk`. Which means all images and also all l
 
 Lightweight app snapshots only copy this data disk, and not the full VM image.
 
+#### Provisioning script
+
+The App spec field `virtualMachine.provisionScript` holds a script that runs as root on every VM start, before the container engine and Kubernetes start. The Lima template writes it to `/etc/rancher-desktop/user-provision.sh` in the guest, and `rancher-desktop-provision.service` runs it. On WSL that unit runs inside Rancher Desktop's network namespace, so the script can resolve host names there. A shebang line picks the interpreter, and bash runs a script without one.
+
+If the script fails, the VM still starts, and the unit's journal records the exit status. Changing the script restarts the VM.
+
+```shell
+rdd set "virtualMachine.provisionScript=$(cat provision.sh)"
+```
+
 ### Docker and Kube Contexts
 
 When the `App` is starting it sets up the kubeconfig in `~/.kube/config`, and on the moby backend it also creates the Docker context. containerd has no Docker endpoint to point a context at, so it creates none, and removes one an earlier moby session left behind.

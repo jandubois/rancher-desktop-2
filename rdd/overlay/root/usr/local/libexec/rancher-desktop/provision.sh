@@ -19,6 +19,14 @@ trap 'systemctl start --no-block rancher-desktop.target' EXIT
 
 systemctl stop rancher-desktop.target
 
+# rdd's Lima template writes the user's provisioning script here on every
+# boot, and writes an empty file when the user has none. A failing script
+# must not keep the container engine and k3s from starting.
+USER_PROVISION_SCRIPT=/etc/rancher-desktop/user-provision.sh
+if [[ -s ${USER_PROVISION_SCRIPT} ]]; then
+    "${USER_PROVISION_SCRIPT}" || echo "User provisioning script failed with exit status $?" >&2
+fi
+
 # Enable the requested container engine and disable the other.
 # containerd.service has a Conflicts=docker, so we must not start both.
 CONTAINERD_ACTION=$([[ ${CONTAINER_ENGINE} == containerd ]] && echo enable || echo disable)
