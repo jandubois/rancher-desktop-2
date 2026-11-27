@@ -23,6 +23,7 @@ import ImagesAdd from '../pages/images/add.vue';
 import ImagesScan from '../pages/images/scans/_image-name.vue';
 import SnapshotsCreate from '../pages/snapshots/create.vue';
 import SnapshotsDialog from '../pages/snapshots/dialog.vue';
+import VirtualMachineShell from '../pages/virtual-machines/VirtualMachineShell.vue';
 import VolumeFiles from '../pages/volumes/files/_name.vue';
 
 export default createRouter({
@@ -37,6 +38,9 @@ export default createRouter({
     },
     {
       path: '/containers/info/:id', component: ContainerInfo, name: 'container-info',
+    },
+    {
+      path: '/VirtualMachines/shell/:namespace/:name', component: VirtualMachineShell, name: 'virtual-machine-shell',
     },
     {
       path: '/Volumes', component: Volumes, name: 'Volumes',

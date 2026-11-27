@@ -80,21 +80,22 @@ describe('VirtualMachines', () => {
     const stopping = [created, condition('Running', 'True', 'Started')];
 
     it.each([
-      ['a stopped VM', limaVM('ns', 'vm', false, [created, condition('Running', 'False', 'Stopped')]), [true, false, true]],
-      ['a pending VM', limaVM('ns', 'vm', false), [true, false, true]],
-      ['a VM that failed to start', limaVM('ns', 'vm', false, [created, condition('Running', 'False', 'StartFailed')]), [true, false, true]],
-      ['a stopping VM', limaVM('ns', 'vm', false, stopping), [true, false, false]],
-      ['a running VM', limaVM('ns', 'vm', true, stopping), [false, true, false]],
-      ['a starting VM', limaVM('ns', 'vm', true, [created]), [false, true, false]],
-      ['a failed VM that should run', limaVM('ns', 'vm', true, [created, condition('Running', 'False', 'StartFailed')]), [false, true, false]],
-      ['the App\'s stopped VM', limaVM('rancher-desktop', 'rd', false, [], { metadata: { ownerReferences: [appOwner] } }), [false, false, false]],
-      ['the App\'s running VM', limaVM('rancher-desktop', 'rd', true, stopping, { metadata: { ownerReferences: [appOwner] } }), [false, false, false]],
-      ['a VM that the App owns without controlling it', limaVM('ns', 'vm', false, [], { metadata: { ownerReferences: [{ ...appOwner, controller: false }] } }), [true, false, true]],
-    ])('sets which of Start, Stop and Delete are enabled for %s', (_, vm, expected) => {
+      ['a stopped VM', limaVM('ns', 'vm', false, [created, condition('Running', 'False', 'Stopped')]), [true, false, true, false]],
+      ['a pending VM', limaVM('ns', 'vm', false), [true, false, true, false]],
+      ['a VM that failed to start', limaVM('ns', 'vm', false, [created, condition('Running', 'False', 'StartFailed')]), [true, false, true, false]],
+      ['a stopping VM', limaVM('ns', 'vm', false, stopping), [true, false, false, false]],
+      ['a running VM', limaVM('ns', 'vm', true, stopping), [false, true, false, true]],
+      ['a starting VM', limaVM('ns', 'vm', true, [created]), [false, true, false, false]],
+      ['a failed VM that should run', limaVM('ns', 'vm', true, [created, condition('Running', 'False', 'StartFailed')]), [false, true, false, false]],
+      ['the App\'s stopped VM', limaVM('rancher-desktop', 'rd', false, [], { metadata: { ownerReferences: [appOwner] } }), [false, false, false, false]],
+      ['the App\'s running VM', limaVM('rancher-desktop', 'rd', true, stopping, { metadata: { ownerReferences: [appOwner] } }), [false, false, false, true]],
+      ['a VM that the App owns without controlling it', limaVM('ns', 'vm', false, [], { metadata: { ownerReferences: [{ ...appOwner, controller: false }] } }), [true, false, true, false]],
+    ])('sets which of Start, Stop, Delete and Shell are enabled for %s', (_, vm, expected) => {
       const actions = methods.getVirtualMachineActions.call({ t }, vm, limaVMStatus(vm));
 
-      expect(actions.map((action: any) => action.action)).toEqual(['startVirtualMachine', 'stopVirtualMachine', 'deleteVirtualMachine']);
+      expect(actions.map((action: any) => action.action)).toEqual(['startVirtualMachine', 'stopVirtualMachine', 'deleteVirtualMachine', 'openShell']);
       expect(actions.map((action: any) => action.enabled)).toEqual(expected);
+      expect(actions.map((action: any) => action.bulkable)).toEqual([true, true, true, false]);
     });
 
     it.each([
