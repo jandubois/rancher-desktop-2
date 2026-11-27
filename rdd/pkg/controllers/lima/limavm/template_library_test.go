@@ -196,6 +196,11 @@ func TestLibraryConfigMapValidator(t *testing.T) {
 		"bad yaml":                       {libraryEntry("user", "b", "b.yml", "cpus: [\n"), "failed to parse"},
 		"template label":                 {withTemplateLabel, "must not have the"},
 		"non-canonical in library":       {libraryEntry(TemplateLibraryNamespace, "b", "ubuntu-24.04", ""), `"ubuntu-24.04.yaml"`},
+		"leading underscore basename":    {libraryEntry("user", "b", "_common.yaml", ""), "filename `_common.yaml` is invalid"},
+		"trailing dash basename":         {libraryEntry("user", "b", "common-.yaml", ""), "is invalid"},
+		"double dot basename":            {libraryEntry("user", "b", "foo..bar.yaml", ""), "is invalid"},
+		"underscore script in subdir":    {libraryEntry("user", "b", "scripts/_setup.sh", ""), "is invalid"},
+		"underscore directory":           {libraryEntry("user", "b", "_images/x.yaml", "arch: x86_64\n"), ""},
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
