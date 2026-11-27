@@ -43,7 +43,6 @@
         :weight="1"
         @active="activeTab = 'tab-logs'"
       />
-      <!--
       <tab
         :label="t('containerInfo.shell')"
         name="tab-shell"
@@ -51,7 +50,6 @@
         :disabled="!isRunning"
         @active="activeTab = 'tab-shell'"
       />
-      -->
       <template #tab-row-extras>
         <li
           v-if="activeTab === 'tab-logs'"
@@ -134,18 +132,14 @@
           :container-id="containerId"
           :is-running="isRunning"
         />
-        <!--
-        TODO: Re-enabling this feature is filed as
-        https://github.com/rancher-sandbox/rancher-desktop-app/issues/38
-        <container-shell
-          v-if="shellEverActivated && containerId"
+        <terminal-session
+          v-if="shellEverActivated && shellTarget"
           v-show="activeTab === 'tab-shell'"
           ref="containerShell"
-          :container-id="containerId"
-          :is-container-running="isRunning"
-          :namespace="namespace"
+          class="container-shell-component"
+          endpoint="exec"
+          :target="shellTarget"
         />
-        -->
       </div>
     </rd-tabbed>
   </div>
@@ -159,10 +153,10 @@ import { useStore } from 'vuex';
 import Banner from '@pkg/components/Banner.vue';
 import ContainerInspect from '@pkg/components/ContainerInspect.vue';
 import ContainerLogs from '@pkg/components/ContainerLogs.vue';
-import ContainerShell from '@pkg/components/ContainerShell.vue';
 import ContainerStats from '@pkg/components/ContainerStats.vue';
 import RdTabbed from '@pkg/components/Tabbed/RdTabbed.vue';
 import Tab from '@pkg/components/Tabbed/Tab.vue';
+import TerminalSession from '@pkg/components/TerminalSession.vue';
 
 // Router and Store
 const route = useRoute();
@@ -171,7 +165,7 @@ const t = (key: string, args?: Record<string, unknown>) => store.getters['i18n/t
 
 // Template refs with proper typing
 const containerLogs = ref<InstanceType<typeof ContainerLogs> | null>(null);
-const containerShell = ref<InstanceType<typeof ContainerShell> | null>(null);
+const containerShell = ref<InstanceType<typeof TerminalSession> | null>(null);
 const searchInput = ref<HTMLInputElement | null>(null);
 
 // Reactive data
@@ -198,6 +192,9 @@ const containerName = computed(() => {
 const isRunning = computed(() => {
   return currentContainer.value?.status?.status === 'running';
 });
+
+// The exec endpoint finds the container by the name of its Container mirror.
+const shellTarget = computed(() => currentContainer.value?.metadata?.name ?? '');
 
 const errorMessage = computed(() => {
   if (['containers', 'namespaces'].includes(error.value?.source || '')) {
