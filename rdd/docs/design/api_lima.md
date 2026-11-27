@@ -55,9 +55,13 @@ status:
 
 - **spec.templateRef**: Specifies the `lima.yaml` template for the machine. The template must pass Lima validation or the `LimaVM` creation will fail. 
 
-    Initially the only way to specify a template is via a ConfigMap that will store the "fully embedded" template under the `template` key. It cannot reference external base templates or scripts. This will change eventually when `spec.templateRef.name` can also be set to a URL. The default for `spec.templateRef.namespace` is the same as `metadata.namespace`.
+    The template is stored in a ConfigMap under the `template` key. The default for `spec.templateRef.namespace` is the same as `metadata.namespace`.
 
-    The `LimaVM` controller will create a new ConfigMap (in `metadata.namespace`) with the `metadata.name` and a `"-template"` suffix to store a copy of the validated template. This name is stored under `status.templateConfigMap`. The original `spec.templateRef` source is never accessed again after this, and can be modified or deleted without affecting the `LimaVM` resource. The `spec.templateRef` is immutable after creation and only serves as documentation.
+    The template can reference base templates, and provision and probe scripts, as Lima templates do. A `template:` name, such as `template:_images/ubuntu`, resolves to a ConfigMap in the `lima-templates` namespace. A relative or absolute path resolves to a ConfigMap in the `spec.templateRef` namespace. Only ConfigMaps labeled `lima.rancherdesktop.io/template-library: "true"` can be referenced, and each one's `lima.rancherdesktop.io/template-path` annotation gives its path, such as `common.yaml`. A path reference must spell that path exactly, extension included. A namespace can hold only one ConfigMap for each path. `http(s):` and `github:` references are fetched as `limactl` fetches them.
+
+    rdd writes Lima's stock templates into `lima-templates` at every start, and rewrites any that were edited. To change a stock template, copy it into the `spec.templateRef` namespace under its own path and reference it by that path.
+
+    The `LimaVM` controller will create a new ConfigMap (in `metadata.namespace`) with the `metadata.name` and a `"-template"` suffix to store the validated template, with every reference embedded. This name is stored under `status.templateConfigMap`. The original `spec.templateRef` source is never accessed again after this, and can be modified or deleted without affecting the `LimaVM` resource. The `spec.templateRef` is immutable after creation and is only documentation.
 
     The `status.templateConfigMap` can be modified, but must pass Lima validation for the update to succeed. If `spec.running` is `true` and the template has changed, then the instance will be restarted. The `status.templateConfigMap` cannot be deleted, except by deleting the `LimaVM` resource itself, which will clean up owned resources automatically.
 
