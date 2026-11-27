@@ -34,7 +34,7 @@ export class ContainerShellPage {
 
   /** Type a command and press Enter, using the hidden xterm textarea. */
   async runCommand(command: string) {
-    // ContainerShell auto-focuses the terminal when the shell tab becomes
+    // The app focuses the terminal when the shell tab becomes
     // active for real users, but Playwright's keyboard routing requires an
     // explicit click to track the focused element correctly.
     await this.terminal.click();
@@ -44,7 +44,7 @@ export class ContainerShellPage {
 
   /**
    * Read terminal content via the xterm.js buffer API.
-   * ContainerShell.vue deliberately exposes the terminal instance as
+   * The xterm composable exposes the terminal instance as
    * __xtermTerminal on the container element for e2e testing.  We use the
    * buffer API rather than .xterm-rows textContent for two reasons:
    *   1. It avoids coupling to xterm's internal DOM structure, which can
@@ -84,9 +84,9 @@ export class ContainerShellPage {
 
   /**
    * Wait until the shell session is ready to accept input.
-   * ContainerShell.vue sets data-session-active="true" on the terminal element
-   * when the container-exec/ready IPC event fires (which is also when
-   * sessionActive becomes true and keyboard input starts being forwarded).
+   * TerminalSession.vue sets data-session-active="true" on the terminal
+   * element once the replay is written, which is when typed input starts
+   * reaching the shell.
    * Using an HTML attribute rather than the xterm buffer means this assertion
    * works regardless of JS evaluation world boundaries in Playwright/Electron.
    */

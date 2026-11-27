@@ -11,12 +11,17 @@
 //
 // containerd has no volume concept, so that backend never creates `Volume`
 // resources.
+//
+// The engine controller's passthrough endpoints are `logs`, which streams a
+// container's logs, and `exec`, which opens a shell in a container.
 package engine
 
 import (
 	"context"
+	"fmt"
 	"maps"
 	"net/http"
+	"os"
 	"slices"
 
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -25,6 +30,7 @@ import (
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/app/engine/controllers"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 )
 
 func init() {
@@ -45,6 +51,9 @@ type controller struct {
 func newController() base.Controller {
 	c := &controller{}
 	c.passthroughs = map[string]http.Handler{
+		"exec": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			c.reconciler.HandleExec(w, r)
+		}),
 		"logs": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			c.reconciler.HandleLogs(w, r)
 		}),
@@ -81,6 +90,12 @@ func (c *controller) GetPassthroughHandler(endpoint string) http.Handler {
 }
 
 func (c *controller) RegisterWithManager(_ context.Context, mgr ctrl.Manager) error {
+	// Container shells find the App's VM through Lima's store, which reads
+	// LIMA_HOME. The LimaVM controller sets it too, but --controllers can run
+	// this controller in a process without the LimaVM controller.
+	if err := os.Setenv("LIMA_HOME", instance.LimaHome()); err != nil {
+		return fmt.Errorf("failed to set LIMA_HOME: %w", err)
+	}
 	if err := appv1alpha1.AddToScheme(mgr.GetScheme()); err != nil {
 		return err
 	}

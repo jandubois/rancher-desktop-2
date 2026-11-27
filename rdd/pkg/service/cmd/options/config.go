@@ -6,8 +6,12 @@
 package options
 
 import (
+	"net/http"
+	"strings"
+
 	apiextensionsapiserver "k8s.io/apiextensions-apiserver/pkg/apiserver"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apiserver/pkg/endpoints/request"
 	"k8s.io/apiserver/pkg/util/webhook"
 	aggregatorapiserver "k8s.io/kube-aggregator/pkg/apiserver"
 	aggregatorscheme "k8s.io/kube-aggregator/pkg/apiserver/scheme"
@@ -15,6 +19,7 @@ import (
 	"k8s.io/kubernetes/pkg/controlplane"
 	controlplaneapiserver "k8s.io/kubernetes/pkg/controlplane/apiserver"
 	generatedopenapi "k8s.io/kubernetes/pkg/generated/openapi"
+	"k8s.io/streaming/pkg/httpstream"
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/controllers"
 )
@@ -67,6 +72,18 @@ func (c *Config) Complete() (CompletedConfig, error) {
 	}}, nil
 }
 
+// passthroughWebSocketsAreLongRunning wraps isLongRunning so that WebSocket
+// upgrade requests under /passthrough/ count as long-running. Otherwise the
+// API server closes the WebSocket at the request deadline.
+func passthroughWebSocketsAreLongRunning(isLongRunning request.LongRunningRequestCheck) request.LongRunningRequestCheck {
+	return func(r *http.Request, requestInfo *request.RequestInfo) bool {
+		if strings.HasPrefix(requestInfo.Path, "/passthrough/") && httpstream.IsUpgradeRequest(r) {
+			return true
+		}
+		return isLongRunning(r, requestInfo)
+	}
+}
+
 // NewConfig creates all the self-contained pieces making up the controlplane server.
 func NewConfig(opts CompletedOptions) (*Config, error) {
 	c := &Config{
@@ -86,6 +103,7 @@ func NewConfig(opts CompletedOptions) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	genericConfig.LongRunningFunc = passthroughWebSocketsAreLongRunning(genericConfig.LongRunningFunc)
 
 	// set standalone config
 	c.AdminToken, c.UserToken, err = opts.AdminAuthentication.ApplyTo(genericConfig)

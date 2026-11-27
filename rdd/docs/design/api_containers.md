@@ -389,9 +389,9 @@ Parameter | Description | Default
 `follow` | Follow the log stream. | `true`
 
 #### Exec (shell) in container
-An endpoint at `/passthrough/.../exec` will speak WebSocket; messages are
-bidirectional, unbuffered binary as in the logs endpoint.  Any text must be
-UTF-8 encoded.
+An endpoint at `/passthrough/engine/exec/${container}` opens an interactive
+shell in the container.  [Terminal sessions](terminal-sessions.md) describes
+the endpoint, its wire format, and how sessions outlive their clients.
 
 #### Delete container
 Delete the `Container` object; a finalizer will be used to delete the container,

@@ -118,6 +118,28 @@ assert_containerd_socket_open() {
         container/"${cid}" --timeout=30s
 }
 
+@test "a container shell runs typed commands, and nerdctl reports a non-zero exit as 1" {
+    run_e -0 nerdctl run --detach --name test-terminal busybox sleep inf
+    cid=${output}
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${cid}" --timeout=60s
+
+    # The terminal echoes the input, so check for output that the input
+    # doesn't contain.
+    #
+    # nerdctl exits with 1 for any non-zero status of the shell, and prints
+    # the shell's status in an error message. A nerdctl that passes the
+    # status through (containerd/nerdctl#3462) fails this test; then change
+    # it to expect 3, and update "Starting a shell" in
+    # rdd/docs/design/terminal-sessions.md.
+    # shellcheck disable=SC2016 # the container's shell expands $((...))
+    run -1 rdd terminal "/passthrough/engine/exec/${cid}" <<<'echo $((6*7)); exit 3'
+    assert_terminal_line 42
+    assert_output --partial "exec failed with exit code 3"
+
+    nerdctl rm --force test-terminal
+}
+
 # --- Image mirroring ---
 
 @test "pulled image has an Image mirror" {

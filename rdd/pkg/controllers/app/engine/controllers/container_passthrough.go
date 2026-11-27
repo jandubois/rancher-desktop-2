@@ -13,8 +13,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
+	"al.essio.dev/pkg/shellescape"
 	"github.com/containerd/errdefs"
 	"github.com/gorilla/websocket"
 	"github.com/moby/moby/api/pkg/stdcopy"
@@ -26,13 +26,8 @@ import (
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
-)
-
-const (
-	controlTimeout = time.Second
-	writeTimeout   = 10 * time.Second
-	pingInterval   = 10 * time.Second
-	pingTimeout    = time.Minute
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/guestexec"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/terminal"
 )
 
 // validContainerMirrorName reports whether the path segment can name a
@@ -44,23 +39,72 @@ func validContainerMirrorName(name string) bool {
 	return len(validation.IsDNS1123Subdomain(name)) == 0
 }
 
-// websocketWriter implements [io.Writer] writing to a websocket connection,
-// with each Write call resulting in a separate [websocket.BinaryMessage].
-type websocketWriter struct {
-	conn *websocket.Conn
+// containerShellScript runs bash when the container has it, and sh otherwise.
+const containerShellScript = "if command -v bash >/dev/null; then exec bash; fi; exec sh"
+
+// containerShellArgs returns the `exec` subcommand and its arguments for a
+// `docker` or `nerdctl` command line that opens an interactive shell in the
+// container with this ID.
+func containerShellArgs(id string) string {
+	return "exec -it -e TERM=xterm-256color " + shellescape.Quote(id) +
+		" sh -c " + shellescape.Quote(containerShellScript)
 }
 
-func (w *websocketWriter) Write(p []byte) (int, error) {
-	_ = w.conn.SetWriteDeadline(time.Now().Add(writeTimeout))
-	writer, err := w.conn.NextWriter(websocket.BinaryMessage)
+// HandleExec implements the endpoint that opens a shell in a container.
+// It is at `/passthrough/engine/exec/{container}`.
+func (r *EngineReconciler) HandleExec(w http.ResponseWriter, req *http.Request) {
+	log := ctrl.LoggerFrom(req.Context())
+	name, _, _ := strings.Cut(strings.TrimLeft(req.URL.Path, "/"), "/")
+	if !validContainerMirrorName(name) {
+		log.V(5).Info("Invalid container ID", "container", name)
+		http.Error(w, "Invalid container ID", http.StatusBadRequest)
+		return
+	}
+	// Attach calls the start function only for a new session. Keep the checks
+	// of the engine and the container in startContainerShell, so that a
+	// reattach to a running shell skips them and works while the engine
+	// watcher is down.
+	r.shells.Attach(w, req, name, func(ctx context.Context, columns, rows int) (terminal.Shell, error) {
+		return r.startContainerShell(ctx, name, columns, rows)
+	})
+}
+
+// startContainerShell starts a shell in the container whose Container mirror
+// is called name. It first checks that the engine and the container are
+// running.
+func (r *EngineReconciler) startContainerShell(ctx context.Context, name string, columns, rows int) (terminal.Shell, error) {
+	r.engineMu.Lock()
+	engine := r.engine
+	r.engineMu.Unlock()
+	if engine == nil {
+		return nil, errors.New("the container engine is not running")
+	}
+
+	var c containersv1alpha1.Container
+	err := r.Client.Get(ctx, types.NamespacedName{Namespace: appv1alpha1.AppNamespace, Name: name}, &c)
+	if apierrors.IsNotFound(err) {
+		return nil, fmt.Errorf("container %q not found", name)
+	} else if err != nil {
+		return nil, fmt.Errorf("failed to get container %q: %w", name, err)
+	}
+	if c.Status.Status != containersv1alpha1.ContainerStatusRunning {
+		return nil, fmt.Errorf("container %q is not running (status: %s)", name, c.Status.Status)
+	}
+
+	startPTY := r.startPTY
+	if startPTY == nil {
+		startPTY = startAppVMPTY
+	}
+	return startPTY(ctx, engine.shellCommand(&c), columns, rows)
+}
+
+// startAppVMPTY runs the command under a pty in the App's VM.
+func startAppVMPTY(ctx context.Context, command string, columns, rows int) (terminal.Shell, error) {
+	inst, err := guestexec.Inspect(ctx, appv1alpha1.AppLimaVMName)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
-	n, err := writer.Write(p)
-	if err == nil {
-		err = writer.Close()
-	}
-	return n, err
+	return guestexec.StartPTYSession(ctx, inst, command, columns, rows)
 }
 
 // HandleLogs implements the log endpoint to pass through container logs.
@@ -160,85 +204,24 @@ func (r *EngineReconciler) HandleLogs(w http.ResponseWriter, req *http.Request) 
 
 	// Now that we have everything, we can do the websocket upgrade.  Defer this
 	// to as late as possible so we can report container engine errors via HTTP.
-	upgrader := websocket.Upgrader{}
-	conn, err := upgrader.Upgrade(w, req, nil)
+	conn, err := terminal.Upgrade(w, req, terminal.Options{ReadLimit: 4096})
 	if err != nil {
 		log.V(5).Info("Failed to upgrade to WebSocket", "error", err)
 		return
 	}
-	defer conn.Close()
-	conn.SetReadLimit(4096)
-	defer func() {
-		message := websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Closing connection")
-		err := conn.WriteControl(websocket.CloseMessage, message, time.Now().Add(controlTimeout))
-		if err == nil {
-			// Allow for websocket to close gracefully
-			select {
-			case <-time.After(controlTimeout):
-			case <-ctx.Done():
-				// We cancel the context on read or write error, which happens
-				// when the connection is closed.  The `defer cancel()` from
-				// when we created the context hasn't triggered yet.
-			}
-		} else if !errors.Is(err, websocket.ErrCloseSent) {
-			log.V(5).Info("Failed to close WebSocket", "error", err)
-		}
-	}()
-
-	// Set up a goroutine to handle reading from the connection; per gorilla
-	// documentation, only one goroutine can call the read methods.
+	// Stop reading the logs once the connection fails or the peer closes it.
 	go func() {
-		timer := time.NewTimer(pingInterval)
-		conn.SetPongHandler(func(string) error {
-			_ = conn.SetReadDeadline(time.Now().Add(pingTimeout))
-			timer.Reset(pingInterval)
-			return nil
-		})
-		_ = conn.SetReadDeadline(time.Now().Add(pingTimeout))
-
-		// Set up a goroutine to emit ping messages
-		go func() {
-			for {
-				select {
-				case <-timer.C:
-					err := conn.WriteControl(
-						websocket.PingMessage,
-						[]byte{},
-						time.Now().Add(controlTimeout))
-					if err != nil {
-						// If we fail to write, the connection isn't usable
-						// anymore; just cancel everything.
-						cancel()
-						return
-					}
-				case <-ctx.Done():
-					return
-				}
-			}
-		}()
-		// Loop to read messages, so we can abort once we receive any errors.
-		// On shutdown, ReadMessage will return an error, so we don't need an
-		// explicit check for the context closing.
-		for {
-			_, _, err := conn.ReadMessage()
-			if err != nil {
-				// Error includes [websocket.CloseError], i.e. graceful close.
-				cancel()
-				return
-			}
-			// On a successful read, reset the ping timer since there is no need
-			// to fire a ping immediately after.
-			_ = conn.SetReadDeadline(time.Now().Add(pingTimeout))
-			timer.Reset(pingInterval)
+		select {
+		case <-conn.Done():
+			cancel()
+		case <-ctx.Done():
 		}
 	}()
-
-	writer := &websocketWriter{conn: conn}
 
 	if hasTTY {
-		_, err = io.Copy(writer, reader)
+		_, err = io.Copy(conn, reader)
 	} else {
-		_, err = stdcopy.StdCopy(writer, writer, reader)
+		_, err = stdcopy.StdCopy(conn, conn, reader)
 	}
 	if err != nil {
 		log.V(5).Info("Failed to copy container logs", "error", err)
@@ -248,13 +231,9 @@ func (r *EngineReconciler) HandleLogs(w http.ResponseWriter, req *http.Request) 
 		case errors.Is(err, websocket.ErrCloseSent):
 		case errors.As(err, new(*websocket.CloseError)):
 		default:
-			message := websocket.FormatCloseMessage(
-				websocket.CloseInternalServerErr,
-				fmt.Sprintf("failed to copy container logs: %s", err))
-			err = conn.WriteControl(websocket.CloseMessage, message, time.Now().Add(writeTimeout))
-			if err != nil {
-				log.V(5).Info("Failed to close WebSocket", "error", err)
-			}
+			conn.Close(websocket.CloseInternalServerErr, fmt.Sprintf("failed to copy container logs: %s", err))
+			return
 		}
 	}
+	conn.Close(websocket.CloseNormalClosure, "Closing connection")
 }

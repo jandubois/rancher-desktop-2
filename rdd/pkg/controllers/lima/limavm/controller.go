@@ -8,6 +8,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"net/http"
 	"os"
 
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
@@ -24,6 +25,7 @@ import (
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/lima/limavm/controllers"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/terminal"
 )
 
 func init() {
@@ -61,12 +63,16 @@ var limaCRD string
 type controller struct {
 	webhookPort     int                   // The actual webhook port allocated by SharedControllerManager
 	webhookManagers []base.WebhookManager // WebhookManagers for parallel setup
+	client          client.Client         // The manager's client; nil until RegisterWithManager succeeds
+	shells          *terminal.Registry    // Login shell sessions, keyed by namespace/name
 }
 
-// Verify that controller implements base.Controller and base.WebhookController interfaces.
+// Verify that controller implements the base.Controller, base.WebhookController
+// and base.PassthroughController interfaces.
 var (
-	_ base.Controller        = &controller{}
-	_ base.WebhookController = &controller{}
+	_ base.Controller            = &controller{}
+	_ base.WebhookController     = &controller{}
+	_ base.PassthroughController = &controller{}
 )
 
 // GetName returns the controller name.
@@ -92,6 +98,20 @@ func (c *controller) GetWebhookServiceName() string {
 // GetWebhookManagers returns all WebhookManagers for parallel setup.
 func (c *controller) GetWebhookManagers() []base.WebhookManager {
 	return c.webhookManagers
+}
+
+// GetPassthroughEndpoints returns the passthrough endpoints of this controller.
+func (c *controller) GetPassthroughEndpoints() []string {
+	return []string{shellEndpoint}
+}
+
+// GetPassthroughHandler returns the handler for the endpoint, or nil before
+// RegisterWithManager has succeeded.
+func (c *controller) GetPassthroughHandler(endpoint string) http.Handler {
+	if c.client == nil || endpoint != shellEndpoint {
+		return nil
+	}
+	return http.HandlerFunc(c.handleShell)
 }
 
 // GetCRDData returns the embedded CRD YAML data.
@@ -192,7 +212,12 @@ func (c *controller) RegisterWithManager(_ context.Context, mgr ctrl.Manager) er
 	if err := c.setupReconciler(mgr); err != nil {
 		return err
 	}
-	return c.setupWebhookWithRuntimeConfig(mgr)
+	if err := c.setupWebhookWithRuntimeConfig(mgr); err != nil {
+		return err
+	}
+	c.client = mgr.GetClient()
+	c.shells = terminal.NewRegistry()
+	return nil
 }
 
 // defaulter handles LimaVM mutation via webhook.

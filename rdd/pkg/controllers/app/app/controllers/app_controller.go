@@ -48,8 +48,8 @@ type ControllerDiscovery interface {
 }
 
 const (
-	appName                        = "app"
-	limaVMName, inputConfigMapName = "rd", "rd"
+	appName            = "app"
+	inputConfigMapName = "rd"
 
 	// requeueAfterDeletion is how long to wait between checks while the LimaVM
 	// controller is running its teardown (stopping the VM, removing disk files).
@@ -246,7 +246,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 
 		// Delete the LimaVM and wait for it to finish cleaning up.
 		limaVM := &limav1alpha1.LimaVM{}
-		err := r.Get(ctx, client.ObjectKey{Name: limaVMName, Namespace: namespace}, limaVM)
+		err := r.Get(ctx, client.ObjectKey{Name: v1alpha1.AppLimaVMName, Namespace: namespace}, limaVM)
 		if err == nil {
 			if err := base.RemoveOwnedFinalizer(ctx, r.Client, limaVM, v1alpha1.AppKind); err != nil {
 				return ctrl.Result{}, fmt.Errorf("failed to remove owned finalizer from LimaVM: %w", err)
@@ -323,7 +323,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 
 	// Check whether the LimaVM already exists. If not, create the input ConfigMap and LimaVM.
 	limaVM := &limav1alpha1.LimaVM{}
-	limaVMErr := r.Get(ctx, client.ObjectKey{Name: limaVMName, Namespace: namespace}, limaVM)
+	limaVMErr := r.Get(ctx, client.ObjectKey{Name: v1alpha1.AppLimaVMName, Namespace: namespace}, limaVM)
 	if limaVMErr != nil && !apierrors.IsNotFound(limaVMErr) {
 		return ctrl.Result{}, limaVMErr
 	}
@@ -402,7 +402,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 		}
 
 		limaVM = &limav1alpha1.LimaVM{
-			Name:       limaVMName,
+			Name:       v1alpha1.AppLimaVMName,
 			Namespace:  namespace,
 			Finalizers: []string{base.OwnedFinalizerFor(v1alpha1.AppKind)},
 			Spec: limav1alpha1.LimaVMSpec{
@@ -419,7 +419,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 		if err := r.Create(ctx, limaVM); err != nil {
 			return ctrl.Result{}, fmt.Errorf("failed to create LimaVM: %w", err)
 		}
-		log.Info("Created LimaVM", "name", limaVMName, "namespace", namespace)
+		log.Info("Created LimaVM", "name", v1alpha1.AppLimaVMName, "namespace", namespace)
 		return ctrl.Result{}, nil
 	}
 

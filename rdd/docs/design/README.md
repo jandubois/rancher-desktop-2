@@ -85,6 +85,8 @@ The [GUI application](gui.md) avoids interaction with the host machine except vi
 
 [^remote]: This means that technically the GUI doesn't have to run on the same host as `rdd`. But this is not a goal. If this ever becomes necessary, it would more likely be implemented by an `rdd-shim` that would handle the remoting.
 
+For the GUI's [terminal sessions](terminal-sessions.md), RDD runs a shell in a container or a Lima VM, and the GUI attaches to it over a WebSocket.
+
 ## CLI Operation
 
 The GUI in Rancher Desktop 2.0 is completely optional. Providing a great CLI experience is one of the goals for `rdd`. The required steps to run `rdd` on a new machine should be as simple as

@@ -28,10 +28,8 @@
 </template>
 
 <script lang="ts" setup>
-import { FitAddon } from '@xterm/addon-fit';
 import { SearchAddon } from '@xterm/addon-search';
 import { WebLinksAddon } from '@xterm/addon-web-links';
-import { Terminal } from '@xterm/xterm';
 import { shell } from 'electron';
 import { ref, onBeforeUnmount, watch, nextTick, useTemplateRef, computed } from 'vue';
 import { useStore } from 'vuex';
@@ -39,6 +37,10 @@ import { useStore } from 'vuex';
 import Banner from '@pkg/components/Banner.vue';
 import LoadingIndicator from '@pkg/components/LoadingIndicator.vue';
 import { usePassthroughURL } from '@pkg/composables/passthrough';
+import { useXterm } from '@pkg/composables/xterm';
+
+import type { FitAddon } from '@xterm/addon-fit';
+import type { Terminal } from '@xterm/xterm';
 
 defineOptions({ name: 'ContainerLogs' });
 
@@ -105,55 +107,27 @@ watch(terminalContainer, async(terminalContainer, _oldValue, onCleanup) => {
 
   terminalAborter = new AbortController();
   onCleanup(() => terminalAborter?.abort());
+  const signal = terminalAborter.signal;
 
-  const t = new Terminal({
-    theme: {
-      background:          '#1a1a1a',
-      foreground:          '#e0e0e0',
-      cursor:              '#1a1a1a', // same as the background to effectively hide the cursor.
-      black:               '#000000',
-      red:                 '#ff5555',
-      green:               '#50fa7b',
-      yellow:              '#f1fa8c',
-      blue:                '#8be9fd',
-      magenta:             '#ff79c6',
-      cyan:                '#8be9fd',
-      white:               '#f8f8f2',
-      brightBlack:         '#6272a4',
-      brightRed:           '#ff6e6e',
-      brightGreen:         '#69ff94',
-      brightYellow:        '#ffffa5',
-      brightBlue:          '#d6acff',
-      brightMagenta:       '#ff92df',
-      brightCyan:          '#a4ffff',
-      brightWhite:         '#ffffff',
-    },
-    fontSize:     14,
-    fontFamily:   '"Courier New", "Monaco", monospace',
+  const { terminal: t, fitAddon: fit } = await useXterm(terminalContainer, {
+    theme:        { cursor: '#1a1a1a' }, // the background color, which hides the cursor.
     cursorBlink:  false,
     disableStdin: true,
     convertEol:   true,
     scrollback:   50_000,
-  });
-  terminalAborter.signal.addEventListener('abort', () => {
+  }, signal);
+  if (signal.aborted) {
+    return;
+  }
+  signal.addEventListener('abort', () => {
     terminal = undefined;
-    t.dispose();
-  });
-
-  fitAddon = new FitAddon();
-  t.loadAddon(fitAddon);
-  terminalAborter.signal.addEventListener('abort', () => {
-    try {
-      fitAddon?.dispose();
-    } catch {
-      // Ignore errors here: fitAddon.dispose() can throw incorrectly.
-    }
     fitAddon = undefined;
   });
+  fitAddon = fit;
 
   searchAddon = new SearchAddon();
   t.loadAddon(searchAddon);
-  terminalAborter.signal.addEventListener('abort', () => {
+  signal.addEventListener('abort', () => {
     searchAddon?.dispose();
     searchAddon = undefined;
   });
@@ -165,10 +139,7 @@ watch(terminalContainer, async(terminalContainer, _oldValue, onCleanup) => {
 
   // Disable key events to allow normal behaviour such as copy/paste.
   t.attachCustomKeyEventHandler(() => false);
-  (terminalContainer as any).__xtermTerminal = t;
-  t.open(terminalContainer);
 
-  await nextTick();
   if (buffer.length > 0) {
     // If we have data streamed in before the terminal showed up, write it now.
     // This shouldn't be necessary as we show the terminal as soon as the socket
@@ -180,13 +151,6 @@ watch(terminalContainer, async(terminalContainer, _oldValue, onCleanup) => {
     buffer = [];
   }
   terminal = t;
-
-  const resizeObserver = new ResizeObserver(fitAddon.fit.bind(fitAddon));
-  resizeObserver.observe(terminalContainer);
-  terminalAborter.signal.addEventListener('abort', () => {
-    resizeObserver.disconnect();
-  });
-  fitAddon.fit();
 });
 
 function isArrayBufferMessage(message: MessageEvent): message is MessageEvent<ArrayBuffer> {

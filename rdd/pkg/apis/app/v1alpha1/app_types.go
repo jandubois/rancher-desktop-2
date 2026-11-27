@@ -17,6 +17,13 @@ const AppKind = "App"
 // requests to the engine.
 const AppNamespace = "rancher-desktop"
 
+// AppLimaVMName is the name of the App's LimaVM in AppNamespace.
+const AppLimaVMName = "rd"
+
+// GuestContainerdSocket is the containerd socket inside the App's VM. It must
+// match the guestSocket forward in the App controller's lima-template.yaml.
+const GuestContainerdSocket = "/run/k3s/containerd/containerd.sock"
+
 // EngineControllerName is the registry name of the engine controller.
 // Both the engine controller's own registration and the App reconciler's
 // discovery query reference this constant so they cannot drift.
