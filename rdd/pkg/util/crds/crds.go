@@ -26,11 +26,12 @@ import (
 type Outcome int
 
 const (
-	// Unchanged means the stored CRD's spec already matched.
+	// Unchanged means the stored CRD already had the spec and labels that
+	// Apply was given.
 	Unchanged Outcome = iota
 	// Created means the CRD did not exist and Apply created it.
 	Created
-	// Updated means the stored CRD's spec differed and Apply replaced it.
+	// Updated means Apply rewrote the stored CRD's spec or labels.
 	Updated
 )
 
@@ -55,7 +56,9 @@ func Decode(data string) ([]apiextensionsv1.CustomResourceDefinition, error) {
 }
 
 // Apply creates crd on the API server. If the API server already has it,
-// Apply replaces the stored spec when that spec differs from crd's.
+// Apply updates the stored copy when the stored spec differs from crd's, or
+// when one of crd's labels is missing from the stored copy or has another
+// value there. The update keeps the labels that crd does not set.
 func Apply(ctx context.Context, c apiextensionsv1client.CustomResourceDefinitionInterface, crd *apiextensionsv1.CustomResourceDefinition) (Outcome, error) {
 	existing, err := c.Get(ctx, crd.Name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
@@ -72,14 +75,33 @@ func Apply(ctx context.Context, c apiextensionsv1client.CustomResourceDefinition
 	// matches the stored one, so fill them in before comparing.
 	defaulted := crd.DeepCopy()
 	apiextensionsv1.SetObjectDefaults_CustomResourceDefinition(defaulted)
-	if apiequality.Semantic.DeepEqual(existing.Spec, defaulted.Spec) {
+	// Cluster API reads a label on a provider's CRD to learn which of the
+	// CRD's API versions implements a Cluster API contract. So a CRD whose
+	// labels alone changed still needs an update.
+	if apiequality.Semantic.DeepEqual(existing.Spec, defaulted.Spec) && hasLabels(existing, crd.Labels) {
 		return Unchanged, nil
 	}
 	existing.Spec = defaulted.Spec
+	if existing.Labels == nil {
+		existing.Labels = map[string]string{}
+	}
+	for k, v := range crd.Labels {
+		existing.Labels[k] = v
+	}
 	if _, err := c.Update(ctx, existing, metav1.UpdateOptions{}); err != nil {
 		return Unchanged, fmt.Errorf("failed to update CRD %s: %w", crd.Name, err)
 	}
 	return Updated, nil
+}
+
+// hasLabels reports whether crd has every label in labels with the same value.
+func hasLabels(crd *apiextensionsv1.CustomResourceDefinition, labels map[string]string) bool {
+	for k, v := range labels {
+		if got, ok := crd.Labels[k]; !ok || got != v {
+			return false
+		}
+	}
+	return true
 }
 
 // WaitEstablished waits until the API server serves the named CRD.

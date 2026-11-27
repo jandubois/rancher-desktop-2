@@ -23,6 +23,8 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: widgets.example.com
+  labels:
+    example.com/version: v1
 spec:
   group: example.com
   names:
@@ -58,11 +60,29 @@ func TestApply(t *testing.T) {
 	assert.Equal(t, outcome, Created)
 	assert.NilError(t, WaitEstablished(ctx, c, desired.Name, 30*time.Second))
 
+	// Turn the stored copy into an older one that lacks our label, and give
+	// it a label that someone else set.
+	stored, err := c.Get(ctx, desired.Name, metav1.GetOptions{})
+	assert.NilError(t, err)
+	stored.Labels = map[string]string{"other.example.com/owner": "someone"}
+	_, err = c.Update(ctx, stored, metav1.UpdateOptions{})
+	assert.NilError(t, err)
+
+	outcome, err = Apply(ctx, c, desired.DeepCopy())
+	assert.NilError(t, err)
+	assert.Equal(t, outcome, Updated)
+	stored, err = c.Get(ctx, desired.Name, metav1.GetOptions{})
+	assert.NilError(t, err)
+	assert.DeepEqual(t, stored.Labels, map[string]string{
+		"example.com/version":     "v1",
+		"other.example.com/owner": "someone",
+	})
+
 	desired.Spec.Versions[0].Schema.OpenAPIV3Schema.Description = "second"
 	outcome, err = Apply(ctx, c, desired.DeepCopy())
 	assert.NilError(t, err)
 	assert.Equal(t, outcome, Updated)
-	stored, err := c.Get(ctx, desired.Name, metav1.GetOptions{})
+	stored, err = c.Get(ctx, desired.Name, metav1.GetOptions{})
 	assert.NilError(t, err)
 	assert.Equal(t, stored.Spec.Versions[0].Schema.OpenAPIV3Schema.Description, "second")
 
