@@ -173,6 +173,7 @@ func newLimaVMCreateCommand() *cobra.Command {
 		Long: `Create a new LimaVM resource with the specified template.
 
 TEMPLATE can be one of:
+- A Lima template name with the "template:" prefix, such as template:default - creates a ConfigMap with the VM name whose template is "base: TEMPLATE"
 - A ConfigMap name (if it's a valid Kubernetes DNS-1123 subdomain) in the namespace specified by --namespace
 - A file path (if it's not a valid ConfigMap name) - creates a ConfigMap with the VM name`,
 		Args: cobra.ExactArgs(2),
@@ -328,10 +329,24 @@ func findLimaVM(ctx context.Context, c client.Client, name string) (*limav1alpha
 	return &vmList.Items[0], nil
 }
 
-func createConfigMap(ctx context.Context, c client.Client, name, namespace, template string) (*corev1.ConfigMap, error) {
+// templateContent returns the template for the TEMPLATE argument. A `template:`
+// name becomes the single line "base: TEMPLATE", and the LimaVM defaulter
+// resolves that name when it admits the VM. Any other TEMPLATE is read as a file.
+func templateContent(template string) (string, error) {
+	if strings.HasPrefix(template, "template:") {
+		return "base: " + template + "\n", nil
+	}
 	content, err := os.ReadFile(template)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read template file %q: %w", template, err)
+		return "", fmt.Errorf("failed to read template file %q: %w", template, err)
+	}
+	return string(content), nil
+}
+
+func createConfigMap(ctx context.Context, c client.Client, name, namespace, template string) (*corev1.ConfigMap, error) {
+	content, err := templateContent(template)
+	if err != nil {
+		return nil, err
 	}
 
 	// Check if ConfigMap already exists
@@ -349,13 +364,13 @@ func createConfigMap(ctx context.Context, c client.Client, name, namespace, temp
 		Name:      name,
 		Namespace: namespace,
 		Data: map[string]string{
-			limav1alpha1.TemplateConfigMapKey: string(content),
+			limav1alpha1.TemplateConfigMapKey: content,
 		},
 	}
 	if err := c.Create(ctx, configMap); err != nil {
 		return nil, fmt.Errorf("failed to create ConfigMap %q: %w", name, err)
 	}
-	logrus.Infof("ConfigMap %q created in namespace %q with template from file %q", name, namespace, template)
+	logrus.Infof("ConfigMap %q created in namespace %q with template from %q", name, namespace, template)
 	return configMap, nil
 }
 
@@ -389,6 +404,7 @@ func limaVMCreateAction(ctx context.Context, name, template, namespace string, d
 
 	// Check if template is a valid ConfigMap name (DNS-1123 subdomain)
 	// https://kubernetes.io/docs/concepts/configuration/configmap/#configmap-object
+	// A "template:" name is never one, because of the colon.
 	configMapName := template
 	validationErrs := validation.IsDNS1123Subdomain(configMapName)
 	if len(validationErrs) > 0 {
