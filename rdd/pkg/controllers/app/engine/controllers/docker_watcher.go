@@ -438,6 +438,12 @@ func (w *dockerWatcher) getLogs(ctx context.Context, c *containersv1alpha1.Conta
 	})
 }
 
+// shellCommand runs docker without sudo, because every user in the guest can
+// write to the Docker socket.
+func (w *dockerWatcher) shellCommand(c *containersv1alpha1.Container) string {
+	return "docker " + containerShellArgs(c.Status.ID)
+}
+
 func (w *dockerWatcher) pullImage(
 	ctx context.Context,
 	repoTag string,
