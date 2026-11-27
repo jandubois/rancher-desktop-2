@@ -572,3 +572,9 @@ load_var() {
     done
     return "${res}"
 }
+
+# Assert that a line of ${lines} matches the regular expression <text> in
+# full, apart from the trailing CR of terminal output.
+assert_terminal_line() { # <text>
+    assert_line --regexp "^$1"$'\r?$'
+}
