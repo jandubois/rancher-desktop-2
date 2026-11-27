@@ -98,11 +98,17 @@ resolve() {
     die "too many levels of symlinks at $1"
 }
 
+# Each link's own path must be under templates/ and must not exist in the copy
+# yet. The module zip drops every symlink, so a link from the module's own
+# commit is never at a path that the copy already holds.
 links=$(git -C "${tmp}" ls-tree -r FETCH_HEAD -- templates/ | sed -n -E $'s/^120000 blob [0-9a-f]+\t//p')
 while IFS= read -r link; do
     [[ -n ${link} ]] || continue
+    alias=$(normalize "${link}")
+    [[ ${alias} == templates/* ]] || die "symlink ${link} is outside templates/"
+    [[ ! -e "${copy}/${alias#templates/}" && ! -L "${copy}/${alias#templates/}" ]] || die "symlink ${link} would overwrite a file in ${copy}"
     final=$(resolve "${link}")
     [[ ${final} == templates/* ]] || die "${link} points outside templates/: ${final}"
     [[ -f "${copy}/${final#templates/}" ]] || die "${link} points to ${final}, which is not in ${copy}"
-    cp "${copy}/${final#templates/}" "${copy}/${link#templates/}"
+    cp "${copy}/${final#templates/}" "${copy}/${alias#templates/}"
 done <<<"${links}"
