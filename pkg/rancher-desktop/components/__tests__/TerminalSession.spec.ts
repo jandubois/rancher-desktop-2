@@ -53,7 +53,7 @@ describe('TerminalSession.vue', () => {
   });
 
   const mountOptions = {
-    props:  { endpoint: 'exec', target: 'container' },
+    props:  { endpoint: 'exec', target: 'container', targetRunning: true },
     global: {
       plugins: [cleanHtmlDirective], mocks: { t: (key: string) => key }, stubs: { t: true },
     },

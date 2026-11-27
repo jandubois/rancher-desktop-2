@@ -139,6 +139,7 @@
           class="container-shell-component"
           endpoint="exec"
           :target="shellTarget"
+          :target-running="isRunning"
         />
       </div>
     </rd-tabbed>

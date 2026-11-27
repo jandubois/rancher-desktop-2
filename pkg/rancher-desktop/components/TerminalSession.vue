@@ -9,6 +9,7 @@
       <button
         class="btn btn-sm role-secondary session-action"
         data-testid="session-action"
+        :disabled="!targetRunning"
         @click="reconnect"
       >
         {{ ended.action === 'reattach' ? t('terminalSession.reattach') : t('terminalSession.startNewShell') }}
@@ -36,11 +37,17 @@ import type { Terminal } from '@xterm/xterm';
 
 defineOptions({ name: 'TerminalSession' });
 
-const { endpoint, target } = defineProps<{
+const { endpoint, target, targetRunning } = defineProps<{
   /** The passthrough endpoint, such as `exec`. */
-  endpoint: string;
+  endpoint:      string;
   /** The path after the endpoint that names the session's target. */
-  target:   string;
+  target:        string;
+  /**
+   * Whether the target is running. rdd ends the target's session when the
+   * target stops, and it starts a new one only in a running target. So the
+   * banner disables its button while this is false.
+   */
+  targetRunning: boolean;
 }>();
 
 defineExpose({ focus: () => terminal.value?.focus() });
