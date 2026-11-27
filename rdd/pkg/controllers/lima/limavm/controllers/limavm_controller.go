@@ -15,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/docker/go-units"
 	limainstance "github.com/lima-vm/lima/v2/pkg/instance"
 	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/lima-vm/lima/v2/pkg/limatype/filenames"
@@ -23,6 +24,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -266,6 +268,12 @@ func (r *LimaVMReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 
 	// Instance already created - handle restart annotation, template changes, then running state.
 	if apimeta.IsStatusConditionTrue(limaVM.Status.Conditions, ConditionCreated) {
+		// Copy the CPU count, memory and disk size from lima.yaml into the
+		// status. When that patches the status, return and let the reconcile
+		// that the patch triggers handle the rest (one mutation per reconcile).
+		if synced, err := r.syncResources(ctx, &limaVM); synced || err != nil {
+			return ctrl.Result{}, err
+		}
 		if _, hasAnnotation := limaVM.Annotations[v1alpha1.AnnotationRestartRequested]; hasAnnotation {
 			return r.handleRestartAnnotation(ctx, &limaVM)
 		}
@@ -571,6 +579,79 @@ func (r *LimaVMReconciler) handleTemplateUpdate(ctx context.Context, limaVM *v1a
 		return ctrl.Result{}, err
 	}
 	return ctrl.Result{}, nil
+}
+
+// syncResources copies the instance's CPU count, memory and disk size from
+// its lima.yaml into the status. It reports whether it patched the status.
+// When lima.yaml cannot be loaded, it logs the error and leaves the fields alone.
+func (r *LimaVMReconciler) syncResources(ctx context.Context, limaVM *v1alpha1.LimaVM) (bool, error) {
+	logger := log.FromContext(ctx)
+	y, err := store.LoadYAMLByFilePath(ctx, instanceTemplatePath(limaVM.Name))
+	if err != nil {
+		logger.V(1).Info("Cannot load lima.yaml for resource sizes", "error", err)
+		return false, nil
+	}
+	patch := client.MergeFrom(limaVM.DeepCopy())
+	if !applyConfigResources(&limaVM.Status, y) {
+		return false, nil
+	}
+	if err := r.Status().Patch(ctx, limaVM, patch); err != nil {
+		logger.Error(err, "Failed to update instance resource sizes")
+		return false, err
+	}
+	return true, nil
+}
+
+// applyConfigResources sets status.cpus, memory and disk from a loaded
+// lima.yaml and reports whether any of them changed. The values match what
+// Lima's Inspect reports for the instance. A value that Lima cannot set (all
+// three on WSL2) or cannot parse clears the field.
+func applyConfigResources(status *v1alpha1.LimaVMStatus, y *limatype.LimaYAML) bool {
+	var cpus int32
+	var memory, disk *resource.Quantity
+	if y.VMType == nil || *y.VMType != limatype.WSL2 {
+		if y.CPUs != nil {
+			cpus = int32(*y.CPUs) //nolint:gosec // CPU counts fit in int32.
+		}
+		memory = sizeQuantity(y.Memory)
+		disk = sizeQuantity(y.Disk)
+	}
+	if status.CPUs == cpus && quantitiesEqual(status.Memory, memory) && quantitiesEqual(status.Disk, disk) {
+		return false
+	}
+	status.CPUs = cpus
+	status.Memory = memory
+	status.Disk = disk
+	return true
+}
+
+// sizeQuantity parses a Lima size string ("4GiB") as a binary quantity. It
+// returns nil for a missing, unparsable or zero size.
+func sizeQuantity(size *string) *resource.Quantity {
+	if size == nil {
+		return nil
+	}
+	n, err := units.RAMInBytes(*size)
+	if err != nil {
+		return nil
+	}
+	return bytesQuantity(n)
+}
+
+// bytesQuantity returns n bytes as a binary quantity, or nil for zero.
+func bytesQuantity(n int64) *resource.Quantity {
+	if n == 0 {
+		return nil
+	}
+	return resource.NewQuantity(n, resource.BinarySI)
+}
+
+// quantitiesEqual compares two optional quantities by value.
+func quantitiesEqual(a, b *resource.Quantity) bool {
+	if a == nil || b == nil {
+		return a == b
+	}
+	return a.Cmp(*b) == 0
 }
 
 // setCondition updates or adds a condition in the LimaVM status. It logs

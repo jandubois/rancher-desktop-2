@@ -5,6 +5,7 @@
 package v1alpha1
 
 import (
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -87,6 +88,22 @@ type LimaVMStatus struct {
 	// Incremented each time the controller sets Running=True/Started.
 	// +optional
 	RestartCount int32 `json:"restartCount,omitempty"`
+
+	// cpus is the number of CPUs configured for the instance, after Lima
+	// fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+	// +optional
+	CPUs int32 `json:"cpus,omitempty"`
+
+	// memory is the memory size configured for the instance, after Lima
+	// fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+	// +optional
+	Memory *resource.Quantity `json:"memory,omitempty"`
+
+	// disk is the configured size of the instance's main disk, after Lima
+	// fills in its defaults; it is not the space that the disk uses on the host.
+	// Unset on WSL2, where Lima cannot set it per instance.
+	// +optional
+	Disk *resource.Quantity `json:"disk,omitempty"`
 }
 
 // +kubebuilder:object:root=true
@@ -94,6 +111,9 @@ type LimaVMStatus struct {
 // +kubebuilder:resource:categories="all"
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Running",type=boolean,JSONPath=`.spec.running`
+// +kubebuilder:printcolumn:name="CPUs",type=integer,JSONPath=`.status.cpus`
+// +kubebuilder:printcolumn:name="Memory",type=string,JSONPath=`.status.memory`
+// +kubebuilder:printcolumn:name="Disk",type=string,JSONPath=`.status.disk`
 
 // LimaVM is the Schema for the limavms API.
 type LimaVM struct {
