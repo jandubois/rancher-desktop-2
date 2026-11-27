@@ -12,6 +12,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/lima-vm/lima/v2/pkg/limatmpl"
 	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/lima-vm/lima/v2/pkg/limayaml"
 
@@ -54,6 +55,12 @@ func (v *LibraryConfigMapValidator) validate(ctx context.Context, configMap *cor
 	}
 	if !fs.ValidPath(p) || p == "." {
 		return fmt.Errorf("%s %q must be a relative slash-separated path without '.' or '..' elements", TemplatePathAnnotation, p)
+	}
+	// Lima derives a name from the basename of every file that a `base:` or
+	// `file:` reference names, and fails the reference when that name is not a
+	// valid identifier.
+	if _, err := limatmpl.InstNameFromYAMLPath(p); err != nil {
+		return fmt.Errorf("%s %q cannot be referenced: %w", TemplatePathAnnotation, p, err)
 	}
 	if configMap.Namespace == TemplateLibraryNamespace {
 		if canonical := templateNamePath(p); canonical != p {
