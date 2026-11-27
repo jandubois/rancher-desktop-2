@@ -439,6 +439,30 @@ assert_single_mirror() { # <image-id> <expected-tag>
     fi
 }
 
+@test "followed docker logs outlast the request timeout" {
+    if ! curl_has_websocket_support; then
+        skip "curl does not support WebSocket"
+    fi
+
+    # shellcheck disable=SC2016 # the container's shell expands $i
+    command='for i in 1 2 3 4 5 6 7 8 9 10; do echo "line $i"; sleep 1; done'
+    run_e -0 docker run --detach --tty=false --name test-logs-timeout busybox /bin/sh -c "${command}"
+    container=${output}
+
+    # The container prints a line a second, so "line 10" comes about 9s after
+    # the container starts. If rdd didn't count passthrough WebSockets as
+    # long-running, the API server would close the stream 2s after
+    # `do_websocket` opens it, before that line.
+    do_websocket "/passthrough/engine/logs/${container}?timeout=2s"
+    assert_line "line 10"
+}
+
+@test "cleanup from logs request timeout test" {
+    if curl_has_websocket_support; then
+        docker rm --force test-logs-timeout || true
+    fi
+}
+
 # --- Volume mirroring ---
 
 # Volume mirror names are derived from the Docker name, possibly via SHA-256
