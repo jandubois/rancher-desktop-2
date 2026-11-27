@@ -54,7 +54,9 @@ func runTemplateLibrarySync(ctx context.Context, writer client.Client, reader cl
 //
 // The sync deletes any further ConfigMap at a bundled path, and any managed
 // ConfigMap whose path bundle no longer has. It creates the entries that are
-// missing, and leaves unmanaged ConfigMaps at other paths alone.
+// missing. When a ConfigMap without the library label already has a missing
+// entry's name, the sync takes that ConfigMap over too. It leaves unmanaged
+// ConfigMaps at other paths alone.
 func syncTemplateLibrary(ctx context.Context, writer client.Client, reader client.Reader, bundle fs.FS) error {
 	if err := ensureNamespace(ctx, writer, reader, TemplateLibraryNamespace); err != nil {
 		return err
@@ -94,28 +96,47 @@ func syncTemplateLibrary(ctx context.Context, writer client.Client, reader clien
 			continue
 		}
 		synced[path] = true
-		desired := libraryConfigMap(path, content)
-		if maps.Equal(existing.Data, desired.Data) && len(existing.BinaryData) == 0 &&
-			hasAll(existing.Labels, desired.Labels) && hasAll(existing.Annotations, desired.Annotations) {
-			continue
-		}
-		existing.Data = desired.Data
-		existing.BinaryData = nil
-		existing.Labels = withAll(existing.Labels, desired.Labels)
-		existing.Annotations = withAll(existing.Annotations, desired.Annotations)
-		if err := writer.Update(ctx, existing); err != nil {
-			errs = append(errs, fmt.Errorf("failed to update ConfigMap %s: %w", existing.Name, err))
+		if err := updateLibraryConfigMap(ctx, writer, existing, libraryConfigMap(path, content)); err != nil {
+			errs = append(errs, err)
 		}
 	}
 	for path, content := range want {
 		if synced[path] {
 			continue
 		}
-		if err := writer.Create(ctx, libraryConfigMap(path, content)); err != nil {
+		desired := libraryConfigMap(path, content)
+		err := writer.Create(ctx, desired)
+		if apierrors.IsAlreadyExists(err) {
+			// The list above misses a ConfigMap that has this name but not the
+			// library label.
+			existing := &corev1.ConfigMap{}
+			err = reader.Get(ctx, client.ObjectKeyFromObject(desired), existing)
+			if err == nil {
+				err = updateLibraryConfigMap(ctx, writer, existing, desired)
+			}
+		}
+		if err != nil {
 			errs = append(errs, fmt.Errorf("failed to create ConfigMap for %s: %w", path, err))
 		}
 	}
 	return errors.Join(errs...)
+}
+
+// updateLibraryConfigMap makes existing hold the data, labels and annotations
+// of desired, keeping any other labels and annotations it has.
+func updateLibraryConfigMap(ctx context.Context, writer client.Client, existing, desired *corev1.ConfigMap) error {
+	if maps.Equal(existing.Data, desired.Data) && len(existing.BinaryData) == 0 &&
+		hasAll(existing.Labels, desired.Labels) && hasAll(existing.Annotations, desired.Annotations) {
+		return nil
+	}
+	existing.Data = desired.Data
+	existing.BinaryData = nil
+	existing.Labels = withAll(existing.Labels, desired.Labels)
+	existing.Annotations = withAll(existing.Annotations, desired.Annotations)
+	if err := writer.Update(ctx, existing); err != nil {
+		return fmt.Errorf("failed to update ConfigMap %s: %w", existing.Name, err)
+	}
+	return nil
 }
 
 // libraryConfigMap returns the managed library ConfigMap for a bundled template.
