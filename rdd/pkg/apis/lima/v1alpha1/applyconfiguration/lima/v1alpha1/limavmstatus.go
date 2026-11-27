@@ -3,6 +3,7 @@
 package v1alpha1
 
 import (
+	resource "k8s.io/apimachinery/pkg/api/resource"
 	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
 )
 
@@ -41,6 +42,16 @@ type LimaVMStatusApplyConfiguration struct {
 	// restartCount tracks how many times the instance has reached the Running state.
 	// Incremented each time the controller sets Running=True/Started.
 	RestartCount *int32 `json:"restartCount,omitempty"`
+	// cpus is the number of CPUs configured for the instance, after Lima
+	// fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+	CPUs *int32 `json:"cpus,omitempty"`
+	// memory is the memory size configured for the instance, after Lima
+	// fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+	Memory *resource.Quantity `json:"memory,omitempty"`
+	// disk is the configured size of the instance's main disk, after Lima
+	// fills in its defaults; it is not the space that the disk uses on the host.
+	// Unset on WSL2, where Lima cannot set it per instance.
+	Disk *resource.Quantity `json:"disk,omitempty"`
 }
 
 // LimaVMStatusApplyConfiguration constructs a declarative configuration of the LimaVMStatus type for use with
@@ -91,5 +102,29 @@ func (b *LimaVMStatusApplyConfiguration) WithRestartNeeded(value bool) *LimaVMSt
 // If called multiple times, the RestartCount field is set to the value of the last call.
 func (b *LimaVMStatusApplyConfiguration) WithRestartCount(value int32) *LimaVMStatusApplyConfiguration {
 	b.RestartCount = &value
+	return b
+}
+
+// WithCPUs sets the CPUs field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the CPUs field is set to the value of the last call.
+func (b *LimaVMStatusApplyConfiguration) WithCPUs(value int32) *LimaVMStatusApplyConfiguration {
+	b.CPUs = &value
+	return b
+}
+
+// WithMemory sets the Memory field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the Memory field is set to the value of the last call.
+func (b *LimaVMStatusApplyConfiguration) WithMemory(value resource.Quantity) *LimaVMStatusApplyConfiguration {
+	b.Memory = &value
+	return b
+}
+
+// WithDisk sets the Disk field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the Disk field is set to the value of the last call.
+func (b *LimaVMStatusApplyConfiguration) WithDisk(value resource.Quantity) *LimaVMStatusApplyConfiguration {
+	b.Disk = &value
 	return b
 }
