@@ -153,6 +153,7 @@ func main() {
 		newSetCommand(),
 		newStartCommand(),
 		newStopCommand(),
+		newTerminalCommand(),
 		newVersionCommand(),
 	)
 	if err := cli.RunNoErrOutput(cmd); err != nil {
