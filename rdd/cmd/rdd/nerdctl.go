@@ -21,13 +21,6 @@ import (
 	service "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/service/cmd"
 )
 
-// appLimaVMName is the LimaVM instance the App controller manages.
-const appLimaVMName = "rd"
-
-// containerdGuestSocket is the shared containerd socket inside the VM,
-// matching the guestSocket forward in the App controller's lima template.
-const containerdGuestSocket = "/run/k3s/containerd/containerd.sock"
-
 func newNerdctlCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "nerdctl",
@@ -93,8 +86,8 @@ func nerdctlAction(cmd *cobra.Command, args []string) error {
 	// nerdctl must run as root in the guest. Non-root nerdctl insists on
 	// rootless mode even when given an explicit --address.
 	// TODO: drop --address once containerd listens on its default socket (#1040).
-	guestCmd := append([]string{"sudo", "nerdctl", "--address", containerdGuestSocket}, guestArgs...)
-	return limaVMGuestExec(ctx, appLimaVMName, "", "", guestCmd)
+	guestCmd := append([]string{"sudo", "nerdctl", "--address", appv1alpha1.GuestContainerdSocket}, guestArgs...)
+	return limaVMGuestExec(ctx, appv1alpha1.AppLimaVMName, "", "", guestCmd)
 }
 
 // nerdctlAppError returns why nerdctl cannot run against the App, or nil.

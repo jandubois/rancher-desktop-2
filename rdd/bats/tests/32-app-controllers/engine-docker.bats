@@ -60,6 +60,54 @@ do_websocket() { # endpoint
         "${server_url/http/ws}${endpoint}"
 }
 
+# Run a busybox container named <name> that sleeps, wait until its Container
+# mirror reports it running, and set CONTAINER_ID to the mirror's name.
+# local_teardown removes the container.
+run_sleeping_container() { # <name>
+    run_e -0 docker run --detach --name "$1" busybox sleep inf
+    CONTAINER_ID=${output}
+    rdd ctl wait --for=jsonpath='{.status.status}'=running \
+        --namespace="${RDD_NAMESPACE}" container/"${CONTAINER_ID}" --timeout=30s
+}
+
+# Attach `rdd terminal` to <path> in the background, without input, and wait
+# until the shell's prompt shows. Set TERMINAL_OUTPUT to the file that gets
+# the client's output, and TERMINAL_PID to the client's process ID.
+start_terminal_client() { # <path>
+    TERMINAL_OUTPUT=${BATS_TEST_TMPDIR}/terminal-client.out
+    # Closing fd 3 keeps bats from waiting for the client when the test ends.
+    timeout 120 rdd terminal "$1" </dev/null >"${TERMINAL_OUTPUT}" 2>&1 3>&- &
+    TERMINAL_PID=$!
+    try --max 30 --delay 1 assert_terminal_prompt
+}
+
+# busybox sh shows "/ # " as root's prompt.
+assert_terminal_prompt() {
+    assert_file_contains "${TERMINAL_OUTPUT}" '[#$] '
+}
+
+# Wait for the client that start_terminal_client started, and set
+# TERMINAL_STATUS to its exit status. `wait` must run in the test's own shell,
+# because `run` would run it in a subshell that can't see the job.
+wait_terminal_client() {
+    TERMINAL_STATUS=0
+    wait "${TERMINAL_PID}" || TERMINAL_STATUS=$?
+    unset TERMINAL_PID
+}
+
+local_teardown() {
+    # Kill a background client that a failed test left behind.
+    if [[ -n "${TERMINAL_PID:-}" ]]; then
+        kill "${TERMINAL_PID}" || true
+    fi
+    # A failing test stops before its last line, so remove its container
+    # here. A busybox container left running keeps the busybox image in
+    # use, and the later test that deletes the busybox Image would time out.
+    if [[ -n "${CONTAINER_ID:-}" ]]; then
+        docker rm --force "${CONTAINER_ID}" || true
+    fi
+}
+
 # --- Startup ---
 
 @test "ContainerNamespace moby exists" {
@@ -437,6 +485,108 @@ assert_single_mirror() { # <image-id> <expected-tag>
     if curl_has_websocket_support; then
         docker rm --force test-logs-no-follow || true
     fi
+}
+
+@test "followed docker logs outlast the request timeout" {
+    if ! curl_has_websocket_support; then
+        skip "curl does not support WebSocket"
+    fi
+
+    # shellcheck disable=SC2016 # the container's shell expands $i
+    command='for i in 1 2 3 4 5 6 7 8 9 10; do echo "line $i"; sleep 1; done'
+    run_e -0 docker run --detach --tty=false --name test-logs-timeout busybox /bin/sh -c "${command}"
+    container=${output}
+
+    # The container prints a line a second, so "line 10" comes about 9s after
+    # the container starts. If rdd didn't count passthrough WebSockets as
+    # long-running, the API server would close the stream 2s after
+    # `do_websocket` opens it, before that line.
+    do_websocket "/passthrough/engine/logs/${container}?timeout=2s"
+    assert_line "line 10"
+}
+
+@test "cleanup from logs request timeout test" {
+    if curl_has_websocket_support; then
+        docker rm --force test-logs-timeout || true
+    fi
+}
+
+# --- Terminal sessions ---
+
+@test "a container shell outlasts the request timeout" {
+    run_sleeping_container test-terminal-timeout
+
+    # The shell prints its line about 8s after it starts. If rdd didn't count
+    # passthrough WebSockets as long-running, the API server would close the
+    # connection 5s after `rdd terminal` opens it, before that line.
+    # shellcheck disable=SC2016 # the container's shell expands $((...))
+    run -0 rdd terminal "/passthrough/engine/exec/${CONTAINER_ID}?timeout=5s" \
+        <<<'sleep 8; echo done-$((40+2)); exit 0'
+    assert_terminal_line done-42
+}
+
+@test "a container shell runs typed commands and reports the exit status" {
+    run_sleeping_container test-terminal-exit
+
+    # The terminal echoes the input, so check for output that the input
+    # doesn't contain.
+    # shellcheck disable=SC2016 # the container's shell expands $((...))
+    run -3 rdd terminal "/passthrough/engine/exec/${CONTAINER_ID}" <<<'echo $((6*7)); exit 3'
+    assert_terminal_line 42
+}
+
+@test "a reattach replays the earlier output and applies the new size" {
+    run_sleeping_container test-terminal-reattach
+
+    # shellcheck disable=SC2016 # the container's shell expands $((...))
+    run -0 rdd terminal --size 100x30 --detach-after 2s \
+        "/passthrough/engine/exec/${CONTAINER_ID}" <<<'echo marker-$((40+2))'
+    assert_terminal_line marker-42
+
+    # On a reattach, rdd briefly shrinks the pty to make full-screen programs
+    # redraw; the sleep outlasts that, so stty reports the client's size.
+    run -0 rdd terminal --size 120x40 \
+        "/passthrough/engine/exec/${CONTAINER_ID}" <<<'sleep 1; stty size; exit 0'
+    assert_terminal_line marker-42
+    assert_terminal_line '40 120'
+}
+
+@test "a second client takes the session over" {
+    run_sleeping_container test-terminal-takeover
+    start_terminal_client "/passthrough/engine/exec/${CONTAINER_ID}"
+
+    run -0 rdd terminal "/passthrough/engine/exec/${CONTAINER_ID}" <<<'exit 0'
+
+    wait_terminal_client
+    assert_equal "${TERMINAL_STATUS}" 1
+    assert_file_contains "${TERMINAL_OUTPUT}" "another client attached to the session"
+}
+
+@test "stopping the container ends its shell" {
+    run_sleeping_container test-terminal-stop
+    start_terminal_client "/passthrough/engine/exec/${CONTAINER_ID}"
+
+    # sleep ignores SIGTERM as the container's PID 1, so kill it after 1s
+    # instead of the default 10s.
+    docker stop --timeout 1 test-terminal-stop
+
+    wait_terminal_client
+    assert_not_equal "${TERMINAL_STATUS}" 0
+}
+
+@test "a container without sh ends the session with the engine's error" {
+    run_sleeping_container test-terminal-no-sh
+    docker exec test-terminal-no-sh rm /bin/sh
+
+    run ! rdd terminal "/passthrough/engine/exec/${CONTAINER_ID}" </dev/null
+    assert_output --partial "executable file not found"
+}
+
+@test "a LimaVM shell runs typed commands and reports the exit status" {
+    # shellcheck disable=SC2016 # the VM's shell expands $((...))
+    run -3 rdd terminal "/passthrough/limavm/shell/${RDD_APP_NAMESPACE}/${VM_NAME}" \
+        <<<'echo $((6*7)); exit 3'
+    assert_terminal_line 42
 }
 
 # --- Volume mirroring ---

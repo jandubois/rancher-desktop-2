@@ -808,7 +808,7 @@ func Test_Reconcile_propagatesRunningOverStaleLimaVM(t *testing.T) {
 				Spec: v1alpha1.AppSpec{Running: appRunning},
 			}
 			limaVM := &limav1alpha1.LimaVM{
-				Name:      limaVMName,
+				Name:      v1alpha1.AppLimaVMName,
 				Namespace: v1alpha1.AppNamespace,
 				Spec:      limav1alpha1.LimaVMSpec{Running: !appRunning},
 			}
