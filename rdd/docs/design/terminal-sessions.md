@@ -1,6 +1,6 @@
 # Terminal Sessions
 
-The GUI shows an interactive shell for a container on its Shell tab, and for each Lima VM on the Virtual Machines page. RDD runs each shell and owns its session, and the GUI attaches to the session over a WebSocket. So a session outlives the page that opened it. Switching tabs or pages, reloading the window, or restarting the app reattaches to the same shell, with its recent output. A session ends when its shell exits, and that includes the shell dying because its container or VM stopped or was deleted.
+The GUI shows an interactive shell for a container on its Shell tab, and for a Lima VM on a shell page opened from the Virtual Machines page. RDD runs each shell and owns its session, and the GUI attaches to the session over a WebSocket. So a session outlives the page that opened it. Switching tabs or pages, reloading the window, or restarting the app reattaches to the same shell, with its recent output. A session ends when its shell exits, and that includes the shell dying because its container or VM stopped or was deleted.
 
 The terminal in the GUI is xterm.js, a full xterm emulator, so full-screen programs such as `top` and `vim` work. RDD gives each shell a pseudo-terminal (pty) of the terminal's size and passes the bytes through unchanged.
 
@@ -105,7 +105,7 @@ GUI:
 - `ContainerShell.vue` becomes `TerminalSession.vue`, a terminal component that takes a passthrough endpoint and a target path. It opens the WebSocket, speaks the framing, sends a resize message whenever xterm's fit addon changes the size, splits large input, and shows how the shell ended. It replaces the `container-exec/*` IPC messages that `ContainerShell.vue` sent. The main process no longer handles them.
 - The xterm.js setup (theme, font, fit addon, resize observer) moves into a composable shared with `ContainerLogs.vue`.
 - The container info page shows its Shell tab again, with the terminal component on `exec`.
-- The Virtual Machines page gets a shell for each VM, with the terminal component on `shell`. The page is on the unmerged `virtual-machines-page` branch, so the VM shell waits for it.
+- The Virtual Machines page gets a Shell action in the row menu of each running VM, the App's VM included. The action opens a page for the VM, with its name and status in the header and the terminal component on `shell`.
 
 ## Tests
 

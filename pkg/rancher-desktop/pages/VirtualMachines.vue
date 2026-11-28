@@ -25,12 +25,7 @@
     >
       <template #col:Status="{ row } : { row: RowItem }">
         <td data-testid="virtual-machine-status-cell">
-          <badge-state
-            v-tooltip="{ content: row.status.message }"
-            :color="row.status.state === 'Running' ? 'bg-success' : 'bg-darker'"
-            :icon="row.status.state === 'Failed' ? 'icon-error' : ''"
-            :label="t(`virtualMachines.status.${row.status.state.toLowerCase()}`)"
-          />
+          <virtual-machine-status-badge :vm="row.vm" />
         </td>
       </template>
       <template #col:CPUs="{ row } : { row: RowItem }">
@@ -73,9 +68,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import BadgeState from '@pkg/components/BadgeState.vue';
 import Banner from '@pkg/components/Banner.vue';
 import SortableTable from '@pkg/components/SortableTable';
+import VirtualMachineStatusBadge from '@pkg/components/VirtualMachineStatusBadge.vue';
 import { mapTypedActions, mapTypedMutations, mapTypedState } from '@pkg/entry/store';
 import { showDeleteConfirmation } from '@pkg/utils/deleteConfirmation';
 import { LimaVMStatus, limaVMStatus } from '@pkg/utils/limaVMStatus';
@@ -98,6 +93,7 @@ interface Action {
  */
 interface RowItem {
   metadata:             { uid?: string, name?: string, namespace?: string };
+  vm:                   LimaVM;
   status:               LimaVMStatus;
   cpus?:                number;
   memoryBytes:          number;
@@ -108,6 +104,7 @@ interface RowItem {
   startVirtualMachine:  () => Promise<void>;
   stopVirtualMachine:   () => Promise<void>;
   deleteVirtualMachine: (rows?: RowItem[]) => Promise<void>;
+  openShell:            () => void;
 }
 
 /**
@@ -134,7 +131,7 @@ function formatQuantity(quantity: string | number | undefined): [number, string]
 
 export default defineComponent({
   name:       'VirtualMachines',
-  components: { BadgeState, Banner, SortableTable },
+  components: { Banner, SortableTable, VirtualMachineStatusBadge },
   computed:   {
     ...mapTypedState('rdd', ['error', 'limaVMs']),
     headers() {
@@ -184,6 +181,7 @@ export default defineComponent({
           metadata: {
             uid: vm.metadata?.uid, name, namespace,
           },
+          vm,
           status,
           cpus:                 vm.status?.cpus,
           memoryBytes,
@@ -193,6 +191,9 @@ export default defineComponent({
           availableActions:     this.getVirtualMachineActions(vm, status),
           startVirtualMachine:  () => this.limaVMSetRunning({ namespace, name, running: true }),
           stopVirtualMachine:   () => this.limaVMSetRunning({ namespace, name, running: false }),
+          openShell:            () => {
+            this.$router.push({ name: 'virtual-machine-shell', params: { namespace, name } });
+          },
           deleteVirtualMachine: async(rows?: RowItem[]) => {
             // The context menu passes the table's live selection, and the
             // dialog leaves the table usable. Copy it so that the delete
@@ -230,7 +231,8 @@ export default defineComponent({
      * Return the row menu and bulk actions for a LimaVM. Start and Stop set
      * `spec.running`, so each is enabled only when it would change that
      * field. Delete also needs a VM that has stopped, has failed or has not
-     * been created yet.
+     * been created yet. These three leave the App's own VM alone. Shell
+     * does not change the VM, so it needs only a running VM, the App's too.
      */
     getVirtualMachineActions(vm: LimaVM, status: LimaVMStatus): Action[] {
       const editable = !isAppOwned(vm);
@@ -256,6 +258,12 @@ export default defineComponent({
           enabled:    editable && !running && atRest,
           bulkable:   true,
           bulkAction: 'deleteVirtualMachine',
+        },
+        {
+          label:    this.t('virtualMachines.action.shell'),
+          action:   'openShell',
+          enabled:  status.state === 'Running',
+          bulkable: false,
         },
       ];
     },
