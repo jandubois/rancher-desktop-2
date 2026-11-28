@@ -4,6 +4,7 @@ export const mainRoutes = [
   { route: '/Volumes', experimental: true },
   // TODO: https://github.com/rancher-sandbox/rancher-desktop-app/issues/21 { route: '/PortForwarding' },
   { route: '/Images' },
+  { route: '/VirtualMachines', experimental: true },
   // TODO: https://github.com/rancher-sandbox/rancher-desktop-app/issues/22 { route: '/Snapshots' },
   // TODO: https://github.com/rancher-sandbox/rancher-desktop-app/issues/23 { route: '/Troubleshooting' },
   // TODO: https://github.com/rancher-sandbox/rancher-desktop-app/issues/24 { route: '/Diagnostics' },

@@ -142,6 +142,14 @@ interface ResourceTypeLike {
 }
 
 /**
+ * Whether a delete failed because the resource no longer exists. The user
+ * wanted it gone, so the delete actions do not report this as an error.
+ */
+export function isNotFound(error: unknown): error is RDDClient.ApiException<unknown> {
+  return error instanceof RDDClient.ApiException && error.code === 404;
+}
+
+/**
  * ListResourceOptions describes the options parameter for a ResourceType's
  * `list` method.
  */

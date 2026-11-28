@@ -86,6 +86,7 @@ const routeLabelKeys = {
   '/Volumes':         'volumes.title',
   '/PortForwarding':  'portForwarding.title',
   '/Images':          'images.title',
+  '/VirtualMachines': 'virtualMachines.title',
   '/Snapshots':       'snapshots.title',
   '/Troubleshooting': 'troubleshooting.title',
   '/Diagnostics':     'diagnostics.title',

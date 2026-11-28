@@ -33,6 +33,9 @@ status:
   observedTemplateResourceVersion: "12345"
   restartNeeded: false
   restartCount: 3
+  cpus: 4
+  memory: 4Gi
+  disk: 100Gi
   conditions:
   - type: Created
     status: "True"
@@ -78,6 +81,8 @@ status:
 - **status.restartNeeded**: Indicates a restart has been requested but not yet executed. The reconciler sets this field when it processes a `restartRequested` annotation or detects a template change on a running instance. The reconciler clears the flag when stopping the instance (before the restart begins), not after the restart completes. When the instance is already stopped, the reconciler clears the flag immediately. When the instance is starting, the reconciler waits for boot to finish before stopping.
 
 - **status.restartCount**: Tracks how many times the instance has reached the Running state. The reconciler increments this counter each time it sets `Running=True/Started`. Because the next value is predictable, callers can use `kubectl wait --for=jsonpath` to block until a restart completes — something `lastTransitionTime` cannot support since `kubectl wait` matches exact values, not comparisons.
+
+- **status.cpus**, **status.memory**, **status.disk**: The CPU count, memory size and main disk size configured for the instance, after Lima fills in its defaults. The disk size is the configured size, not the space that the disk uses on the host. The reconciler reads them from the instance's `lima.yaml` once the instance exists, and again after each template change. So for a running instance, they show the new values before the restart applies them. On WSL2, where Lima cannot set them per instance, all three stay unset.
 
 - **status.conditions**: Standard Kubernetes conditions tracking the LimaVM state.
 
@@ -152,6 +157,7 @@ sequenceDiagram
     R->>R: Extract embedded image
     R->>Lima: Prepare (download, disks)
     R->>R: Set Created=True
+    R->>R: Set status.cpus, memory, disk
 
     User->>R: Set spec.running=true
     R->>R: Set Running=False (Starting)

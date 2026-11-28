@@ -62,6 +62,15 @@ var schemaYAML = typed.YAMLObject(`types:
           elementRelationship: associative
           keys:
           - type
+    - name: cpus
+      type:
+        scalar: numeric
+    - name: disk
+      type:
+        namedType: io.k8s.apimachinery.pkg.api.resource.Quantity
+    - name: memory
+      type:
+        namedType: io.k8s.apimachinery.pkg.api.resource.Quantity
     - name: observedTemplateResourceVersion
       type:
         scalar: string
@@ -83,6 +92,16 @@ var schemaYAML = typed.YAMLObject(`types:
     - name: namespace
       type:
         scalar: string
+- name: io.k8s.apimachinery.pkg.api.resource.Quantity
+  scalar: untyped
+  list:
+    elementType:
+      namedType: __untyped_atomic_
+    elementRelationship: atomic
+  map:
+    elementType:
+      namedType: __untyped_deduced_
+    elementRelationship: separable
 - name: io.k8s.apimachinery.pkg.apis.meta.v1.Condition
   map:
     fields:
