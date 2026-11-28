@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
+	"github.com/lima-vm/lima/v2/pkg/cacheutil"
 	limainstance "github.com/lima-vm/lima/v2/pkg/instance"
 	"github.com/lima-vm/lima/v2/pkg/limatype"
 	"github.com/lima-vm/lima/v2/pkg/limatype/filenames"
@@ -405,6 +406,21 @@ func (r *LimaVMReconciler) startInstance(ctx context.Context, limaVM *v1alpha1.L
 	}
 	if logger.V(1).Enabled() {
 		args = append(args, "--debug")
+	}
+	// The hostagent copies this archive onto the cidata disk, where the guest's
+	// containerd boot script expects it.
+	// Passing true says the instance already exists, so Lima reuses a cached
+	// download.
+	nerdctlArchive, err := cacheutil.EnsureNerdctlArchiveCache(ctx, inst.Config, true)
+	if err != nil {
+		logger.Error(err, "Failed to prepare nerdctl archive")
+		if updateErr := r.updateCondition(ctx, limaVM, ConditionRunning, metav1.ConditionFalse, ReasonStartFailed, err.Error()); updateErr != nil {
+			logger.Error(updateErr, "Failed to update status after start failure")
+		}
+		return ctrl.Result{}, err
+	}
+	if nerdctlArchive != "" {
+		args = append(args, "--nerdctl-archive", nerdctlArchive)
 	}
 	args = append(args, inst.Name)
 

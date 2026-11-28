@@ -543,8 +543,8 @@ require (
 
 replace (
 	github.com/containerd/ltag => github.com/mook-as/ltag v0.0.0-20260224191129-27fed92c7adf
-	// Lima from the vznat-guest-route fork branch, pending lima-vm/lima#5832
-	github.com/lima-vm/lima/v2 => github.com/jandubois/lima/v2 v2.3.0-beta.1.0.20261123073818-86e09f9d27f7
+	// Lima from the rd2-integration fork branch, merging lima-vm/lima#5832 and #5843
+	github.com/lima-vm/lima/v2 => github.com/jandubois/lima/v2 v2.3.0-beta.1.0.20261128004742-470374d40665
 	k8s.io/api => k8s.io/api v0.37.2
 	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.37.2
 	k8s.io/apimachinery => k8s.io/apimachinery v0.37.2
