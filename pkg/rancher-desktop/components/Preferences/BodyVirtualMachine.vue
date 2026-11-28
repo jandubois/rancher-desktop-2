@@ -5,6 +5,7 @@ import { useStore } from 'vuex';
 
 import PreferencesVirtualMachineEmulation from '@pkg/components/Preferences/VirtualMachineEmulation.vue';
 import PreferencesVirtualMachineHardware from '@pkg/components/Preferences/VirtualMachineHardware.vue';
+import PreferencesVirtualMachineProvision from '@pkg/components/Preferences/VirtualMachineProvision.vue';
 import PreferencesVirtualMachineVolumes from '@pkg/components/Preferences/VirtualMachineVolumes.vue';
 import RdTabbed from '@pkg/components/Tabbed/RdTabbed.vue';
 import Tab from '@pkg/components/Tabbed/Tab.vue';
@@ -25,6 +26,7 @@ const tabs = computed(() => preferencesNavItemsMap['virtual-machine'].tabs);
 const componentFromTab: ComputedRef<Component> = computed(() => {
   return ({
     hardware:  PreferencesVirtualMachineHardware,
+    provision: PreferencesVirtualMachineProvision,
     volumes:   PreferencesVirtualMachineVolumes,
     emulation: PreferencesVirtualMachineEmulation,
   } as const)[activeTab.value];
@@ -70,7 +72,24 @@ function tabSelected({ selectedName }: { selectedName: tabName }) {
 </template>
 
 <style lang="scss" scoped>
+  // Give the tab content the remaining height of the body, so a tab can fill it.
+  .action-tabs {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    :deep(.tab-container) {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
   .virtual-machine-content {
     padding: var(--preferences-content-padding);
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 </style>

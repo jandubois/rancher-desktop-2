@@ -22,6 +22,7 @@ class PreferencesHelp {
     'application/environment':         'ui/preferences/application/environment',
     'application/general':             'ui/preferences/application/general',
     'virtual-machine/hardware':        'ui/preferences/virtual-machine/hardware',
+    'virtual-machine/provision':       'ui/preferences/virtual-machine/provision',
     // 'virtual-machine/volumes':         'ui/preferences/virtual-machine/volumes',
     // 'virtual-machine/emulation':       'ui/preferences/virtual-machine/emulation',
     'container-engine/general':        'ui/preferences/container-engine/general',
