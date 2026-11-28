@@ -13,3 +13,8 @@ set -o errexit -o nounset
 for apiversion in pkg/apis/*/*/; do
     go tool controller-gen applyconfiguration object "paths=./${apiversion%/}"
 done
+
+# The Cluster API provider types don't need apply configurations.
+for apiversion in pkg/capi/*/; do
+    go tool controller-gen object "paths=./${apiversion%/}"
+done

@@ -12,6 +12,14 @@ that Rancher builds its own release with, and this repository doesn't keep a
 lockfile for it. Rancher's lockfile is for Yarn 1, so the build runs Yarn 1
 through Corepack.
 
+The Makefile also builds `pkg/rancher-desktop`, a Rancher UI extension that
+adds Rancher Desktop to the Cluster API providers on Rancher's Create page.
+rdd serves it to a Rancher Manager installed in Rancher Desktop's Kubernetes
+cluster. The dashboard build registers every package under `pkg/` that has
+a `rancher` field as a builtin extension, but this extension doesn't belong
+in the dashboard that rdd embeds. So the Makefile copies it into Rancher's
+tree only after building the dashboard.
+
 We download a checksummed archive instead of adding rancher-sandbox/dashboard
 as a git submodule. With a submodule, every clone and worktree would have to
 initialize it.

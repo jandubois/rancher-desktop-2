@@ -3,6 +3,10 @@ Description=Minimal cloud-init for Rancher Desktop
 Wants=ssh-keygen.service sshd.service
 After=systemd-networkd-wait-online.service
 After=network.service NetworkManager.service NetworkManager-wait-online.service
+# Lima's guest-to-guest route script skips the route while systemd-networkd
+# isn't active. rd-init queues its restart of systemd-networkd before it
+# reports ready, so this line makes lima-init wait for that restart.
+After=systemd-networkd.service
 Before=network-online.target sshd-keygen.service sshd.service shutdown.target
 Conflicts=shutdown.target
 
