@@ -137,8 +137,8 @@ spec:
                 description: running specifies whether the VM should be running.
                 type: boolean
               virtualMachine:
-                description: virtualMachine specifies the VM resource allocation (CPUs
-                  and memory).
+                description: virtualMachine specifies the VM's CPUs, memory and provisioning
+                  script.
                 properties:
                   cpus:
                     description: |-
@@ -157,6 +157,16 @@ spec:
                       controller fills in the default amount.
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
+                  provisionScript:
+                    description: |-
+                      provisionScript is a script that runs as root inside the VM each time
+                      the VM starts, before the container engine and Kubernetes start.
+                      Because it runs on every start, it should be safe to run again.
+                      A shebang line picks the interpreter; without one, bash runs it.
+                      When it fails, the VM still starts, and the journal of the guest's
+                      rancher-desktop-provision unit records the exit status.
+                      Changing it restarts the VM.
+                    type: string
                 type: object
             required:
             - running
@@ -2146,6 +2156,15 @@ spec:
     - jsonPath: .spec.running
       name: Running
       type: boolean
+    - jsonPath: .status.cpus
+      name: CPUs
+      type: integer
+    - jsonPath: .status.memory
+      name: Memory
+      type: string
+    - jsonPath: .status.disk
+      name: Disk
+      type: string
     name: v1alpha1
     schema:
       openAPIV3Schema:
@@ -2272,6 +2291,31 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
+              cpus:
+                description: |-
+                  cpus is the number of CPUs configured for the instance, after Lima
+                  fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+                format: int32
+                type: integer
+              disk:
+                anyOf:
+                - type: integer
+                - type: string
+                description: |-
+                  disk is the configured size of the instance's main disk, after Lima
+                  fills in its defaults; it is not the space that the disk uses on the host.
+                  Unset on WSL2, where Lima cannot set it per instance.
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
+              memory:
+                anyOf:
+                - type: integer
+                - type: string
+                description: |-
+                  memory is the memory size configured for the instance, after Lima
+                  fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                x-kubernetes-int-or-string: true
               observedTemplateResourceVersion:
                 description: |-
                   observedTemplateResourceVersion tracks the resourceVersion of the template

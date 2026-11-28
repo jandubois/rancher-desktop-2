@@ -13,6 +13,7 @@ mockModules({
 });
 
 const rdd = await import('../rdd');
+const RDDClient = await import('@rdd-client');
 
 const app = {
   apiVersion: 'app.rancherdesktop.io/v1alpha1',
@@ -28,9 +29,9 @@ function appList(items: any[]) {
 /**
  * Build a store with the real rdd module and a fake rdd client.  The test
  * resolves each `listApp` call through `lists`, and sends watch events
- * through `watches`.
+ * through `watches`. `methods` adds methods to the fake client.
  */
-function makeStore() {
+function makeStore(methods: Record<string, unknown> = {}) {
   const lists: PromiseWithResolvers<any>[] = [];
   const watches: { callback: (phase: string, obj: any) => void, done: (err: any) => void }[] = [];
   const listApp = () => {
@@ -42,9 +43,11 @@ function makeStore() {
   };
   const client = {
     listApp,
-    listNamespace:           () => new Promise(() => {}),
-    listNamespacedConfigMap: () => new Promise(() => {}),
-    listHostInfo:            () => new Promise(() => {}),
+    listNamespace:              () => new Promise(() => {}),
+    listNamespacedConfigMap:    () => new Promise(() => {}),
+    listHostInfo:               () => new Promise(() => {}),
+    listLimaVMForAllNamespaces: () => new Promise(() => {}),
+    ...methods,
   };
   const config = markRaw({ makeApiClient: () => client });
   const watch = markRaw({
@@ -194,5 +197,29 @@ describe('rdd store', () => {
     watches[0].callback('DELETED', app);
     await jest.advanceTimersByTimeAsync(0);
     expect(send.mock.calls).toEqual([['backend/app-status-changed', {}]]);
+  });
+
+  describe('LimaVM actions', () => {
+    it.each([true, false])('patches spec.running to %s', async(running) => {
+      const patchNamespacedLimaVM = jest.fn(() => Promise.resolve({}));
+      const { store } = makeStore({ patchNamespacedLimaVM });
+
+      await store.dispatch('rdd/limaVMSetRunning', { namespace: 'ns', name: 'vm', running });
+      expect(patchNamespacedLimaVM).toHaveBeenCalledWith({ namespace: 'ns', name: 'vm', body: { spec: { running } } }, expect.anything());
+      expect(store.state.rdd.error).toBeUndefined();
+    });
+
+    it.each([
+      ['reports a failed delete', 500, true],
+      ['ignores a delete of a VM that is already gone', 404, false],
+    ])('%s', async(_, code, reported) => {
+      const error = new RDDClient.ApiException(code, 'failed', {}, {});
+      const deleteNamespacedLimaVM = jest.fn(() => Promise.reject(error));
+      const { store } = makeStore({ deleteNamespacedLimaVM });
+
+      await store.dispatch('rdd/limaVMDelete', { namespace: 'ns', name: 'vm' });
+      expect(deleteNamespacedLimaVM).toHaveBeenCalledWith({ namespace: 'ns', name: 'vm' });
+      expect(store.state.rdd.error).toBe(reported ? error : undefined);
+    });
   });
 });

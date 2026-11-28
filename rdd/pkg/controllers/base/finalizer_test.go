@@ -24,7 +24,7 @@ import (
 )
 
 func TestDeleteOwnedResources(t *testing.T) {
-	cfg := testapiserver.Start(t)
+	cfg := testapiserver.Start(t).Config
 
 	c, err := client.New(cfg, client.Options{})
 	assert.NilError(t, err, "failed to create client")

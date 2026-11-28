@@ -13,7 +13,7 @@
 import { HttpFile } from '../http/http';
 
 /**
-* virtualMachine specifies the VM resource allocation (CPUs and memory).
+* virtualMachine specifies the VM\'s CPUs, memory and provisioning script.
 */
 export class IoRancherdesktopAppV1alpha1AppSpecVirtualMachine {
     /**
@@ -24,6 +24,10 @@ export class IoRancherdesktopAppV1alpha1AppSpecVirtualMachine {
     * memory is the amount of RAM to allocate to the VM, as a Kubernetes resource quantity (e.g. \"4Gi\", \"2048Mi\"). Must be at least 2Gi and no greater than the total memory on the host. When unset, the admission controller fills in the default amount.
     */
     'memory'?: any;
+    /**
+    * provisionScript is a script that runs as root inside the VM each time the VM starts, before the container engine and Kubernetes start. Because it runs on every start, it should be safe to run again. A shebang line picks the interpreter; without one, bash runs it. When it fails, the VM still starts, and the journal of the guest\'s rancher-desktop-provision unit records the exit status. Changing it restarts the VM.
+    */
+    'provisionScript'?: string;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -40,6 +44,12 @@ export class IoRancherdesktopAppV1alpha1AppSpecVirtualMachine {
             "name": "memory",
             "baseName": "memory",
             "type": "any",
+            "format": ""
+        },
+        {
+            "name": "provisionScript",
+            "baseName": "provisionScript",
+            "type": "string",
             "format": ""
         }    ];
 

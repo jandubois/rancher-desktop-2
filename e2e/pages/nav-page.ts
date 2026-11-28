@@ -8,6 +8,7 @@ import { K8sPage } from './k8s-page';
 import { PortForwardPage } from './portforward-page';
 import { SnapshotsPage } from './snapshots-page';
 import { TroubleshootingPage } from './troubleshooting-page';
+import { VirtualMachinesPage } from './virtual-machines-page';
 import { VolumesPage } from './volumes-page';
 import { WSLIntegrationsPage } from './wsl-integrations-page';
 import { rdd, rddExe } from '../utils/TestUtils';
@@ -27,6 +28,7 @@ const pageConstructors = {
   Diagnostics:     (page: Page) => new DiagnosticsPage(page),
   Extensions:      (page: Page) => new ExtensionsPage(page),
   Volumes:         (page: Page) => new VolumesPage(page),
+  VirtualMachines: (page: Page) => new VirtualMachinesPage(page),
 };
 
 export class NavPage {

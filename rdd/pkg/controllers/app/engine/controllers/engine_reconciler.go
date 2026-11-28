@@ -25,6 +25,7 @@ import (
 
 	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/terminal"
 )
 
 const (
@@ -106,6 +107,9 @@ type engine interface {
 	hasTTY(ctx context.Context, c *containersv1alpha1.Container) (bool, error)
 	// getLogs returns a reader for the container's logs.
 	getLogs(ctx context.Context, c *containersv1alpha1.Container, opts ...engineLogOptions) (io.ReadCloser, error)
+	// shellCommand returns the command line that the App's VM runs to open a
+	// shell in the container.
+	shellCommand(c *containersv1alpha1.Container) string
 	// pullImage pulls an image from its repository tag and reports progress.
 	pullImage(ctx context.Context, repoTag string, onProgress func(start, current, total int64, units string), onComplete func(error)) error
 	// deleteContainer removes a container from the engine.
@@ -169,6 +173,12 @@ type EngineReconciler struct {
 	imagePullRequestMu sync.Mutex
 	// imagePullRequestState maps image pull request UIDs to their state.
 	imagePullRequestState map[types.UID]imagePullRequestState
+
+	// shells holds the container shell sessions of the exec endpoint.
+	shells *terminal.Registry
+	// startPTY runs a command under a pty in the App's VM. Tests replace
+	// it; nil means startAppVMPTY.
+	startPTY func(ctx context.Context, command string, columns, rows int) (terminal.Shell, error)
 }
 
 // Reconcile dispatches requests by source kind.
@@ -200,6 +210,7 @@ func (r *EngineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	r.reconcileImagePullRequestChan = make(chan event.GenericEvent, 1)
 	r.apiReader = mgr.GetAPIReader()
 	r.imagePullRequestState = make(map[types.UID]imagePullRequestState)
+	r.shells = terminal.NewRegistry()
 
 	// Create the watcher-scoped context and register a shutdown
 	// hook that cancels it and stops the active watcher. The hook

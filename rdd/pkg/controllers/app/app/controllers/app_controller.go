@@ -9,6 +9,7 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -28,6 +29,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/yaml"
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	limav1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
@@ -48,8 +50,8 @@ type ControllerDiscovery interface {
 }
 
 const (
-	appName                        = "app"
-	limaVMName, inputConfigMapName = "rd", "rd"
+	appName            = "app"
+	inputConfigMapName = "rd"
 
 	// requeueAfterDeletion is how long to wait between checks while the LimaVM
 	// controller is running its teardown (stopping the VM, removing disk files).
@@ -144,6 +146,11 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 		return "", fmt.Errorf("failed to create log directory: %w", err)
 	}
 
+	baseTemplate, err = insertProvisionScript(baseTemplate, spec.VirtualMachine.ProvisionScript)
+	if err != nil {
+		return "", err
+	}
+
 	// cpus and memory are appended here rather than baked into the template so
 	// the spec drives them directly. Lima falls back to its own default when a
 	// key is absent, which covers the unset case (cpus 0, memory nil).
@@ -171,6 +178,38 @@ func applySpecToTemplate(baseTemplate string, spec v1alpha1.AppSpec, kubernetesP
 		fmt.Sprintf("  KUBERNETES_PORT: %d", kubernetesPort),
 		"",
 	)
+	return strings.Join(lines, "\n"), nil
+}
+
+// userProvisionScriptPath is the guest path that the user's provisioning
+// script is written to. provision.sh in the guest overlay runs the script from
+// this path too, so change both together.
+const userProvisionScriptPath = "/etc/rancher-desktop/user-provision.sh"
+
+// insertProvisionScript adds a Lima data entry that writes script to
+// userProvisionScriptPath, at the start of the template's provision list. It
+// adds the entry even for an empty script. Otherwise a guest disk would keep
+// the previous script after the user removes it, and provision.sh would still
+// run it; provision.sh skips an empty file.
+func insertProvisionScript(baseTemplate, script string) (string, error) {
+	// Lima expands the content of every data entry as a Go template, so
+	// escape each {{ in the script to make it reach the guest unchanged.
+	content := strings.ReplaceAll(script, "{{", `{{"{{"}}`)
+	entry, err := yaml.Marshal([]map[string]string{{
+		"mode":        "data",
+		"path":        userProvisionScriptPath,
+		"permissions": "755",
+		"content":     content,
+	}})
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal provisioning script: %w", err)
+	}
+	lines := strings.Split(baseTemplate, "\n")
+	i := slices.Index(lines, "provision:")
+	if i < 0 {
+		return "", errors.New(`lima template does not contain a top-level "provision:" line`)
+	}
+	lines = slices.Insert(lines, i+1, strings.TrimSuffix(string(entry), "\n"))
 	return strings.Join(lines, "\n"), nil
 }
 
@@ -246,7 +285,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 
 		// Delete the LimaVM and wait for it to finish cleaning up.
 		limaVM := &limav1alpha1.LimaVM{}
-		err := r.Get(ctx, client.ObjectKey{Name: limaVMName, Namespace: namespace}, limaVM)
+		err := r.Get(ctx, client.ObjectKey{Name: v1alpha1.AppLimaVMName, Namespace: namespace}, limaVM)
 		if err == nil {
 			if err := base.RemoveOwnedFinalizer(ctx, r.Client, limaVM, v1alpha1.AppKind); err != nil {
 				return ctrl.Result{}, fmt.Errorf("failed to remove owned finalizer from LimaVM: %w", err)
@@ -323,7 +362,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 
 	// Check whether the LimaVM already exists. If not, create the input ConfigMap and LimaVM.
 	limaVM := &limav1alpha1.LimaVM{}
-	limaVMErr := r.Get(ctx, client.ObjectKey{Name: limaVMName, Namespace: namespace}, limaVM)
+	limaVMErr := r.Get(ctx, client.ObjectKey{Name: v1alpha1.AppLimaVMName, Namespace: namespace}, limaVM)
 	if limaVMErr != nil && !apierrors.IsNotFound(limaVMErr) {
 		return ctrl.Result{}, limaVMErr
 	}
@@ -402,7 +441,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 		}
 
 		limaVM = &limav1alpha1.LimaVM{
-			Name:       limaVMName,
+			Name:       v1alpha1.AppLimaVMName,
 			Namespace:  namespace,
 			Finalizers: []string{base.OwnedFinalizerFor(v1alpha1.AppKind)},
 			Spec: limav1alpha1.LimaVMSpec{
@@ -419,7 +458,7 @@ func (r *AppReconciler) Reconcile(ctx context.Context, _ ctrl.Request) (ctrl.Res
 		if err := r.Create(ctx, limaVM); err != nil {
 			return ctrl.Result{}, fmt.Errorf("failed to create LimaVM: %w", err)
 		}
-		log.Info("Created LimaVM", "name", limaVMName, "namespace", namespace)
+		log.Info("Created LimaVM", "name", v1alpha1.AppLimaVMName, "namespace", namespace)
 		return ctrl.Result{}, nil
 	}
 

@@ -81,9 +81,13 @@ APIs include:
 * [app API](api_app.md) is the "Rancher Desktop 2" application object itself
 * [k3s version API](api_k3sversion.md) maintains a list of k3s versions resource objects
 
+Rancher Manager can run in the App's k3s cluster and provision downstream clusters from there. The [Lima Cluster API provider](capi-provider.md) creates a Lima VM for each machine of those clusters.
+
 The [GUI application](gui.md) avoids interaction with the host machine except via the kube API of RDD (or the `containerd`/`dockerd`/`k3s` APIs of the corresponding services)[^remote].
 
 [^remote]: This means that technically the GUI doesn't have to run on the same host as `rdd`. But this is not a goal. If this ever becomes necessary, it would more likely be implemented by an `rdd-shim` that would handle the remoting.
+
+For the GUI's [terminal sessions](terminal-sessions.md), RDD runs a shell in a container or a Lima VM, and the GUI attaches to it over a WebSocket.
 
 ## CLI Operation
 

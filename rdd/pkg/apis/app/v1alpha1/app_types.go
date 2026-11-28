@@ -17,6 +17,13 @@ const AppKind = "App"
 // requests to the engine.
 const AppNamespace = "rancher-desktop"
 
+// AppLimaVMName is the name of the App's LimaVM in AppNamespace.
+const AppLimaVMName = "rd"
+
+// GuestContainerdSocket is the containerd socket inside the App's VM. It must
+// match the guestSocket forward in the App controller's lima-template.yaml.
+const GuestContainerdSocket = "/run/k3s/containerd/containerd.sock"
+
 // EngineControllerName is the registry name of the engine controller.
 // Both the engine controller's own registration and the App reconciler's
 // discovery query reference this constant so they cannot drift.
@@ -181,7 +188,7 @@ const (
 	EngineReasonConnectFailed = "ConnectFailed"
 )
 
-// VirtualMachineSpec defines the resource allocation for the Lima VM.
+// VirtualMachineSpec defines the resources and provisioning of the Lima VM.
 type VirtualMachineSpec struct {
 	// cpus is the number of vCPUs to allocate to the VM.
 	// Must be no greater than the number of CPUs on the host.
@@ -194,6 +201,15 @@ type VirtualMachineSpec struct {
 	// controller fills in the default amount.
 	// +optional
 	Memory *resource.Quantity `json:"memory,omitempty"`
+	// provisionScript is a script that runs as root inside the VM each time
+	// the VM starts, before the container engine and Kubernetes start.
+	// Because it runs on every start, it should be safe to run again.
+	// A shebang line picks the interpreter; without one, bash runs it.
+	// When it fails, the VM still starts, and the journal of the guest's
+	// rancher-desktop-provision unit records the exit status.
+	// Changing it restarts the VM.
+	// +optional
+	ProvisionScript string `json:"provisionScript,omitempty"`
 }
 
 // ContainerEngineSpec defines the desired container engine configuration.
@@ -296,7 +312,7 @@ type AppSpec struct {
 	// kubernetes specifies the Kubernetes configuration.
 	// +optional
 	Kubernetes KubernetesSpec `json:"kubernetes,omitempty"`
-	// virtualMachine specifies the VM resource allocation (CPUs and memory).
+	// virtualMachine specifies the VM's CPUs, memory and provisioning script.
 	// +optional
 	VirtualMachine VirtualMachineSpec `json:"virtualMachine,omitempty"`
 	// application specifies the settings for the Rancher Desktop Electron frontend.

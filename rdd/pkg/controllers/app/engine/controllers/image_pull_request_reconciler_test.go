@@ -52,6 +52,12 @@ func (*testEngine) getLogs(_ context.Context, _ *containersv1alpha1.Container, _
 	return nil, nil
 }
 
+// testShellCommand is the command line that testEngine returns for every
+// container.
+const testShellCommand = "test-shell"
+
+func (*testEngine) shellCommand(_ *containersv1alpha1.Container) string { return testShellCommand }
+
 func (e *testEngine) pullImage(
 	ctx context.Context,
 	repoTag string,

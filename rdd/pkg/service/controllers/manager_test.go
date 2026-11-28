@@ -60,7 +60,7 @@ func TestSharedControllerManagerMarksReadyAfterWebhooks(t *testing.T) {
 	t.Setenv("USERPROFILE", home)
 	t.Setenv("RDD_INSTANCE", "test-webhook-startup-order")
 
-	cfg := testapiserver.Start(t)
+	cfg := testapiserver.Start(t).Config
 
 	client, err := kubernetes.NewForConfig(cfg)
 	assert.NilError(t, err, "failed to create kubernetes client")

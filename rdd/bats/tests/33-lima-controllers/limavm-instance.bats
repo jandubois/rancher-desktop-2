@@ -9,6 +9,7 @@ load '../../helpers/load'
 
 NAMESPACE="instance-test-ns"
 VM_NAME="test-instance"
+SIZED_VM_NAME="sized-instance"
 
 INSTANCE_TEMPLATE=$(vm_template)
 
@@ -19,7 +20,7 @@ local_setup_file() {
 
 local_teardown_file() {
     # Clean up any remaining Lima instances
-    for vm in "${VM_NAME}" "invalid-vm"; do
+    for vm in "${VM_NAME}" "invalid-vm" "${SIZED_VM_NAME}"; do
         if [[ -d "${RDD_LIMA_HOME}/${vm}" ]]; then
             rm -rf "${RDD_LIMA_HOME:?}/${vm}"
         fi
@@ -27,7 +28,7 @@ local_teardown_file() {
     # Clean up any WSL2 distros created by tests.
     # Use a timeout because wsl.exe --unregister can hang.
     if is_windows; then
-        for vm in "${VM_NAME}" "invalid-vm"; do
+        for vm in "${VM_NAME}" "invalid-vm" "${SIZED_VM_NAME}"; do
             timeout 30 bash -c "MSYS_NO_PATHCONV=1 wsl.exe --unregister 'lima-${vm}'" 2>/dev/null || true
         done
     fi
@@ -192,4 +193,72 @@ fi
 
 @test "cleanup LimaVM with invalid image" {
     rdd ctl delete limavm "invalid-vm" --namespace "${NAMESPACE}" --ignore-not-found
+}
+
+# Test that status reports the CPU count, memory and disk size set in the
+# template, and follows a template change. Lima cannot set them on WSL2, so
+# there the fields stay unset.
+
+SIZED_TEMPLATE="${INSTANCE_TEMPLATE}
+cpus: 2
+memory: 3GiB
+disk: 20GiB"
+
+limavm_status() { # <jsonpath>
+    rdd ctl get limavm "${SIZED_VM_NAME}" --namespace "${NAMESPACE}" --output jsonpath="$1"
+}
+
+template_resource_version() {
+    rdd ctl get configmap "${SIZED_VM_NAME}-template" --namespace "${NAMESPACE}" \
+        --output jsonpath='{.metadata.resourceVersion}'
+}
+
+# Waits until the controller has applied the given template ConfigMap version.
+wait_for_template_applied() { # <resourceVersion>
+    rdd ctl wait --for=jsonpath="{.status.observedTemplateResourceVersion}=$1" \
+        "limavm/${SIZED_VM_NAME}" --namespace "${NAMESPACE}" --timeout=60s
+}
+
+@test "create LimaVM with explicit cpus, memory and disk" {
+    rdd ctl create configmap "sized-template" --namespace "${NAMESPACE}" --from-literal="template=${SIZED_TEMPLATE}"
+    create_limavm "${SIZED_VM_NAME}" "sized-template"
+    rdd ctl wait --for=condition=Created=True \
+        "limavm/${SIZED_VM_NAME}" --namespace "${NAMESPACE}" --timeout=120s
+}
+
+@test "status reports the instance's cpus, memory and disk" {
+    if is_windows; then
+        run -0 template_resource_version
+        wait_for_template_applied "${output}"
+        run -0 limavm_status '{.status.cpus}{.status.memory}{.status.disk}'
+        refute_output
+        return
+    fi
+    rdd ctl wait --for=jsonpath='{.status.cpus}'=2 \
+        "limavm/${SIZED_VM_NAME}" --namespace "${NAMESPACE}" --timeout=30s
+    run -0 limavm_status '{.status.memory}'
+    assert_output "3Gi"
+    run -0 limavm_status '{.status.disk}'
+    assert_output "20Gi"
+}
+
+@test "status follows a cpus change in the template" {
+    rdd ctl patch configmap "${SIZED_VM_NAME}-template" --namespace "${NAMESPACE}" --type='merge' \
+        --patch "$(jq -n --arg t "${SIZED_TEMPLATE/cpus: 2/cpus: 3}" '{"data":{"template":$t}}')"
+    if is_windows; then
+        run -0 template_resource_version
+        wait_for_template_applied "${output}"
+        run -0 limavm_status '{.status.cpus}'
+        refute_output
+        return
+    fi
+    rdd ctl wait --for=jsonpath='{.status.cpus}'=3 \
+        "limavm/${SIZED_VM_NAME}" --namespace "${NAMESPACE}" --timeout=60s
+    run -0 limavm_status '{.status.memory}'
+    assert_output "3Gi"
+}
+
+@test "cleanup LimaVM after resource size test" {
+    rdd ctl delete limavm "${SIZED_VM_NAME}" --namespace "${NAMESPACE}"
+    try --max 30 --delay 1 --until-fail -- lima_instance_exists "${SIZED_VM_NAME}"
 }

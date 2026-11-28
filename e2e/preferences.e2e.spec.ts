@@ -171,6 +171,37 @@ test.describe('Preferences Dialog', () => {
       await virtualMachine.cpus.value.press('ArrowDown');
       await expect(virtualMachine.cpus.value).toHaveValue('9');
     });
+
+    test('should apply the provisioning script', async() => {
+      const script = '#!/bin/sh\necho provisioned';
+      const getScript = () => rdd('ctl', 'get', 'app', 'app',
+        '--output=jsonpath={.spec.virtualMachine.provisionScript}');
+
+      async function setScript(value: string) {
+        const { virtualMachine } = prefPage;
+
+        await virtualMachine.nav.click();
+        await virtualMachine.tabProvision.click();
+        await virtualMachine.provisionEditor.click();
+        await prefPage.page.keyboard.press('ControlOrMeta+A');
+        if (value) {
+          await prefPage.page.keyboard.insertText(value);
+        } else {
+          await prefPage.page.keyboard.press('Delete');
+        }
+        await applyAndReopen();
+        await prefPage.virtualMachine.nav.click();
+        await prefPage.virtualMachine.tabProvision.click();
+      }
+
+      await setScript(script);
+      expect(await getScript()).toBe(script);
+      await expect(prefPage.virtualMachine.provisionEditor.locator('.cm-line')).toHaveText(script.split('\n'));
+
+      // Clear the script for the tests that follow.
+      await setScript('');
+      expect(await getScript()).toBe('');
+    });
   });
 
   test.describe('Container Engine', () => {

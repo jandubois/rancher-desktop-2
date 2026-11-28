@@ -126,6 +126,10 @@ STAGE_DISTRO ?=
 GUESTAGENT_BINARY := pkg/guestagent/lima-guestagent.$(TARGET_ARCH)
 GUESTAGENT_GZ := $(GUESTAGENT_BINARY).gz
 
+# Lima's stock templates, copied from the pinned Lima module for
+# pkg/limatemplates to embed.
+LIMA_TEMPLATES := pkg/limatemplates/templates
+
 default: build-rdd
 .PHONY: default
 
@@ -162,6 +166,26 @@ $(GUESTAGENT_GZ): $(GUESTAGENT_BINARY)
 	gzip --to-stdout $< > $@
 
 .INTERMEDIATE: $(GUESTAGENT_BINARY)
+
+# Copy the stock templates out of the Lima module. The copy is redone from
+# scratch whenever go.mod or go.sum change, so a Lima bump also drops the
+# templates it removed. The copy is built next to the target and moved into
+# place last, so a failed build doesn't leave a directory that make would take
+# as up to date. Files in the module cache are read-only, so the copy is
+# made writable for the next rm. The module zip drops Lima's symlinked
+# templates, such as _images/ubuntu.yaml, so the script restores each one as a
+# copy of its target. README.md is not a template, and
+# experimental/fedora-rawhide.yaml takes its base from Lima's
+# limactl-url-fedora-rawhide URL plugin, which rdd does not run.
+$(LIMA_TEMPLATES): go.mod go.sum
+	rm -rf $@ $@.tmp
+	go$(EXE) mod download github.com/lima-vm/lima/v2
+	cp -R "$$(go$(EXE) list -m -f '{{.Dir}}' github.com/lima-vm/lima/v2)/templates" $@.tmp
+	chmod -R u+w $@.tmp
+	scripts/restore-lima-template-aliases.sh $@.tmp
+	rm -f $@.tmp/README.md $@.tmp/experimental/fedora-rawhide.yaml
+	touch $@.tmp
+	mv $@.tmp $@
 
 # The downloader runs on every build, because the staged file names have no
 # architecture in them and only a rerun notices a build for a different one. It
@@ -248,11 +272,16 @@ FORCE:
 # bin/rdd embeds the dashboard only when it has been staged, so building rdd
 # doesn't need Node. `make --directory=dashboard` from the repo root stages it.
 DASHBOARD_INDEX := $(wildcard pkg/steve/dashboard/index.html)
-DASHBOARD_TAG := $(if $(DASHBOARD_INDEX),with_dashboard)
+# The same make run also stages the Rancher UI extension for the capi
+# controller. rdd embeds the extension under a tag of its own,
+# with_uiextension, so rdd still builds when the dashboard is staged without
+# the extension.
+UIEXTENSION_FILES := $(wildcard pkg/controllers/app/capi/uiextension/files.txt)
+DASHBOARD_TAG := $(strip $(if $(DASHBOARD_INDEX),with_dashboard) $(if $(UIEXTENSION_FILES),with_uiextension))
 
 # The stamp changes only when DASHBOARD_TAG does, so bin/rdd rebuilds when the
-# dashboard appears or disappears, even if the staged files are older than
-# bin/rdd.
+# dashboard or the UI extension appears or disappears, even if the staged
+# files are older than bin/rdd.
 bin/.dashboard-tag: FORCE
 	@mkdir -p $(@D)
 	@test -f $@ && test "$$(cat $@)" = '$(DASHBOARD_TAG)' || echo '$(DASHBOARD_TAG)' > $@
@@ -270,14 +299,14 @@ endef
 # Only the rdd builds and bin/lima-controller embed the distro. Tests, lint and
 # the other standalone controllers build without with_distro and do not need
 # the image.
-bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE) $(DASHBOARD_INDEX) bin/.dashboard-tag
+bin/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(LIMA_TEMPLATES) $(DISTRO_IMAGE) $(DASHBOARD_INDEX) $(UIEXTENSION_FILES) bin/.dashboard-tag
 	$(call BUILD_RDD,$@,$(DASHBOARD_TAG))
 build-rdd: bin/rdd$(EXE)
 .PHONY: build-rdd
 
 # Releases also publish rdd by itself. Only the app uses steve and the
 # dashboard, so this build always leaves them out.
-bin/standalone/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(DISTRO_IMAGE)
+bin/standalone/rdd$(EXE): $(GOLANG_SOURCES) $(EMBEDDED_SOURCES) $(GUESTAGENT_GZ) $(LIMA_TEMPLATES) $(DISTRO_IMAGE)
 	@mkdir -p $(@D)
 	$(call BUILD_RDD,$@,)
 build-rdd-standalone: bin/standalone/rdd$(EXE)
@@ -314,10 +343,10 @@ ifeq ($(shell uname -s),Darwin)
 CGO_ENABLED_lima := 1
 endif
 
-# The lima controller embeds the guest agent, and the distro it extracts for
-# the App's VM.
+# The lima controller embeds the guest agent, Lima's stock templates, and the
+# distro it extracts for the App's VM.
 TAGS_lima := with_distro
-bin/lima-controller$(EXE): $(DISTRO_IMAGE) $(GUESTAGENT_GZ)
+bin/lima-controller$(EXE): $(DISTRO_IMAGE) $(GUESTAGENT_GZ) $(LIMA_TEMPLATES)
 
 # Generate build targets for API group controllers
 define CONTROLLER_TARGETS
@@ -330,7 +359,7 @@ bin/$(1)-controller$$(EXE): $$(GOLANG_SOURCES) $$(EMBEDDED_SOURCES)
 build-$(1)-controller: bin/$(1)-controller$$(EXE)
 .PHONY: build-$(1)-controller
 
-test-$(1)-controllers:
+test-$(1)-controllers: $(LIMA_TEMPLATES)
 	go$$(EXE) test -v ./pkg/controllers/$(1)/...
 .PHONY: test-$(1)-controllers
 
@@ -392,7 +421,7 @@ run: bin/rdd$(EXE)
 	$< service start
 .PHONY: run
 
-test: $(GOLANG_SOURCES) $(GUESTAGENT_GZ)
+test: $(GOLANG_SOURCES) $(GUESTAGENT_GZ) $(LIMA_TEMPLATES)
 	CGO_CFLAGS="$(SQLITE_CFLAGS)" \
 	go$(EXE) test -tags="$(TAGS)" ./...
 .PHONY: test
@@ -403,7 +432,7 @@ lint-bats:
 
 # golangci-lint compiles the packages it analyses, so it fills the build cache
 # that the other jobs restore.
-lint-rdd: $(GUESTAGENT_GZ)
+lint-rdd: $(GUESTAGENT_GZ) $(LIMA_TEMPLATES)
 	CGO_CFLAGS="$(SQLITE_CFLAGS)" \
 	go$(EXE) tool golangci-lint run --build-tags="$(TAGS)"
 .PHONY: lint-rdd
@@ -426,6 +455,7 @@ check: test lint verify-generate
 clean:
 	-rm -r bin
 	-rm pkg/guestagent/lima-guestagent.*
+	-rm -rf $(LIMA_TEMPLATES) $(LIMA_TEMPLATES).tmp
 	-rm pkg/embedded/distro.*.xz
 	-rm -r $(OVERLAY_BUILD)
 .PHONY: clean

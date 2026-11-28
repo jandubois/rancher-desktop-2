@@ -13,6 +13,8 @@ import (
 	"testing"
 	"text/template"
 
+	"github.com/lima-vm/lima/v2/pkg/limatype"
+	"github.com/lima-vm/lima/v2/pkg/limayaml"
 	"gotest.tools/v3/assert"
 
 	corev1 "k8s.io/api/core/v1"
@@ -623,7 +625,7 @@ func Test_applySpecToTemplate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got, err := applySpecToTemplate("", tt.spec, tt.status.KubernetesPort)
+			got, err := applySpecToTemplate("provision:", tt.spec, tt.status.KubernetesPort)
 			assert.NilError(t, err)
 			assert.Assert(t, strings.Contains(got, tt.wantPortLine),
 				"expected output to contain %q, got:\n%s", tt.wantPortLine, got)
@@ -674,7 +676,7 @@ func Test_applySpecToTemplate_VMResources(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got, err := applySpecToTemplate("base", tt.spec, 0)
+			got, err := applySpecToTemplate("base\nprovision:", tt.spec, 0)
 			assert.NilError(t, err)
 
 			if tt.wantCPUs == "" {
@@ -692,6 +694,65 @@ func Test_applySpecToTemplate_VMResources(t *testing.T) {
 				assert.Assert(t, strings.Contains(got, tt.wantMemory),
 					"expected output to contain %q, got:\n%s", tt.wantMemory, got)
 			}
+		})
+	}
+}
+
+func Test_applySpecToTemplate_NoProvisionKey(t *testing.T) {
+	t.Parallel()
+
+	_, err := applySpecToTemplate("base", v1alpha1.AppSpec{}, 0)
+	assert.ErrorContains(t, err, "provision:")
+}
+
+// Test_applySpecToTemplate_ProvisionScript renders the real template, loads it
+// through Lima as the LimaVM webhook does, and checks that the user's script
+// comes out of Lima's template expansion unchanged.
+func Test_applySpecToTemplate_ProvisionScript(t *testing.T) {
+	t.Parallel()
+
+	var base strings.Builder
+	for _, name := range []string{"../lima-images-unix.yaml", "../lima-template.yaml"} {
+		data, err := os.ReadFile(name)
+		assert.NilError(t, err)
+		base.Write(data)
+	}
+
+	tests := map[string]string{
+		"empty":               "",
+		"go template braces":  "docker ps --format '{{.Names}}'\n",
+		"unbalanced braces":   "{{{\n",
+		"backslashes":         "sed -e 's/\\\\(a\\)/b/'\n",
+		"no trailing newline": "echo hi",
+		"leading spaces":      "  echo hi\necho there\n",
+		"tab":                 "if true; then\n\techo hi\nfi\n",
+		"crlf line endings":   "echo hi\r\necho there\r\n",
+		"document separator":  "cat <<EOF\n---\nEOF\n",
+		"non-ascii":           "echo 'Grüße, 世界'\n",
+	}
+	for name, script := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			spec := v1alpha1.AppSpec{VirtualMachine: v1alpha1.VirtualMachineSpec{ProvisionScript: script}}
+			rendered, err := applySpecToTemplate(base.String(), spec, 0)
+			assert.NilError(t, err)
+
+			y, err := limayaml.Load(t.Context(), []byte(rendered), "")
+			assert.NilError(t, err)
+			assert.NilError(t, limayaml.Validate(y, false))
+
+			var found bool
+			for _, p := range y.Provision {
+				if p.Path == nil || *p.Path != userProvisionScriptPath {
+					continue
+				}
+				found = true
+				assert.Equal(t, p.Mode, limatype.ProvisionModeData)
+				assert.Equal(t, *p.Permissions, "755")
+				assert.Equal(t, *p.Content, script)
+			}
+			assert.Assert(t, found, "no provision entry for %s in:\n%s", userProvisionScriptPath, rendered)
 		})
 	}
 }
@@ -808,7 +869,7 @@ func Test_Reconcile_propagatesRunningOverStaleLimaVM(t *testing.T) {
 				Spec: v1alpha1.AppSpec{Running: appRunning},
 			}
 			limaVM := &limav1alpha1.LimaVM{
-				Name:      limaVMName,
+				Name:      v1alpha1.AppLimaVMName,
 				Namespace: v1alpha1.AppNamespace,
 				Spec:      limav1alpha1.LimaVMSpec{Running: !appRunning},
 			}

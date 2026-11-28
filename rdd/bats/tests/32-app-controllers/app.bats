@@ -380,7 +380,7 @@ EOF
 
 @test "wait for k3s nodes to be Ready" {
     skip_on_windows "Kubernetes tests require further setup on Windows"
-    # k3s.service goes active ~53s before the kubelet registers the node.
+    # k3s-rancher-desktop.service goes active ~53s before the kubelet registers the node.
     # Poll the apiserver directly so we don't race past node registration.
     try --max 36 --delay 10 -- \
         rdd limavm shell "${VM_NAME}" sudo k3s kubectl wait \

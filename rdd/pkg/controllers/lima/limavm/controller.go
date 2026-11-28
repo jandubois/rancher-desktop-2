@@ -8,22 +8,30 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"net/http"
 	"os"
+
+	"github.com/lima-vm/lima/v2/pkg/limatmpl"
+	"github.com/lima-vm/lima/v2/pkg/templatestore"
 
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 	metav1apply "k8s.io/client-go/applyconfigurations/meta/v1"
 	"k8s.io/klog/v2"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
 	ctrlwebhookadmission "sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/lima/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/base"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/controllers/lima/limavm/controllers"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/limatemplates"
+	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/terminal"
 )
 
 func init() {
@@ -52,6 +60,11 @@ const (
 	configMapValidatorWebhookName = "limavm-configmap-validator.lima.rancherdesktop.io"
 	// configMapValidatorConfigName is the name of the ConfigMap ValidatingWebhookConfiguration.
 	configMapValidatorConfigName = "limavm-configmap-validator"
+
+	// libraryValidatorWebhookName is the name used for the template library ConfigMap validation webhook.
+	libraryValidatorWebhookName = "limavm-template-library-validator.lima.rancherdesktop.io"
+	// libraryValidatorConfigName is the name of the template library ValidatingWebhookConfiguration.
+	libraryValidatorConfigName = "limavm-template-library-validator"
 )
 
 //go:embed crd.yaml
@@ -61,12 +74,16 @@ var limaCRD string
 type controller struct {
 	webhookPort     int                   // The actual webhook port allocated by SharedControllerManager
 	webhookManagers []base.WebhookManager // WebhookManagers for parallel setup
+	client          client.Client         // The manager's client; nil until RegisterWithManager succeeds
+	shells          *terminal.Registry    // Login shell sessions, keyed by namespace/name
 }
 
-// Verify that controller implements base.Controller and base.WebhookController interfaces.
+// Verify that controller implements the base.Controller, base.WebhookController
+// and base.PassthroughController interfaces.
 var (
-	_ base.Controller        = &controller{}
-	_ base.WebhookController = &controller{}
+	_ base.Controller            = &controller{}
+	_ base.WebhookController     = &controller{}
+	_ base.PassthroughController = &controller{}
 )
 
 // GetName returns the controller name.
@@ -92,6 +109,20 @@ func (c *controller) GetWebhookServiceName() string {
 // GetWebhookManagers returns all WebhookManagers for parallel setup.
 func (c *controller) GetWebhookManagers() []base.WebhookManager {
 	return c.webhookManagers
+}
+
+// GetPassthroughEndpoints returns the passthrough endpoints of this controller.
+func (c *controller) GetPassthroughEndpoints() []string {
+	return []string{shellEndpoint}
+}
+
+// GetPassthroughHandler returns the handler for the endpoint, or nil before
+// RegisterWithManager has succeeded.
+func (c *controller) GetPassthroughHandler(endpoint string) http.Handler {
+	if c.client == nil || endpoint != shellEndpoint {
+		return nil
+	}
+	return http.HandlerFunc(c.handleShell)
 }
 
 // GetCRDData returns the embedded CRD YAML data.
@@ -121,7 +152,9 @@ func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
 			admissionregistrationv1.Create, // Only on CREATE - UPDATE doesn't need to create ConfigMap again
 		},
 		SideEffects: &sideEffectsNoneOnDryRun, // Creates ConfigMap normally, but not during dry-run
-		Defaulter:   &defaulter{Client: mgr.GetClient(), Reader: mgr.GetAPIReader()},
+		// The defaulter fetches http(s): and github: base templates during admission.
+		TimeoutSeconds: ptr.To[int32](30),
+		Defaulter:      &defaulter{Client: mgr.GetClient(), Reader: mgr.GetAPIReader()},
 	}
 
 	managers, err := base.SetupWebhookForResource(mgr, &v1alpha1.LimaVM{}, mutatingConfig)
@@ -173,6 +206,23 @@ func (c *controller) setupWebhookWithRuntimeConfig(mgr ctrl.Manager) error {
 	}
 	c.webhookManagers = append(c.webhookManagers, managers...)
 
+	libraryWebhookConfig := base.WebhookConfig[*corev1.ConfigMap]{
+		Name:        libraryValidatorConfigName,
+		WebhookName: libraryValidatorWebhookName,
+		WebhookPort: c.webhookPort,
+		ObjectSelector: metav1apply.LabelSelector().
+			WithMatchLabels(map[string]string{
+				TemplateLibraryLabel: "true",
+			}),
+		Validator: &LibraryConfigMapValidator{Reader: mgr.GetAPIReader()},
+	}
+
+	managers, err = base.SetupWebhookForResource(mgr, &corev1.ConfigMap{}, libraryWebhookConfig)
+	if err != nil {
+		return err
+	}
+	c.webhookManagers = append(c.webhookManagers, managers...)
+
 	return nil
 }
 
@@ -192,7 +242,20 @@ func (c *controller) RegisterWithManager(_ context.Context, mgr ctrl.Manager) er
 	if err := c.setupReconciler(mgr); err != nil {
 		return err
 	}
-	return c.setupWebhookWithRuntimeConfig(mgr)
+	// The sync logs its failures and retries until it succeeds, so it never stops the manager.
+	err := mgr.Add(manager.RunnableFunc(func(ctx context.Context) error {
+		runTemplateLibrarySync(ctx, mgr.GetClient(), mgr.GetAPIReader(), limatemplates.FS())
+		return nil
+	}))
+	if err != nil {
+		return err
+	}
+	if err := c.setupWebhookWithRuntimeConfig(mgr); err != nil {
+		return err
+	}
+	c.client = mgr.GetClient()
+	c.shells = terminal.NewRegistry()
+	return nil
 }
 
 // defaulter handles LimaVM mutation via webhook.
@@ -218,9 +281,14 @@ func (d *defaulter) Default(ctx context.Context, limavm *v1alpha1.LimaVM) error 
 	}
 
 	// Fetch template data from templateRef
-	templateData, err := d.fetchTemplateRefData(ctx, limavm)
+	templateRef := d.templateRefKey(limavm)
+	templateData, err := d.fetchTemplateRefData(ctx, templateRef)
 	if err != nil {
 		return fmt.Errorf("failed to fetch template data: %w", err)
+	}
+	templateData, err = d.embedTemplate(ctx, templateRef, templateData)
+	if err != nil {
+		return err
 	}
 
 	// Create template ConfigMap with label
@@ -259,8 +327,8 @@ func (d *defaulter) Default(ctx context.Context, limavm *v1alpha1.LimaVM) error 
 	return nil
 }
 
-// fetchTemplateRefData fetches the template data from the templateRef ConfigMap.
-func (d *defaulter) fetchTemplateRefData(ctx context.Context, limavm *v1alpha1.LimaVM) (string, error) {
+// templateRefKey returns the name and namespace of the templateRef ConfigMap.
+func (d *defaulter) templateRefKey(limavm *v1alpha1.LimaVM) types.NamespacedName {
 	configMapKey := types.NamespacedName{
 		Name:      limavm.Spec.TemplateRef.Name,
 		Namespace: limavm.Spec.TemplateRef.Namespace,
@@ -268,11 +336,45 @@ func (d *defaulter) fetchTemplateRefData(ctx context.Context, limavm *v1alpha1.L
 	if configMapKey.Namespace == "" {
 		configMapKey.Namespace = limavm.Namespace
 	}
+	return configMapKey
+}
+
+// fetchTemplateRefData fetches the template data from the templateRef ConfigMap.
+func (d *defaulter) fetchTemplateRefData(ctx context.Context, configMapKey types.NamespacedName) (string, error) {
 	configMap := &corev1.ConfigMap{}
 	if err := d.Reader.Get(ctx, configMapKey, configMap); err != nil {
 		return "", fmt.Errorf("failed to get templateRef ConfigMap %q in namespace %q: %w", configMapKey.Name, configMapKey.Namespace, err)
 	}
 	return configMap.Data[v1alpha1.TemplateConfigMapKey], nil
+}
+
+// embedTemplate resolves the base templates and provision and probe files that
+// templateData references, and returns the merged template. `template:` names
+// resolve to the library ConfigMaps in TemplateLibraryNamespace. Relative and
+// absolute paths resolve to the library ConfigMaps in the templateRef's namespace. The
+// locator "/<templateRef name>" makes relative paths resolve from that namespace's
+// root. A template without references comes back unchanged.
+func (d *defaulter) embedTemplate(ctx context.Context, templateRef types.NamespacedName, templateData string) (string, error) {
+	ctx = templatestore.WithLayers(ctx, []templatestore.Layer{
+		{FS: newConfigMapFS(ctx, d.Reader, TemplateLibraryNamespace)},
+	})
+	ctx = limatmpl.WithLocalFS(ctx, newConfigMapFS(ctx, d.Reader, templateRef.Namespace))
+	tmpl := &limatmpl.Template{
+		Name:    templateRef.Name,
+		Locator: "/" + templateRef.Name,
+		Bytes:   []byte(templateData),
+	}
+	// Embed would parse the template itself, and the error wrap below would
+	// report a YAML error as a failure to resolve template references. Parsing
+	// first gives that error the template ConfigMap validator's message.
+	if err := tmpl.Unmarshal(); err != nil {
+		return "", fmt.Errorf("failed to parse template: %w", err)
+	}
+	// defaultBase=false keeps the base file in rdd's own Lima config directory out of the result.
+	if err := tmpl.Embed(ctx, true, false); err != nil {
+		return "", fmt.Errorf("failed to resolve template references in ConfigMap %q in namespace %q: %w", templateRef.Name, templateRef.Namespace, err)
+	}
+	return string(tmpl.Bytes), nil
 }
 
 // ConfigMapValidator validates ConfigMap resources that are template ConfigMaps for LimaVM resources.

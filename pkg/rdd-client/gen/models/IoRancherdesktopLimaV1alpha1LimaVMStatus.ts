@@ -22,6 +22,18 @@ export class IoRancherdesktopLimaV1alpha1LimaVMStatus {
     */
     'conditions'?: Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>;
     /**
+    * cpus is the number of CPUs configured for the instance, after Lima fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+    */
+    'cpus'?: number;
+    /**
+    * disk is the configured size of the instance\'s main disk, after Lima fills in its defaults; it is not the space that the disk uses on the host. Unset on WSL2, where Lima cannot set it per instance.
+    */
+    'disk'?: any;
+    /**
+    * memory is the memory size configured for the instance, after Lima fills in its defaults. Unset on WSL2, where Lima cannot set it per instance.
+    */
+    'memory'?: any;
+    /**
     * observedTemplateResourceVersion tracks the resourceVersion of the template ConfigMap last applied to the instance. For stopped instances, this is updated after writing lima.yaml to disk. For running instances, it is deferred until the restart completes. When this differs from the ConfigMap\'s current resourceVersion, the reconciler checks for template changes.
     */
     'observedTemplateResourceVersion'?: string;
@@ -47,6 +59,24 @@ export class IoRancherdesktopLimaV1alpha1LimaVMStatus {
             "name": "conditions",
             "baseName": "conditions",
             "type": "Array<IoRancherdesktopAppV1alpha1AppStatusConditionsInner>",
+            "format": ""
+        },
+        {
+            "name": "cpus",
+            "baseName": "cpus",
+            "type": "number",
+            "format": "int32"
+        },
+        {
+            "name": "disk",
+            "baseName": "disk",
+            "type": "any",
+            "format": ""
+        },
+        {
+            "name": "memory",
+            "baseName": "memory",
+            "type": "any",
             "format": ""
         },
         {

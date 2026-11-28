@@ -99,21 +99,6 @@ editor_cmd() {
     fi
 }
 
-delete_test_vm() {
-    rdd ctl delete limavm "${VM_NAME}" --namespace "${NAMESPACE}"
-    # Wrap with an outer timeout because rdd ctl wait --timeout may not be
-    # enforced when the reconciler is stalled. On WSL2, a failed
-    # wsl.exe --unregister can deadlock wslservice.exe, blocking all
-    # subsequent wsl.exe calls (including store.Inspect in the reconciler).
-    # If the wait hangs, kill wslservice.exe to recover.
-    if ! timeout 90 rdd ctl wait --for=delete "limavm/${VM_NAME}" --namespace "${NAMESPACE}" --timeout=60s; then
-        if is_windows; then
-            MSYS_NO_PATHCONV=1 taskkill.exe /F /IM wslservice.exe || true
-        fi
-        false
-    fi
-}
-
 @test "create source template ConfigMap for running tests" {
     rdd ctl create configmap "source-template" --namespace "${NAMESPACE}" --from-literal="template=${RUNNING_TEMPLATE}"
     run -0 rdd ctl get configmap "source-template" --namespace "${NAMESPACE}" --output jsonpath='{.data.template}'
@@ -169,6 +154,14 @@ delete_test_vm() {
     # SSH inside the guest may not be ready immediately after Running=True
     try --max 12 --delay 5 -- assert_shell_succeeds "${VM_NAME}" uname -s
     assert_line "Linux"
+}
+
+@test "guest interface gets the name set in Lima's network-config" {
+    skip_on_windows "rd-init does not run in the WSL2 guest"
+    # The user-mode network interface's set-name in Lima's network-config is
+    # eth0. If rd-init doesn't rename it, the guest keeps the name that udev
+    # gave it, such as enp0s1.
+    rdd lima shell "${VM_NAME}" ip link show dev eth0
 }
 
 @test "shell propagates the remote exit code" {
@@ -568,7 +561,7 @@ env:
 }
 
 @test "cleanup LimaVM running test" {
-    delete_test_vm
+    delete_limavm "${VM_NAME}" "${NAMESPACE}"
 }
 
 @test "limavm edit command updates template ConfigMap" {
@@ -652,5 +645,5 @@ SCRIPT
 }
 
 @test "cleanup LimaVM edit test" {
-    delete_test_vm
+    delete_limavm "${VM_NAME}" "${NAMESPACE}"
 }

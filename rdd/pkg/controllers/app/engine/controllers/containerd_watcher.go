@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"al.essio.dev/pkg/shellescape"
 	apievents "github.com/containerd/containerd/api/events"
 	containerdclient "github.com/containerd/containerd/v2/client"
 	"github.com/containerd/containerd/v2/core/events"
@@ -25,6 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
+	appv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/app/v1alpha1"
 	containersv1alpha1 "github.com/rancher-sandbox/rancher-desktop-daemon/pkg/apis/containers/v1alpha1"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/instance"
 	"github.com/rancher-sandbox/rancher-desktop-daemon/pkg/util/api"
@@ -279,6 +281,13 @@ func (w *containerdWatcher) hasTTY(_ context.Context, _ *containersv1alpha1.Cont
 // inside the VM, and containerd itself exposes no log API.
 func (w *containerdWatcher) getLogs(_ context.Context, _ *containersv1alpha1.Container, _ ...engineLogOptions) (io.ReadCloser, error) {
 	return nil, errLogsNotSupported
+}
+
+// shellCommand runs nerdctl with sudo, because nerdctl insists on rootless
+// mode when it doesn't run as root, even with an explicit --address.
+func (w *containerdWatcher) shellCommand(c *containersv1alpha1.Container) string {
+	return "sudo nerdctl --address " + appv1alpha1.GuestContainerdSocket +
+		" --namespace " + shellescape.Quote(c.Status.Namespace) + " " + containerShellArgs(c.Status.ID)
 }
 
 // pullImage is not wired for containerd; an ImagePullRequest fails with this

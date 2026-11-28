@@ -22,6 +22,7 @@ const prefItemData = defineNavItems([
     labelKey: 'preferences.nav.virtualMachine',
     tabs:      [
       ['hardware', 'preferences.tabs.hardware'],
+      ['provision', 'preferences.tabs.provision'],
       // ['volumes', 'preferences.tabs.volumes'],
       // ['network', 'preferences.tabs.network'],
       // ['emulation', 'preferences.tabs.emulation'],

@@ -29,6 +29,9 @@ export class VirtualMachineNav {
   readonly vz:                Locator;
   readonly useRosetta:        Locator;
   readonly tabHardware:       Locator;
+  readonly tabProvision:      Locator;
+  readonly provisionScript:   Locator;
+  readonly provisionEditor:   Locator;
   readonly tabVolumes:        Locator;
   readonly tabEmulation:      Locator;
 
@@ -51,6 +54,9 @@ export class VirtualMachineNav {
     this.vz = page.locator('[data-test="VZ"]');
     this.useRosetta = page.locator('[data-test="useRosetta"]');
     this.tabHardware = page.getByTestId('hardware');
+    this.tabProvision = page.getByTestId('provision');
+    this.provisionScript = page.getByTestId('provision-script');
+    this.provisionEditor = this.provisionScript.locator('.cm-content');
     this.tabVolumes = page.getByTestId('volumes');
     this.tabEmulation = page.getByTestId('emulation');
   }

@@ -18,6 +18,7 @@ require (
 	github.com/diskfs/go-diskfs v1.9.4
 	github.com/distribution/reference v0.6.0
 	github.com/docker/cli v29.10.0+incompatible
+	github.com/docker/go-units v0.5.0
 	github.com/go-logr/logr v1.4.4
 	github.com/gofrs/flock v0.13.2
 	github.com/google/uuid v1.6.0
@@ -42,6 +43,7 @@ require (
 	github.com/tonistiigi/go-csvvalue v0.0.0-20240710180619-ddb21b71c0b4
 	github.com/ulikunitz/xz v0.5.17
 	go.etcd.io/etcd/api/v3 v3.7.4
+	golang.org/x/crypto v0.59.0
 	golang.org/x/mod v0.43.0
 	golang.org/x/sync v0.25.0
 	golang.org/x/sys v0.50.0
@@ -58,6 +60,7 @@ require (
 	k8s.io/kube-aggregator v0.37.2
 	k8s.io/kubectl v0.37.2
 	k8s.io/kubernetes v1.37.2
+	k8s.io/streaming v0.37.2
 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
 	sigs.k8s.io/controller-runtime v0.25.3
 	sigs.k8s.io/structured-merge-diff/v6 v6.4.2
@@ -174,7 +177,6 @@ require (
 	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
 	github.com/docker/go-connections v0.8.2 // indirect
-	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/elliotchance/orderedmap v1.8.0 // indirect
 	github.com/elliotwutingfeng/asciiset v0.0.0-20260129054604-cfde2086bc57 // indirect
@@ -476,14 +478,13 @@ require (
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.6 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.7 // indirect
-	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 // indirect
 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
 	golang.org/x/exp/typeparams v0.0.0-20260811152304-ee035b5b010f // indirect
-	golang.org/x/image v0.47.0 // indirect
+	golang.org/x/image v0.48.0 // indirect
 	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/oauth2 v0.37.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/term v0.48.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 	golang.org/x/time v0.16.0 // indirect
 	golang.org/x/tools v0.52.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
@@ -522,7 +523,6 @@ require (
 	k8s.io/metrics v0.37.2 // indirect
 	k8s.io/mount-utils v0.37.2 // indirect
 	k8s.io/pod-security-admission v0.37.2 // indirect
-	k8s.io/streaming v0.37.2 // indirect
 	modernc.org/libc v1.80.1 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
@@ -543,6 +543,8 @@ require (
 
 replace (
 	github.com/containerd/ltag => github.com/mook-as/ltag v0.0.0-20260224191129-27fed92c7adf
+	// Lima from the rd2-integration fork branch, merging lima-vm/lima#5832 and #5843
+	github.com/lima-vm/lima/v2 => github.com/jandubois/lima/v2 v2.3.0-beta.1.0.20261128004742-470374d40665
 	k8s.io/api => k8s.io/api v0.37.2
 	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.37.2
 	k8s.io/apimachinery => k8s.io/apimachinery v0.37.2

@@ -41,6 +41,8 @@ ARCHIVE := rancher-dashboard.tar.gz
 TREE := rancher-dashboard
 OUTPUT := dist/embed
 STAGED := ../rdd/pkg/steve/dashboard
+EXTENSION := rancher-desktop
+EXTENSION_STAGED := ../rdd/pkg/controllers/app/capi/uiextension
 
 all:
 	curl --fail --location --silent --show-error --output $(ARCHIVE) \
@@ -70,4 +72,28 @@ all:
 	find $(TREE)/$(OUTPUT) -name '*.map' -delete
 	rm -rf $(STAGED)
 	cp -R $(TREE)/$(OUTPUT) $(STAGED)
+
+	# The shell's build registers every pkg/* that has a rancher field as a
+	# builtin extension. The extension doesn't belong in the dashboard that rdd
+	# embeds, so it joins the tree only after that build. `yarn build-pkg`
+	# would also lint the whole tree, so we call its script directly.
+	cp -R pkg/$(EXTENSION) $(TREE)/pkg/
+	cd $(TREE) && BROWSERSLIST=defaults ./shell/scripts/build-pkg.sh $(EXTENSION)
+
+	# Rancher fetches plugin/package.json, then files.txt, then each file that
+	# files.txt lists. The build replaces the package's rancher.annotations
+	# with `rancher: true`, so rdd takes the annotations from metadata.json for
+	# the UIPlugin's spec.plugin.metadata. Rancher fetches the files again only
+	# when the UIPlugin's spec changes or it hasn't cached that version. A
+	# rebuild keeps the version, so metadata.json also holds a hash of the
+	# files, and a new hash changes the spec.
+	rm -rf $(EXTENSION_STAGED)
+	mkdir -p $(EXTENSION_STAGED)
+	cp -R $(TREE)/dist-pkg/$(EXTENSION)-$$(node --print 'require("./pkg/$(EXTENSION)/package.json").version') \
+		$(EXTENSION_STAGED)/plugin
+	find $(EXTENSION_STAGED)/plugin \( -name '*.map' -o -name report.html \) -delete
+	cd $(EXTENSION_STAGED) && find plugin -type f | LC_ALL=C sort > files.txt
+	cd $(EXTENSION_STAGED) && HASH=$$(xargs shasum --algorithm 256 < files.txt | shasum --algorithm 256 | cut -d ' ' -f 1) && \
+		node --print 'JSON.stringify({ ...require(process.argv[1]).rancher.annotations, "rancherdesktop.io/content-hash": process.argv[2] }, null, 2)' \
+		$(CURDIR)/pkg/$(EXTENSION)/package.json "$$HASH" > metadata.json
 .PHONY: all

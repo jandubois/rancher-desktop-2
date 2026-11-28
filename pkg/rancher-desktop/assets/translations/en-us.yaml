@@ -215,6 +215,53 @@ volumes:
         size: Size
         modified: Modified
         permissions: Permissions
+virtualMachines:
+  title: Virtual Machines
+  table:
+    header:
+      name: Name
+      status: Status
+      cpus: CPUs
+      memory: Memory
+      disk: Disk
+  status:
+    # @context Virtual Machines page, status badge of a virtual machine
+    running: Running
+    # @context Virtual Machines page, status badge of a virtual machine
+    starting: Starting
+    # @context Virtual Machines page, status badge of a virtual machine
+    stopping: Stopping
+    # @context Virtual Machines page, status badge of a virtual machine
+    stopped: Stopped
+    # @context Virtual Machines page, status badge of a virtual machine
+    failed: Failed
+    # @context Virtual Machines page, status badge of a virtual machine
+    pending: Pending
+    # @context Virtual Machines page, status badge of a virtual machine
+    unknown: Unknown
+  action:
+    # @context Virtual Machines page, row menu and bulk action button
+    start: Start
+    # @context Virtual Machines page, row menu and bulk action button
+    stop: Stop
+    # @context Virtual Machines page, row menu and bulk action button
+    delete: Delete
+    # @context Virtual Machines page, row menu item that opens a terminal in the virtual machine
+    shell: Shell
+  confirmDelete:
+    # @context Virtual Machines page, delete confirmation dialog button
+    # @meaning '&' marks the access key, not literal text; see the README.
+    confirm: '&Delete'
+    # @context Virtual Machines page, delete confirmation dialog question
+    message: Delete {count} {count, plural, one {virtual machine} other {virtual machines}}?
+    # @context Virtual Machines page, delete confirmation dialog title
+    title: Confirm virtual machine deletion
+  shell:
+    # @context Virtual machine shell page, header line under the virtual machine's name
+    # @meaning {namespace} is the Kubernetes namespace of the virtual machine
+    description: 'Namespace: {namespace}'
+  sortableTables:
+    noRows: There are no virtual machines to show
 images:
   title: Images
   state:
@@ -426,6 +473,12 @@ virtualMachine:
   useRosetta:
     legend: VZ Option
     label: Enable Rosetta support
+  provision:
+    # @context Preferences, Virtual Machine section: heading above the editor for a shell script that the VM runs each time it starts
+    label: Provisioning script
+    # @no-translate root, Kubernetes
+    description: Runs as root each time the VM starts, before the container engine and Kubernetes start.
+    restartNotice: Applying changes to the script restarts the VM.
 containerEngine:
   label: Container Engine
   options:
@@ -801,6 +854,8 @@ preferences:
     behavior: Behavior
     environment: Environment
     hardware: Hardware
+    # @context Preferences, Virtual Machine section: tab for a shell script that the VM runs each time it starts
+    provision: Provisioning
     volumes: Volumes
     emulation: Emulation
     integrations: Integrations
@@ -918,6 +973,24 @@ containerStats:
     write: Write
   processes: Processes
   noProcesses: No processes found.
+terminalSession:
+  ended:
+    # @context Banner above a terminal after its shell exited with status 0
+    exited: The shell exited.
+    # @context Banner above a terminal after its shell exited with a non-zero status
+    # @meaning {status} is the shell's exit status, a number
+    exitedWithStatus: The shell exited with status {status}.
+    # @context Banner above a terminal when its shell couldn't start or failed
+    # @meaning {message} is an untranslated English error message from Rancher Desktop Daemon
+    failed: 'Shell error: {message}'
+    # @context Banner above a terminal after another window or client attached to the same shell
+    takenOver: Another client attached to this shell.
+    # @context Banner above a terminal after its connection closed without the shell ending
+    connectionLost: The terminal lost its connection to the shell.
+  # @context Button in the banner above an ended terminal; opens a new shell
+  startNewShell: Start new shell
+  # @context Button in the banner above a disconnected terminal; attaches to the same shell again
+  reattach: Reattach
 blogFeed:
   readMore: Read more
   title: Recent blog posts

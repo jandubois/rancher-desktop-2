@@ -16,7 +16,6 @@ import (
 	"github.com/gofrs/flock"
 	"gotest.tools/v3/assert"
 
-	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 )
 
@@ -29,9 +28,9 @@ import (
 var binaryAssetsDirectory, binaryAssetsDirectoryErr = envtest.SetupEnvtestDefaultBinaryAssetsDirectory()
 
 // Start runs envtest with the shared binary cache, stops it when the test
-// ends, and returns the config for its API server. It waits while another
-// test process starts envtest from the same cache.
-func Start(t testing.TB) *rest.Config {
+// ends, and returns the running environment. It waits while another test
+// process starts envtest from the same cache.
+func Start(t testing.TB) *envtest.Environment {
 	t.Helper()
 	assert.NilError(t, binaryAssetsDirectoryErr, "failed to find envtest binary cache directory")
 	dir := binaryAssetsDirectory
@@ -52,7 +51,7 @@ func Start(t testing.TB) *rest.Config {
 		DownloadBinaryAssets:  true,
 		BinaryAssetsDirectory: dir,
 	}
-	cfg, err := env.Start()
+	_, err := env.Start()
 	unlockErr := lock.Unlock()
 	assert.NilError(t, err, "failed to start environment; if an interrupted download left a broken binary, delete the directory under %s that holds it", dir)
 
@@ -71,5 +70,5 @@ func Start(t testing.TB) *rest.Config {
 		}
 	})
 	assert.NilError(t, unlockErr, "failed to unlock envtest binary cache directory %s", dir)
-	return cfg
+	return env
 }

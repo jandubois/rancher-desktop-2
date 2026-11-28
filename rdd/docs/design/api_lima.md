@@ -33,6 +33,9 @@ status:
   observedTemplateResourceVersion: "12345"
   restartNeeded: false
   restartCount: 3
+  cpus: 4
+  memory: 4Gi
+  disk: 100Gi
   conditions:
   - type: Created
     status: "True"
@@ -55,9 +58,13 @@ status:
 
 - **spec.templateRef**: Specifies the `lima.yaml` template for the machine. The template must pass Lima validation or the `LimaVM` creation will fail. 
 
-    Initially the only way to specify a template is via a ConfigMap that will store the "fully embedded" template under the `template` key. It cannot reference external base templates or scripts. This will change eventually when `spec.templateRef.name` can also be set to a URL. The default for `spec.templateRef.namespace` is the same as `metadata.namespace`.
+    The template is stored in a ConfigMap under the `template` key. The default for `spec.templateRef.namespace` is the same as `metadata.namespace`.
 
-    The `LimaVM` controller will create a new ConfigMap (in `metadata.namespace`) with the `metadata.name` and a `"-template"` suffix to store a copy of the validated template. This name is stored under `status.templateConfigMap`. The original `spec.templateRef` source is never accessed again after this, and can be modified or deleted without affecting the `LimaVM` resource. The `spec.templateRef` is immutable after creation and only serves as documentation.
+    The template can reference base templates and provision scripts, as Lima templates do. A probe's script has to be inline, because Lima doesn't embed a probe's `file:` reference. A `template:` name, such as `template:_images/ubuntu`, resolves to a ConfigMap in the `lima-templates` namespace. A relative or absolute path resolves to a ConfigMap in the `spec.templateRef` namespace. Only ConfigMaps labeled `lima.rancherdesktop.io/template-library: "true"` can be referenced, and each one's `lima.rancherdesktop.io/template-path` annotation gives its path, such as `common.yaml`. A path reference must spell that path exactly, extension included. A namespace can hold only one ConfigMap for each path. `http(s):` and `github:` references are fetched as `limactl` fetches them.
+
+    rdd writes Lima's stock templates into `lima-templates` at every start. It rewrites any stock template that was edited, and takes over any other ConfigMap at a stock template's path. So if you add your own template to `lima-templates` and a later Lima release ships one at the same path, rdd replaces yours. To change a stock template, copy it into the `spec.templateRef` namespace under its own path and reference it by that path.
+
+    The `LimaVM` controller will create a new ConfigMap (in `metadata.namespace`) with the `metadata.name` and a `"-template"` suffix to store the validated template, with every reference embedded. This name is stored under `status.templateConfigMap`. The original `spec.templateRef` source is never accessed again after this, and can be modified or deleted without affecting the `LimaVM` resource. The `spec.templateRef` is immutable after creation and is only documentation.
 
     The `status.templateConfigMap` can be modified, but must pass Lima validation for the update to succeed. If `spec.running` is `true` and the template has changed, then the instance will be restarted. The `status.templateConfigMap` cannot be deleted, except by deleting the `LimaVM` resource itself, which will clean up owned resources automatically.
 
@@ -74,6 +81,8 @@ status:
 - **status.restartNeeded**: Indicates a restart has been requested but not yet executed. The reconciler sets this field when it processes a `restartRequested` annotation or detects a template change on a running instance. The reconciler clears the flag when stopping the instance (before the restart begins), not after the restart completes. When the instance is already stopped, the reconciler clears the flag immediately. When the instance is starting, the reconciler waits for boot to finish before stopping.
 
 - **status.restartCount**: Tracks how many times the instance has reached the Running state. The reconciler increments this counter each time it sets `Running=True/Started`. Because the next value is predictable, callers can use `kubectl wait --for=jsonpath` to block until a restart completes — something `lastTransitionTime` cannot support since `kubectl wait` matches exact values, not comparisons.
+
+- **status.cpus**, **status.memory**, **status.disk**: The CPU count, memory size and main disk size configured for the instance, after Lima fills in its defaults. The disk size is the configured size, not the space that the disk uses on the host. The reconciler reads them from the instance's `lima.yaml` once the instance exists, and again after each template change. So for a running instance, they show the new values before the restart applies them. On WSL2, where Lima cannot set them per instance, all three stay unset.
 
 - **status.conditions**: Standard Kubernetes conditions tracking the LimaVM state.
 
@@ -123,6 +132,10 @@ The `rdd limavm` commands would support:
 
 Currently, the reconciler force-stops the instance on deletion. Graceful shutdown on delete could be added via the grace period mechanism described above.
 
+### Shell
+
+An endpoint at `/passthrough/limavm/shell/${namespace}/${name}` opens an interactive shell in the instance. [Terminal sessions](terminal-sessions.md) describes the endpoint, its wire format, and how sessions outlive their clients.
+
 ### LimaVM Component Interactions
 
 ```mermaid
@@ -148,6 +161,7 @@ sequenceDiagram
     R->>R: Extract embedded image
     R->>Lima: Prepare (download, disks)
     R->>R: Set Created=True
+    R->>R: Set status.cpus, memory, disk
 
     User->>R: Set spec.running=true
     R->>R: Set Running=False (Starting)

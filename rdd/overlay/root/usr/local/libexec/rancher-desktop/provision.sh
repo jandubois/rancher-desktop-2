@@ -19,6 +19,14 @@ trap 'systemctl start --no-block rancher-desktop.target' EXIT
 
 systemctl stop rancher-desktop.target
 
+# rdd's Lima template writes the user's provisioning script here on every
+# boot, and writes an empty file when the user has none. A failing script
+# must not keep the container engine and k3s from starting.
+USER_PROVISION_SCRIPT=/etc/rancher-desktop/user-provision.sh
+if [[ -s ${USER_PROVISION_SCRIPT} ]]; then
+    "${USER_PROVISION_SCRIPT}" || echo "User provisioning script failed with exit status $?" >&2
+fi
+
 # Enable the requested container engine and disable the other.
 # containerd.service has a Conflicts=docker, so we must not start both.
 CONTAINERD_ACTION=$([[ ${CONTAINER_ENGINE} == containerd ]] && echo enable || echo disable)
@@ -28,6 +36,13 @@ systemctl "${DOCKER_ACTION}" docker.service docker.socket
 
 if [[ ${KUBERNETES_ENABLED} == "true" ]]; then
     export INSTALL_K3S_VERSION="v${KUBERNETES_VERSION}+k3s1"
+    # The installer names the unit k3s-${INSTALL_K3S_NAME}.service, so the
+    # image's drop-ins in k3s-rancher-desktop.service.d apply only to this
+    # k3s. Rancher Manager's system agent installs k3s.service on server
+    # node VMs built from the same image, and the drop-ins would otherwise
+    # replace its command line and keep it from starting.
+    export INSTALL_K3S_NAME=rancher-desktop
+    K3S_UNIT=k3s-${INSTALL_K3S_NAME}.service
     INSTALLED_VERSION=""
     # awk must read to EOF; `{print; exit}` closes the pipe while k3s
     # is still writing, and the SIGPIPE propagates via pipefail + errexit.
@@ -41,7 +56,7 @@ if [[ ${KUBERNETES_ENABLED} == "true" ]]; then
         # dependency tree from disk so the EXIT trap's restart honors the
         # removal even on the failure path, where add-wants below (the only
         # other reload) never runs. The want is re-added on success below.
-        rm -f /etc/systemd/system/rancher-desktop.target.wants/k3s.service
+        rm -f "/etc/systemd/system/rancher-desktop.target.wants/${K3S_UNIT}"
         systemctl daemon-reload
         (
             export PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin
@@ -65,14 +80,14 @@ if [[ ${KUBERNETES_ENABLED} == "true" ]]; then
                 sleep 2
             done
         )
-        systemctl add-wants rancher-desktop.target k3s.service
+        systemctl add-wants rancher-desktop.target "${K3S_UNIT}"
     fi
 
     if [[ ${CONTAINER_ENGINE} == "containerd" ]]; then
         echo "K3S_CONTAINER_ENGINE_OPTIONS=--container-runtime-endpoint /run/k3s/containerd/containerd.sock" \
-            >/etc/systemd/system/k3s.service.env
+            >"/etc/systemd/system/${K3S_UNIT}.env"
     else
-        echo "K3S_CONTAINER_ENGINE_OPTIONS=--docker" >/etc/systemd/system/k3s.service.env
+        echo "K3S_CONTAINER_ENGINE_OPTIONS=--docker" >"/etc/systemd/system/${K3S_UNIT}.env"
     fi
 
     # Remove stale kubeconfig so k3s regenerates it on start.

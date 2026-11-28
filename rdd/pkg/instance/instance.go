@@ -15,11 +15,14 @@ import (
 	"sync"
 )
 
-// Suffix returns the instance suffix from the RDD_INSTANCE environment variable, defaulting to "2".
+// DefaultSuffix is the instance suffix when RDD_INSTANCE is unset or empty.
+const DefaultSuffix = "2"
+
+// Suffix returns the instance suffix from the RDD_INSTANCE environment variable, defaulting to DefaultSuffix.
 var Suffix = sync.OnceValue(func() string {
 	instance := os.Getenv("RDD_INSTANCE")
 	if instance == "" {
-		return "2"
+		return DefaultSuffix
 	}
 	return instance
 })
